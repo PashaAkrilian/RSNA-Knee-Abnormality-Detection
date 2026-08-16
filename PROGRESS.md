@@ -135,9 +135,11 @@ Ditemukan beberapa dataset publik berisi label hasil pembacaan LLM atas kolom `R
 
 Provenance dataset: dihasilkan oleh LLM pihak lain yang membaca kolom `Report` `train.csv` kompetisi ini secara offline, hasil dipublikasikan statis (bukan kita yang memanggil API LLM hosted) — konsisten dengan pola "LLM-offline-label" yang sudah didokumentasikan di `docs/RESEARCH_NOTES.md` §1 dan tidak melanggar larangan API LLM hosted untuk memproses data pasien.
 
+**v7 — naikkan `EPOCHS` 3→8, `BATCH_STUDIES` 4→8 (mendekati pola kompetitor top: EPOCHS=10/BATCH_STUDIES=8), sudah di-push, sedang berjalan.** Checkpoint tetap disimpan berdasar val_macro_auc terbaik (bukan epoch terakhir) — aman kalau epoch belakangan mulai overfit.
+
 ## Belum dikerjakan
 
-- [ ] v7: naikkan `EPOCHS` (competitor top pakai 10) + `BATCH_STUDIES`, backbone tunggal DINOv2 dulu — cek apakah val_macro_auc terus naik atau mulai overfit (tanda awal sudah kelihatan di ekor epoch 3 v6)
+- [ ] Tunggu hasil v7 — cek apakah val_macro_auc terus naik melewati 0.7658 atau mulai overfit
 - [ ] Lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP sesuai `docs/RESEARCH_NOTES.md` §5 — syarat baseline belajar sinyal nyata sudah terpenuhi di v6
 - [ ] Belum ada pipeline inference/submission (predict ke `test_series`, format `sample_submission.csv`) — perlu dibangun sebelum submit ke leaderboard
 - [ ] Review manual studi gold-label yang ter-flag exclude (bagian 4)

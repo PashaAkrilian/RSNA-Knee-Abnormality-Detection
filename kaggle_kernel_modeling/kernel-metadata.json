@@ -1,6 +1,6 @@
 {
   "id": "dimaspashaakrilian/rsna-knee-modeling-v1-dinov2",
-  "title": "RSNA Knee - Modeling v6 DINOv2 (fix cache path + LLM labels)",
+  "title": "RSNA Knee - Modeling v7 DINOv2 (epoch 3->8, batch 4->8)",
   "code_file": "rsna_knee_modeling.ipynb",
   "language": "python",
   "kernel_type": "notebook",
