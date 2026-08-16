@@ -137,13 +137,32 @@ Provenance dataset: dihasilkan oleh LLM pihak lain yang membaca kolom `Report` `
 
 **v7 — naikkan `EPOCHS` 3→8, `BATCH_STUDIES` 4→8 (mendekati pola kompetitor top: EPOCHS=10/BATCH_STUDIES=8), sudah di-push, sedang berjalan.** Checkpoint tetap disimpan berdasar val_macro_auc terbaik (bukan epoch terakhir) — aman kalau epoch belakangan mulai overfit.
 
+## 10. Riset lanjutan: ekosistem dataset publik kompetitor top (`docs/RESEARCH_NOTES.md` §8)
+
+Arahan: jangan cuma 1 dataset, riset lebih luas apa yang dipakai kompetitor top di Code tab & public score.
+
+Ditarik 18 kernel publik tambahan (rentang 0-344 votes) via `kaggle kernels pull -m`, dibaca `dataset_sources`/`model_sources`-nya. **Temuan utama: ada ekosistem dataset bersama yang dipakai HAMPIR SEMUA kompetitor top sekaligus**, bukan 1 dataset saja — bobot model (`pilkwang/rsna-knee-weights` 14/18), label LLM kedua (`pilkwang/rsna-knee-llm-labels` 13/18, `lixin73/...-sol56` 8/18), bobot RadImageNet pihak lain (`marwanmath/...` 12/18), fold-weights k-fold CV (`mattiaangeli/knee-mri-fold-weights` 7/18), dll. Tabel lengkap + lisensi tiap dataset di `docs/RESEARCH_NOTES.md` §8.
+
+**Langsung diadopsi (aman, CC0, terverifikasi independen):**
+- `flight0234/rsna-knee-hybrid-report-labels` — label hybrid (stevenleehans v4_blend + kolom Fracture dari pilkwang v2), **macro AUC 0.8991 vs gold** (lebih baik dari 0.8927 yang dipakai sekarang), plus kolom confidence eksplisit per-label. Akan dipakai mulai v8.
+- `royceplayz/rsna-medicalnet-resnet50-weights` (Apache-2.0, bersih) — dipertimbangkan sbg backbone tambahan, membatalkan keputusan skip MedicalNet sebelumnya.
+
+**3 item STOP — menunggu keputusan Anda (legalitas ambigu, bukan teknis):**
+1. `pilkwang/rsna-knee-weights` (14/18 kernel!) — bukan pretrained generik, tapi bobot yang SUDAH di-fine-tune kompetitor lain ke kompetisi ini. CC0 & publik, tapi berpotensi kena aturan "no solution sharing" banyak kompetisi Kaggle.
+2. `sohaibanwaar1203/kneemridataset` — data MRI lutut EKSTERNAL (917 studi RS Rijeka Kroasia, di luar dataset resmi), lisensi Kaggle "unknown". Belum jelas apakah Rules mengizinkan data eksternal.
+3. `marwanmath/resnet-50-radimagenet-marwan` & `antoinegg1/...-heads-v15` — CC-BY-NC-SA-4.0 (**NonCommercial**), ambigu utk kompetisi berhadiah $77rb. **Rekomendasi: skip**, kita sudah punya RadImageNet-ResNet50 MIT-licensed sendiri (§4/§6 RESEARCH_NOTES) dgn kapabilitas sama.
+
+**Strategi sintesis menuju peringkat 1** (detail di RESEARCH_NOTES §8c): label hybrid (v8) → ensemble RadImageNet+BiomedCLIP+(MedicalNet?) di atas baseline yg sudah lebih lama dilatih (v9) → proper k-fold CV + OOF ensemble selection (pola `sakhawathossen`) → per-target specialist fine-tuning → TTA + pipeline submission (belum ada sama sekali).
+
 ## Belum dikerjakan
 
 - [ ] Tunggu hasil v7 — cek apakah val_macro_auc terus naik melewati 0.7658 atau mulai overfit
-- [ ] Lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP sesuai `docs/RESEARCH_NOTES.md` §5 — syarat baseline belajar sinyal nyata sudah terpenuhi di v6
+- [ ] v8: swap label ke `flight0234/rsna-knee-hybrid-report-labels` (0.8991) — siap push begitu v7 selesai (tidak interupsi run yang sedang jalan)
+- [ ] Keputusan Anda soal 3 item STOP di atas (bagian 10)
+- [ ] Lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP (+MedicalNet?) sesuai `docs/RESEARCH_NOTES.md` §5/§8c — syarat baseline belajar sinyal nyata sudah terpenuhi di v6
+- [ ] Proper k-fold CV (bukan cuma 1 split gold N=57) + OOF ensemble selection
 - [ ] Belum ada pipeline inference/submission (predict ke `test_series`, format `sample_submission.csv`) — perlu dibangun sebelum submit ke leaderboard
 - [ ] Review manual studi gold-label yang ter-flag exclude (bagian 4)
-- [ ] Cross-validation stratified multi-label pada 58 studi gold (saat ini validasi cuma 1 split gold, N=57, berpotensi noisy)
 
 ## Struktur repo
 
