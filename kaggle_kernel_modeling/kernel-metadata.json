@@ -1,0 +1,19 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-modeling-v1-dinov2",
+  "title": "RSNA Knee - Modeling v6 DINOv2 (fix cache path + LLM labels)",
+  "code_file": "rsna_knee_modeling.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": ["stevenleehans/rsna-knee-llm-report-labels"],
+  "competition_sources": ["rsna-knee-abnormality-detection"],
+  "kernel_sources": [
+    "dimaspashaakrilian/rsna-knee-preprocessing-pipeline",
+    "dimaspashaakrilian/rsna-knee-weak-labeler-from-reports"
+  ],
+  "model_sources": ["metaresearch/dinov2/PyTorch/base/1"]
+}

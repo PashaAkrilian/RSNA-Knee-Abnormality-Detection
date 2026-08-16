@@ -1,0 +1,64 @@
+[{"stream_name":"stderr","time":7.639483295,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":7.639574189,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":8.770814148,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.770846121,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.770850771,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.770854326,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":9.578268043,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.578306211,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.578312568,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.578317333,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":11.959975566,"data":"[t=   0.0s] DATA_DIR: /kaggle/input/competitions/rsna-knee-abnormality-detection\n"}
+,{"stream_name":"stdout","time":12.172168586,"data":"[t=   0.2s] train: (4407, 14) | studi gold-label: 58\n"}
+,{"stream_name":"stdout","time":12.225410275,"data":"[t=   0.3s] Lexicon dimuat: 12 label x 9 bahasa (+ 3 label OA via co-occurrence)\n"}
+,{"stream_name":"stdout","time":15.070105745,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 981.5/981.5 kB 19.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":15.272802713,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 981.5/981.5 kB 19.0 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":21.957917111,"data":"[t=  10.0s] Validasi selesai.\n"}
+,{"stream_name":"stdout","time":21.985422054,"data":"\n"}
+,{"stream_name":"stdout","time":21.985456896,"data":"Rata-rata: agreement=0.747 | precision=0.686 | recall=0.951 | silence=0.582\n"}
+,{"stream_name":"stdout","time":51.283305997,"data":"[t=  39.3s]   1000/4349 studi diproses\n"}
+,{"stream_name":"stdout","time":52.143085201,"data":"[t=  40.2s]   2000/4349 studi diproses\n"}
+,{"stream_name":"stdout","time":52.950933016,"data":"[t=  41.0s]   3000/4349 studi diproses\n"}
+,{"stream_name":"stdout","time":53.784302945,"data":"[t=  41.8s]   4000/4349 studi diproses\n"}
+,{"stream_name":"stdout","time":54.093687787,"data":"[t=  42.2s] SELESAI. weak_labels_full.csv: (4407, 15)\n"}
+,{"stream_name":"stdout","time":54.099846203,"data":"\n"}
+,{"stream_name":"stdout","time":54.099919042,"data":"Cakupan (non-null) per label di studi non-gold (dari total 4349 studi):\n"}
+,{"stream_name":"stdout","time":54.099928749,"data":"ACL                 50.8\n"}
+,{"stream_name":"stdout","time":54.099934821,"data":"MCL                 42.2\n"}
+,{"stream_name":"stdout","time":54.099940495,"data":"Medial Meniscus     54.6\n"}
+,{"stream_name":"stdout","time":54.099946248,"data":"Lateral Meniscus    56.9\n"}
+,{"stream_name":"stdout","time":54.099952218,"data":"Medial OA           13.5\n"}
+,{"stream_name":"stdout","time":54.099977088,"data":"Lateral OA           8.2\n"}
+,{"stream_name":"stdout","time":54.099980743,"data":"PF OA               14.9\n"}
+,{"stream_name":"stdout","time":54.099983795,"data":"Effusion            70.5\n"}
+,{"stream_name":"stdout","time":54.099986739,"data":"Synovitis           10.0\n"}
+,{"stream_name":"stdout","time":54.09998969,"data":"Baker's             30.6\n"}
+,{"stream_name":"stdout","time":54.099994281,"data":"Contusion           30.5\n"}
+,{"stream_name":"stdout","time":54.099998493,"data":"Fracture            19.1\n"}
+,{"stream_name":"stdout","time":54.100003003,"data":"dtype: float64\n"}
+,{"stream_name":"stdout","time":54.100007522,"data":"\n"}
+,{"stream_name":"stdout","time":54.100011685,"data":"Distribusi positif (dari yang ke-cover) per label:\n"}
+,{"stream_name":"stdout","time":54.100016149,"data":"ACL                  797\n"}
+,{"stream_name":"stdout","time":54.100020623,"data":"MCL                  646\n"}
+,{"stream_name":"stdout","time":54.100024883,"data":"Medial Meniscus     1547\n"}
+,{"stream_name":"stdout","time":54.100029456,"data":"Lateral Meniscus     806\n"}
+,{"stream_name":"stdout","time":54.100033845,"data":"Medial OA            489\n"}
+,{"stream_name":"stdout","time":54.100038525,"data":"Lateral OA           267\n"}
+,{"stream_name":"stdout","time":54.100043422,"data":"PF OA                588\n"}
+,{"stream_name":"stdout","time":54.10004816,"data":"Effusion            2106\n"}
+,{"stream_name":"stdout","time":54.100052285,"data":"Synovitis            407\n"}
+,{"stream_name":"stdout","time":54.100056476,"data":"Baker's              750\n"}
+,{"stream_name":"stdout","time":54.100060565,"data":"Contusion            842\n"}
+,{"stream_name":"stdout","time":54.100064863,"data":"Fracture             245\n"}
+,{"stream_name":"stdout","time":54.100069511,"data":"dtype: int64\n"}
+,{"stream_name":"stderr","time":57.757898223,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":57.75793713,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":57.967966751,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":57.968001181,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":58.820239094,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":59.262352022,"data":"[NbConvertApp] Writing 112766 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":62.70898252,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":63.930127121,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":63.930179434,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":63.930819046,"data":"[NbConvertApp] Writing 401982 bytes to __results__.html\n"}
+]

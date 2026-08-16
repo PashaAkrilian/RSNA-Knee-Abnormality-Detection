@@ -56,13 +56,85 @@ Pipeline: RescaleSlope/Intercept → invert kalau MONOCHROME1 → clip per-grup-
 - Output reusable via `kernel_sources` di kernel-metadata.json notebook lain (tidak perlu Kaggle Dataset terpisah)
 - Teks laporan sudah dibersihkan (`study_manifest.csv`) + bahasa terdeteksi per studi
 
+## 6. Riset metode optimal — Tahap 1 & 2 (`docs/RESEARCH_NOTES.md`)
+
+**Metodologi:** Discussion/Overview/Rules/Evaluation tab Kaggle JS-rendered, tidak bisa di-scrape (dicoba berkali-kali, konsisten gagal). Sebagai gantinya: **Code tab lewat API resmi** (`kaggle kernels list --competition ... --sort-by scoreDescending`) — jauh lebih bernilai, dapat kode kerja nyata, bukan opini forum. 10 notebook publik top ditarik & dianalisis kodenya langsung.
+
+**Temuan kunci dari kode kompetitor top:**
+- **DINOv2 (`metaresearch/dinov2`, resmi Meta) mendominasi** — dipakai hampir semua notebook top, termasuk yang judulnya menyebut "DinoV3" (kode aslinya tetap DINOv2). **Tidak ada Kaggle Model DINOv3 resmi** — cuma re-upload komunitas tak terverifikasi
+- Representasi studi: **"slot" bag** (kombinasi anatomis plane×sekuens) + attention pooling per-diagnosis dengan **prior anatomis hardcoded** (`SLOT_PRIOR_TABLE`) — `TARGETS` di kode ini identik persis dengan 12 label kita
+- **Weak-label LLM: bukan live API call** — semua notebook baca CSV pre-computed dari Dataset terpisah (LLM dijalankan offline, hasil dipublikasi statis). Ada bukti eksplisit perbandingan "Claude Opus 5" vs rule-based (Claude menang signifikan, p=0.02) di satu notebook publik — indikasi praktik komunitas, **belum tentu berarti sesuai Competition Rules**
+- Rule-based fallback pakai **deteksi negasi/uncertainty per-klausa multi-bahasa** (termasuk urutan kata negasi berbeda antar bahasa) — persis seperti yang kita rekomendasikan sebelumnya, terkonfirmasi jadi kebutuhan nyata
+- Ensemble multi-backbone: DINOv2 + BiomedCLIP + EfficientNet-B3 dikombinasi dengan rank-blending
+- **Ditemukan Efficiency Prize** — leaderboard efisiensi terpisah (1.507 tim), rank TIDAK sama dengan skor mentah (dikonfirmasi empiris) — dimensi kompetisi yang tidak ada di brief awal
+
+**Riset kompetisi RSNA sebelumnya:** pola 2D CNN/ViT (intra-slice) + attention/RNN (inter-slice) konsisten menang di RSNA Intracranial Hemorrhage 2019, MRNet Stanford, RSNA Breast Cancer 2023 — memvalidasi arah arsitektur kita.
+
+**Perbandingan lisensi foundation model:** BiomedCLIP = MIT (aman). **RadImageNet = restriktif, dilarang redistribusi tanpa izin** — re-upload Kaggle Model kemungkinan sudah melanggar lisensi asli.
+
+**Keputusan Anda (dijawab, jadi acuan sejak titik ini):**
+- [x] Metrik evaluasi: **macro (mean) ROC-AUC** — dikonfirmasi lewat kode validasi kompetitor top, dipakai konsisten di training loop kita
+- [x] "Lakukan sebebasmu utk skor tertinggi" — **kecuali** larangan API LLM hosted (aturan keselamatan eksplisit, tetap berlaku kecuali dikoreksi)
+- [x] Target: **kalahkan Brandon Low (peringkat 1, 0.950)** — skor mentah, bukan Efficiency Prize
+- [x] RadImageNet: **dipakai** — bobot model (bukan dataset mentah) berlisensi MIT terverifikasi (lihat §6 lanjutan di `docs/RESEARCH_NOTES.md`)
+- [x] Arsitektur final: DINOv2-base (primer) + ensemble RadImageNet-ResNet50 + BiomedCLIP, slot-bag attention + prior anatomis — didokumentasikan penuh di `docs/RESEARCH_NOTES.md` §5
+
+## 7. Weak-labeler dari teks laporan (`kaggle_kernel_weak_labeler/`)
+
+Kernel: [`rsna-knee-weak-labeler-from-reports`](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-weak-labeler-from-reports). Rule-based, negation-aware per-klausa, 9 bahasa (en/es/tr/hr/el/de/bg/nl/fr) — **bukan LLM API** (data pasien sensitif, Rules belum terverifikasi eksplisit mengizinkan).
+
+**Diuji lokal dulu sebelum push** — ketemu bug nyata (3 label OA 100% silence karena istilah kaku), diperbaiki jadi co-occurrence (indikator OA + kata lokasi dalam klausa sama) sebelum push. Sempat ada bug kedua (langdetect belum ter-install, run pertama fallback semua ke Inggris) — diperbaiki di v2.
+
+**Hasil validasi ke 58 studi gold (v2, deteksi bahasa asli):**
+- Agreement rata-rata **0.747**, precision **0.686**, **recall 0.951** (tinggi — jarang melewatkan temuan positif)
+- Cakupan ke 4.349 studi non-gold: Effusion 70.5%, Medial Meniscus 54.6%, Lateral Meniscus 56.9%, ACL 50.8% (label umum tercakup baik); Synovitis 10%, Lateral OA 8.2% (label langka masih sparse -- sebagian inherent krn jarang disebut di laporan)
+- Titik lemah tercatat utk iterasi lanjut: presisi MCL (0.44) & Contusion (0.50) rendah
+- Output `weak_labels_full.csv` (4.407 studi: 58 gold + 4.349 weak-label) siap dipakai training via `kernel_sources`
+
+Hasil lengkap: `weak_labeler_results/`
+
+## 8. Modeling v1 — DINOv2-base + slot attention pooling (`kaggle_kernel_modeling/`)
+
+Kernel: [`rsna-knee-modeling-v1-dinov2`](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-modeling-v1-dinov2). Backbone tunggal dulu (sesuai keputusan bertahap) -- ensemble RadImageNet+BiomedCLIP menyusul setelah baseline ini terbukti jalan.
+
+**3 bug ditemukan & diperbaiki sebelum/selama iterasi:**
+1. **Dimensi `SlotHead` salah** (lupa kali 2 utk konkat CLS+mean-patch) -- ketemu lewat trace manual sebelum push (tidak bisa uji lokal, disk nyaris penuh utk install torch), jadi tidak buang kuota GPU
+2. **Path `kernel_sources` tidak ketemu** -- ternyata mount lebih dalam dari dugaan (`/kaggle/input/notebooks/<owner>/<slug>/...`), diperbaiki pakai `os.walk` dgn pruning (pola sama spt pencarian DINOv2)
+3. **GPU P100 tidak kompatibel** dgn build PyTorch Kaggle (compute capability terlalu lama) -- digali dari source code `kaggle` CLI sendiri, ketemu field `machine_shape: "NvidiaTeslaT4"` utk memaksa GPU yang benar, plus fallback CPU otomatis kalau terulang
+
+**Uji skala kecil (v3, 40 studi, 1 epoch): SELESAI PENUH end-to-end.** GPU T4x2 terkonfirmasi, 3 sumber data (preprocessing cache + weak-label + DINOv2) semua ketemu benar, forward/backward pass tidak error, checkpoint tersimpan. `val_macro_auc=0.500`.
+
+**v4 — run penuh (4.349 studi, 5 epoch, 3.2 jam): SELESAI, tapi val_macro_auc mentok TEPAT ~0.50 di SEMUA epoch** walau train_loss turun bertahap (0.717→0.620). Pola khas model yang cuma belajar bias per-label, mengabaikan gambar sama sekali.
+
+**v5 — push diagnostik murah** (`RUN_FULL_TRAINING=False`, cuma statistik dataset + 1x forward pass kecil, tanpa training) buat root-cause tanpa buang kuota GPU lagi. **Ketemu:** 100% studi (train & val) punya mask kosong (0 dari 6 slot terisi) dan gambar kosong (mean pixel ≈0) — variasi embedding antar-studi juga persis 0.0000. **Akar masalah:** kolom `cache_path` di `series_manifest.csv` menyimpan path *relatif* apa adanya dari kernel preprocessing asli (`prep_outputs/image_cache/...`, relatif ke `/kaggle/working` kernel ITU) — begitu dipakai ulang lewat `kernel_sources` di kernel lain (mount di path berbeda), `np.load()` selalu gagal `FileNotFoundError`, dan itu ketangkep diam-diam oleh `except Exception: continue` di loader slot. Bug ini sudah ada sejak v3, cuma tidak pernah error karena di-*silent-catch* — makanya "pipeline validated" di v3 sebenarnya juga belum pernah benar-benar melihat gambar.
+
+**v6 — 2 perbaikan sekaligus, sudah di-push, sedang berjalan:**
+1. **Fix bug cache path**: path direkonstruksi dari `PREP_DIR` (hasil auto-discovery yang sudah benar per-kernel) + struktur relatif yang diketahui, bukan percaya string `cache_path` yang tersimpan. Ditambah guard `DATA_OK` (dicek ulang di §7b sebelum training) yang otomatis membatalkan training kalau gambar/mask ternyata masih kosong massal — supaya tidak ada lagi run berjam-jam yang sia-sia.
+2. **Ganti sumber label training** — lihat bagian 9 di bawah.
+
+## 9. Riset dataset publik & adopsi label LLM (`docs/RESEARCH_NOTES.md` §7)
+
+Sesuai arahan: cek dataset publik apa yang dipakai kompetitor top, adopsi kalau terbukti signifikan naikkan skor.
+
+Ditemukan beberapa dataset publik berisi label hasil pembacaan LLM atas kolom `Report`. Diukur macro AUC vs 58 studi gold kita sendiri (implementasi AUC manual berbasis rank — `sklearn` tidak tersedia lokal):
+
+| sumber | macro AUC vs gold | catatan |
+|---|---|---|
+| rule-based labeler kita sendiri (bagian 7) | **~0.71** (estimasi dari precision/recall/agreement) | titik lemah: Synovitis, Contusion, Effusion |
+| `stevenleehans/rsna-knee-llm-report-labels` v1 | **0.8780** | cocok persis dgn klaim publikasi dataset — implementasi AUC kita terverifikasi benar |
+| `stevenleehans/rsna-knee-llm-report-labels` v4_blend | **0.8927** | blend dgn labeler independen kedua (lixin73/GPT-5.6-Sol), lisensi **CC0-1.0** |
+| `barun2104/rsna-knee-stratified-folds-and-llm-soft-labels` | 1.0000 (trivial) | **di-skip** — dicek, kolom labelnya identik persis (selisih absolut = 0.0) dgn 58 studi gold, NaN di 4.349 sisanya. Bukan sumber baru, cuma re-package `train.csv` resmi + fold split |
+
+**Keputusan: adopsi `stevenleehans/rsna-knee-llm-report-labels` (v4_blend)** sebagai target training untuk 4.349 studi non-gold (via `dataset_sources`, lisensi CC0-1.0 aman). 57 studi gold **tetap** pakai label asli annotator, tidak pernah ditimpa. Loss BCE ditambah confidence-weight `2*|p-0.5|` (rekomendasi dari dataset card) supaya sel "tidak dibahas di report" (p≈0.5) tidak memberi gradien palsu.
+
+Provenance dataset: dihasilkan oleh LLM pihak lain yang membaca kolom `Report` `train.csv` kompetisi ini secara offline, hasil dipublikasikan statis (bukan kita yang memanggil API LLM hosted) — konsisten dengan pola "LLM-offline-label" yang sudah didokumentasikan di `docs/RESEARCH_NOTES.md` §1 dan tidak melanggar larangan API LLM hosted untuk memproses data pasien.
+
 ## Belum dikerjakan
 
+- [ ] Tunggu hasil run v6 (fix cache path + label LLM publik) — cek `val_macro_auc` naik dari 0.50, target akhirnya kalahkan 0.950 (Brandon Low)
+- [ ] Kalau v6 menunjukkan sinyal belajar nyata: lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP sesuai `docs/RESEARCH_NOTES.md` §5
 - [ ] Review manual studi gold-label yang ter-flag exclude (bagian 4)
-- [ ] Weak-labeler dari teks laporan (rule-based/NLP, validasi presisi/recall ke 58 studi gold sebelum skala penuh)
-- [ ] Notebook modeling: arsitektur 2D CNN + attention pooling, attach preprocessing via `kernel_sources`
-- [ ] Cross-validation stratified multi-label pada 58 studi gold
-- [ ] Verifikasi metrik evaluasi resmi kompetisi (halaman Kaggle JS-rendered, belum terkonfirmasi otomatis)
+- [ ] Cross-validation stratified multi-label pada 58 studi gold (saat ini validasi cuma 1 split gold, N=57, berpotensi noisy)
 
 ## Struktur repo
 
@@ -71,9 +143,13 @@ kaggle_kernel/                 EDA
 kaggle_kernel_audit/           Audit kualitas (sampel)
 kaggle_kernel_audit_full/      Audit kualitas (exhaustive, 820rb file)
 kaggle_kernel_preprocessing/   Pipeline preprocessing
+kaggle_kernel_weak_labeler/    Weak-labeler rule-based dari teks laporan
+kaggle_kernel_modeling/        Modeling (DINOv2-base + slot attention pooling)
 eda_results/                   Output EDA (grafik, notebook, log)
 audit_results/                 Output audit sampel
 audit_results_exhaustive/      Output audit exhaustive
+weak_labeler_results/          Output weak-labeler (validasi, CSV label)
+docs/RESEARCH_NOTES.md         Riset arsitektur & dataset publik (Tahap 1&2 + lanjutan)
 reference_metadata/            Salinan CSV metadata kompetisi
 README.md                      Dokumentasi teknis detail per komponen
 PROGRESS.md                    File ini

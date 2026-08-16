@@ -18,9 +18,17 @@ Workspace lokal untuk kompetisi Kaggle: https://www.kaggle.com/competitions/rsna
 ## Struktur folder
 
 ```
-kaggle_kernel/            notebook EDA + kernel-metadata.json untuk push ke Kaggle
-reference_metadata/       salinan lokal CSV metadata (hasil unduhan via Kaggle API, untuk referensi cepat offline)
-eda_results/              (dibuat setelah pull) hasil eksekusi notebook dari Kaggle: notebook + gambar + summary
+kaggle_kernel/                notebook EDA + kernel-metadata.json untuk push ke Kaggle
+kaggle_kernel_audit/          audit kualitas data (sampel terstratifikasi)
+kaggle_kernel_audit_full/     audit kualitas data (exhaustive, 820rb file)
+kaggle_kernel_preprocessing/  pipeline preprocessing (cache gambar siap-pakai)
+kaggle_kernel_weak_labeler/   weak-labeler rule-based dari teks laporan
+kaggle_kernel_modeling/       modeling (DINOv2-base + slot attention pooling)
+reference_metadata/           salinan lokal CSV metadata (hasil unduhan via Kaggle API, untuk referensi cepat offline)
+docs/RESEARCH_NOTES.md        riset arsitektur, foundation model, dataset publik
+eda_results/, audit_results/, audit_results_exhaustive/, weak_labeler_results/, modeling_results/
+                               (dibuat setelah pull) hasil eksekusi tiap kernel dari Kaggle
+PROGRESS.md                   log kronologis progres per tahap
 ```
 
 ## Alur kerja: EDA jalan di Kaggle, ditarik ke lokal
@@ -92,9 +100,40 @@ Tidak perlu bikin Kaggle Dataset terpisah — cukup tambahkan di `kernel-metadat
 ```json
 "kernel_sources": ["dimaspashaakrilian/rsna-knee-preprocessing-pipeline"]
 ```
-Output kernel ini otomatis ter-mount di `/kaggle/input/rsna-knee-preprocessing-pipeline/` saat notebook modeling dijalankan.
+**Koreksi:** output kernel via `kernel_sources` ter-mount lebih dalam dari dugaan awal —
+`/kaggle/input/notebooks/<owner>/<slug>/...`, bukan `/kaggle/input/<slug>/...` langsung. Jangan
+`glob` dangkal atau hardcode path; pakai `os.walk` dengan pruning subtree besar (`image_cache`,
+`train_series`, `test_series`) untuk cari folder yang mengandung file manifest yang dicari — pola ini
+dipakai di semua notebook downstream (`kaggle_kernel_modeling`). **Juga penting:** kalau kernel sumber
+menyimpan path file absolut/relatif di kolom CSV manifest-nya (mis. `cache_path`), path itu valid
+untuk kernel ASLINYA saja — begitu dipakai ulang lewat `kernel_sources` di kernel lain, cwd & prefix
+mount beda, jadi path yang tersimpan jadi tidak valid. Rekonstruksi path dari direktori hasil
+auto-discovery + struktur relatif yang diketahui, jangan percaya string path yang tersimpan di CSV
+(lihat bug §"Modeling" di bawah — ini yang bikin run v4 gagal belajar apa pun selama berjam-jam
+tanpa error eksplisit, karena tertangkap `except Exception` yang terlalu luas).
 
 **Catatan operasional:** kernel dengan puluhan ribu file output (seperti ini) membuat `kaggle kernels output`/`files` gampang kena rate-limit (429) karena API perlu enumerasi semua file — `kaggle kernels logs` tetap jalan normal (cuma streaming teks, bukan daftar file) dan cukup untuk memantau progress/hasil akhir tanpa perlu file listing.
+
+## Weak-labeler dari teks laporan (kernel kelima)
+
+Kernel: `kaggle_kernel_weak_labeler/rsna_knee_weak_labeler.ipynb` → [`rsna-knee-weak-labeler-from-reports`](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-weak-labeler-from-reports). Rule-based (bukan LLM API — data pasien sensitif), negation/uncertainty-aware per-klausa, 9 bahasa. Label OA (Medial/Lateral/PF) pakai co-occurrence indikator+lokasi dalam klausa yang sama, bukan exact-phrase match (istilah di laporan asli sering terpisah, terutama non-Inggris).
+
+**Hasil validasi ke 58 studi gold:** agreement 0.747, precision 0.686, recall 0.951 (rata-rata). Output `weak_labels_full.csv` (4.407 studi: 58 gold asli + 4.349 weak-label) — detail di `weak_labeler_results/` dan `PROGRESS.md` §7.
+
+**Catatan operasional:** `langdetect` tidak ter-install default di image Kaggle — pip-install-if-missing eksplisit sebelum import, kalau tidak fallback diam-diam ke bahasa Inggris untuk semua laporan (bug nyata di run pertama).
+
+## Modeling — DINOv2-base + slot attention pooling (kernel keenam)
+
+Kernel: `kaggle_kernel_modeling/rsna_knee_modeling.ipynb` → [`rsna-knee-modeling-v1-dinov2`](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-modeling-v1-dinov2). Arsitektur: DINOv2-base (`metaresearch/dinov2` via `model_sources`, 2 blok terakhir di-unfreeze) → CLS+mean-patch pooling per slice → rata-rata antar-slice → bag 6 "slot" (plane × sekuens fluid-sensitive) dengan attention pooling berprior anatomis (`SLOT_PRIOR_TABLE`) → sigmoid 12-label.
+
+**Riwayat run & bug signifikan** (detail penuh di `PROGRESS.md` §8-9):
+- v1-v2: error (path `kernel_sources` belum ditemukan; GPU P100 tidak kompatibel dengan build PyTorch — fix: `machine_shape: "NvidiaTeslaT4"` di `kernel-metadata.json`).
+- v3: uji skala kecil sukses end-to-end (40 studi, 1 epoch).
+- v4: run penuh (5 epoch) selesai tapi `val_macro_auc` mentok tepat ~0.50 di semua epoch.
+- v5: push diagnostik murah (tanpa training) — ketemu akar masalah: kolom `cache_path` di manifest preprocessing berisi path relatif yang tidak valid lagi lewat `kernel_sources`, jadi 100% gambar & mask kosong sejak v3, model cuma belajar bias per-label. Silent-caught oleh `except Exception` yang terlalu luas.
+- v6: fix path (rekonstruksi dari `PREP_DIR`, plus guard `DATA_OK` yang membatalkan training kalau ternyata masih kosong) **+ ganti sumber label training** dari rule-based labeler sendiri ke dataset publik `stevenleehans/rsna-knee-llm-report-labels` (CC0-1.0, macro AUC 0.89 vs gold, jauh di atas rule-based ~0.71) — lihat `docs/RESEARCH_NOTES.md` §7 untuk metodologi evaluasi & alasan skip dataset publik lain yang ternyata cuma re-package `train.csv` resmi.
+
+**Lever baru: dataset publik hasil labeling LLM offline pihak lain.** Beberapa kompetitor mempublikasikan Kaggle Dataset berisi label report yang lebih akurat dari regex/rule-based (LLM dijalankan offline oleh mereka, hasil dipublikasikan statis, CC0). Sebelum memakai dataset publik seperti ini: **selalu verifikasi ulang klaim kualitasnya sendiri** (jangan percaya begitu saja) terhadap ground-truth yang kita punya, dan periksa apakah dataset itu benar representasi independen atau cuma re-package data resmi kompetisi (kasus `barun2104` di atas).
 
 ## Catatan teknis
 
