@@ -108,9 +108,15 @@ Kernel: [`rsna-knee-modeling-v1-dinov2`](https://www.kaggle.com/code/dimaspashaa
 
 **v5 — push diagnostik murah** (`RUN_FULL_TRAINING=False`, cuma statistik dataset + 1x forward pass kecil, tanpa training) buat root-cause tanpa buang kuota GPU lagi. **Ketemu:** 100% studi (train & val) punya mask kosong (0 dari 6 slot terisi) dan gambar kosong (mean pixel ≈0) — variasi embedding antar-studi juga persis 0.0000. **Akar masalah:** kolom `cache_path` di `series_manifest.csv` menyimpan path *relatif* apa adanya dari kernel preprocessing asli (`prep_outputs/image_cache/...`, relatif ke `/kaggle/working` kernel ITU) — begitu dipakai ulang lewat `kernel_sources` di kernel lain (mount di path berbeda), `np.load()` selalu gagal `FileNotFoundError`, dan itu ketangkep diam-diam oleh `except Exception: continue` di loader slot. Bug ini sudah ada sejak v3, cuma tidak pernah error karena di-*silent-catch* — makanya "pipeline validated" di v3 sebenarnya juga belum pernah benar-benar melihat gambar.
 
-**v6 — 2 perbaikan sekaligus, sudah di-push, sedang berjalan:**
+**v6 — 2 perbaikan sekaligus, SELESAI, fix terkonfirmasi berhasil:**
 1. **Fix bug cache path**: path direkonstruksi dari `PREP_DIR` (hasil auto-discovery yang sudah benar per-kernel) + struktur relatif yang diketahui, bukan percaya string `cache_path` yang tersimpan. Ditambah guard `DATA_OK` (dicek ulang di §7b sebelum training) yang otomatis membatalkan training kalau gambar/mask ternyata masih kosong massal — supaya tidak ada lagi run berjam-jam yang sia-sia.
 2. **Ganti sumber label training** — lihat bagian 9 di bawah.
+
+**Hasil v6 (COMPLETE, ~1,83 jam training + overhead):**
+- Diagnostik §7b **mengkonfirmasi fix berhasil**: `DATA_OK=True`, 0 dari 24.371 series cache tidak ketemu (sebelumnya 100% gagal), mask rata2 4.89-4.91/6 slot terisi (sebelumnya 0), gambar rata2 pixel 87-92 (sebelumnya 0), variasi embedding antar-studi 0.3870 (sebelumnya persis 0.0000), std prediksi per-label 0.01-0.03 (sebelumnya persis 0 — bukan lagi bias-only)
+- **Training 3 epoch, val_macro_auc naik konsisten: 0.6906 → 0.7507 → 0.7658** (checkpoint terbaik disimpan tiap kali naik). train_loss turun 0.566→0.503, sempat naik tipis di akhir epoch 3 (0.4975→0.5029) — sinyal mendekati titik mulai overfitting, tapi AUC tetap naik
+- **Signifikansi:** dari chance-level (0.50) ke 0.7658 dengan SATU perbaikan bug + label lebih baik, backbone tunggal, cuma 3 epoch, K_SLICE=4 (subsample dari 16 slice cache). Baseline sudah terbukti belajar sinyal nyata dari gambar — syarat sebelum lanjut ke ensemble sudah terpenuhi
+- Masih jauh dari target (0.950, Brandon Low) — wajar untuk baseline pertama yang benar-benar jalan. Rencana lanjut: epoch lebih banyak (kompetitor top pakai EPOCHS=10/BATCH_STUDIES=8, lihat `docs/RESEARCH_NOTES.md` §1) + ensemble RadImageNet-ResNet50 + BiomedCLIP sesuai keputusan arsitektur final
 
 ## 9. Riset dataset publik & adopsi label LLM (`docs/RESEARCH_NOTES.md` §7)
 
@@ -131,8 +137,9 @@ Provenance dataset: dihasilkan oleh LLM pihak lain yang membaca kolom `Report` `
 
 ## Belum dikerjakan
 
-- [ ] Tunggu hasil run v6 (fix cache path + label LLM publik) — cek `val_macro_auc` naik dari 0.50, target akhirnya kalahkan 0.950 (Brandon Low)
-- [ ] Kalau v6 menunjukkan sinyal belajar nyata: lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP sesuai `docs/RESEARCH_NOTES.md` §5
+- [ ] v7: naikkan `EPOCHS` (competitor top pakai 10) + `BATCH_STUDIES`, backbone tunggal DINOv2 dulu — cek apakah val_macro_auc terus naik atau mulai overfit (tanda awal sudah kelihatan di ekor epoch 3 v6)
+- [ ] Lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP sesuai `docs/RESEARCH_NOTES.md` §5 — syarat baseline belajar sinyal nyata sudah terpenuhi di v6
+- [ ] Belum ada pipeline inference/submission (predict ke `test_series`, format `sample_submission.csv`) — perlu dibangun sebelum submit ke leaderboard
 - [ ] Review manual studi gold-label yang ter-flag exclude (bagian 4)
 - [ ] Cross-validation stratified multi-label pada 58 studi gold (saat ini validasi cuma 1 split gold, N=57, berpotensi noisy)
 
