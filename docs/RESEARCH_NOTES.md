@@ -396,3 +396,48 @@ Dari `prvsiyan/rsna-knee-read-the-report-then-the-knee` (226 votes, scorecard ek
 6. Setelah dapat submission nyata & kalibrasi jujur, **iterasi berdasar gap yang benar-benar terlihat**, bukan cuma angka lokal N=57.
 
 Ini bukan jaminan pasti sampai peringkat 1 — bahkan tim top-20 kemungkinan pakai penyempurnaan yang tidak bisa kita amati dari Code tab publik manapun. Tapi jalur di atas: (a) berbasis bukti nyata dari kompetitor top, bukan tebakan, (b) membawa kita realistis ke rentang 0.90-0.93 (ceiling publik yg terdokumentasi) sbg checkpoint jujur, lalu (c) dari situ baru masuk akal menutup gap ke 0.934+.
+
+## 12. Resep persis 0.912-0.916: bagaimana kombinasi dataset benar-benar menaikkan skor (arahan lanjutan 17 Agustus 2026)
+
+Ditemukan & dibaca penuh 3 kernel "reproduction" (`ieshanmeghani/rsna-knee-v38-public-0-912-reproduction`, `.../v39-public-0-916-reproduction`, `sofiaanjenje/rsna-knee-frontier-0-916-reproduction`) — kernel ini secara eksplisit dibuat untuk MEREPRODUKSI submission Kaggle yang sudah selesai & bernilai persis 0.912 dan 0.916, bukan cuma klaim di judul. Ini kasih rantai sebab-akibat yang jelas, bukan cuma tabel skor.
+
+### 12a. Rantai skor lengkap: dari 0.891 (1 dataset) ke 0.916 (kombinasi + tuning tervalidasi)
+
+| tahap | resep | skor publik |
+|---|---|---:|
+| 1 | `pilkwang/rsna-knee-weights` SENDIRIAN — 20-model DINOv2-small rank-mean ensemble | 0.891 |
+| 2 | + `tonylica/rsna2026-models` (4 model tambahan) + label diblend dari **3 sumber** (stevenleehans, lixin73, pilkwang) — ini "Bend the Knee Ensemble", resep komunitas yang sama persis dgn credit note di §9 | **0.912** (V38) |
+| 3 | + arm independen `marwanmath/resnet-50-radimagenet-marwan` (encoder RadImageNet-ResNet50 beku + head terlatih), digabung ke ensemble tahap 2 lewat **blend rank bertingkat** dgn bobot α dipilih via **nested 5-fold grouped CV** di 58 studi gold, **dideploy konservatif** di α=0.35 (bukan α=0.60-0.70 yg sebenarnya dipilih nested-CV jujur) | **0.916** (V39, "E10 uniform_035") |
+
+**Tepat di kisaran yang Anda tanyakan (0.914)** — antara tahap 2 (0.912) dan tahap 3 (0.916), beda 0.004 murni dari cara MENGGABUNGKAN arm RadImageNet, bukan dari model baru.
+
+### 12b. Mekanisme blend yang sebenarnya (bukan cuma "gabungkan saja")
+
+```python
+blend = (1 - alpha) * base_rank + alpha * rad_rank   # base = rank ensemble 20+4 model DINOv2
+                                                        # rad  = rank arm RadImageNet-ResNet50 independen
+alpha_grid = [0.0, 0.025, 0.05, 0.10, 0.15, 0.20, 0.25, ...]
+# alpha dipilih via NESTED 5-fold grouped CV di 58 gold: latih pilihan alpha di 4 fold,
+# UKUR di fold ke-5 yg tidak pernah dilihat -- bukan pilih alpha terbaik di seluruh 58 sekaligus
+# (itu overfitting terhadap sample kecil, persis yg diwanti-wanti user riset ini sejak awal)
+```
+
+**3 hal penting yg bikin ini beda dari sekadar "coba-coba bobot":**
+1. **Nested CV, bukan flat CV** — supaya bobot yang dipilih bukan hasil mengintip data yg nanti dipakai mengukur bobot itu sendiri. Catatan penulisnya sendiri: *"selecting the rung on four grouped folds and scoring the fifth picks 0.60... and never picks 0.20. So every deployable rung at or below 0.35 is below what honest selection would choose, which is the answer to 'you tuned on the 58 gold rows'."* — mereka SENGAJA deploy lebih konservatif (0.35) drpd pilihan "jujur" nested-CV (0.60-0.70), demi keamanan generalisasi krn N=58 kecil.
+2. **Per-target gate**: 2 label (`Baker's`, `Fracture`) di-exclude dari blend RadImageNet krn terbukti regresi kalau di-blend — dipertahankan 100% dari ensemble DINOv2 murni. Bukti nyata bahwa blending itu tidak selalu menang di semua label, harus dicek per-label.
+3. **Ditemukan juga** (di kernel lain, `sofiaanjenje/rsna-knee-e11-train`, versi "V41: alpha 0.60") — versi yang PAKAI bobot "jujur" nested-CV (0.60) alih-alih yang konservatif (0.35) juga ada & dipublikasikan, kemungkinan skornya LEBIH TINGGI dari 0.916 (belum kami verifikasi angka pastinya — worth dicoba).
+
+### 12c. E11: lever belum dipakai siapa pun secara luas — diversitas di PIKSEL, bukan di bobot
+
+Ditemukan potongan kode "E11" (mode training-only, belum masuk submission resmi manapun yg kami temukan) di kernel yg sama: menambah **arm ketiga** yang inputnya beda secara fisik, bukan cuma beda bobot model — 3 slot NON-fat-suppressed + 1 slot fat-suppressed, di-crop fisik ke 130mm (field-of-view lebih sempit & konsisten, di bawah FOV akuisisi 99.6% series). Alasan eksplisit penulisnya: *"the existing arm reads three fat-suppressed slots... nothing has looked at a non-fat-suppressed series, where meniscal and ligament morphology is conventionally read."* Ini levers yang BELUM dieksploitasi luas oleh komunitas — kandidat kuat utk diferensiasi kita sendiri drpd cuma mengikuti resep yang sudah dipakai ratusan fork.
+
+### 12d. Implikasi konkret untuk kita
+
+Kita SEKARANG (setelah §10-11) tahu persis resep 0.912-0.916, dan semua bahannya legal dipakai:
+1. `pilkwang/rsna-knee-weights` (20 model) + `tonylica/rsna2026-models` (4 model, masih perlu diverifikasi isinya di kernel Kaggle sblm dipakai — §9) → basis rank-ensemble ~0.891-0.912 tanpa kita training apa pun.
+2. Tambahkan arm RadImageNet-ResNet50 **milik kita sendiri** (MIT-licensed, §4) — bukan `marwanmath` (NC-licensed) — dilatih head-nya di atas fitur RadImageNet beku, di-blend via rank dgn bobot α dipilih **nested grouped-CV di 58 gold**, deploy konservatif di awal.
+3. Tambahkan BiomedCLIP (§5) sbg arm ke-3 — diversitas arsitektur asli, bukan cuma DINOv2 varian lain.
+4. **Coba E11-style**: arm ke-4 dgn piksel yg genuinely beda (non-fat-suppressed, crop fisik berbeda) — lever yang belum banyak dipakai kompetitor, potensi diferensiasi nyata drpd cuma mengulang resep yang sudah dipakai ratusan fork.
+5. Per-target gate: cek tiap label, jangan blend kalau regresi (pola `Baker's`/`Fracture` di atas).
+
+Ini realistis membawa kita ke **kisaran 0.90-0.92** relatif cepat (basis komunitas legal + arm tambahan milik sendiri), dan kombinasi dgn item lain di §11e (fine-tune lebih dalam, k-fold proper, per-target specialist tervalidasi, E11-style diversitas piksel) adalah jalur paling masuk akal utk mendekati/melewati klaster top-20 (0.934+).
