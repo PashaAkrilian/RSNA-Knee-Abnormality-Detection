@@ -315,3 +315,84 @@ Halaman Evaluation: *"Submissions are evaluated by the average AUC ROC between p
 - **Deadline:** Final Submission 22 Oktober 2026, 23:59 UTC. Entry/Team Merger deadline 15 Oktober 2026.
 - **Efficiency Prize**: formula $\text{Efficiency} = \frac{AUC}{Benchmark - \max AUC} + \frac{RuntimeSeconds}{32400}$ (minimalkan), syarat: submission itu ranking di atas benchmark `sample_submission.csv` di Private LB dan termasuk salah satu Final Submission yg dipilih. Track terpisah dari leaderboard utama, konsisten dgn temuan sebelumnya di §2.
 - **Winner's obligation kalau menang**: wajib serahkan training+inference code, model weights (sbg Kaggle Dataset publik), deskripsi metodologi lengkap, & sanggup direproduksi dari deskripsi itu -- relevan utk kerapian dokumentasi kita ke depan (`PROGRESS.md`/`README.md` sudah mengarah ke sana).
+
+## 11. Leaderboard sungguhan + riset mendalam strategi peringkat 1 (arahan 17 Agustus 2026, "riset dulu dengan mendalam")
+
+### 11a. Leaderboard publik sungguhan (`kaggle competitions leaderboard`)
+
+Top 20 (17 Agustus 2026):
+
+| # | tim | skor |
+|---|---|---:|
+| 1 | Brandon Low | 0.950 |
+| 2 | MKhlystun | 0.947 |
+| 3 | CloseAI | 0.946 |
+| 4 | Lukas Nissen Molvær | 0.945 |
+| 5-6 | qkrtkddnjs, Pizza Boy | 0.942 |
+| 7 | Matteo Vitali | 0.941 |
+| 8-9 | DaviDavian, Aastik Rajan15 | 0.940 |
+| 10-11 | Ignat, Siontist | 0.939 |
+| 12 | JOLEE | 0.938 |
+| 13-14 | Sida Zuo, Raihan | 0.937 |
+| 15-16 | rhoskeri, Marcin Jarosz | 0.936 |
+| 17-19 | Chikuwabu, codex rybaka, xnx | 0.935 |
+| 20 | Pirhosseinlou | 0.934 |
+
+**Temuan penting: top-20 sangat rapat (spread cuma 0.016).** Peringkat 1 BUKAN outlier liar — ini kompetisi ketat di puncak, bukan 1 solusi ajaib yang jauh di depan.
+
+### 11b. Kalibrasi kritis: skor lokal gold-58 vs skor leaderboard sungguhan
+
+Ditemukan di catatan `sadamtorres/dinov2-dual-llm-pseudo-labels-0-892` (dibaca lebih dalam): **skor macro AUC dari 58 studi gold lokal secara konsisten MENAKSIR TERLALU RENDAH skor leaderboard sungguhan**, dengan offset sekitar **+0.04** diamati di 3 sistem independen (2 punya sadamtorres sendiri + 1 sistem lain yg dipublikasikan dgn arsitektur berbeda, offset-nya sama sampai per-seribu). Kutipan: *"Both systems with measured gold-58 landed 0.044 above it on the leaderboard... Three independent systems, one constant."*
+
+**Implikasi utk kita**: skor lokal v7 kita (0.7811) kemungkinan setara **~0.82-0.83 di leaderboard sungguhan** kalau disubmit -- BUKAN jaminan pasti (offset ini diukur utk pipeline/label mereka, bukan punya kita persis), tapi arah & besaran kasarnya masuk akal karena mekanismenya jelas: 58 gold studies dianotasi radiologis dari GAMBAR, sedangkan target training kita berasal dari LLM membaca TEKS laporan -- keduanya kadang tidak sepakat, dan gold-58 (N kecil) jadi ukuran yg lebih ketat/noisy drpd apa yg sebenarnya diukur leaderboard (~1.300 studi test). **Ini alasan kuat utk segera dapat 1 submission nyata** -- baru dari situ kita punya angka kalibrasi jujur, bukan tebak-tebak dari 57 studi.
+
+### 11c. Skor tertinggi yang benar-benar terdokumentasi publik (bukan cuma judul kernel)
+
+Dari `prvsiyan/rsna-knee-read-the-report-then-the-knee` (226 votes, scorecard eksplisit, tiap baris dikaitkan ke submission Kaggle yg selesai):
+
+| recipe | skor publik terverifikasi |
+|---|---:|
+| Pilkwang V15 (20-checkpoint DINOv2-small ensemble, anchor publik) | 0.891 |
+| + EfficientNet-B3 5-fold (V49) | 0.898 |
+| V46 | 0.899 |
+| + 20% RadImageNet rank-blend (V52, **skor tertinggi notebook ini**) | **0.906** |
+| `yashbishnoi98/rsna-knee-infer-v1` (independen: LLM lokal Qwen3.6-35B baca SEMUA 4.349 laporan, bukan cuma yg bergold) | 0.903 |
+
+**Temuan penting & agak menyadarkan**: skor publik tertinggi yg BENAR-BENAR terdokumentasi dgn rantai submission lengkap (bukan cuma disebut di judul kernel) ada di kisaran **0.90-0.906** -- masih ~0.03-0.05 di bawah batas bawah top-20 (0.934). Artinya tim-tim peringkat atas (termasuk Brandon Low) kemungkinan besar TIDAK cuma menjalankan resep publik yang beredar -- ada penyempurnaan tambahan (lebih banyak fold/member, tuning blend lebih cermat, spesialis per-label lebih banyak, atau teknik yang tidak dipublikasikan) di luar apa yang bisa kita amati dari Code tab manapun.
+
+### 11d. Pelajaran teknis konkret (bukan cuma angka)
+
+1. **Domain adaptation (fine-tune backbone) >> resolusi lebih tinggi.** Temuan `sadamtorres`: fine-tune di resolusi SAMA (224px) menggerakkan skor label fokal jauh lebih besar drpd menaikkan resolusi:
+
+   | label | frozen | fine-tuned @224px | Δ |
+   |---|---:|---:|---:|
+   | Medial Meniscus | 0.679 | 0.850 | **+0.171** |
+   | MCL | 0.708 | 0.825 | **+0.118** |
+   | ACL | 0.727 | 0.840 | **+0.113** |
+
+   Resolusi (224→336px) cuma +0.017. **Implikasi konkret**: arsitektur kita saat ini `unfreeze_last=2` (2 blok terakhir DINOv2-base) -- ini fine-tune ringan. Layak dicoba naikkan (unfreeze lebih banyak blok) sebelum berinvestasi ke resolusi lebih tinggi.
+
+2. **Rank-mean, bukan rata-rata probabilitas, di SETIAP tahap ensembling** -- dikonfirmasi berulang (`pilkwang`, `prvsiyan`, `sadamtorres`): metrik AUC cuma peduli urutan, rata-rata sigmoid membiarkan model paling percaya diri mendominasi.
+
+3. **Diversitas arsitektur asli > diversitas superfisial.** `sadamtorres`: model 224px & 336px (backbone SAMA) berkorelasi 0.901 meski akurasi lokal nyaris sama -- gain ensembling cuma +0.006. Backbone yang GENUINELY beda keluarga (DINOv2 vs RadImageNet-ResNet50 vs BiomedCLIP) akan lebih terdekorelasi -- inilah alasan rencana ensemble 3-backbone kita (§5/§8c) tepat, dan ensemble sesama-DINOv2-beda-hyperparameter kurang bernilai.
+
+4. **Validasi 2-tingkat**: `sadamtorres` sempat SALAH gate 1 stage krn cuma percaya OOF-vs-pseudolabel (yg ternyata under-state perbaikan asli, krn makin bagus model makin "tidak setuju" dgn pseudo-label yg salah). Pelajaran: **pakai OOF/pseudo-label utk deteksi kerusakan murah (N besar), tapi keputusan arah pakai 58 gold** (N kecil tapi ground-truth asli) -- jangan buang perubahan cuma krn OOF turun tipis.
+
+5. **Bahaya k-fold naif #1**: kalau label berubah lalu fold di-generate ulang dgn seed sama, partisi BISA berubah (re-stratifikasi bereaksi ke label baru) -- studi yang tadinya training utk 1 tahap bisa "bocor" jadi validation di tahap berikutnya kalau warm-start dipakai lintas tahap. **Fix: transplant kolom fold lama, jangan hitung ulang.**
+
+6. **Bahaya k-fold naif #2**: sebagian laporan radiologi **identik persis** (template laporan "knee normal" dst.) di banyak studi berbeda -- kalau split fold naif (per studi), studi kembar-laporan bisa kepisah training/validation, dan model "curang" krn sudah pernah lihat teks yang sama persis. `prvsiyan`: split berdasar **hash teks laporan**, bukan per-studi, supaya grup laporan identik selalu utuh di 1 sisi. **Wajib diterapkan saat kita bangun k-fold CV sendiri.**
+
+7. **Per-target specialist terbukti kasih gain nyata, tervalidasi ketat**: spesialis Synovitis (`blacklions`, frozen DINOv2-base RTA-HMIL) naikkan Synovitis AUC 0.742→0.826 di 58 gold (dipilih via 4-fold stratified 500x resampling, positif di 99.4% partisi). Spesialis PCA per-label naikkan Lateral Meniscus +0.0273, Synovitis +0.0185, divalidasi leave-one-out semua positif. Bukan asal tambah kompleksitas -- semua diverifikasi ketat sebelum dipakai.
+
+### 11e. Sintesis: apa yang realistis bisa kita lakukan
+
+**Jujur**: skor publik TERDOKUMENTASI tertinggi yang bisa kita verifikasi (~0.906) masih di bawah batas bawah top-20 (0.934), apalagi peringkat 1 (0.950). Tidak ada resep publik manapun yang terbukti sampai ke sana. Tapi ada jalur konkret, berbasis-bukti, yang belum kita jalankan penuh:
+
+1. **Dapatkan 1 submission nyata SECEPATNYA** setelah baseline+label terbaik siap -- supaya kalibrasi lokal-vs-leaderboard bukan tebakan lagi (§11b).
+2. **Unfreeze lebih banyak blok DINOv2** (bukan cuma naikkan resolusi) -- domain adaptation adalah pengungkit terbesar per bukti §11d.1.
+3. **Ensemble 3-backbone SUNGGUHAN berbeda keluarga** (DINOv2 + RadImageNet-ResNet50 + BiomedCLIP) + gabung dgn `pilkwang/rsna-knee-weights` (20 model, legal dipakai) via **rank-mean**, bukan cuma tambah lebih banyak DINOv2.
+4. **k-fold CV yang benar** — grouping per hash-laporan (bukan per-studi), transplant fold kalau label berubah, validasi 2-tingkat (OOF besar utk deteksi rusak, gold-58 utk keputusan arah).
+5. **Per-target specialist tervalidasi ketat** utk label yang secara konsisten lemah di semua sumber kita (Synovitis, Fracture, Contusion) — dgn ambang validasi statistik yg jelas sebelum dipakai (bootstrap/permutation, bukan 1 angka).
+6. Setelah dapat submission nyata & kalibrasi jujur, **iterasi berdasar gap yang benar-benar terlihat**, bukan cuma angka lokal N=57.
+
+Ini bukan jaminan pasti sampai peringkat 1 — bahkan tim top-20 kemungkinan pakai penyempurnaan yang tidak bisa kita amati dari Code tab publik manapun. Tapi jalur di atas: (a) berbasis bukti nyata dari kompetitor top, bukan tebakan, (b) membawa kita realistis ke rentang 0.90-0.93 (ceiling publik yg terdokumentasi) sbg checkpoint jujur, lalu (c) dari situ baru masuk akal menutup gap ke 0.934+.
