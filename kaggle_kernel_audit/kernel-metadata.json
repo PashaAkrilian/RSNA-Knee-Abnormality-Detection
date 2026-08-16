@@ -1,0 +1,15 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-dicom-quality-audit",
+  "title": "RSNA Knee DICOM - Quality Audit",
+  "code_file": "rsna_knee_dicom_audit.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "dataset_sources": [],
+  "competition_sources": ["rsna-knee-abnormality-detection"],
+  "kernel_sources": [],
+  "model_sources": []
+}

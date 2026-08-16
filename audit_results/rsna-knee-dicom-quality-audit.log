@@ -1,0 +1,129 @@
+[{"stream_name":"stderr","time":7.508912957,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":7.509023431,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":8.608130387,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.608163688,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.608170068,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.608175215,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":9.412703055,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.412747893,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.412755727,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.412762592,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":13.402535773,"data":"DATA_DIR: /kaggle/input/competitions/rsna-knee-abnormality-detection | exists: True\n"}
+,{"stream_name":"stdout","time":13.402594949,"data":"train.csv: shape=(4407, 14)\n"}
+,{"stream_name":"stdout","time":13.437872668,"data":"train_series.csv: shape=(24371, 5)\n"}
+,{"stream_name":"stdout","time":13.43791491,"data":"test.csv: shape=(3, 1)\n"}
+,{"stream_name":"stdout","time":13.437921691,"data":"test_series.csv: shape=(15, 5)\n"}
+,{"stream_name":"stdout","time":13.4379271,"data":"sample_submission.csv: shape=(3, 13)\n"}
+,{"stream_name":"stdout","time":13.493902865,"data":"=== 1.1 Shape, dtype, null per kolom ===\n"}
+,{"stream_name":"stdout","time":13.493938574,"data":"\n"}
+,{"stream_name":"stdout","time":13.493965463,"data":"--- train.csv (4407 baris x 14 kolom) ---\n"}
+,{"stream_name":"stdout","time":13.510361661,"data":"\n"}
+,{"stream_name":"stdout","time":13.510399125,"data":"--- train_series.csv (24371 baris x 5 kolom) ---\n"}
+,{"stream_name":"stdout","time":13.518152649,"data":"\n"}
+,{"stream_name":"stdout","time":13.518194953,"data":"--- test.csv (3 baris x 1 kolom) ---\n"}
+,{"stream_name":"stdout","time":13.526050126,"data":"\n"}
+,{"stream_name":"stdout","time":13.526086198,"data":"--- test_series.csv (15 baris x 5 kolom) ---\n"}
+,{"stream_name":"stdout","time":13.534185851,"data":"\n"}
+,{"stream_name":"stdout","time":13.534226607,"data":"--- sample_submission.csv (3 baris x 13 kolom) ---\n"}
+,{"stream_name":"stdout","time":13.618378244,"data":"=== 1.2 Duplikasi baris/ID ===\n"}
+,{"stream_name":"stdout","time":13.618415834,"data":"train.csv: baris duplikat total=0, duplikat kunci StudyInstanceUID=0\n"}
+,{"stream_name":"stdout","time":13.62415637,"data":"train_series.csv: baris duplikat total=0, duplikat kunci ['StudyInstanceUID', 'SeriesInstanceUID']=0\n"}
+,{"stream_name":"stdout","time":13.624198531,"data":"test.csv: baris duplikat total=0, duplikat kunci StudyInstanceUID=0\n"}
+,{"stream_name":"stdout","time":13.624206171,"data":"test_series.csv: baris duplikat total=0, duplikat kunci ['StudyInstanceUID', 'SeriesInstanceUID']=0\n"}
+,{"stream_name":"stdout","time":13.624234303,"data":"sample_submission.csv: baris duplikat total=0, duplikat kunci StudyInstanceUID=0\n"}
+,{"stream_name":"stdout","time":13.667908795,"data":"=== 1.3 Konsistensi ID: CSV vs folder di disk (EXHAUSTIVE, level studi \u0026 series) ===\n"}
+,{"stream_name":"stdout","time":19.639204158,"data":"--- TRAIN ---\n"}
+,{"stream_name":"stdout","time":19.639247986,"data":"Studi (EXHAUSTIVE): disk=4407, csv=4407, hanya-di-disk=0, hanya-di-csv=0\n"}
+,{"stream_name":"stdout","time":19.639255498,"data":"Series (SAMPEL 800/4407 studi): disk=4368, csv(dlm sampel)=4368, hanya-di-disk=0, hanya-di-csv=0\n"}
+,{"stream_name":"stdout","time":19.639261826,"data":"--- TEST ---\n"}
+,{"stream_name":"stdout","time":19.639267223,"data":"Studi (EXHAUSTIVE): disk=3, csv=3, hanya-di-disk=0, hanya-di-csv=0\n"}
+,{"stream_name":"stdout","time":19.639272921,"data":"Series (SAMPEL 3/3 studi): disk=15, csv(dlm sampel)=15, hanya-di-disk=0, hanya-di-csv=0\n"}
+,{"stream_name":"stdout","time":19.690621227,"data":"=== 1.4 Skema sample_submission.csv vs kolom label train.csv ===\n"}
+,{"stream_name":"stdout","time":19.690667468,"data":"Kolom label di sample_submission: ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis', \"Baker's\", 'Contusion', 'Fracture']\n"}
+,{"stream_name":"stdout","time":19.690675736,"data":"Kolom label di train.csv        : ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis', \"Baker's\", 'Contusion', 'Fracture']\n"}
+,{"stream_name":"stdout","time":19.690682548,"data":"Identik \u0026 urutan sama? True\n"}
+,{"stream_name":"stdout","time":19.690686953,"data":"Range nilai sample_submission (harus 0..1 probabilitas):\n"}
+,{"stream_name":"stdout","time":19.779821962,"data":"Studi gold-label: 58 -\u003e 336 series (semua ikut diaudit)\n"}
+,{"stream_name":"stdout","time":19.779861982,"data":"Tambahan stratifikasi: 6 series dari 6 strata (target 1/strata)\n"}
+,{"stream_name":"stdout","time":19.779867342,"data":"\n"}
+,{"stream_name":"stdout","time":19.77987127,"data":"TOTAL series yang akan diaudit: 342\n"}
+,{"stream_name":"stdout","time":19.779875134,"data":"Anatomical_Plane\n"}
+,{"stream_name":"stdout","time":19.779878893,"data":"Sagittal    138\n"}
+,{"stream_name":"stdout","time":19.779883091,"data":"Coronal     121\n"}
+,{"stream_name":"stdout","time":19.779888772,"data":"Axial        83\n"}
+,{"stream_name":"stdout","time":19.779894517,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":19.864153141,"data":"Mulai loop audit: 342 series, HEAVY_CAP_PER_SERIES=10\n"}
+,{"stream_name":"stdout","time":23.980378457,"data":"  ...checkpoint: 10/342 series, 299 baris instance, 4s\n"}
+,{"stream_name":"stdout","time":29.623033026999998,"data":"  ...checkpoint: 20/342 series, 625 baris instance, 10s\n"}
+,{"stream_name":"stdout","time":33.617669127,"data":"  ...checkpoint: 30/342 series, 851 baris instance, 14s\n"}
+,{"stream_name":"stdout","time":38.720627825,"data":"  ...checkpoint: 40/342 series, 1152 baris instance, 19s\n"}
+,{"stream_name":"stdout","time":43.01308672,"data":"  ...checkpoint: 50/342 series, 1460 baris instance, 23s\n"}
+,{"stream_name":"stdout","time":46.292390103,"data":"  ...checkpoint: 60/342 series, 1774 baris instance, 26s\n"}
+,{"stream_name":"stdout","time":49.918924084,"data":"  ...checkpoint: 70/342 series, 2029 baris instance, 30s\n"}
+,{"stream_name":"stdout","time":53.898880555,"data":"  ...checkpoint: 80/342 series, 2279 baris instance, 34s\n"}
+,{"stream_name":"stdout","time":57.569817888,"data":"  ...checkpoint: 90/342 series, 2522 baris instance, 38s\n"}
+,{"stream_name":"stdout","time":61.398576976,"data":"  ...checkpoint: 100/342 series, 2778 baris instance, 41s\n"}
+,{"stream_name":"stdout","time":67.70121356,"data":"  ...checkpoint: 110/342 series, 3121 baris instance, 48s\n"}
+,{"stream_name":"stdout","time":75.485009282,"data":"  ...checkpoint: 120/342 series, 3558 baris instance, 55s\n"}
+,{"stream_name":"stdout","time":83.977055359,"data":"  ...checkpoint: 130/342 series, 4051 baris instance, 64s\n"}
+,{"stream_name":"stdout","time":86.66926126,"data":"  ...checkpoint: 140/342 series, 4352 baris instance, 67s\n"}
+,{"stream_name":"stdout","time":90.125483467,"data":"  ...checkpoint: 150/342 series, 4620 baris instance, 70s\n"}
+,{"stream_name":"stdout","time":93.224087758,"data":"  ...checkpoint: 160/342 series, 4918 baris instance, 73s\n"}
+,{"stream_name":"stdout","time":96.419592846,"data":"  ...checkpoint: 170/342 series, 5168 baris instance, 76s\n"}
+,{"stream_name":"stdout","time":99.498499002,"data":"  ...checkpoint: 180/342 series, 5423 baris instance, 79s\n"}
+,{"stream_name":"stdout","time":103.600886137,"data":"  ...checkpoint: 190/342 series, 5742 baris instance, 84s\n"}
+,{"stream_name":"stdout","time":107.385990617,"data":"  ...checkpoint: 200/342 series, 6025 baris instance, 87s\n"}
+,{"stream_name":"stdout","time":113.222930888,"data":"  ...checkpoint: 210/342 series, 6638 baris instance, 93s\n"}
+,{"stream_name":"stdout","time":116.96077183,"data":"  ...checkpoint: 220/342 series, 6926 baris instance, 97s\n"}
+,{"stream_name":"stdout","time":120.965206401,"data":"  ...checkpoint: 230/342 series, 7215 baris instance, 101s\n"}
+,{"stream_name":"stdout","time":125.418528738,"data":"  ...checkpoint: 240/342 series, 7518 baris instance, 105s\n"}
+,{"stream_name":"stdout","time":130.24634228,"data":"  ...checkpoint: 250/342 series, 7862 baris instance, 110s\n"}
+,{"stream_name":"stdout","time":134.495697077,"data":"  ...checkpoint: 260/342 series, 8170 baris instance, 114s\n"}
+,{"stream_name":"stdout","time":138.355864524,"data":"  ...checkpoint: 270/342 series, 8404 baris instance, 118s\n"}
+,{"stream_name":"stdout","time":142.617181454,"data":"  ...checkpoint: 280/342 series, 8687 baris instance, 123s\n"}
+,{"stream_name":"stdout","time":149.15587189,"data":"  ...checkpoint: 290/342 series, 9092 baris instance, 129s\n"}
+,{"stream_name":"stdout","time":152.582341721,"data":"  ...checkpoint: 300/342 series, 9377 baris instance, 133s\n"}
+,{"stream_name":"stdout","time":157.486435178,"data":"  ...checkpoint: 310/342 series, 9692 baris instance, 137s\n"}
+,{"stream_name":"stdout","time":160.507817036,"data":"  ...checkpoint: 320/342 series, 9944 baris instance, 140s\n"}
+,{"stream_name":"stdout","time":164.294167981,"data":"  ...checkpoint: 330/342 series, 10195 baris instance, 144s\n"}
+,{"stream_name":"stdout","time":172.350838603,"data":"  ...checkpoint: 340/342 series, 10651 baris instance, 152s\n"}
+,{"stream_name":"stdout","time":172.98527043,"data":"\n"}
+,{"stream_name":"stdout","time":172.985307159,"data":"SELESAI. 342 series diproses, 10701 baris instance, 0 exception penuh dicatat.\n"}
+,{"stream_name":"stdout","time":172.985314748,"data":"Total waktu: 153 detik\n"}
+,{"stream_name":"stdout","time":173.052364899,"data":"instance_df: (10701, 19)\n"}
+,{"stream_name":"stdout","time":173.052407194,"data":"series_cons_df: (342, 10)\n"}
+,{"stream_name":"stdout","time":173.232527096,"data":"Distribusi kategori error (1 baris bisa \u003e1 kategori):\n"}
+,{"stream_name":"stdout","time":173.461593339,"data":"Tersimpan: audit_per_instance.csv (10701, 19)\n"}
+,{"stream_name":"stdout","time":173.875099384,"data":"Tersimpan: audit_per_series_summary.csv (342, 7)\n"}
+,{"stream_name":"stdout","time":173.953311493,"data":"Tersimpan: audit_per_study_summary.csv (64, 5)\n"}
+,{"stream_name":"stdout","time":173.953347497,"data":"\n"}
+,{"stream_name":"stdout","time":173.953352695,"data":"Distribusi flag:\n"}
+,{"stream_name":"stdout","time":173.953357575,"data":"flag\n"}
+,{"stream_name":"stdout","time":173.953362103,"data":"usable          51\n"}
+,{"stream_name":"stdout","time":173.953367439,"data":"needs_review    13\n"}
+,{"stream_name":"stdout","time":173.953371955,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":173.953377151,"data":"\n"}
+,{"stream_name":"stdout","time":173.953381613,"data":"Distribusi flag KHUSUS studi gold-label (paling kritis):\n"}
+,{"stream_name":"stdout","time":173.953386357,"data":"flag\n"}
+,{"stream_name":"stdout","time":173.953390868,"data":"usable          45\n"}
+,{"stream_name":"stdout","time":173.953395326,"data":"needs_review    13\n"}
+,{"stream_name":"stdout","time":173.953399965,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":174.35108113,"data":"\n"}
+,{"stream_name":"stdout","time":174.35111762,"data":"RINGKASAN GLOBAL\n"}
+,{"stream_name":"stdout","time":174.351123177,"data":"Total instance diaudit: 10701 (dari 342 series)\n"}
+,{"stream_name":"stdout","time":174.351127982,"data":"Bersih (OK): 10517 (98.3%)\n"}
+,{"stream_name":"stdout","time":174.351132796,"data":"Bermasalah (\u003e=1 kategori): 184 (1.7%)\n"}
+,{"stream_name":"stdout","time":174.351145683,"data":"\n"}
+,{"stream_name":"stdout","time":174.351150467,"data":"Studi: {'usable': 51, 'needs_review': 13}\n"}
+,{"stream_name":"stdout","time":174.392345297,"data":"Tersimpan: audit_top_priority.csv (top 30)\n"}
+,{"stream_name":"stderr","time":177.974977738,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":177.975020098,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":178.18585405,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":178.185888924,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":178.992077183,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":179.435238876,"data":"[NbConvertApp] Writing 153819 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":182.765884779,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":184.015902371,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":184.015968894,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":184.016758782,"data":"[NbConvertApp] Writing 445362 bytes to __results__.html\n"}
+]

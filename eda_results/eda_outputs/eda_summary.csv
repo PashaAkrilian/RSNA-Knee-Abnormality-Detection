@@ -1,0 +1,7 @@
+,value
+n_train_studies,4407.0
+n_test_studies_public_sample,3.0
+pct_labels_missing_avg,98.68391195824825
+n_studies_with_any_label,58.0
+n_train_series,24371.0
+avg_series_per_study,5.530065804402088

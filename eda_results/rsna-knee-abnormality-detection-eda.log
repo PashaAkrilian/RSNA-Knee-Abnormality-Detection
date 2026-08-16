@@ -1,0 +1,133 @@
+[{"stream_name":"stderr","time":7.136626706,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":7.136700379,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":8.124197583,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.124230868,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.124236299,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.124240867,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":8.837298293,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.837334119,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.837339832,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.837344281,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":14.456335451,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 981.5/981.5 kB 13.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":14.658692444,"data":"     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 981.5/981.5 kB 13.9 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":24.91774168,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 33.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":25.11995197,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 33.1 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":27.567229281,"data":"[warn] could not import/install pylibjpeg-libjpeg: No module named 'pylibjpeg_libjpeg'\n"}
+,{"stream_name":"stdout","time":28.910913695,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 22.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":29.113110277,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 22.3 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":31.593726523,"data":"[warn] could not import/install pylibjpeg-openjpeg: No module named 'pylibjpeg_openjpeg'\n"}
+,{"stream_name":"stdout","time":33.031200163,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 98.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":33.233699139,"data":"   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 98.5 MB/s eta 0:00:00\n"}
+,{"stream_name":"stdout","time":35.958006119,"data":"/kaggle/input isi: ['competitions']\n"}
+,{"stream_name":"stdout","time":35.986248571,"data":"Using DATA_DIR: /kaggle/input/competitions/rsna-knee-abnormality-detection | exists: True\n"}
+,{"stream_name":"stdout","time":35.986295508,"data":"['sample_submission.csv', 'test.csv', 'test_series', 'test_series.csv', 'train.csv', 'train_series', 'train_series.csv']\n"}
+,{"stream_name":"stdout","time":36.186694607,"data":"train.csv: shape=(4407, 14)\n"}
+,{"stream_name":"stdout","time":36.276471051,"data":"train_series.csv: shape=(24371, 5)\n"}
+,{"stream_name":"stdout","time":36.276509329,"data":"test.csv: shape=(3, 1)\n"}
+,{"stream_name":"stdout","time":36.276514771,"data":"test_series.csv: shape=(15, 5)\n"}
+,{"stream_name":"stdout","time":36.276519262,"data":"sample_submission.csv: shape=(3, 13)\n"}
+,{"stream_name":"stdout","time":36.276523231,"data":"Label columns found: ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis', \"Baker's\", 'Contusion', 'Fracture']\n"}
+,{"stream_name":"stdout","time":36.303774765,"data":"Duplicate StudyInstanceUID in train.csv: 0\n"}
+,{"stream_name":"stdout","time":37.026739881,"data":"Rata-rata seluruh kolom label kosong: 98.7%\n"}
+,{"stream_name":"stdout","time":37.026794071,"data":"Studi dengan MINIMAL 1 label terisi: 58 / 4407 (1.32%)\n"}
+,{"stream_name":"stdout","time":37.241389807,"data":"Jumlah studi berlabel (\u003e=1 label terisi): 58\n"}
+,{"stream_name":"stdout","time":40.502798437,"data":"Studi dengan Report terisi: 4407 / 4407 (100.0%)\n"}
+,{"stream_name":"stdout","time":49.968160998,"data":"Report\n"}
+,{"stream_name":"stdout","time":49.968211546,"data":"en    584\n"}
+,{"stream_name":"stdout","time":49.968218907,"data":"es    234\n"}
+,{"stream_name":"stdout","time":49.968224001,"data":"tr    188\n"}
+,{"stream_name":"stdout","time":49.968229261,"data":"hr    137\n"}
+,{"stream_name":"stdout","time":49.968234253,"data":"el    123\n"}
+,{"stream_name":"stdout","time":49.968238991,"data":"de     79\n"}
+,{"stream_name":"stdout","time":49.968243841,"data":"bg     71\n"}
+,{"stream_name":"stdout","time":49.968248788,"data":"nl     56\n"}
+,{"stream_name":"stdout","time":49.968253782,"data":"fr     28\n"}
+,{"stream_name":"stdout","time":49.968258921,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":50.467046283,"data":"count    4407.000000\n"}
+,{"stream_name":"stdout","time":50.467083203,"data":"mean        5.530066\n"}
+,{"stream_name":"stdout","time":50.467090015,"data":"std         1.393826\n"}
+,{"stream_name":"stdout","time":50.467094691,"data":"min         3.000000\n"}
+,{"stream_name":"stdout","time":50.467099372,"data":"25%         5.000000\n"}
+,{"stream_name":"stdout","time":50.467104022,"data":"50%         5.000000\n"}
+,{"stream_name":"stdout","time":50.467108463,"data":"75%         6.000000\n"}
+,{"stream_name":"stdout","time":50.467112883,"data":"max        14.000000\n"}
+,{"stream_name":"stdout","time":50.467117782,"data":"dtype: float64\n"}
+,{"stream_name":"stdout","time":51.578354796,"data":"train_series dir: /kaggle/input/competitions/rsna-knee-abnormality-detection/train_series\n"}
+,{"stream_name":"stdout","time":58.594097489,"data":"count    300.000000\n"}
+,{"stream_name":"stdout","time":58.59414611,"data":"mean      33.686667\n"}
+,{"stream_name":"stdout","time":58.594159259,"data":"std       25.792103\n"}
+,{"stream_name":"stdout","time":58.594164162,"data":"min       12.000000\n"}
+,{"stream_name":"stdout","time":58.594169406,"data":"25%       26.000000\n"}
+,{"stream_name":"stdout","time":58.594174339,"data":"50%       30.000000\n"}
+,{"stream_name":"stdout","time":58.594179099,"data":"75%       33.000000\n"}
+,{"stream_name":"stdout","time":58.594183945,"data":"max      320.000000\n"}
+,{"stream_name":"stdout","time":58.594204821,"data":"dtype: float64\n"}
+,{"stream_name":"stdout","time":69.496595449,"data":"Berhasil baca header: 600 / 600 series (gagal: 0)\n"}
+,{"stream_name":"stdout","time":70.112751124,"data":"Transfer syntax yang ditemukan:\n"}
+,{"stream_name":"stdout","time":70.112810315,"data":"TransferSyntax\n"}
+,{"stream_name":"stdout","time":70.112816407,"data":"1.2.840.10008.1.2.1    600\n"}
+,{"stream_name":"stdout","time":70.112821645,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":70.112826662,"data":"\n"}
+,{"stream_name":"stdout","time":70.112831519,"data":"PhotometricInterpretation:\n"}
+,{"stream_name":"stdout","time":70.112837012,"data":"PhotometricInterpretation\n"}
+,{"stream_name":"stdout","time":70.112840452,"data":"MONOCHROME2    600\n"}
+,{"stream_name":"stdout","time":70.112843932,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":71.187382161,"data":"Jumlah kombinasi (Rows, Columns) UNIK yang ditemukan: 50 dari 600 series sampel\n"}
+,{"stream_name":"stdout","time":71.187421629,"data":"-\u003e jika \u003e 1, gambar TIDAK berukuran seragam -\u003e wajib resize/pad eksplisit sebelum masuk model.\n"}
+,{"stream_name":"stdout","time":77.670471743,"data":"-\u003e Jika rentang mean antar grup jauh berbeda: NORMALISASI SEBAIKNYA DILAKUKAN PER-GRUP SEKUENS, bukan global.\n"}
+,{"stream_name":"stdout","time":87.950615447,"data":"Sampel diuji: 400 series\n"}
+,{"stream_name":"stdout","time":87.950665797,"data":"  OK (header + pixel decode sukses): 400 (100.0%)\n"}
+,{"stream_name":"stdout","time":87.950673231,"data":"  Gagal baca header / file tidak ada: 0 (0.0%)\n"}
+,{"stream_name":"stdout","time":87.950678873,"data":"  Header OK tapi gagal decode pixel: 0 (0.0%)\n"}
+,{"stream_name":"stdout","time":88.156550064,"data":"HTTP status: 200 | panjang HTML: 5652\n"}
+,{"stream_name":"stdout","time":88.156587681,"data":"Tidak ada keyword metrik yang ketemu di HTML mentah (kemungkinan besar konten di-render via JS penuh).\n"}
+,{"stream_name":"stdout","time":88.398643562,"data":"=== Spesifikasi compute kernel Kaggle ===\n"}
+,{"stream_name":"stdout","time":88.398675426,"data":"CPU count: 4\n"}
+,{"stream_name":"stdout","time":88.398680027,"data":"MemTotal:       32870492 kB\n"}
+,{"stream_name":"stdout","time":88.398683638,"data":"MemAvailable:   31530220 kB\n"}
+,{"stream_name":"stdout","time":88.398687,"data":"Disk /kaggle/working -\u003e total 21.0 GB, terpakai 0.0 GB, bebas 20.9 GB\n"}
+,{"stream_name":"stdout","time":88.398690713,"data":"Disk mount data (read-only) -\u003e total 109951.2 GB, bebas 26401.2 GB\n"}
+,{"stream_name":"stdout","time":91.844778544,"data":"Folder studi di disk: 4407\n"}
+,{"stream_name":"stdout","time":91.844818336,"data":"StudyInstanceUID unik di train.csv: 4407\n"}
+,{"stream_name":"stdout","time":91.844824922,"data":"Ada di disk TAPI TIDAK di train.csv: 0\n"}
+,{"stream_name":"stdout","time":91.844830351,"data":"Ada di train.csv TAPI TIDAK ada folder di disk: 0\n"}
+,{"stream_name":"stdout","time":132.384470005,"data":"Sampel diuji: 3000 series (gagal baca: 0)\n"}
+,{"stream_name":"stdout","time":132.384509217,"data":"\n"}
+,{"stream_name":"stdout","time":132.384515302,"data":"Distribusi TransferSyntaxUID:\n"}
+,{"stream_name":"stdout","time":132.384520466,"data":"  1.2.840.10008.1.2.1 (Explicit VR Little Endian (uncompressed)): 3000 (100.0%)\n"}
+,{"stream_name":"stdout","time":132.384525211,"data":"\n"}
+,{"stream_name":"stdout","time":132.384530196,"data":"Tag InstitutionName ADA di: 0 / 3000 series (0.0%)\n"}
+,{"stream_name":"stdout","time":132.38453512,"data":"Jumlah DICOM element per file (header saja): min=30, median=58, max=74\n"}
+,{"stream_name":"stdout","time":132.384564146,"data":"Ukuran file rata-rata (mid-slice, sampel n=3000): 653 KB (min 73 KB, max 2814 KB)\n"}
+,{"stream_name":"stdout","time":132.472021421,"data":"Estimasi jumlah instance TRAIN (series x rata-rata slice/series): 820,978\n"}
+,{"stream_name":"stdout","time":132.47205549,"data":"Estimasi total ukuran TRAIN: 549.1 GB\n"}
+,{"stream_name":"stdout","time":132.472060748,"data":"(test_series hanya sampel publik kecil -\u003e tidak dihitung, ukuran test asli tersembunyi)\n"}
+,{"stream_name":"stdout","time":132.472065057,"data":"\n"}
+,{"stream_name":"stdout","time":132.472067945,"data":"Klaim di prompt pengguna: ~820.000 file, 569.76 GB (train+test penuh, termasuk test tersembunyi)\n"}
+,{"stream_name":"stdout","time":132.472070953,"data":"-\u003e jumlah file estimasi ini SEJALAN dengan klaim; ukuran GB tidak bisa dikonfirmasi 1:1 karena test asli tersembunyi.\n"}
+,{"stream_name":"stderr","time":136.1843713,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":136.184405394,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":136.373318487,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":136.373346712,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":137.147026993,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":137.619815305,"data":"[NbConvertApp] Writing 2921993 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":140.552489611,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":141.86450389,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":141.864541461,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.864807586,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.865062188,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.865285817,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.865477995,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.865660585,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.865852567,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.866129358,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.866309954,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.866472912,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.867139219,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.867298291,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.867472202,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.867692251,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.867888492,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.868052454,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":141.868649912,"data":"[NbConvertApp] Writing 525592 bytes to __results__.html\n"}
+]

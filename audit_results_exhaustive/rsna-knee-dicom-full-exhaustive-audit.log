@@ -1,0 +1,183 @@
+[{"stream_name":"stderr","time":7.863218454,"data":"/usr/local/lib/python3.12/dist-packages/nbformat/__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.\n"}
+,{"stream_name":"stderr","time":7.863297763,"data":"  validate(nb)\n"}
+,{"stream_name":"stderr","time":8.991993556,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.992026071,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.992031961,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.992037956,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":9.810643578,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.810686832,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.810694417,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.810701295,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":13.73448709,"data":"[t=    0.9s] DATA_DIR: /kaggle/input/competitions/rsna-knee-abnormality-detection | exists: True\n"}
+,{"stream_name":"stdout","time":13.96120644,"data":"[t=    1.1s] train: (4407, 14) | train_series: (24371, 5)\n"}
+,{"stream_name":"stdout","time":13.994394403,"data":"[t=    1.1s] Tidak ada checkpoint sebelumnya -- mulai dari nol.\n"}
+,{"stream_name":"stdout","time":14.137021734,"data":"[t=    1.3s] Total series di train_series.csv: 24371\n"}
+,{"stream_name":"stdout","time":14.13798889,"data":"[t=    1.3s] Sudah selesai dari checkpoint sebelumnya: 0\n"}
+,{"stream_name":"stdout","time":14.154882558,"data":"[t=    1.3s] AKAN diproses run ini: 24371\n"}
+,{"stream_name":"stdout","time":89.411650895,"data":"[t=   76.5s] batch 1: 200/24371 series run ini (200/24371 total = 0.8%), 6748 instance, 1.3 menit berjalan, 159.5 series/menit, ETA sisa run ini ~152 menit\n"}
+,{"stream_name":"stdout","time":164.459860241,"data":"[t=  151.6s] batch 2: 400/24371 series run ini (400/24371 total = 1.6%), 14114 instance, 2.5 menit berjalan, 159.7 series/menit, ETA sisa run ini ~150 menit\n"}
+,{"stream_name":"stdout","time":261.939503341,"data":"[t=  249.0s] batch 3: 600/24371 series run ini (600/24371 total = 2.5%), 20432 instance, 4.2 menit berjalan, 145.3 series/menit, ETA sisa run ini ~164 menit\n"}
+,{"stream_name":"stdout","time":349.226281893,"data":"[t=  336.3s] batch 4: 800/24371 series run ini (800/24371 total = 3.3%), 27063 instance, 5.6 menit berjalan, 143.3 series/menit, ETA sisa run ini ~165 menit\n"}
+,{"stream_name":"stdout","time":459.306327657,"data":"[t=  446.4s] batch 5: 1000/24371 series run ini (1000/24371 total = 4.1%), 35811 instance, 7.4 menit berjalan, 134.8 series/menit, ETA sisa run ini ~173 menit\n"}
+,{"stream_name":"stdout","time":543.298303315,"data":"[t=  530.4s] batch 6: 1200/24371 series run ini (1200/24371 total = 4.9%), 42094 instance, 8.8 menit berjalan, 136.1 series/menit, ETA sisa run ini ~170 menit\n"}
+,{"stream_name":"stdout","time":616.101551147,"data":"[t=  603.2s] batch 7: 1400/24371 series run ini (1400/24371 total = 5.7%), 48707 instance, 10.1 menit berjalan, 139.5 series/menit, ETA sisa run ini ~165 menit\n"}
+,{"stream_name":"stdout","time":712.209272389,"data":"[t=  699.3s] batch 8: 1600/24371 series run ini (1600/24371 total = 6.6%), 55586 instance, 11.7 menit berjalan, 137.5 series/menit, ETA sisa run ini ~166 menit\n"}
+,{"stream_name":"stdout","time":801.255566145,"data":"[t=  788.4s] batch 9: 1800/24371 series run ini (1800/24371 total = 7.4%), 62806 instance, 13.1 menit berjalan, 137.2 series/menit, ETA sisa run ini ~164 menit\n"}
+,{"stream_name":"stdout","time":893.31422386,"data":"[t=  880.4s] batch 10: 2000/24371 series run ini (2000/24371 total = 8.2%), 69413 instance, 14.7 menit berjalan, 136.5 series/menit, ETA sisa run ini ~164 menit\n"}
+,{"stream_name":"stdout","time":985.54440239,"data":"[t=  972.7s] batch 11: 2200/24371 series run ini (2200/24371 total = 9.0%), 76676 instance, 16.2 menit berjalan, 135.9 series/menit, ETA sisa run ini ~163 menit\n"}
+,{"stream_name":"stdout","time":1079.192930088,"data":"[t= 1066.3s] batch 12: 2400/24371 series run ini (2400/24371 total = 9.8%), 83667 instance, 17.8 menit berjalan, 135.2 series/menit, ETA sisa run ini ~162 menit\n"}
+,{"stream_name":"stdout","time":1162.573722803,"data":"[t= 1149.7s] batch 13: 2600/24371 series run ini (2600/24371 total = 10.7%), 90501 instance, 19.2 menit berjalan, 135.8 series/menit, ETA sisa run ini ~160 menit\n"}
+,{"stream_name":"stdout","time":1215.125973265,"data":"[t= 1202.2s] batch 14: 2800/24371 series run ini (2800/24371 total = 11.5%), 96723 instance, 20.0 menit berjalan, 139.9 series/menit, ETA sisa run ini ~154 menit\n"}
+,{"stream_name":"stdout","time":1284.450706478,"data":"[t= 1271.6s] batch 15: 3000/24371 series run ini (3000/24371 total = 12.3%), 103216 instance, 21.2 menit berjalan, 141.7 series/menit, ETA sisa run ini ~151 menit\n"}
+,{"stream_name":"stdout","time":1345.170238146,"data":"[t= 1332.3s] batch 16: 3200/24371 series run ini (3200/24371 total = 13.1%), 109837 instance, 22.2 menit berjalan, 144.3 series/menit, ETA sisa run ini ~147 menit\n"}
+,{"stream_name":"stdout","time":1411.261194708,"data":"[t= 1398.4s] batch 17: 3400/24371 series run ini (3400/24371 total = 14.0%), 116625 instance, 23.3 menit berjalan, 146.0 series/menit, ETA sisa run ini ~144 menit\n"}
+,{"stream_name":"stdout","time":1505.426020107,"data":"[t= 1492.5s] batch 18: 3600/24371 series run ini (3600/24371 total = 14.8%), 123931 instance, 24.9 menit berjalan, 144.8 series/menit, ETA sisa run ini ~143 menit\n"}
+,{"stream_name":"stdout","time":1605.697679712,"data":"[t= 1592.8s] batch 19: 3800/24371 series run ini (3800/24371 total = 15.6%), 131646 instance, 26.5 menit berjalan, 143.3 series/menit, ETA sisa run ini ~144 menit\n"}
+,{"stream_name":"stdout","time":1685.817164049,"data":"[t= 1672.9s] batch 20: 4000/24371 series run ini (4000/24371 total = 16.4%), 138116 instance, 27.9 menit berjalan, 143.6 series/menit, ETA sisa run ini ~142 menit\n"}
+,{"stream_name":"stdout","time":1758.612476186,"data":"[t= 1745.7s] batch 21: 4200/24371 series run ini (4200/24371 total = 17.2%), 144630 instance, 29.1 menit berjalan, 144.5 series/menit, ETA sisa run ini ~140 menit\n"}
+,{"stream_name":"stdout","time":1831.536238742,"data":"[t= 1818.7s] batch 22: 4400/24371 series run ini (4400/24371 total = 18.1%), 151128 instance, 30.3 menit berjalan, 145.3 series/menit, ETA sisa run ini ~137 menit\n"}
+,{"stream_name":"stdout","time":1946.756585903,"data":"[t= 1933.9s] batch 23: 4600/24371 series run ini (4600/24371 total = 18.9%), 159714 instance, 32.2 menit berjalan, 142.8 series/menit, ETA sisa run ini ~138 menit\n"}
+,{"stream_name":"stdout","time":2005.17305752,"data":"[t= 1992.3s] batch 24: 4800/24371 series run ini (4800/24371 total = 19.7%), 165809 instance, 33.2 menit berjalan, 144.7 series/menit, ETA sisa run ini ~135 menit\n"}
+,{"stream_name":"stdout","time":2091.488892712,"data":"[t= 2078.6s] batch 25: 5000/24371 series run ini (5000/24371 total = 20.5%), 172603 instance, 34.6 menit berjalan, 144.4 series/menit, ETA sisa run ini ~134 menit\n"}
+,{"stream_name":"stdout","time":2159.323125902,"data":"[t= 2146.4s] batch 26: 5200/24371 series run ini (5200/24371 total = 21.3%), 178920 instance, 35.8 menit berjalan, 145.4 series/menit, ETA sisa run ini ~132 menit\n"}
+,{"stream_name":"stdout","time":2242.869424901,"data":"[t= 2230.0s] batch 27: 5400/24371 series run ini (5400/24371 total = 22.2%), 185841 instance, 37.2 menit berjalan, 145.4 series/menit, ETA sisa run ini ~130 menit\n"}
+,{"stream_name":"stdout","time":2303.754291599,"data":"[t= 2290.9s] batch 28: 5600/24371 series run ini (5600/24371 total = 23.0%), 191644 instance, 38.2 menit berjalan, 146.8 series/menit, ETA sisa run ini ~128 menit\n"}
+,{"stream_name":"stdout","time":2387.891225559,"data":"[t= 2375.0s] batch 29: 5800/24371 series run ini (5800/24371 total = 23.8%), 198472 instance, 39.6 menit berjalan, 146.6 series/menit, ETA sisa run ini ~127 menit\n"}
+,{"stream_name":"stdout","time":2443.86440924,"data":"[t= 2431.0s] batch 30: 6000/24371 series run ini (6000/24371 total = 24.6%), 204038 instance, 40.5 menit berjalan, 148.2 series/menit, ETA sisa run ini ~124 menit\n"}
+,{"stream_name":"stdout","time":2528.914470023,"data":"[t= 2516.0s] batch 31: 6200/24371 series run ini (6200/24371 total = 25.4%), 210835 instance, 41.9 menit berjalan, 147.9 series/menit, ETA sisa run ini ~123 menit\n"}
+,{"stream_name":"stdout","time":2591.831365649,"data":"[t= 2578.9s] batch 32: 6400/24371 series run ini (6400/24371 total = 26.3%), 216937 instance, 43.0 menit berjalan, 149.0 series/menit, ETA sisa run ini ~121 menit\n"}
+,{"stream_name":"stdout","time":2663.494461655,"data":"[t= 2650.6s] batch 33: 6600/24371 series run ini (6600/24371 total = 27.1%), 223910 instance, 44.2 menit berjalan, 149.5 series/menit, ETA sisa run ini ~119 menit\n"}
+,{"stream_name":"stdout","time":2751.572631421,"data":"[t= 2738.7s] batch 34: 6800/24371 series run ini (6800/24371 total = 27.9%), 230800 instance, 45.6 menit berjalan, 149.0 series/menit, ETA sisa run ini ~118 menit\n"}
+,{"stream_name":"stdout","time":2834.375750306,"data":"[t= 2821.5s] batch 35: 7000/24371 series run ini (7000/24371 total = 28.7%), 237190 instance, 47.0 menit berjalan, 148.9 series/menit, ETA sisa run ini ~117 menit\n"}
+,{"stream_name":"stdout","time":2926.387153626,"data":"[t= 2913.5s] batch 36: 7200/24371 series run ini (7200/24371 total = 29.5%), 244294 instance, 48.6 menit berjalan, 148.3 series/menit, ETA sisa run ini ~116 menit\n"}
+,{"stream_name":"stdout","time":2998.486318302,"data":"[t= 2985.6s] batch 37: 7400/24371 series run ini (7400/24371 total = 30.4%), 250999 instance, 49.8 menit berjalan, 148.8 series/menit, ETA sisa run ini ~114 menit\n"}
+,{"stream_name":"stdout","time":3075.387482546,"data":"[t= 3062.5s] batch 38: 7600/24371 series run ini (7600/24371 total = 31.2%), 257675 instance, 51.0 menit berjalan, 149.0 series/menit, ETA sisa run ini ~113 menit\n"}
+,{"stream_name":"stdout","time":3162.829826184,"data":"[t= 3149.9s] batch 39: 7800/24371 series run ini (7800/24371 total = 32.0%), 264379 instance, 52.5 menit berjalan, 148.6 series/menit, ETA sisa run ini ~111 menit\n"}
+,{"stream_name":"stdout","time":3232.812990245,"data":"[t= 3219.9s] batch 40: 8000/24371 series run ini (8000/24371 total = 32.8%), 270724 instance, 53.7 menit berjalan, 149.1 series/menit, ETA sisa run ini ~110 menit\n"}
+,{"stream_name":"stdout","time":3339.201420811,"data":"[t= 3326.3s] batch 41: 8200/24371 series run ini (8200/24371 total = 33.6%), 278182 instance, 55.4 menit berjalan, 148.0 series/menit, ETA sisa run ini ~109 menit\n"}
+,{"stream_name":"stdout","time":3425.376159152,"data":"[t= 3412.5s] batch 42: 8400/24371 series run ini (8400/24371 total = 34.5%), 285483 instance, 56.9 menit berjalan, 147.7 series/menit, ETA sisa run ini ~108 menit\n"}
+,{"stream_name":"stdout","time":3499.547113796,"data":"[t= 3486.7s] batch 43: 8600/24371 series run ini (8600/24371 total = 35.3%), 292034 instance, 58.1 menit berjalan, 148.0 series/menit, ETA sisa run ini ~107 menit\n"}
+,{"stream_name":"stdout","time":3606.136253998,"data":"[t= 3593.2s] batch 44: 8800/24371 series run ini (8800/24371 total = 36.1%), 299202 instance, 59.9 menit berjalan, 147.0 series/menit, ETA sisa run ini ~106 menit\n"}
+,{"stream_name":"stdout","time":3666.27107341,"data":"[t= 3653.4s] batch 45: 9000/24371 series run ini (9000/24371 total = 36.9%), 304855 instance, 60.9 menit berjalan, 147.9 series/menit, ETA sisa run ini ~104 menit\n"}
+,{"stream_name":"stdout","time":3743.169560486,"data":"[t= 3730.3s] batch 46: 9200/24371 series run ini (9200/24371 total = 37.7%), 311181 instance, 62.2 menit berjalan, 148.0 series/menit, ETA sisa run ini ~102 menit\n"}
+,{"stream_name":"stdout","time":3802.629825038,"data":"[t= 3789.7s] batch 47: 9400/24371 series run ini (9400/24371 total = 38.6%), 317668 instance, 63.2 menit berjalan, 148.9 series/menit, ETA sisa run ini ~101 menit\n"}
+,{"stream_name":"stdout","time":3872.53516006,"data":"[t= 3859.6s] batch 48: 9600/24371 series run ini (9600/24371 total = 39.4%), 323680 instance, 64.3 menit berjalan, 149.3 series/menit, ETA sisa run ini ~99 menit\n"}
+,{"stream_name":"stdout","time":3961.778375345,"data":"[t= 3948.9s] batch 49: 9800/24371 series run ini (9800/24371 total = 40.2%), 329878 instance, 65.8 menit berjalan, 149.0 series/menit, ETA sisa run ini ~98 menit\n"}
+,{"stream_name":"stdout","time":4033.793344025,"data":"[t= 4020.9s] batch 50: 10000/24371 series run ini (10000/24371 total = 41.0%), 336772 instance, 67.0 menit berjalan, 149.3 series/menit, ETA sisa run ini ~96 menit\n"}
+,{"stream_name":"stdout","time":4142.886902424,"data":"[t= 4130.0s] batch 51: 10200/24371 series run ini (10200/24371 total = 41.9%), 344426 instance, 68.8 menit berjalan, 148.2 series/menit, ETA sisa run ini ~96 menit\n"}
+,{"stream_name":"stdout","time":4209.121882862,"data":"[t= 4196.2s] batch 52: 10400/24371 series run ini (10400/24371 total = 42.7%), 350866 instance, 69.9 menit berjalan, 148.8 series/menit, ETA sisa run ini ~94 menit\n"}
+,{"stream_name":"stdout","time":4290.58504849,"data":"[t= 4277.7s] batch 53: 10600/24371 series run ini (10600/24371 total = 43.5%), 357322 instance, 71.3 menit berjalan, 148.7 series/menit, ETA sisa run ini ~93 menit\n"}
+,{"stream_name":"stdout","time":4383.579863158,"data":"[t= 4370.7s] batch 54: 10800/24371 series run ini (10800/24371 total = 44.3%), 364120 instance, 72.8 menit berjalan, 148.3 series/menit, ETA sisa run ini ~92 menit\n"}
+,{"stream_name":"stdout","time":4450.846883619,"data":"[t= 4438.0s] batch 55: 11000/24371 series run ini (11000/24371 total = 45.1%), 370558 instance, 74.0 menit berjalan, 148.8 series/menit, ETA sisa run ini ~90 menit\n"}
+,{"stream_name":"stdout","time":4550.681636952,"data":"[t= 4537.8s] batch 56: 11200/24371 series run ini (11200/24371 total = 46.0%), 377697 instance, 75.6 menit berjalan, 148.1 series/menit, ETA sisa run ini ~89 menit\n"}
+,{"stream_name":"stdout","time":4661.349605228,"data":"[t= 4648.5s] batch 57: 11400/24371 series run ini (11400/24371 total = 46.8%), 384651 instance, 77.5 menit berjalan, 147.2 series/menit, ETA sisa run ini ~88 menit\n"}
+,{"stream_name":"stdout","time":4732.817046681,"data":"[t= 4719.9s] batch 58: 11600/24371 series run ini (11600/24371 total = 47.6%), 391059 instance, 78.7 menit berjalan, 147.5 series/menit, ETA sisa run ini ~87 menit\n"}
+,{"stream_name":"stdout","time":4800.131718985,"data":"[t= 4787.2s] batch 59: 11800/24371 series run ini (11800/24371 total = 48.4%), 397939 instance, 79.8 menit berjalan, 147.9 series/menit, ETA sisa run ini ~85 menit\n"}
+,{"stream_name":"stdout","time":4886.01920079,"data":"[t= 4873.1s] batch 60: 12000/24371 series run ini (12000/24371 total = 49.2%), 405524 instance, 81.2 menit berjalan, 147.8 series/menit, ETA sisa run ini ~84 menit\n"}
+,{"stream_name":"stdout","time":4974.612988878,"data":"[t= 4961.7s] batch 61: 12200/24371 series run ini (12200/24371 total = 50.1%), 412043 instance, 82.7 menit berjalan, 147.6 series/menit, ETA sisa run ini ~82 menit\n"}
+,{"stream_name":"stdout","time":5045.157862521,"data":"[t= 5032.3s] batch 62: 12400/24371 series run ini (12400/24371 total = 50.9%), 417779 instance, 83.9 menit berjalan, 147.9 series/menit, ETA sisa run ini ~81 menit\n"}
+,{"stream_name":"stdout","time":5102.467732165,"data":"[t= 5089.6s] batch 63: 12600/24371 series run ini (12600/24371 total = 51.7%), 423913 instance, 84.8 menit berjalan, 148.6 series/menit, ETA sisa run ini ~79 menit\n"}
+,{"stream_name":"stdout","time":5183.694636942,"data":"[t= 5170.8s] batch 64: 12800/24371 series run ini (12800/24371 total = 52.5%), 430523 instance, 86.2 menit berjalan, 148.6 series/menit, ETA sisa run ini ~78 menit\n"}
+,{"stream_name":"stdout","time":5256.585623248,"data":"[t= 5243.7s] batch 65: 13000/24371 series run ini (13000/24371 total = 53.3%), 436516 instance, 87.4 menit berjalan, 148.8 series/menit, ETA sisa run ini ~76 menit\n"}
+,{"stream_name":"stdout","time":5325.673855686,"data":"[t= 5312.8s] batch 66: 13200/24371 series run ini (13200/24371 total = 54.2%), 443274 instance, 88.5 menit berjalan, 149.1 series/menit, ETA sisa run ini ~75 menit\n"}
+,{"stream_name":"stdout","time":5405.282302216,"data":"[t= 5392.4s] batch 67: 13400/24371 series run ini (13400/24371 total = 55.0%), 449712 instance, 89.9 menit berjalan, 149.1 series/menit, ETA sisa run ini ~74 menit\n"}
+,{"stream_name":"stdout","time":5510.783164153,"data":"[t= 5497.9s] batch 68: 13600/24371 series run ini (13600/24371 total = 55.8%), 457834 instance, 91.6 menit berjalan, 148.5 series/menit, ETA sisa run ini ~73 menit\n"}
+,{"stream_name":"stdout","time":5582.006426079,"data":"[t= 5569.1s] batch 69: 13800/24371 series run ini (13800/24371 total = 56.6%), 464575 instance, 92.8 menit berjalan, 148.7 series/menit, ETA sisa run ini ~71 menit\n"}
+,{"stream_name":"stdout","time":5659.147359627,"data":"[t= 5646.3s] batch 70: 14000/24371 series run ini (14000/24371 total = 57.4%), 471103 instance, 94.1 menit berjalan, 148.8 series/menit, ETA sisa run ini ~70 menit\n"}
+,{"stream_name":"stdout","time":5750.789363347,"data":"[t= 5737.9s] batch 71: 14200/24371 series run ini (14200/24371 total = 58.3%), 478084 instance, 95.6 menit berjalan, 148.5 series/menit, ETA sisa run ini ~68 menit\n"}
+,{"stream_name":"stdout","time":5840.868127797,"data":"[t= 5827.9s] batch 72: 14400/24371 series run ini (14400/24371 total = 59.1%), 484364 instance, 97.1 menit berjalan, 148.3 series/menit, ETA sisa run ini ~67 menit\n"}
+,{"stream_name":"stdout","time":5919.952969404,"data":"[t= 5907.1s] batch 73: 14600/24371 series run ini (14600/24371 total = 59.9%), 490607 instance, 98.5 menit berjalan, 148.3 series/menit, ETA sisa run ini ~66 menit\n"}
+,{"stream_name":"stdout","time":6002.423999077,"data":"[t= 5989.5s] batch 74: 14800/24371 series run ini (14800/24371 total = 60.7%), 497808 instance, 99.8 menit berjalan, 148.3 series/menit, ETA sisa run ini ~65 menit\n"}
+,{"stream_name":"stdout","time":6069.919762108,"data":"[t= 6057.0s] batch 75: 15000/24371 series run ini (15000/24371 total = 61.5%), 504034 instance, 101.0 menit berjalan, 148.6 series/menit, ETA sisa run ini ~63 menit\n"}
+,{"stream_name":"stdout","time":6147.139497454,"data":"[t= 6134.2s] batch 76: 15200/24371 series run ini (15200/24371 total = 62.4%), 510955 instance, 102.2 menit berjalan, 148.7 series/menit, ETA sisa run ini ~62 menit\n"}
+,{"stream_name":"stdout","time":6225.861868503,"data":"[t= 6213.0s] batch 77: 15400/24371 series run ini (15400/24371 total = 63.2%), 517888 instance, 103.5 menit berjalan, 148.8 series/menit, ETA sisa run ini ~60 menit\n"}
+,{"stream_name":"stdout","time":6295.294412518,"data":"[t= 6282.4s] batch 78: 15600/24371 series run ini (15600/24371 total = 64.0%), 524137 instance, 104.7 menit berjalan, 149.0 series/menit, ETA sisa run ini ~59 menit\n"}
+,{"stream_name":"stdout","time":6372.696448537,"data":"[t= 6359.8s] batch 79: 15800/24371 series run ini (15800/24371 total = 64.8%), 530705 instance, 106.0 menit berjalan, 149.1 series/menit, ETA sisa run ini ~57 menit\n"}
+,{"stream_name":"stdout","time":6489.871852992,"data":"[t= 6477.0s] batch 80: 16000/24371 series run ini (16000/24371 total = 65.7%), 537863 instance, 107.9 menit berjalan, 148.2 series/menit, ETA sisa run ini ~56 menit\n"}
+,{"stream_name":"stdout","time":6576.158428428,"data":"[t= 6563.3s] batch 81: 16200/24371 series run ini (16200/24371 total = 66.5%), 544600 instance, 109.4 menit berjalan, 148.1 series/menit, ETA sisa run ini ~55 menit\n"}
+,{"stream_name":"stdout","time":6653.861524474,"data":"[t= 6641.0s] batch 82: 16400/24371 series run ini (16400/24371 total = 67.3%), 551149 instance, 110.7 menit berjalan, 148.2 series/menit, ETA sisa run ini ~54 menit\n"}
+,{"stream_name":"stdout","time":6738.509481951,"data":"[t= 6725.6s] batch 83: 16600/24371 series run ini (16600/24371 total = 68.1%), 558151 instance, 112.1 menit berjalan, 148.1 series/menit, ETA sisa run ini ~52 menit\n"}
+,{"stream_name":"stdout","time":6817.28388002,"data":"[t= 6804.4s] batch 84: 16800/24371 series run ini (16800/24371 total = 68.9%), 564981 instance, 113.4 menit berjalan, 148.2 series/menit, ETA sisa run ini ~51 menit\n"}
+,{"stream_name":"stdout","time":6893.420005037,"data":"[t= 6880.5s] batch 85: 17000/24371 series run ini (17000/24371 total = 69.8%), 571155 instance, 114.7 menit berjalan, 148.3 series/menit, ETA sisa run ini ~50 menit\n"}
+,{"stream_name":"stdout","time":6998.407844198,"data":"[t= 6985.5s] batch 86: 17200/24371 series run ini (17200/24371 total = 70.6%), 578115 instance, 116.4 menit berjalan, 147.8 series/menit, ETA sisa run ini ~49 menit\n"}
+,{"stream_name":"stdout","time":7112.955144899,"data":"[t= 7100.1s] batch 87: 17400/24371 series run ini (17400/24371 total = 71.4%), 585433 instance, 118.3 menit berjalan, 147.1 series/menit, ETA sisa run ini ~47 menit\n"}
+,{"stream_name":"stdout","time":7197.234408613,"data":"[t= 7184.3s] batch 88: 17600/24371 series run ini (17600/24371 total = 72.2%), 592419 instance, 119.7 menit berjalan, 147.0 series/menit, ETA sisa run ini ~46 menit\n"}
+,{"stream_name":"stdout","time":7278.23121145,"data":"[t= 7265.3s] batch 89: 17800/24371 series run ini (17800/24371 total = 73.0%), 599222 instance, 121.1 menit berjalan, 147.0 series/menit, ETA sisa run ini ~45 menit\n"}
+,{"stream_name":"stdout","time":7351.237816071,"data":"[t= 7338.3s] batch 90: 18000/24371 series run ini (18000/24371 total = 73.9%), 606196 instance, 122.3 menit berjalan, 147.2 series/menit, ETA sisa run ini ~43 menit\n"}
+,{"stream_name":"stdout","time":7419.963472035,"data":"[t= 7407.1s] batch 91: 18200/24371 series run ini (18200/24371 total = 74.7%), 612303 instance, 123.5 menit berjalan, 147.5 series/menit, ETA sisa run ini ~42 menit\n"}
+,{"stream_name":"stdout","time":7496.63494655,"data":"[t= 7483.7s] batch 92: 18400/24371 series run ini (18400/24371 total = 75.5%), 619282 instance, 124.7 menit berjalan, 147.5 series/menit, ETA sisa run ini ~40 menit\n"}
+,{"stream_name":"stdout","time":7582.34083163,"data":"[t= 7569.5s] batch 93: 18600/24371 series run ini (18600/24371 total = 76.3%), 626128 instance, 126.2 menit berjalan, 147.5 series/menit, ETA sisa run ini ~39 menit\n"}
+,{"stream_name":"stdout","time":7648.816184836,"data":"[t= 7635.9s] batch 94: 18800/24371 series run ini (18800/24371 total = 77.1%), 632435 instance, 127.3 menit berjalan, 147.7 series/menit, ETA sisa run ini ~38 menit\n"}
+,{"stream_name":"stdout","time":7751.652397033,"data":"[t= 7738.8s] batch 95: 19000/24371 series run ini (19000/24371 total = 78.0%), 638915 instance, 129.0 menit berjalan, 147.3 series/menit, ETA sisa run ini ~36 menit\n"}
+,{"stream_name":"stdout","time":7825.001623612,"data":"[t= 7812.1s] batch 96: 19200/24371 series run ini (19200/24371 total = 78.8%), 645639 instance, 130.2 menit berjalan, 147.5 series/menit, ETA sisa run ini ~35 menit\n"}
+,{"stream_name":"stdout","time":7921.102330033,"data":"[t= 7908.2s] batch 97: 19400/24371 series run ini (19400/24371 total = 79.6%), 652934 instance, 131.8 menit berjalan, 147.2 series/menit, ETA sisa run ini ~34 menit\n"}
+,{"stream_name":"stdout","time":8006.537385594,"data":"[t= 7993.6s] batch 98: 19600/24371 series run ini (19600/24371 total = 80.4%), 659957 instance, 133.2 menit berjalan, 147.1 series/menit, ETA sisa run ini ~32 menit\n"}
+,{"stream_name":"stdout","time":8086.962644055,"data":"[t= 8074.1s] batch 99: 19800/24371 series run ini (19800/24371 total = 81.2%), 666630 instance, 134.6 menit berjalan, 147.2 series/menit, ETA sisa run ini ~31 menit\n"}
+,{"stream_name":"stdout","time":8158.014937859,"data":"[t= 8145.1s] batch 100: 20000/24371 series run ini (20000/24371 total = 82.1%), 672786 instance, 135.8 menit berjalan, 147.4 series/menit, ETA sisa run ini ~30 menit\n"}
+,{"stream_name":"stdout","time":8233.477849616,"data":"[t= 8220.6s] batch 101: 20200/24371 series run ini (20200/24371 total = 82.9%), 678750 instance, 137.0 menit berjalan, 147.5 series/menit, ETA sisa run ini ~28 menit\n"}
+,{"stream_name":"stdout","time":8316.348691822,"data":"[t= 8303.5s] batch 102: 20400/24371 series run ini (20400/24371 total = 83.7%), 685761 instance, 138.4 menit berjalan, 147.4 series/menit, ETA sisa run ini ~27 menit\n"}
+,{"stream_name":"stdout","time":8424.204879537,"data":"[t= 8411.3s] batch 103: 20600/24371 series run ini (20600/24371 total = 84.5%), 692618 instance, 140.2 menit berjalan, 147.0 series/menit, ETA sisa run ini ~26 menit\n"}
+,{"stream_name":"stdout","time":8496.131074536,"data":"[t= 8483.2s] batch 104: 20800/24371 series run ini (20800/24371 total = 85.3%), 699254 instance, 141.4 menit berjalan, 147.1 series/menit, ETA sisa run ini ~24 menit\n"}
+,{"stream_name":"stdout","time":8568.303287893,"data":"[t= 8555.4s] batch 105: 21000/24371 series run ini (21000/24371 total = 86.2%), 705627 instance, 142.6 menit berjalan, 147.3 series/menit, ETA sisa run ini ~23 menit\n"}
+,{"stream_name":"stdout","time":8652.549485092,"data":"[t= 8639.7s] batch 106: 21200/24371 series run ini (21200/24371 total = 87.0%), 712397 instance, 144.0 menit berjalan, 147.2 series/menit, ETA sisa run ini ~22 menit\n"}
+,{"stream_name":"stdout","time":8729.091988388,"data":"[t= 8716.2s] batch 107: 21400/24371 series run ini (21400/24371 total = 87.8%), 718921 instance, 145.3 menit berjalan, 147.3 series/menit, ETA sisa run ini ~20 menit\n"}
+,{"stream_name":"stdout","time":8820.666630652,"data":"[t= 8807.8s] batch 108: 21600/24371 series run ini (21600/24371 total = 88.6%), 725703 instance, 146.8 menit berjalan, 147.2 series/menit, ETA sisa run ini ~19 menit\n"}
+,{"stream_name":"stdout","time":8914.650630997,"data":"[t= 8901.8s] batch 109: 21800/24371 series run ini (21800/24371 total = 89.5%), 732922 instance, 148.4 menit berjalan, 147.0 series/menit, ETA sisa run ini ~17 menit\n"}
+,{"stream_name":"stdout","time":8999.00987485,"data":"[t= 8986.1s] batch 110: 22000/24371 series run ini (22000/24371 total = 90.3%), 739045 instance, 149.8 menit berjalan, 146.9 series/menit, ETA sisa run ini ~16 menit\n"}
+,{"stream_name":"stdout","time":9077.725168834,"data":"[t= 9064.8s] batch 111: 22200/24371 series run ini (22200/24371 total = 91.1%), 745454 instance, 151.1 menit berjalan, 147.0 series/menit, ETA sisa run ini ~15 menit\n"}
+,{"stream_name":"stdout","time":9145.722860921,"data":"[t= 9132.8s] batch 112: 22400/24371 series run ini (22400/24371 total = 91.9%), 751472 instance, 152.2 menit berjalan, 147.2 series/menit, ETA sisa run ini ~13 menit\n"}
+,{"stream_name":"stdout","time":9217.637296395,"data":"[t= 9204.7s] batch 113: 22600/24371 series run ini (22600/24371 total = 92.7%), 757450 instance, 153.4 menit berjalan, 147.3 series/menit, ETA sisa run ini ~12 menit\n"}
+,{"stream_name":"stdout","time":9285.241200551,"data":"[t= 9272.3s] batch 114: 22800/24371 series run ini (22800/24371 total = 93.6%), 763931 instance, 154.5 menit berjalan, 147.6 series/menit, ETA sisa run ini ~11 menit\n"}
+,{"stream_name":"stdout","time":9358.992722023,"data":"[t= 9346.1s] batch 115: 23000/24371 series run ini (23000/24371 total = 94.4%), 770054 instance, 155.8 menit berjalan, 147.7 series/menit, ETA sisa run ini ~9 menit\n"}
+,{"stream_name":"stdout","time":9429.736815605,"data":"[t= 9416.8s] batch 116: 23200/24371 series run ini (23200/24371 total = 95.2%), 776496 instance, 156.9 menit berjalan, 147.8 series/menit, ETA sisa run ini ~8 menit\n"}
+,{"stream_name":"stdout","time":9527.339831807,"data":"[t= 9514.4s] batch 117: 23400/24371 series run ini (23400/24371 total = 96.0%), 783924 instance, 158.6 menit berjalan, 147.6 series/menit, ETA sisa run ini ~7 menit\n"}
+,{"stream_name":"stdout","time":9602.494968913,"data":"[t= 9589.5s] batch 118: 23600/24371 series run ini (23600/24371 total = 96.8%), 790961 instance, 159.8 menit berjalan, 147.7 series/menit, ETA sisa run ini ~5 menit\n"}
+,{"stream_name":"stdout","time":9721.600217703,"data":"[t= 9708.7s] batch 119: 23800/24371 series run ini (23800/24371 total = 97.7%), 798489 instance, 161.8 menit berjalan, 147.1 series/menit, ETA sisa run ini ~4 menit\n"}
+,{"stream_name":"stdout","time":9806.982817497,"data":"[t= 9794.1s] batch 120: 24000/24371 series run ini (24000/24371 total = 98.5%), 805092 instance, 163.2 menit berjalan, 147.0 series/menit, ETA sisa run ini ~3 menit\n"}
+,{"stream_name":"stdout","time":9925.325428352,"data":"[t= 9912.4s] batch 121: 24200/24371 series run ini (24200/24371 total = 99.3%), 813531 instance, 165.2 menit berjalan, 146.5 series/menit, ETA sisa run ini ~1 menit\n"}
+,{"stream_name":"stdout","time":9997.846480638,"data":"[t= 9985.0s] batch 122: 24371/24371 series run ini (24371/24371 total = 100.0%), 819078 instance, 166.4 menit berjalan, 146.5 series/menit, ETA sisa run ini ~0 menit\n"}
+,{"stream_name":"stdout","time":9997.864694249,"data":"[t= 9985.0s] SELESAI batch loop. 24371 series baru diproses run ini (819078 instance). hit_time_limit=False\n"}
+,{"stream_name":"stdout","time":9997.867958681,"data":"[t= 9985.0s] 2 exception penuh dicatat.\n"}
+,{"stream_name":"stdout","time":9997.912958344,"data":"\n"}
+,{"stream_name":"stdout","time":9997.913001589,"data":"============================================================\n"}
+,{"stream_name":"stdout","time":9997.913009017,"data":"STATUS: SELESAI PENUH\n"}
+,{"stream_name":"stdout","time":9997.91301491,"data":"Progress: 24371 / 24371 series (100.0%)\n"}
+,{"stream_name":"stdout","time":9997.913020524,"data":"============================================================\n"}
+,{"stream_name":"stdout","time":10006.472068221,"data":"Total baris terkumpul sejauh ini: (819078, 13)\n"}
+,{"stream_name":"stdout","time":10029.959588948,"data":"Distribusi kategori:\n"}
+,{"stream_name":"stdout","time":10031.080250636,"data":"error_category\n"}
+,{"stream_name":"stdout","time":10031.080299963,"data":"OK                     771097\n"}
+,{"stream_name":"stdout","time":10031.080306978,"data":"BLUR                    16384\n"}
+,{"stream_name":"stdout","time":10031.080312605,"data":"UNDEREXPOSED            16384\n"}
+,{"stream_name":"stdout","time":10031.080317939,"data":"LOW_CONTRAST            16384\n"}
+,{"stream_name":"stdout","time":10031.080323685,"data":"OVEREXPOSED             16384\n"}
+,{"stream_name":"stdout","time":10031.08032856,"data":"DUPLICATE_SLICE            26\n"}
+,{"stream_name":"stdout","time":10031.080333152,"data":"ORIENTATION_ANOMALY        20\n"}
+,{"stream_name":"stdout","time":10031.080356477,"data":"EMPTY_OR_CONSTANT           5\n"}
+,{"stream_name":"stdout","time":10031.080359792,"data":"CORRUPT_FILE                2\n"}
+,{"stream_name":"stdout","time":10031.080362872,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":10062.920974316,"data":"Distribusi flag studi (progress saat ini):\n"}
+,{"stream_name":"stdout","time":10062.921016805,"data":"flag\n"}
+,{"stream_name":"stdout","time":10062.921023485,"data":"usable          2898\n"}
+,{"stream_name":"stdout","time":10062.921029992,"data":"needs_review    1432\n"}
+,{"stream_name":"stdout","time":10062.921036344,"data":"exclude           77\n"}
+,{"stream_name":"stdout","time":10062.921041772,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":10062.921047451,"data":"\n"}
+,{"stream_name":"stdout","time":10062.921052756,"data":"KHUSUS studi gold-label:\n"}
+,{"stream_name":"stdout","time":10062.92105652,"data":"flag\n"}
+,{"stream_name":"stdout","time":10062.92106007,"data":"usable          38\n"}
+,{"stream_name":"stdout","time":10062.921063672,"data":"needs_review    19\n"}
+,{"stream_name":"stdout","time":10062.921067484,"data":"exclude          1\n"}
+,{"stream_name":"stdout","time":10062.921071203,"data":"Name: count, dtype: int64\n"}
+,{"stream_name":"stdout","time":10064.925906348,"data":"Total instance: 819078 | bersih: 771097 (94.1%)\n"}
+,{"stream_name":"stderr","time":10069.785823816,"data":"/usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":10069.785868364,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":10070.066651939,"data":"/usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":10070.066690771,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":10070.981307878,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":10071.439028795,"data":"[NbConvertApp] Writing 112816 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":10074.916943526,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":10076.23784851,"data":"[NbConvertApp] Support files will be in __results___files/\n"}
+,{"stream_name":"stderr","time":10076.237885409,"data":"[NbConvertApp] Making directory __results___files\n"}
+,{"stream_name":"stderr","time":10076.238249997,"data":"[NbConvertApp] Writing 407527 bytes to __results__.html\n"}
+]
