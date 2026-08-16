@@ -182,6 +182,8 @@ Ditemukan `kaggle competitions pages <slug> list --content --format json` mengem
 - **Format kompetisi (baru diketahui)**: submission WAJIB lewat Notebook, nama file `submission.csv`, **internet HARUS mati** saat run submission (beda dari kernel R&D kita), **<=9 jam runtime** utk 1 run submission penuh (termasuk decode ~1.300 studi test + inferensi ensemble) — jadi batas keras desain pipeline inferensi nanti. Kolom `Report` **tidak disediakan saat testing** — konfirmasi pendekatan report-text cuma valid utk target training, sudah sesuai desain kita.
 - **Deadline: Final Submission 22 Oktober 2026** (23:59 UTC). Winner wajib serahkan training+inference code & model weights sbg Kaggle Dataset publik kalau menang.
 
+**v8 — ganti label ke `flight0234/rsna-knee-hybrid-report-labels` (0.8991, lebih baik dari 0.8927) + turunkan `EPOCHS` 8→6 (v7 sudah overfitting jelas di epoch 8). Sudah di-push, sedang berjalan** — estimasi ~3,5 jam (6/8 dari waktu v7).
+
 ## Belum dikerjakan
 
 - [ ] Tunggu hasil v7 — cek apakah val_macro_auc terus naik melewati 0.7658 atau mulai overfit
