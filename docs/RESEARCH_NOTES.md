@@ -4,7 +4,8 @@ Riset Tahap 1 & 2. Dikumpulkan 16 Agustus 2026. Semua klaim disitasi — link ke
 
 ## 0. Catatan metodologi
 
-- **Discussion/Overview/Rules/Evaluation tab Kaggle tidak bisa di-scrape** — semuanya JS-rendered penuh, sudah dicoba berkali-kali di proyek ini (WebFetch cuma dapat title halaman). Ini konsisten di seluruh percobaan, bukan kegagalan sesaat.
+- **TEROBOSAN (16 Agustus 2026): `kaggle competitions pages <slug> list --content --format json` mengembalikan TEKS ASLI LENGKAP semua halaman kompetisi** (rules, description, evaluation, timeline, data-description, prizes, code requirements, dll) sebagai markdown, langsung dari API resmi Kaggle — bukan scraping, dan sepenuhnya melewati masalah JS-rendering yang selama ini memblokir WebFetch. Command butuh `kaggle config set -n competition -v <slug>` dulu (positional arg kernel/competition di CLI kaggle punya bug parsing kalau ditulis eksplisit). Ini mengganti seluruh pendekatan "Code tab sbg proxy" di bawah untuk pertanyaan spesifik soal Rules/Evaluation/Data — lihat §10 utk hasil lengkapnya (SEMUA item "menunggu verifikasi" sebelumnya sekarang terjawab pasti, bukan inferensi).
+- **(Historis, sebelum terobosan di atas) Discussion/Overview/Rules/Evaluation tab Kaggle tidak bisa di-scrape** — semuanya JS-rendered penuh, sudah dicoba berkali-kali di proyek ini (WebFetch cuma dapat title halaman). Ini konsisten di seluruh percobaan, bukan kegagalan sesaat.
 - **Sebagai gantinya, riset ini fokus ke Code tab lewat `kaggle kernels list --competition ... --sort-by scoreDescending/voteCount`** — ini API resmi, bukan scraping, dan hasilnya jauh lebih bernilai: kode kerja nyata dari kompetitor top, bukan opini di forum.
 - 10 notebook publik ditarik penuh via `kaggle kernels pull` dan dibaca kode-nya (bukan cuma deskripsi): `pilkwang/rsna-knee-baseline-v1` (340 votes, baseline paling banyak di-fork), `prvsiyan/rsna-knee-read-the-report-then-the-knee` (223 votes), `mattiaangeli/bend-the-knee-to-dinov3-ensembled` (102 votes), `sakhawathossen/rsna-knee-enhanced-ensemble`, `salemali7/rsna-knee-90-reports-llm-30-epochs`, `wguesdon/rsna-knee-dinov2-at-meniscus-resolution` (84 votes), `hida1211/rsna-knee-public-4-fold-dinov2-v4`, `ranjithragavan07/rsna-knee-dinov2-0-93`, `renta0426/rsna-knee-baseline-v1-fracture-tta-pool-probe`, `ryanholbrook/rsna-knee-abnormalities-efficiency-lb`.
 - **Metrik evaluasi: macro/mean ROC-AUC across 12 label — dikonfirmasi via bukti konvergen.** Halaman Evaluation resmi tetap tidak bisa diakses (JS-rendered), tapi 2 notebook top independen (`prvsiyan`, dan validasi silang lain) sama-sama menghitung "macro AUC" (rata-rata `roc_auc_score` per label) sebagai proxy validasi lokal mereka — kalau bukan itu metrik aslinya, mereka tidak akan optimasi ke situ. Digabung dengan rentang skor leaderboard (0.90-0.95, khas AUC) dan klaim awal Anda sendiri, ini sudah cukup meyakinkan untuk dipakai sebagai dasar loss/validasi kita: **mean ROC-AUC per label, dirata-rata ke 12 label (macro-average)**.
@@ -159,10 +160,10 @@ Ditemukan dari `ryanholbrook/rsna-knee-abnormalities-efficiency-lb` (dihosting s
 
 **Arsitektur final:** ensemble 3-backbone (DINOv2-base + RadImageNet-ResNet50 + BiomedCLIP) → CLS+mean(+focal top-k) patch pooling per slot/slice → attention pooling per-diagnosis dengan prior anatomis (SLOT_PRIOR_TABLE) → rank-blend antar-backbone → sigmoid 12-label. Latih di atas weak-label rule-based negation-aware multi-bahasa dari 4.349 studi, kalibrasi & validasi ke 57 studi gold (exclude 1 studi anomali dari audit kita).
 
-## 6. Item yang masih perlu verifikasi Anda (tidak memblokir Tahap 3, tapi penting)
+## 6. Item yang masih perlu verifikasi Anda (tidak memblokir Tahap 3, tapi penting) — **SEMUA TERJAWAB, lihat §10**
 
-1. **Rules soal LLM API eksternal & data security** — kalau Anda bisa cek browser dan ternyata diizinkan, kita bisa upgrade weak-labeler pakai LLM lokal open-weight (bukan API hosted) di kernel Kaggle sendiri — opsi ini tetap terbuka tanpa perlu kirim data keluar Kaggle sama sekali
-2. **Efficiency Prize** — saat ini saya prioritaskan skor mentah sesuai instruksi Anda; beri tahu kalau berubah pikiran
+1. ~~Rules soal LLM API eksternal & data security~~ **TERJAWAB §10** — Data Security (2.4.b) melarang transmit Competition Data (termasuk teks Report) ke pihak yang tidak ikut kompetisi; API LLM hosted eksternal termasuk pihak itu. Larangan kita sendiri sudah tepat.
+2. **Efficiency Prize** — saat ini saya prioritaskan skor mentah sesuai instruksi Anda; beri tahu kalau berubah pikiran. (Formula efficiency score & syarat kelayakan sekarang terverifikasi penuh, lihat §10.)
 
 ## 7. Dataset publik yang dipakai kompetitor (arahan 16 Agustus 2026 — "cek dataset apa yang dipakai utk naikkan skor")
 
@@ -272,3 +273,45 @@ Memperdalam §8 khusus utk dataset berisi **bobot model terlatih** (bukan label)
 Ini mengkonfirmasi: **skor tinggi di leaderboard publik (klaster ~0.89-0.93 di banyak judul kernel) sebagian besar BUKAN dari 1 arsitektur/dataset istimewa, tapi dari akumulasi ensemble 20+4 model terlatih siap-pakai + 2-3 sumber label yang di-blend** -- sebuah "meta-solusi" komunitas yang di-fork & diutak-atik ratusan kali (menjelaskan kenapa begitu banyak kernel dgn judul mirip: V38-V46, "frontier", "reproduction", dll -- semuanya varian tuning-parameter dari resep yang sama). Praktik hati-hati yang juga terlihat: beberapa versi (V40, V41) eksplisit menyebut "no visible-test tuning or identifier is used" / "hidden-test-safe" -- komunitas ini sadar & aktif menghindari overfitting ke leaderboard publik lewat pemilihan bobot blend yang tidak melihat data test.
 
 **Implikasi utk strategi kita:** kita sudah memutuskan (§8d) untuk memakai `pilkwang/rsna-knee-weights` sbg anggota ensemble independen (bukan warm-start ke backbone kita) via rank-mean, setelah pipeline inferensi kita sendiri berdiri. `tonylica/rsna2026-models` (4 model tambahan) adalah kandidat sama tapi belum cukup terdokumentasi (tidak ada manifest/fingerprint spt punya pilkwang) utk diintegrasikan dgn aman -- perlu diperiksa manual isinya (perlu `torch` utk `torch.load`, cuma bisa dilakukan di kernel Kaggle, bukan lokal) sebelum diputuskan pakai/skip.
+
+## 10. Rules resmi terverifikasi LANGSUNG dari API Kaggle (arahan lanjutan 16 Agustus 2026, "cek Rules soal data eksternal")
+
+**Ditemukan cara membaca teks resmi lengkap semua halaman kompetisi** (lihat §0) -- ini bukan lagi inferensi/sinyal tidak langsung, tapi teks asli dari `kaggle competitions pages rsna-knee-abnormality-detection list --content --format json`. Semua item yang sebelumnya "menunggu verifikasi" di §6 sekarang **terjawab pasti**.
+
+### 10a. External Data & pretrained model -- DIIZINKAN, eksplisit
+
+Halaman **Code Requirements** (paling tegas, khusus kompetisi ini):
+> - CPU Notebook <= 9 hours run-time
+> - GPU Notebook <= 9 hours run-time
+> - Internet access disabled
+> - **Freely & publicly available external data is allowed, including pre-trained models**
+> - Submission file must be named `submission.csv`
+
+Rules umum §2.6 (EXTERNAL DATA AND TOOLS) menguatkan dgn syarat yg sama: publicly available + equally accessible + no cost ke peserta lain ("the use of external data and models is acceptable unless specifically prohibited by the Host" -- kompetisi ini TIDAK melarangnya, malah eksplisit mengizinkan di atas).
+
+**Implikasi konkret:**
+- **`sohaibanwaar1203/kneemridataset`** (item STOP di §8a/8d) -- **DIIZINKAN.** Dataset Kaggle publik, gratis, sama-sama bisa diakses semua peserta -- memenuhi syarat persis. Boleh dipakai (mis. sbg data pretraining/augmentasi tambahan), dgn tetap mencantumkan atribusi ke Štajduhar et al. 2017 sesuai permintaan sumber aslinya.
+- **`pilkwang/rsna-knee-weights`, `tonylica/rsna2026-models`, dan seluruh dataset weight/label publik lain di §8-9** -- juga eksplisit **DIIZINKAN** ("including pre-trained models"), tidak perlu was-was lagi soal "solution sharing".
+- Rules §3.5.d (Private Sharing) menegaskan dari sudut lain: **"It's okay to share code if made available to all Participants on the forums"** -- publikasi Kaggle Dataset/kernel publik = persis pola ini, dan Rules §3.6.b bahkan MEMAKSA lisensi OSI-approved pada kode yg dibagi publik di kompetisi ini, terlepas dari tag lisensi yg dicantumkan uploader-nya.
+
+### 10b. Lisensi NC (marwanmath dkk.) -- bukan dilarang Rules, tapi tetap ada risiko terpisah dari lisensor asli
+
+Rules §2.5.a.4 (WINNER LICENSE) eksplisit mengantisipasi kasus ini: *"In the event that input data or pretrained models with an incompatible license are used to generate your winning solution, you do not need to grant an open source license... for that data and/or model(s)."* Jadi Kaggle **tidak melarang** dependensi berlisensi NC/incompatible -- cuma tidak memaksa kita relisensi bagian itu kalau menang. **Tapi ini beda dgn pertanyaan apakah lisensi ASLI (CC-BY-NC-SA-4.0 dari `marwanmath`) sendiri mengizinkan dipakai di kompetisi berhadiah uang** -- itu urusan lisensor, di luar kendali Rules Kaggle. **Rekomendasi tidak berubah: tetap skip, pakai RadImageNet-ResNet50 MIT-licensed milik kita sendiri** -- bukan lagi krn Rules melarang, tapi krn ini pilihan lebih bersih & tidak perlu menanggung risiko itu sama sekali padahal ada alternatif setara.
+
+### 10c. Data Security -- mengonfirmasi larangan API LLM hosted kita sendiri
+
+Rules §2.4.b: *"You agree not to transmit, duplicate, publish, redistribute or otherwise provide or make available the Competition Data to any party not participating in the Competition."* Teks laporan radiologi (`Report`) adalah Competition Data. API LLM hosted eksternal (OpenAI/Anthropic/dll di luar Kaggle) adalah "a party not participating in the Competition". **Larangan kita mengirim teks report ke API LLM hosted sudah tepat dan sekarang berdasar teks Rules langsung, bukan cuma kehati-hatian.**
+
+### 10d. Evaluasi -- 100% terkonfirmasi, bukan lagi inferensi
+
+Halaman Evaluation: *"Submissions are evaluated by the average AUC ROC between predicted confidence scores and observed targets across the twelve targets... macro-averaged AUC ROC."* Formula eksplisit: $\frac{1}{12}\sum_{i=0}^{11} AUC_i$ -- **persis** yang sudah dipakai `macro_auc()` di training loop kita sejak v1. Submission: 1 baris/studi test, header `StudyInstanceUID` + 12 kolom label, skor `[0,1]`.
+
+### 10e. Format kompetisi -- code competition, submission via Notebook, batas ketat
+
+- **Submission HARUS lewat Notebook** (bukan file upload biasa), nama file `submission.csv`.
+- **Internet HARUS mati** saat run submission (beda dari kernel R&D kita yg `enable_internet:true` -- notebook submission final NANTI wajib pakai `dataset_sources`/`model_sources` utk semua aset, tidak boleh `pip install` on-the-fly dari internet).
+- **<=9 jam runtime** (CPU maupun GPU) utk 1 run submission penuh -- termasuk decode ~1.300 studi test + seluruh inferensi ensemble. Ini batas keras yg jadi acuan desain pipeline inferensi kita nanti (mis. berapa banyak anggota ensemble & TTA window yg realistis muat dlm 9 jam).
+- Test set: **~1.300 studi**, kolom `Report` **TIDAK disediakan saat testing** -- konfirmasi bahwa pendekatan report-text (weak-labeler/LLM label) HANYA bisa dipakai utk target training, tidak pernah sbg input model saat inferensi -- sudah sesuai desain kita (gambar-only di forward pass).
+- **Deadline:** Final Submission 22 Oktober 2026, 23:59 UTC. Entry/Team Merger deadline 15 Oktober 2026.
+- **Efficiency Prize**: formula $\text{Efficiency} = \frac{AUC}{Benchmark - \max AUC} + \frac{RuntimeSeconds}{32400}$ (minimalkan), syarat: submission itu ranking di atas benchmark `sample_submission.csv` di Private LB dan termasuk salah satu Final Submission yg dipilih. Track terpisah dari leaderboard utama, konsisten dgn temuan sebelumnya di §2.
+- **Winner's obligation kalau menang**: wajib serahkan training+inference code, model weights (sbg Kaggle Dataset publik), deskripsi metodologi lengkap, & sanggup direproduksi dari deskripsi itu -- relevan utk kerapian dokumentasi kita ke depan (`PROGRESS.md`/`README.md` sudah mengarah ke sana).

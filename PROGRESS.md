@@ -158,14 +158,25 @@ Ditarik 18 kernel publik tambahan (rentang 0-344 votes) via `kaggle kernels pull
 
 **Riset lanjutan §9 (arahan "riset dataset model weights lebih dalam"):** diperiksa 6 dataset weight tambahan (`tonylica/rsna2026-models`, `mattiaangeli/rsna-knee-radimagenet-foldsv1-heads`, `sadamtorres/rsna-ft-a`/`rsna-ft-b`/`rsna-wheels`, `prvsiyan/...-radimagenet-heads-20260812`). Temuan kunci: kernel `sofiaanjenje/rsna-knee-e11-train` (dipakai 2 dari kernel top kita) punya catatan "Thank you" yang mengkonfirmasi ekosistem publik ini persis — 20 model pilkwang + 4 model tonylica + 2-3 sumber label LLM = "meta-solusi" komunitas yang di-fork ratusan kali (menjelaskan klaster skor 0.89-0.93 di banyak judul kernel). `mattiaangeli`/`prvsiyan` punya dataset head-RadImageNet yang README-nya sendiri memperingatkan soal isu NonCommercial marwanmath — konfirmasi independen bahwa kehati-hatian kita soal lisensi NC itu tepat. `tonylica/rsna2026-models` (7/18 kernel) masih unknown-license & belum terdokumentasi, belum direkomendasikan tanpa verifikasi lebih lanjut (butuh `torch.load` di kernel Kaggle, tidak bisa lokal).
 
+## 11. TEROBOSAN: teks Rules resmi lengkap terverifikasi langsung dari API Kaggle (`docs/RESEARCH_NOTES.md` §10)
+
+Ditemukan `kaggle competitions pages <slug> list --content --format json` mengembalikan teks LENGKAP semua halaman kompetisi (rules, evaluation, data-description, code requirements, dll) langsung dari API resmi — bukan scraping, sepenuhnya melewati blokir JS-rendering yang selama ini jadi kendala. **Semua item yang sebelumnya "menunggu verifikasi" sekarang terjawab pasti:**
+
+- **External data & pretrained model: DIIZINKAN eksplisit.** Halaman Code Requirements: *"Freely & publicly available external data is allowed, including pre-trained models"*. → `sohaibanwaar1203/kneemridataset` **diizinkan** (item STOP sebelumnya, sekarang terjawab). `pilkwang/rsna-knee-weights`, `tonylica/rsna2026-models`, dan seluruh dataset publik di §8-9 juga eksplisit diizinkan — tidak perlu was-was lagi soal "solution sharing" (Rules §3.5.d: "It's okay to share code if made available to all Participants on the forums").
+- **Lisensi NC (marwanmath dkk.): bukan dilarang Rules**, tapi Kaggle cuma tidak memaksa relisensi kalau menang — lisensi asli NC-nya sendiri tetap urusan terpisah. Rekomendasi tidak berubah: tetap skip, pakai RadImageNet MIT-licensed sendiri (pilihan lebih bersih, bukan krn Rules melarang).
+- **Data Security mengonfirmasi larangan API LLM hosted kita**: Rules §2.4.b melarang transmit Competition Data (termasuk teks Report) ke pihak yang tidak ikut kompetisi — sekarang berdasar teks Rules langsung, bukan cuma kehati-hatian kita.
+- **Evaluasi 100% terkonfirmasi**: macro-averaged AUC ROC, formula $\frac{1}{12}\sum AUC_i$ — persis yang sudah dipakai training loop kita sejak v1.
+- **Format kompetisi (baru diketahui)**: submission WAJIB lewat Notebook, nama file `submission.csv`, **internet HARUS mati** saat run submission (beda dari kernel R&D kita), **<=9 jam runtime** utk 1 run submission penuh (termasuk decode ~1.300 studi test + inferensi ensemble) — jadi batas keras desain pipeline inferensi nanti. Kolom `Report` **tidak disediakan saat testing** — konfirmasi pendekatan report-text cuma valid utk target training, sudah sesuai desain kita.
+- **Deadline: Final Submission 22 Oktober 2026** (23:59 UTC). Winner wajib serahkan training+inference code & model weights sbg Kaggle Dataset publik kalau menang.
+
 ## Belum dikerjakan
 
 - [ ] Tunggu hasil v7 — cek apakah val_macro_auc terus naik melewati 0.7658 atau mulai overfit
 - [ ] v8: swap label ke `flight0234/rsna-knee-hybrid-report-labels` (0.8991) — siap push begitu v7 selesai (tidak interupsi run yang sedang jalan)
-- [ ] Keputusan Anda soal 3 item STOP di atas (bagian 10)
+- [x] ~~Keputusan Anda soal 3 item STOP~~ — 2/3 terjawab via Rules resmi (§11): external data & pretrained model kompetitor lain **diizinkan eksplisit**. Sisa: `marwanmath` dkk. tetap direkomendasikan skip (bukan krn Rules, krn ada alternatif MIT lebih bersih)
 - [ ] Lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP (+MedicalNet?) sesuai `docs/RESEARCH_NOTES.md` §5/§8c — syarat baseline belajar sinyal nyata sudah terpenuhi di v6
 - [ ] Proper k-fold CV (bukan cuma 1 split gold N=57) + OOF ensemble selection
-- [ ] Belum ada pipeline inference/submission (predict ke `test_series`, format `sample_submission.csv`) — perlu dibangun sebelum submit ke leaderboard
+- [ ] Belum ada pipeline inference/submission — **sekarang ada spesifikasi keras dari Rules resmi (§11)**: wajib via Notebook, nama file `submission.csv`, internet MATI, <=9 jam runtime utk ~1.300 studi test + inferensi ensemble, kolom `Report` tidak tersedia saat testing. Perlu dibangun dgn `dataset_sources`/`model_sources` (bukan `pip install` on-the-fly) sebelum submit ke leaderboard
 - [ ] Review manual studi gold-label yang ter-flag exclude (bagian 4)
 
 ## Struktur repo
