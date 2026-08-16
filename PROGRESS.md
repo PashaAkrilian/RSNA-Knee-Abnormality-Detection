@@ -135,7 +135,20 @@ Ditemukan beberapa dataset publik berisi label hasil pembacaan LLM atas kolom `R
 
 Provenance dataset: dihasilkan oleh LLM pihak lain yang membaca kolom `Report` `train.csv` kompetisi ini secara offline, hasil dipublikasikan statis (bukan kita yang memanggil API LLM hosted) — konsisten dengan pola "LLM-offline-label" yang sudah didokumentasikan di `docs/RESEARCH_NOTES.md` §1 dan tidak melanggar larangan API LLM hosted untuk memproses data pasien.
 
-**v7 — naikkan `EPOCHS` 3→8, `BATCH_STUDIES` 4→8 (mendekati pola kompetitor top: EPOCHS=10/BATCH_STUDIES=8), sudah di-push, sedang berjalan.** Checkpoint tetap disimpan berdasar val_macro_auc terbaik (bukan epoch terakhir) — aman kalau epoch belakangan mulai overfit.
+**v7 — naikkan `EPOCHS` 3→8, `BATCH_STUDIES` 4→8 (mendekati pola kompetitor top: EPOCHS=10/BATCH_STUDIES=8). SELESAI, ~4,73 jam.**
+
+| epoch | train_loss | val_macro_auc | |
+|---|---|---|---|
+| 1 | 0.5697 | 0.6976 | checkpoint |
+| 2 | 0.5227 | 0.7387 | checkpoint |
+| 3 | 0.5002 | 0.7592 | checkpoint |
+| 4 | 0.4822 | 0.7709 | checkpoint |
+| 5 | 0.4653 | 0.7682 | turun, tidak disimpan |
+| 6 | 0.4490 | 0.7794 | checkpoint |
+| 7 | 0.4314 | **0.7811** | checkpoint (**BEST**) |
+| 8 | 0.4125 | 0.7625 | turun cukup jauh — overfitting mulai signifikan |
+
+**Best val macro AUC: 0.7811** (naik dari 0.7658 di v6, +0.0153) — checkpoint tersimpan otomatis di epoch 7, epoch 8 yang lebih buruk tidak menimpa. **Overfitting mulai kelihatan jelas di epoch 8** (train_loss terus turun 0.4314→0.4125 tapi val_auc malah turun 0.7811→0.7625) — konfirmasi guard "simpan checkpoint terbaik, bukan terakhir" itu penting & terbukti berguna. Kesimpulan: menaikkan epoch+batch dari backbone tunggal DINOv2-base memberi kenaikan modest (+2%), diminishing returns terlihat jelas sekitar epoch 6-7 — sesuai perkiraan §8c bahwa lompatan skor berikutnya lebih mungkin datang dari label lebih baik + ensemble multi-backbone drpd sekadar epoch lebih banyak di 1 backbone.
 
 ## 10. Riset lanjutan: ekosistem dataset publik kompetitor top (`docs/RESEARCH_NOTES.md` §8)
 
