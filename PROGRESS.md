@@ -210,6 +210,16 @@ Ensemble komunitas genuinely lebih baik dari model kita saat ini (unfreeze cuma 
 
 Langkah berikutnya (v2 kernel ini): tambah prediksi model kita sendiri (dari `kaggle_kernel_modeling`) + arm RadImageNet-ResNet50 (MIT, bukan `marwanmath` NC-licensed), gabung via rank-mean dgn bobot dipilih nested-CV di 57 gold — persis resep 0.912-0.916.
 
+## 14. Mencari bukti skor di atas 0.916 (`docs/RESEARCH_NOTES.md` §14)
+
+Arahan: riset lebih dalam demi melewati skor 0.950. Dicari kernel dgn klaim 0.92-0.95 di judul (`nikhil00718/rsna-knee-0-95-dinov2-v2`, `ranjithragavan07/rsna-knee-dinov2-0-93`, `ieshanmeghani/rsna-knee-v41-dinov3-e10-alpha060`).
+
+**Temuan kunci**: beda dgn kernel "reproduction" 0.912/0.916 yg mencantumkan sitasi submission Kaggle selesai (bisa diverifikasi), klaim 0.93/0.95 di kernel-kernel ini **tidak** disitasi dgn submission nyata — tampak aspirasional (penulis `nikhil00718` sendiri menulis "leaderboard improvement is plausible but cannot be guaranteed"). **Tidak ketemu bukti tervalidasi skor publik di atas 0.916.**
+
+**Teknik baru yg genuinely berguna** (terlepas dari validitas klaim skor): arm DINOv3 ViT-S/16 tambahan (dilatih sendiri, bukan Kaggle Model resmi — perlu cek sumber sebelum ditiru), agregasi cross-attention penuh atas SEMUA token semua series dlm 1 studi (lebih ekspresif drpd slot-mean kita), **greedy checkpoint soup** (rata-rata beberapa checkpoint terbaik), fold dikelompokkan per hash-laporan (konfirmasi independen lagi dari §11d.6).
+
+**Kesimpulan jujur**: tidak ada jalan pintas terverifikasi ke atas 0.950. Tim top-20 kemungkinan besar kombinasi teknik-teknik di atas dieksekusi lebih matang, bukan 1 trik rahasia. Jalur realistis tetap: bangun ensemble kita setinggi mungkin, dapat submission nyata, iterasi berdasar gap yang benar-benar terlihat.
+
 ## Belum dikerjakan
 
 - [ ] Tunggu hasil v7 — cek apakah val_macro_auc terus naik melewati 0.7658 atau mulai overfit
