@@ -182,7 +182,13 @@ Ditemukan `kaggle competitions pages <slug> list --content --format json` mengem
 - **Format kompetisi (baru diketahui)**: submission WAJIB lewat Notebook, nama file `submission.csv`, **internet HARUS mati** saat run submission (beda dari kernel R&D kita), **<=9 jam runtime** utk 1 run submission penuh (termasuk decode ~1.300 studi test + inferensi ensemble) — jadi batas keras desain pipeline inferensi nanti. Kolom `Report` **tidak disediakan saat testing** — konfirmasi pendekatan report-text cuma valid utk target training, sudah sesuai desain kita.
 - **Deadline: Final Submission 22 Oktober 2026** (23:59 UTC). Winner wajib serahkan training+inference code & model weights sbg Kaggle Dataset publik kalau menang.
 
-**v8 — ganti label ke `flight0234/rsna-knee-hybrid-report-labels` (0.8991, lebih baik dari 0.8927) + turunkan `EPOCHS` 8→6 (v7 sudah overfitting jelas di epoch 8). Sudah di-push, sedang berjalan** — estimasi ~3,5 jam (6/8 dari waktu v7).
+**v8 — ganti label ke `flight0234/rsna-knee-hybrid-report-labels` (0.8991, lebih baik dari 0.8927) + turunkan `EPOCHS` 8→6.** Sempat ERROR (filter `source` tidak ke-update setelah rename kolom — sudah diperbaiki + ditambah assert fail-fast). Push ulang sbg v9, **sedang berjalan**.
+
+## 12. Kernel ensemble baru: 20-model komunitas (`kaggle_kernel_ensemble/`)
+
+Implementasi pertama menuju resep 0.912-0.916 (`docs/RESEARCH_NOTES.md` §12). Kode decode+model+inferensi disalin ~verbatim dari `pilkwang/rsna-knee-baseline-v1` (CC0-1.0, legal — Rules §10), diadaptasi supaya baca dari `train_series` + filter ke 57 studi gold kita (bukan `test_series` stub 3-studi bawaan kompetisi) — dapat macro AUC ensemble 20-model DINOv2-small komunitas, apple-to-apple dgn `val_macro_auc` kita sendiri. **Sudah di-push, sedang berjalan paralel dgn kernel modeling v9.** Sempat gagal push krn Kaggle API menolak judul tertentu (400 Bad Request, tampaknya flaky/tidak deterministik terkait teks judul + rate limit push beruntun — diselesaikan dgn judul lebih sederhana, bukan masalah isi notebook).
+
+Langkah berikutnya (v2 kernel ini): tambah prediksi model kita sendiri (dari `kaggle_kernel_modeling`) + arm RadImageNet-ResNet50 (MIT, bukan `marwanmath` NC-licensed), gabung via rank-mean dgn bobot dipilih nested-CV di 57 gold — persis resep 0.912-0.916.
 
 ## Belum dikerjakan
 
