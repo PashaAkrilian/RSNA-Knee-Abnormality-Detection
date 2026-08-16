@@ -186,7 +186,27 @@ Ditemukan `kaggle competitions pages <slug> list --content --format json` mengem
 
 ## 12. Kernel ensemble baru: 20-model komunitas (`kaggle_kernel_ensemble/`)
 
-Implementasi pertama menuju resep 0.912-0.916 (`docs/RESEARCH_NOTES.md` §12). Kode decode+model+inferensi disalin ~verbatim dari `pilkwang/rsna-knee-baseline-v1` (CC0-1.0, legal — Rules §10), diadaptasi supaya baca dari `train_series` + filter ke 57 studi gold kita (bukan `test_series` stub 3-studi bawaan kompetisi) — dapat macro AUC ensemble 20-model DINOv2-small komunitas, apple-to-apple dgn `val_macro_auc` kita sendiri. **Sudah di-push, sedang berjalan paralel dgn kernel modeling v9.** Sempat gagal push krn Kaggle API menolak judul tertentu (400 Bad Request, tampaknya flaky/tidak deterministik terkait teks judul + rate limit push beruntun — diselesaikan dgn judul lebih sederhana, bukan masalah isi notebook).
+Implementasi pertama menuju resep 0.912-0.916 (`docs/RESEARCH_NOTES.md` §12). Kode decode+model+inferensi disalin ~verbatim dari `pilkwang/rsna-knee-baseline-v1` (CC0-1.0, legal — Rules §10), diadaptasi supaya baca dari `train_series` + filter ke 57 studi gold kita (bukan `test_series` stub 3-studi bawaan kompetisi). Sempat gagal push krn Kaggle API menolak judul tertentu (400 Bad Request, flaky, diselesaikan dgn judul lebih sederhana, bukan masalah isi notebook). **SELESAI ~6 menit — tapi hasil pertama SALAH (bug leakage kita sendiri), lihat §13.**
+
+## 13. Bug leakage kritis + macro AUC ensemble komunitas yang benar (`docs/RESEARCH_NOTES.md` §13)
+
+Kernel ensemble v1 selesai lancar (0 error, semua 20 fingerprint checkpoint cocok), tapi hasilnya **macro AUC 0.9954** — hampir sempurna, jelas tidak masuk akal (klaim publik pilkwang cuma 0.891 di leaderboard sungguhan). **Root cause ditemukan & diverifikasi sendiri**: tiap dari 20 model punya `fold` assignment (k-fold CV) dan sudah dilatih pakai sebagian besar studi gold kita (satu-satunya ground truth asli yg ada) — menjalankan SEMUA 20 model ke SEMUA 57 gold & rata-ratakan = tiap studi diskor oleh model yg SUDAH HAFAL jawabannya (bukan evaluasi, kebocoran murni).
+
+**Perbaikan**: paket `pilkwang/rsna-knee-weights` ternyata sudah menyediakan `oof.npz` — prediksi out-of-fold RESMI (tiap studi diskor cuma oleh model yg fold-nya benar-benar exclude studi itu), siap pakai utk seluruh 4.407 studi training. Diukur ulang pakai ini (bukan live-inference kernel v1 kita):
+
+**Macro AUC (leak-free, 57 gold kita): 0.8360** — MCL 0.875, Effusion 0.940, Baker's 0.954 tinggi; Lateral Meniscus 0.632, Synovitis 0.735 lemah. Jauh lebih masuk akal & dekat klaim publik 0.891 (selisih konsisten dgn kalibrasi lokal-vs-leaderboard §11b).
+
+**Perbandingan baseline sejauh ini:**
+
+| sumber | macro AUC (57 gold, leak-free) |
+|---|---:|
+| Model kita v6 (DINOv2-base, 3 epoch) | 0.7658 |
+| Model kita v7 (DINOv2-base, 8 epoch, overfit epoch 8) | 0.7811 |
+| **Ensemble komunitas 20-model pilkwang (OOF resmi)** | **0.8360** |
+
+Ensemble komunitas genuinely lebih baik dari model kita saat ini (unfreeze cuma 2 blok vs mereka 6 blok, 3-8 epoch vs mereka 60 epoch/model) — konfirmasi arah blend (bukan buang model kita, tapi gabung) tetap tepat, krn diversitas arsitektur/pipeline masih bernilai (§11d.3) walau model kita sendiri belum sekuat punya mereka satu-satu.
+
+**Pelajaran metodologi** (menegaskan lagi §11d.4, sekarang lewat kesalahan sendiri bukan cuma baca): jangan pernah evaluasi model pihak lain ke sample yg overlap training mereka kecuali ada bukti exclusion eksplisit; kalau paket eksternal sudah sediakan OOF resmi, PAKAI ITU — jangan re-infer sendiri (lebih murah & otomatis benar).
 
 Langkah berikutnya (v2 kernel ini): tambah prediksi model kita sendiri (dari `kaggle_kernel_modeling`) + arm RadImageNet-ResNet50 (MIT, bukan `marwanmath` NC-licensed), gabung via rank-mean dgn bobot dipilih nested-CV di 57 gold — persis resep 0.912-0.916.
 

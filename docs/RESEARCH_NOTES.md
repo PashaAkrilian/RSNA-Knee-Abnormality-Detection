@@ -441,3 +441,34 @@ Kita SEKARANG (setelah §10-11) tahu persis resep 0.912-0.916, dan semua bahanny
 5. Per-target gate: cek tiap label, jangan blend kalau regresi (pola `Baker's`/`Fracture` di atas).
 
 Ini realistis membawa kita ke **kisaran 0.90-0.92** relatif cepat (basis komunitas legal + arm tambahan milik sendiri), dan kombinasi dgn item lain di §11e (fine-tune lebih dalam, k-fold proper, per-target specialist tervalidasi, E11-style diversitas piksel) adalah jalur paling masuk akal utk mendekati/melewati klaster top-20 (0.934+).
+
+## 13. Bug leakage kritis di percobaan pertama kita sendiri + cara benar (17 Agustus 2026)
+
+**Percobaan pertama** (`kaggle_kernel_ensemble` v1): jalankan SEMUA 20 model paket `pilkwang/rsna-knee-weights` ke SEMUA 57 studi gold kita, rank-mean. Hasil: **macro AUC 0.9954** — hampir sempurna, banyak label persis 1.000.
+
+**Ini SALAH, bukan pencapaian.** Root cause: tiap dari 20 model punya `fold` assignment (k-fold CV, field `fold: 0-4` di `manifest.json`) — artinya tiap model dilatih pakai ~4/5 data (termasuk sebagian studi gold, krn gold adalah SATU-SATUNYA ground truth asli yg tersedia utk siapa pun berlatih dgnnya) dan cuma held-out dari 1/5 fold-nya sendiri. Menjalankan SEMUA 20 model ke SEMUA 57 studi & rata-ratakan berarti tiap studi gold diskor oleh ~16 dari 20 model yg SUDAH PERNAH MELIHAT studi itu saat training mereka — bukan evaluasi, tapi menanyakan jawaban ke murid yg sudah hafal soalnya sendiri. Field `manifest.json` per-member `holdout: 0.838` (skor OOF jujur mereka sendiri) langsung membocorkan bahwa 0.9954 mustahil benar.
+
+**Perbaikan**: paket `pilkwang/rsna-knee-weights` TERNYATA sudah menyediakan `oof.npz` — prediksi **out-of-fold resmi** (tiap studi diskor HANYA oleh model yg fold-nya meng-exclude studi itu dari training), utk seluruh 4.407 studi training, siap pakai (`ids`, `pred`, `gold_mask`, `targets`). Diukur ulang pakai `oof.npz["pred"]` (bukan live-inference 20-model kita sendiri) terhadap 57 gold kita:
+
+| label | AUC (OOF resmi, leak-free) |
+|---|---:|
+| ACL | 0.8649 |
+| MCL | 0.8750 |
+| Medial Meniscus | 0.8462 |
+| Lateral Meniscus | 0.6317 |
+| Medial OA | 0.9492 |
+| Lateral OA | 0.7055 |
+| PF OA | 0.7976 |
+| Effusion | 0.9403 |
+| Synovitis | 0.7346 |
+| Baker's | 0.9537 |
+| Contusion | 0.8407 |
+| Fracture | 0.8932 |
+| **MACRO** | **0.8360** |
+
+**Jauh lebih masuk akal** — dekat dgn klaim publik pilkwang (0.891 di leaderboard sungguhan), dan cocok dgn kalibrasi +0.04 dari §11b (0.836 + 0.04 ≈ 0.876, dalam jangkauan wajar 0.891 mengingat gold-N kecil & noisy). **Angka inilah yang valid dipakai sbg baseline "ensemble komunitas" utk dibandingkan/di-blend dgn model kita sendiri** — bukan 0.9954.
+
+**Implikasi metodologi (langsung menegaskan lagi pelajaran §11d.4 dari sadamtorres, sekarang dibuktikan lewat kesalahan kita sendiri, bukan cuma dibaca):**
+1. **Jangan pernah evaluasi model pihak lain terhadap sample yg overlap dgn training mereka**, kecuali punya bukti eksplisit exclusion (fold assignment, holdout flag) DAN benar-benar dipakai saat scoring — bukan diasumsikan.
+2. **Kalau paket eksternal menyediakan OOF resmi (`oof.npz` di sini) — PAKAI ITU, jangan re-infer sendiri.** Lebih murah (tidak perlu decode+forward-pass ulang di Kaggle), dan otomatis benar krn metodologi exclusion-nya sudah mereka desain dgn benar sejak awal.
+3. Utk v2 ensemble (blend dgn model kita + arm RadImageNet), sumber prediksi pilkwang yg dipakai adalah **`oof.npz["pred"]` utk 4.349 studi non-gold** (target training/blend-weight-selection) **bukan** hasil live-inference kernel v1 kita yg dibuang krn bocor.
