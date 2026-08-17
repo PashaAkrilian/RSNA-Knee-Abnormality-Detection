@@ -1,7 +1,11 @@
-epoch,train_loss,val_macro_auc
-1,0.5704,0.7343
-2,0.5234,0.7608
-3,0.4979,0.7738
-4,0.4737,0.7886
-5,0.4473,0.7895
-6,0.4196,0.8195
+epoch,train_loss,val_macro_auc,note
+1,0.5704,0.7343,v11 dari-nol
+2,0.5234,0.7608,v11 dari-nol
+3,0.4979,0.7738,v11 dari-nol
+4,0.4737,0.7886,v11 dari-nol
+5,0.4473,0.7895,v11 dari-nol
+6,0.4196,0.8195,v11 dari-nol BEST
+7,0.3889,0.8096,v12 resume epoch1 (turun dari checkpoint)
+8,0.3604,0.7988,v12 resume epoch2 (turun lagi)
+9,0.3362,0.8016,v12 resume epoch3
+10,0.3171,0.8182,v12 resume epoch4 (mendekati tp blm lampaui 0.8195)

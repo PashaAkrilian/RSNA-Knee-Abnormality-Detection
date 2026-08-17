@@ -286,11 +286,28 @@ Sesuai arahan Anda ("pakai checkpoint agar tidak mengulang train, hemat waktu").
 - **Perubahan kode**: `CKPT_DIR` discovery (`find_dir_containing("best_model.pt", "modeling")`), load `state_dict` ke model sebelum training loop, `best_auc` awal di-set ke 0,8195 (skor checkpoint) supaya tidak pernah tertimpa hasil lebih buruk, `EPOCHS=4` (tambahan, bukan dari nol), `SAFETY_CUTOFF_SECONDS` diperketat ke 3,5 jam (dari 7,5 jam) menyesuaikan sisa kuota.
 - Sudah **di-push (versi 12) & sedang berjalan**. Kuota GPU saat push: 25,87h terpakai, 4,13h sisa.
 
-**Pelajaran operasional baru**: (1) log API Kaggle di environment ini bisa kosong TOTAL selama berjam-jam (v11 kosong ~4,5 jam) padahal kernel genuinely aktif — dikonfirmasi via `kaggle quota` (kuota GPU terus naik konsisten selama itu); verifikasi via delta kuota GPU jauh lebih andal drpd cuma `kaggle kernels logs`/`status` saat curiga hang. (2) `kaggle kernels output` bisa gagal berulang utk file besar (>300MB) krn koneksi lokal — kalau butuh transfer file besar antar-kernel, self-reference/`kernel_sources` (server-side) lebih andal drpd download-lokal-lalu-upload-ulang.
+**Pelajaran operasional baru**: (1) log API Kaggle di environment ini bisa kosong TOTAL selama berjam-jam (v11 kosong ~4,5 jam) padahal kernel genuinely aktif — dikonfirmasi via `kaggle quota` (kuota GPU terus naik konsisten selama itu); verifikasi via delta kuota GPU jauh lebih andal drpd cuma `kaggle kernels logs`/`status` saat curiga hang. (2) `kaggle kernels output` bisa gagal berulang utk file besar (>300MB) krn koneksi lokal — kalau butuh transfer file besar antar-kernel, self-reference/`kernel_sources` (server-side) lebih andal drpd download-lokal-lalu-upload-ulang. (3) **Kaggle mengizinkan sesi yang sudah berjalan melebihi kuota mingguan** — kuota `used` naik sampai 30,30h (>30h nominal), `remaining` cuma floor di 0,00h, tapi kernel TIDAK di-force-stop, dibiarkan selesai normal.
+
+**v12 SELESAI (~4,51 jam) — self-reference checkpoint BERHASIL SEMPURNA, tapi hasil trainingnya JADI PELAJARAN PENTING:**
+
+Log konfirmasi: `"RESUME: checkpoint v11 dimuat... (val_macro_auc sebelumnya: 0.8195)"` — pola self-reference `kernel_sources` tervalidasi, bisa dipakai lagi ke depan utk resume training murah.
+
+| epoch | train_loss | val_macro_auc |
+|---|---|---:|
+| v11 ep6 (checkpoint awal) | 0,4196 | **0,8195** |
+| v12 ep1 | 0,3889 | 0,8096 (turun) |
+| v12 ep2 | 0,3604 | 0,7988 (turun lebih jauh) |
+| v12 ep3 | 0,3362 | 0,8016 |
+| v12 ep4 | 0,3171 | 0,8182 (mendekati tp blm lampaui) |
+
+**Tidak ada epoch v12 yang mengalahkan 0,8195** — guard `best_auc = 0,8195 if RESUMED` bekerja sempurna, checkpoint final TETAP v11 (0,8195), TIDAK rusak. Tapi **train_loss terus turun tajam sementara val_macro_auc turun/stagnan — pola OVERFITTING klasik**. Kesimpulan: v11 (6 epoch dari nol, LR head=1e-3/backbone=8e-6 konstan) sudah mendekati titik optimal utk konfigurasi ini; melanjutkan dgn LR sama (tanpa decay) bikin model makin hafal weak-label training set, bukan makin generalize ke gold. **"Epoch lebih banyak dgn config sama" bukan lagi jalan maju yang tepat** — perlu LR scheduler/decay, atau strategi berbeda (k-fold, per-target specialist, ensemble).
+
+**Model final terbaik sejauh ini: val_macro_auc 0,8195** (checkpoint v11, backbone tunggal DINOv2-base, unfreeze 6 blok). Kuota GPU sudah overrun — TIDAK push eksperimen baru sampai ada arahan Anda soal langkah selanjutnya atau kuota refresh (22 Agustus 2026).
 
 ## Belum dikerjakan
 
-- [ ] Tunggu hasil v12 — apakah resume+4 epoch tambahan naikkan val_macro_auc lebih jauh dari 0,8195?
+- [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
+- [ ] **Keputusan Anda**: strategi berikutnya menuju 0,950 — opsi: (a) LR scheduler/decay utk lanjutkan fine-tune v11 lebih hati-hati, (b) k-fold CV + OOF ensemble selection, (c) blend model kita (0,8195) + ensemble komunitas (0,8360) + arm RadImageNet via nested-CV (resep 0,912-0,916 yg diriset), (d) per-target specialist utk label lemah. Kuota GPU overrun, tunggu refresh atau arahan Anda dulu sebelum eksperimen berikutnya.
 - [ ] Verifikasi pola self-reference `kernel_sources` benar2 berhasil memuat checkpoint (cek log "RESUME: checkpoint v11 dimuat" begitu ada) — kalau gagal, ada fallback `[warn] CKPT_DIR tidak ketemu` yg training dari nol (bukan crash, tapi berarti eksperimen resume gagal & butuh pendekatan lain)
 - [ ] **Keputusan Anda soal API LLM hosted sudah DIJAWAB** (dilonggarkan, §16) — implementasi relabeling ditunda dulu, fokus ke single-model dulu sesuai arahan terbaru
 - [ ] Koordinasi dgn tim (kolaborator `nxtirfan` dkk.) soal submission — tim sudah di 0.914, jangan boros kuota 5x/hari
