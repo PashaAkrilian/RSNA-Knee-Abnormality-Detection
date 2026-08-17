@@ -408,7 +408,7 @@ The major stages of the workflow are implemented as separate Kaggle kernels:
 | Exhaustive Audit | [RSNA Knee DICOM Full Exhaustive Audit](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-dicom-full-exhaustive-audit) |
 | Preprocessing | [RSNA Knee Preprocessing Pipeline](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-preprocessing-pipeline) |
 | Weak Labeling | [RSNA Knee Weak Labeler from Reports](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-weak-labeler-from-reports) |
-| Modeling | [RSNA Knee Modeling v1 — DINOv2](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-modeling-v1-dinov2) |
+| Modeling | [RSNA Knee Modeling v10 — DINOv2, unfreeze6 + split-LR](https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-modeling-v10-unfreeze6-split-lr) |
 
 ---
 

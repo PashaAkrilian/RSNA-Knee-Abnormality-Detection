@@ -1,6 +1,6 @@
 {
-  "id": "dimaspashaakrilian/rsna-knee-modeling-v1-dinov2",
-  "title": "RSNA Knee - Modeling v8 DINOv2 (label hybrid flight0234)",
+  "id": "dimaspashaakrilian/rsna-knee-modeling-v10-unfreeze6-split-lr",
+  "title": "RSNA Knee - Modeling v10 unfreeze6 split-lr",
   "code_file": "rsna_knee_modeling.ipynb",
   "language": "python",
   "kernel_type": "notebook",
