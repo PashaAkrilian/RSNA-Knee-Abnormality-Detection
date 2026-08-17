@@ -1,0 +1,18 @@
+Label training: flight0234/rsna-knee-hybrid-report-labels (0.8991 macro AUC vs gold),
+confidence eksplisit (__conf) sbg bobot BCE. EPOCHS=6, BATCH_STUDIES=8, LR=1e-4.
+
+[t=  163.4s] DATA_OK = True (fraksi gambar kosong: train=0.0%, val=0.0%)
+
+EPOCH 1/6 selesai. train_loss=0.5779 val_macro_auc=0.6938  -> checkpoint disimpan
+EPOCH 2/6 selesai. train_loss=0.5306 val_macro_auc=0.7396  -> checkpoint disimpan
+EPOCH 3/6 selesai. train_loss=0.5087 val_macro_auc=0.7630  -> checkpoint disimpan
+EPOCH 4/6 selesai. train_loss=0.4897 val_macro_auc=0.7757  -> checkpoint disimpan
+EPOCH 5/6 selesai. train_loss=0.4721 val_macro_auc=0.7760  -> checkpoint disimpan
+EPOCH 6/6 selesai. train_loss=0.4539 val_macro_auc=0.7902  -> checkpoint disimpan (BEST)
+
+SELESAI TRAINING. Best val macro AUC: 0.7902 (epoch 6)
+Total wall time: ~12570s (~3.49 jam)
+
+Catatan: naik MONOTON di semua 6 epoch (tidak ada overfitting dip spt v7 di epoch 8) --
+konsisten dgn hipotesis bahwa label lebih baik (flight0234 hybrid + confidence eksplisit)
++ EPOCHS lebih pendek (6 drpd 8) sama-sama membantu.

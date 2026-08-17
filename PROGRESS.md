@@ -220,6 +220,25 @@ Arahan: riset lebih dalam demi melewati skor 0.950. Dicari kernel dgn klaim 0.92
 
 **Kesimpulan jujur**: tidak ada jalan pintas terverifikasi ke atas 0.950. Tim top-20 kemungkinan besar kombinasi teknik-teknik di atas dieksekusi lebih matang, bukan 1 trik rahasia. Jalur realistis tetap: bangun ensemble kita setinggi mungkin, dapat submission nyata, iterasi berdasar gap yang benar-benar terlihat.
 
+## 15. v9 SELESAI (0.7902) + TEMUAN KRITIS: tim sudah punya riwayat submission sampai 0.914
+
+**v9 (label hybrid flight0234 + confidence eksplisit, EPOCHS=6): SELESAI, ~3,49 jam.** Val macro AUC naik **monoton** di semua 6 epoch (tidak ada overfitting dip spt v7):
+
+| epoch | train_loss | val_macro_auc |
+|---|---|---:|
+| 1 | 0.5779 | 0.6938 |
+| 2 | 0.5306 | 0.7396 |
+| 3 | 0.5087 | 0.7630 |
+| 4 | 0.4897 | 0.7757 |
+| 5 | 0.4721 | 0.7760 |
+| 6 | 0.4539 | **0.7902** (BEST) |
+
+Naik dari v7 (0.7811) dan v6 (0.7658) — label lebih baik + epoch lebih pendek sama-sama membantu, tanpa overfitting kali ini. Masih di bawah ensemble komunitas (0.8360).
+
+**TEMUAN KRITIS (17 Agustus 2026, saat mau submit resep pilkwang-sendirian utk kalibrasi)**: dicek `kaggle competitions submissions` sebelum submit — **tim kita SUDAH PUNYA 30+ submission sejak 6 Agustus 2026**, jauh sebelum sesi kerja hari ini. Progres skor publik tim: 0.768→0.774 (6 Agu) → 0.891 (8 Agu, pilkwang baseline) → 0.896-0.899 (9-12 Agu) → 0.909-0.911 (13-15 Agu) → **0.914 (16 Agu, TERBAIK saat ini)**. Notebook yang di-submit persis notebook publik yang sama yang kita riset hari ini (pilkwang baseline, prvsiyan, DINOsaur V2, Bend the Knee DinoV3, enhanced-ensemble, frontier v46) — dikerjakan pihak lain (kemungkinan terkait kolaborator `nxtirfan` yg ditemukan menulis ulang README, §14 sebelumnya).
+
+**Implikasi**: skor terbaik TIM (0.914) jauh lebih tinggi drpd perkiraan submission pilkwang-sendirian (~0.891) yang sedang saya siapkan, dan gap ke target (0.950) cuma 0.036 — jauh lebih dekat dari yang saya kira sebelumnya. **BELUM jadi submit** submission pilkwang-sendirian (nilainya rendah drpd yang sudah ada + submission harian dibatasi 5x/hari UTK SELURUH TIM, bukan per orang) — menunggu arahan user soal koordinasi dgn kerja tim yang sudah ada.
+
 ## Belum dikerjakan
 
 - [ ] Tunggu hasil v7 — cek apakah val_macro_auc terus naik melewati 0.7658 atau mulai overfit
