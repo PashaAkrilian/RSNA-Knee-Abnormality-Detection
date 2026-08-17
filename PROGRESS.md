@@ -251,6 +251,8 @@ Naik dari v7 (0.7811) dan v6 (0.7658) — label lebih baik + epoch lebih pendek 
 
 **Isu lisensi NC RadImageNet masih terbuka di komunitas juga** (735121, belum dijawab host) — menguatkan keputusan kita skip `marwanmath`.
 
+**Keputusan Anda (17 Agustus 2026): restriksi API LLM hosted DILONGGARKAN** — "kalau tidak melanggar aturan, buka" — sudah dikonfirmasi ruling resmi host (733965) mengizinkan, jadi syaratnya terpenuhi. **Konstrain lama diganti**: sekarang boleh pakai API LLM hosted (OpenAI/Anthropic/dll) utk memproses report text, SELAMA layanannya "reasonably accessible & minimal cost" ke semua peserta (syarat Rules §2.6.b) — bukan lagi larangan mutlak. Praktiknya butuh API key (disimpan sbg Kaggle Secret) utk dipakai di kernel — menunggu konfirmasi/API key dari Anda kalau mau benar-benar diimplementasikan (relabeling ulang 4.349 studi non-gold), atau bisa juga tetap pakai label publik terbaik yang sudah ada (flight0234, 0.8991) sambil fokus ke pengungkit lain dulu (single model kuat, per §16 di atas).
+
 ## Belum dikerjakan
 
 - [ ] **Keputusan Anda**: longgarkan restriksi API LLM hosted? (§16, ruling resmi host baru ditemukan)
