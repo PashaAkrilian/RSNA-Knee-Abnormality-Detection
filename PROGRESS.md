@@ -239,14 +239,26 @@ Naik dari v7 (0.7811) dan v6 (0.7658) — label lebih baik + epoch lebih pendek 
 
 **Implikasi**: skor terbaik TIM (0.914) jauh lebih tinggi drpd perkiraan submission pilkwang-sendirian (~0.891) yang sedang saya siapkan, dan gap ke target (0.950) cuma 0.036 — jauh lebih dekat dari yang saya kira sebelumnya. **BELUM jadi submit** submission pilkwang-sendirian (nilainya rendah drpd yang sudah ada + submission harian dibatasi 5x/hari UTK SELURUH TIM, bukan per orang) — menunggu arahan user soal koordinasi dgn kerja tim yang sudah ada.
 
+## 16. Discussion tab — sumber baru jauh lebih berharga (`docs/RESEARCH_NOTES.md` §15)
+
+`kaggle competitions topics list` + `topic-messages` (belum dipakai sepanjang sesi) buka akses ke Discussion tab, isinya lebih bernilai dari Code tab utk pertanyaan strategis — ada komentar host resmi & pengakuan skor asli peserta (bukan klaim judul kernel).
+
+**RULING RESMI HOST (733965): API LLM hosted TERNYATA DIIZINKAN** — *"submitting Competition Data, including report text, to an external LLM or API for inference... will not, by itself, be considered prohibited PRIVATE SHARING."* Ini membalik asumsi kerja kita sejak awal proyek. **Item keputusan Anda**: mau dilonggarkan sekarang restriksi "jangan pakai API LLM hosted"? Relevan krn kualitas label masih pengungkit besar (lihat di bawah).
+
+**Single model bisa capai 0.92-0.934 — ensemble 20+ model BUKAN keharusan.** Thread "Best single-model score" (735304): pengakuan skor asli — 0.915 single DINOv2, **0.934 single model @224px** (resolusi sama persis dgn kita!), 0.92 di 5-fold (bukan 20+). Komentar penting: *"Highly doubt the top results are ensembles... Public notebooks just ensemble early on to try and get a high leaderboard score and exposure/kudos. Waste of time IMO."* — ekosistem 20-model publik yang kita riset mungkin BUKAN jalan tim top-20 sungguhan, cuma "kudos farming". **Implikasi besar**: mungkin lebih bernilai investasi ke 1 model kuat (fine-tune dalam, k-fold proper) drpd terus kejar ensemble komunitas yang levelnya cuma ~0.89-0.916.
+
+**Teknik sampling slice lebih baik ("3+3+3")**: dari thread "Scaling encoder bought us nothing" (735154) — 3 anchor merata di jendela tengah stack, ambil 3 slice fisik berdekatan per anchor (3×3=9) jadi channel R/G/B — representasi ~10mm depth neighbourhood asli, lebih canggih dari K_SLICE=4 subsample rata-rata yang kita pakai. Kandidat upgrade konkret. Juga dikonfirmasi lagi: DINOv2-small→base cuma +0.0011 (noise floor 0.0020) — kapasitas model bukan pengungkit.
+
+**Isu lisensi NC RadImageNet masih terbuka di komunitas juga** (735121, belum dijawab host) — menguatkan keputusan kita skip `marwanmath`.
+
 ## Belum dikerjakan
 
-- [ ] Tunggu hasil v7 — cek apakah val_macro_auc terus naik melewati 0.7658 atau mulai overfit
-- [ ] v8: swap label ke `flight0234/rsna-knee-hybrid-report-labels` (0.8991) — siap push begitu v7 selesai (tidak interupsi run yang sedang jalan)
-- [x] ~~Keputusan Anda soal 3 item STOP~~ — 2/3 terjawab via Rules resmi (§11): external data & pretrained model kompetitor lain **diizinkan eksplisit**. Sisa: `marwanmath` dkk. tetap direkomendasikan skip (bukan krn Rules, krn ada alternatif MIT lebih bersih)
-- [ ] Lanjut ke ensemble RadImageNet-ResNet50 + BiomedCLIP (+MedicalNet?) sesuai `docs/RESEARCH_NOTES.md` §5/§8c — syarat baseline belajar sinyal nyata sudah terpenuhi di v6
-- [ ] Proper k-fold CV (bukan cuma 1 split gold N=57) + OOF ensemble selection
-- [ ] Belum ada pipeline inference/submission — **sekarang ada spesifikasi keras dari Rules resmi (§11)**: wajib via Notebook, nama file `submission.csv`, internet MATI, <=9 jam runtime utk ~1.300 studi test + inferensi ensemble, kolom `Report` tidak tersedia saat testing. Perlu dibangun dgn `dataset_sources`/`model_sources` (bukan `pip install` on-the-fly) sebelum submit ke leaderboard
+- [ ] **Keputusan Anda**: longgarkan restriksi API LLM hosted? (§16, ruling resmi host baru ditemukan)
+- [ ] Pertimbangkan investasi ke 1 model kuat (224px, fine-tune dalam, k-fold proper, sampling 3+3+3) drpd cuma ikuti ensemble komunitas — bukti dari Discussion single model bisa 0.92-0.934
+- [ ] Koordinasi dgn tim (kolaborator `nxtirfan` dkk.) soal submission — tim sudah di 0.914, jangan boros kuota 5x/hari
+- [ ] Bangun v2 ensemble: blend model kita (v9=0.7902) + `oof.npz` pilkwang + arm RadImageNet-ResNet50 (MIT), bobot nested-CV di 57 gold
+- [ ] Proper k-fold CV (bukan cuma 1 split gold N=57) + OOF ensemble selection, grouping per hash-laporan
+- [ ] Pipeline inference/submission sudah ada versi pertama (`kaggle_kernel_submission/`, community 20-model, belum disubmit — §15 PROGRESS)
 - [ ] Review manual studi gold-label yang ter-flag exclude (bagian 4)
 
 ## Struktur repo

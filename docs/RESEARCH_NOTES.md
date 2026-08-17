@@ -485,3 +485,49 @@ Dicari lebih jauh kernel dgn klaim skor 0.92-0.95 di judul, ditarik & dibaca 3 k
 - **`nikhil00718`'s "DINOsaur V2"** (independen, bukan turunan pilkwang): kumpulan teknik matang — kalibrasi monotonic per-fold, **fold dikelompokkan per hash-laporan duplikat** (persis pelajaran §11d.6, dikonfirmasi independen lagi), unfreezing progresif dgn learning-rate per-layer, **greedy checkpoint soup** (rata-rata beberapa checkpoint terbaik, bukan cuma pilih 1), gamma TTA, dual-GPU DataParallel, fallback submission.csv langsung di awal (pola sama dgn `write_benchmark_submission()` pilkwang, dikonfirmasi jadi praktik umum yg baik).
 
 **Kesimpulan jujur**: kami tidak menemukan bukti tervalidasi (sitasi submission selesai) untuk skor publik di atas **0.916** dari sisi Code tab manapun yang bisa diverifikasi. Klaim 0.92-0.95 di beberapa judul kernel tampak aspirasional. Tim top-20 leaderboard (0.934-0.950) kemungkinan besar mencapainya lewat kombinasi teknik-teknik di atas (E10 alpha lebih tinggi, DINOv3 arm, agregasi cross-attention penuh, checkpoint soup, fold-hash-grouping) yang dijalankan & di-tuning lebih jauh drpd versi publik mana pun yang bisa kami baca — bukan 1 trik rahasia tunggal, tapi akumulasi eksekusi yang lebih matang dari resep yang sama. **Tidak ada jalan pintas terverifikasi ke atas 0.950** — jalur realistis tetap: bangun ensemble kita sendiri setinggi mungkin (0.90-0.92+ dari §12-13), dapat submission nyata, lalu iterasi pakai teknik-teknik tambahan di atas (checkpoint soup, agregasi cross-attention, fold-hash-grouping, arm ke-4 genuinely beda) berdasar gap yang benar-benar terlihat.
+
+## 15. Discussion tab — sumber baru, jauh lebih berharga dari Code tab (arahan lanjutan 17 Agustus 2026)
+
+**Terobosan metodologi**: `kaggle competitions topics list` + `topic-messages` (belum pernah dipakai sepanjang sesi ini) membuka akses ke Discussion tab — dan isinya jauh lebih bernilai drpd Code tab utk pertanyaan strategis, krn ada **komentar host resmi** dan diskusi teknis jujur (termasuk orang mengaku skor & metode asli mereka, sesuatu yg tidak ada di kernel publik yg cenderung "kudos farming").
+
+### 15a. RULING RESMI HOST: API LLM hosted TERNYATA DIIZINKAN (mengubah konstrain awal kita)
+
+Topik resmi host **"Use of Commercially Hosted LLMs"** (733965, diposting 9 Agustus 2026):
+
+> *"Use of commercially hosted LLMs and other external inference services is **permitted**, provided that the service and method of use otherwise comply with the Competition Rules... submitting Competition Data, including report text, to an external LLM or API for inference or other computational processing (for example, extracting labels from reports) will **not, by itself, be considered prohibited PRIVATE SHARING** of Competition Data outside the Team."*
+
+**Ini membalik asumsi/aturan kerja kita sejak awal proyek** ("JANGAN pakai API LLM hosted untuk memproses report text" — dulu berdasar kehati-hatian data pasien, sekarang host eksplisit bilang itu BUKAN pelanggaran Data Security asalkan layanannya "reasonably accessible & minimal cost" ke semua peserta). Diskusi komunitas di 733652 (sebelum ruling ini keluar) sampai pada bacaan yang SAMA dgn kita sendiri (dilarang) berdasar §2.4.b — host mengoreksi bacaan itu secara eksplisit lewat pengumuman resmi.
+
+**Item keputusan Anda (STOP — ini konstrain yang Anda tetapkan sendiri di awal proyek, bukan urusan legalitas lagi krn sudah jelas diizinkan)**: apakah restriksi "jangan pakai API LLM hosted" mau dilonggarkan sekarang? Ini relevan krn ada bukti kuat kualitas label masih jadi pengungkit besar (§15b) — model LLM yang lebih mumpuni (dgn prompting hati-hati) berpotensi kasih label lebih baik drpd yang dipakai komunitas (flight0234 dkk., 0.8991).
+
+### 15b. Single model bisa capai 0.92-0.934 — ensemble 20+ model BUKAN keharusan
+
+Thread "Best single-model score" (735304) — pengakuan skor asli dari peserta lain (bukan klaim di judul kernel, jadi lebih kredibel meski tidak tersitasi formal):
+
+| klaim | metode |
+|---|---|
+| 0.887 | DINOv2, single model (starting point penanya) |
+| 0.915 | DINOv2, single model |
+| **0.934** | single model, **224px** (resolusi sama persis dgn yang kita pakai!) |
+| 0.92 | 5-fold ensemble (bukan 20+) |
+| 0.92 | single model, "OOF AUC = LB AUC within noise" |
+| 0.826 | pembanding: 192px/9 slice/4 slot, masih mencari tahu ceiling-nya input pipeline atau model |
+
+**Komentar penting** dari salah satu peserta skor tinggi: *"Highly doubt the top results are ensembles... Public notebooks just ensemble early on to try and get a high leaderboard score and exposure/kudos on their notebooks. Waste of time IMO."* — mendukung hipotesis bahwa **ekosistem 20-model publik yang kita riset di §8-9 & §12 mungkin BUKAN jalan yang dipakai tim top-20 sungguhan**, melainkan efek viral "kudos farming" di kalangan publik. Petunjuk lain: skor tinggi berkorelasi dgn **runtime rendah** (lihat efficiency leaderboard) — konsisten dgn single/few-model, bukan ensemble besar.
+
+**Implikasi besar utk strategi kita**: mungkin lebih bernilai investasi ke **1 model yang benar-benar kuat** (fine-tune dalam, k-fold proper, resolusi 224px sudah cukup terbukti org lain capai 0.934 di situ) drpd terus mengejar ensemble 20+ model komunitas yang levelnya "cuma" ~0.89-0.916.
+
+### 15c. Teknik sampling slice yang jauh lebih baik dari cara kita ("3+3+3")
+
+Thread "Scaling the encoder bought us nothing (+0.0011)" (735154) — org yang sama juga membagi resep sampling slice detail:
+- **DINOv2-small → base cuma +0.0011** (noise floor 0.0020) — kapasitas model BUKAN pengungkit, konfirmasi independen lagi dari temuan kita/sadamtorres.
+- **Urutan fisik slice WAJIB** (filename-order cuma benar ~5% dari waktu di dataset ini) — kita sudah tahu ini, dikonfirmasi lagi.
+- **Sampling "3+3+3"**: taruh 3 anchor merata (linspace, bukan acak) di jendela tengah stack per series, ambil 3 slice fisik BERDEKATAN di sekitar tiap anchor (jadi 3×3=9), dan tiap grup-3 jadi channel R/G/B 1 input 2.5D — representasi ~10mm depth neighbourhood asli, BUKAN 3 pandangan ~20mm terpisah kalau 9 slice disebar rata. **Ini lebih canggih dari K_SLICE=4 subsample rata-rata yang kita pakai sekarang** (`kaggle_kernel_modeling` §4) — kandidat upgrade konkret.
+
+### 15d. Konfirmasi independen dari komunitas: isu lisensi NC RadImageNet masih terbuka
+
+Thread "Are CC-BY-NC pretrained weights compatible with the winners open-licence obligation?" (735121) — **belum ada jawaban host** (commentCount: 0 saat kami cek). Menguatkan lagi keputusan kita (§10b) utk skip `marwanmath` & pakai sumber MIT sendiri — bahkan komunitas sendiri tidak yakin & masih menunggu klarifikasi resmi yang belum datang.
+
+### 15e. Peringatan kualitas label dari sumber LLM (relevan langsung ke pilihan kita)
+
+Dari thread yang sama (735304): *"Do research on the labels. Learn what the model needs to see. LLMs are very wrong a lot of the time here without careful guidance."* — konsisten dgn temuan kita sendiri (flight0234 0.8991 vs gold, masih ada label lemah spt Synovitis 0.79, Lateral Meniscus di kisaran 0.7-an di beberapa evaluasi) — ruang perbaikan label MASIH ADA, bukan sudah maksimal.
