@@ -13,7 +13,8 @@
   "competition_sources": ["rsna-knee-abnormality-detection"],
   "kernel_sources": [
     "dimaspashaakrilian/rsna-knee-preprocessing-pipeline",
-    "dimaspashaakrilian/rsna-knee-weak-labeler-from-reports"
+    "dimaspashaakrilian/rsna-knee-weak-labeler-from-reports",
+    "dimaspashaakrilian/rsna-knee-modeling-v11-fix-oom-grad-checkpoint"
   ],
   "model_sources": ["metaresearch/dinov2/PyTorch/base/1"]
 }

@@ -259,11 +259,39 @@ Sesuai arahan Anda ("lakukan eksperimen yg kamu butuhkan, sesuai strategi top-20
 
 **v10 ERROR**: `CUDA OutOfMemoryError` — sanity check kecil (batch=2) lolos, tapi training beneran (`BATCH_STUDIES=8`) kehabisan memori T4 14.5GB begitu forward/backward pertama jalan. Sebab: 6 blok trainable (42.5M params) butuh jauh lebih banyak memori aktivasi drpd 2 blok (10.7M) sebelumnya, `BATCH_STUDIES=8` yang aman utk unfreeze=2 jadi kebesaran.
 
-**v11 — fix, sudah di-push, sedang berjalan**: (1) `gradient_checkpointing_enable()` di backbone (tukar compute demi memori), (2) `BATCH_STUDIES` 8→4. Catatan: push v10→v11 membuat Kaggle rename slug kernel 2x (`v1-dinov2` → `v10-unfreeze6-split-lr` → `v11-fix-oom-grad-checkpoint`) — judul yang menyimpang jauh dari slug asal memicu Kaggle bikin URL baru meski `id` di metadata tidak berubah; versi/riwayat kernel tetap utuh, cuma alamat berubah tiap kali. `kernel-metadata.json` & link README di-update tiap kali.
+**v11 — fix**: (1) `gradient_checkpointing_enable()` di backbone (tukar compute demi memori), (2) `BATCH_STUDIES` 8→4. Catatan: push v10→v11 membuat Kaggle rename slug kernel 2x (`v1-dinov2` → `v10-unfreeze6-split-lr` → `v11-fix-oom-grad-checkpoint`) — judul yang menyimpang jauh dari slug asal memicu Kaggle bikin URL baru meski `id` di metadata tidak berubah; versi/riwayat kernel tetap utuh, cuma alamat berubah tiap kali. `kernel-metadata.json` & link README di-update tiap kali.
+
+**v11 SELESAI — LOMPATAN TERBESAR sejauh ini: val_macro_auc 0.8195** (~7,39 jam, jauh lebih lama drpd v9 3,49 jam krn batch lebih kecil + gradient checkpointing).
+
+| epoch | train_loss | val_macro_auc |
+|---|---|---:|
+| 1 | 0.5704 | 0.7343 |
+| 2 | 0.5234 | 0.7608 |
+| 3 | 0.4979 | 0.7738 |
+| 4 | 0.4737 | 0.7886 |
+| 5 | 0.4473 | 0.7895 |
+| 6 | 0.4196 | **0.8195** |
+
+**Naik MONOTON di semua 6 epoch, BELUM PLATEAU** — epoch 6 masih naik +0,03 dari epoch 5, kandidat kuat utk epoch lebih banyak. Hipotesis dari Discussion tab (§16, single model bisa capai 0,92-0,934 tanpa ensemble besar) **terkonfirmasi arahnya benar**: unfreeze lebih dalam + LR terpisah adalah pengungkit besar, jauh melampaui backbone-tunggal manapun sebelumnya (v6=0,7658 → v7=0,7811 → v9=0,7902 → **v11=0,8195**) dan mendekati ensemble komunitas 20-model (0,8360, OOF resmi leak-free) — dengan backbone TUNGGAL, bukan 20 model.
+
+**Pelajaran operasional baru**: log API Kaggle di environment ini bisa kosong TOTAL selama berjam-jam (v11 kosong ~4,5 jam) padahal kernel genuinely aktif — dikonfirmasi via `kaggle quota` (kuota GPU terus naik konsisten selama itu). Verifikasi via delta kuota GPU adalah cara diagnostik yang jauh lebih andal drpd cuma mengandalkan `kaggle kernels logs`/`status` saat curiga hang.
+
+## 18. v12 — resume training dari checkpoint (bukan dari nol), hemat kuota GPU
+
+Sesuai arahan Anda ("pakai checkpoint agar tidak mengulang train, hemat waktu"). Sisa kuota GPU mingguan tipis (~4,13h saat dirancang) — training ulang dari nol utk epoch lebih banyak (target awal EPOCHS=10) tidak akan muat (~10-12 jam dari nol). Solusi: **resume dari checkpoint v11** (val_macro_auc=0,8195):
+
+- **Coba unduh `best_model.pt` v11 secara lokal dulu (gagal berulang)**: file checkpoint DINOv2-base full (~350MB, wajar utk 86M parameter) terus putus di tengah (`IncompleteRead`) krn koneksi lokal tidak stabil — 4x percobaan semua gagal di bawah 2.5MB dari 350MB.
+- **Solusi**: pakai **self-reference `kernel_sources`** — kernel modeling menambahkan dirinya sendiri (`dimaspashaakrilian/rsna-knee-modeling-v11-fix-oom-grad-checkpoint`) ke daftar `kernel_sources`-nya sendiri. Transfer checkpoint jadi 100% server-side Kaggle-ke-Kaggle, tidak lewat koneksi lokal yang bermasalah. **Pola baru, belum pernah dicoba sebelumnya di proyek ini.**
+- **Trik supaya self-reference stabil**: judul kernel SENGAJA TIDAK diubah dari versi v11 (biar slug tidak berganti lagi seperti pola v10→v11 sebelumnya) — dokumentasi "v12" cukup di markdown notebook, bukan di judul Kaggle. Push berhasil TANPA peringatan mismatch judul-slug (beda dari push-push sebelumnya) — konfirmasi slug stabil.
+- **Perubahan kode**: `CKPT_DIR` discovery (`find_dir_containing("best_model.pt", "modeling")`), load `state_dict` ke model sebelum training loop, `best_auc` awal di-set ke 0,8195 (skor checkpoint) supaya tidak pernah tertimpa hasil lebih buruk, `EPOCHS=4` (tambahan, bukan dari nol), `SAFETY_CUTOFF_SECONDS` diperketat ke 3,5 jam (dari 7,5 jam) menyesuaikan sisa kuota.
+- Sudah **di-push (versi 12) & sedang berjalan**. Kuota GPU saat push: 25,87h terpakai, 4,13h sisa.
+
+**Pelajaran operasional baru**: (1) log API Kaggle di environment ini bisa kosong TOTAL selama berjam-jam (v11 kosong ~4,5 jam) padahal kernel genuinely aktif — dikonfirmasi via `kaggle quota` (kuota GPU terus naik konsisten selama itu); verifikasi via delta kuota GPU jauh lebih andal drpd cuma `kaggle kernels logs`/`status` saat curiga hang. (2) `kaggle kernels output` bisa gagal berulang utk file besar (>300MB) krn koneksi lokal — kalau butuh transfer file besar antar-kernel, self-reference/`kernel_sources` (server-side) lebih andal drpd download-lokal-lalu-upload-ulang.
 
 ## Belum dikerjakan
 
-- [ ] Tunggu hasil v11 — apakah unfreeze lebih dalam + split-LR benar2 mengalahkan v9 (0.7902)?
+- [ ] Tunggu hasil v12 — apakah resume+4 epoch tambahan naikkan val_macro_auc lebih jauh dari 0,8195?
+- [ ] Verifikasi pola self-reference `kernel_sources` benar2 berhasil memuat checkpoint (cek log "RESUME: checkpoint v11 dimuat" begitu ada) — kalau gagal, ada fallback `[warn] CKPT_DIR tidak ketemu` yg training dari nol (bukan crash, tapi berarti eksperimen resume gagal & butuh pendekatan lain)
 - [ ] **Keputusan Anda soal API LLM hosted sudah DIJAWAB** (dilonggarkan, §16) — implementasi relabeling ditunda dulu, fokus ke single-model dulu sesuai arahan terbaru
 - [ ] Koordinasi dgn tim (kolaborator `nxtirfan` dkk.) soal submission — tim sudah di 0.914, jangan boros kuota 5x/hari
 - [ ] Bangun v2 ensemble: blend model kita (v9=0.7902) + `oof.npz` pilkwang + arm RadImageNet-ResNet50 (MIT), bobot nested-CV di 57 gold
