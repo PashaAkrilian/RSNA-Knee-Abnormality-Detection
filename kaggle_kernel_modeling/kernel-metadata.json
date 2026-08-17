@@ -1,6 +1,6 @@
 {
-  "id": "dimaspashaakrilian/rsna-knee-modeling-v10-unfreeze6-split-lr",
-  "title": "RSNA Knee - Modeling v10 unfreeze6 split-lr",
+  "id": "dimaspashaakrilian/rsna-knee-modeling-v11-fix-oom-grad-checkpoint",
+  "title": "RSNA Knee - Modeling v11 fix OOM (grad checkpoint)",
   "code_file": "rsna_knee_modeling.ipynb",
   "language": "python",
   "kernel_type": "notebook",

@@ -253,10 +253,18 @@ Naik dari v7 (0.7811) dan v6 (0.7658) — label lebih baik + epoch lebih pendek 
 
 **Keputusan Anda (17 Agustus 2026): restriksi API LLM hosted DILONGGARKAN** — "kalau tidak melanggar aturan, buka" — sudah dikonfirmasi ruling resmi host (733965) mengizinkan, jadi syaratnya terpenuhi. **Konstrain lama diganti**: sekarang boleh pakai API LLM hosted (OpenAI/Anthropic/dll) utk memproses report text, SELAMA layanannya "reasonably accessible & minimal cost" ke semua peserta (syarat Rules §2.6.b) — bukan lagi larangan mutlak. Praktiknya butuh API key (disimpan sbg Kaggle Secret) utk dipakai di kernel — menunggu konfirmasi/API key dari Anda kalau mau benar-benar diimplementasikan (relabeling ulang 4.349 studi non-gold), atau bisa juga tetap pakai label publik terbaik yang sudah ada (flight0234, 0.8991) sambil fokus ke pengungkit lain dulu (single model kuat, per §16 di atas).
 
+## 17. Eksperimen single-model kuat: v10 (OOM) → v11 (fix)
+
+Sesuai arahan Anda ("lakukan eksperimen yg kamu butuhkan, sesuai strategi top-20, testing sendiri") dan temuan §16 (single model bisa 0.92-0.934 tanpa ensemble besar): **v10** naikkan `unfreeze_last` 2→6 + pisah LR head(1e-3)/backbone(8e-6, nilai umum kode komunitas top).
+
+**v10 ERROR**: `CUDA OutOfMemoryError` — sanity check kecil (batch=2) lolos, tapi training beneran (`BATCH_STUDIES=8`) kehabisan memori T4 14.5GB begitu forward/backward pertama jalan. Sebab: 6 blok trainable (42.5M params) butuh jauh lebih banyak memori aktivasi drpd 2 blok (10.7M) sebelumnya, `BATCH_STUDIES=8` yang aman utk unfreeze=2 jadi kebesaran.
+
+**v11 — fix, sudah di-push, sedang berjalan**: (1) `gradient_checkpointing_enable()` di backbone (tukar compute demi memori), (2) `BATCH_STUDIES` 8→4. Catatan: push v10→v11 membuat Kaggle rename slug kernel 2x (`v1-dinov2` → `v10-unfreeze6-split-lr` → `v11-fix-oom-grad-checkpoint`) — judul yang menyimpang jauh dari slug asal memicu Kaggle bikin URL baru meski `id` di metadata tidak berubah; versi/riwayat kernel tetap utuh, cuma alamat berubah tiap kali. `kernel-metadata.json` & link README di-update tiap kali.
+
 ## Belum dikerjakan
 
-- [ ] **Keputusan Anda**: longgarkan restriksi API LLM hosted? (§16, ruling resmi host baru ditemukan)
-- [ ] Pertimbangkan investasi ke 1 model kuat (224px, fine-tune dalam, k-fold proper, sampling 3+3+3) drpd cuma ikuti ensemble komunitas — bukti dari Discussion single model bisa 0.92-0.934
+- [ ] Tunggu hasil v11 — apakah unfreeze lebih dalam + split-LR benar2 mengalahkan v9 (0.7902)?
+- [ ] **Keputusan Anda soal API LLM hosted sudah DIJAWAB** (dilonggarkan, §16) — implementasi relabeling ditunda dulu, fokus ke single-model dulu sesuai arahan terbaru
 - [ ] Koordinasi dgn tim (kolaborator `nxtirfan` dkk.) soal submission — tim sudah di 0.914, jangan boros kuota 5x/hari
 - [ ] Bangun v2 ensemble: blend model kita (v9=0.7902) + `oof.npz` pilkwang + arm RadImageNet-ResNet50 (MIT), bobot nested-CV di 57 gold
 - [ ] Proper k-fold CV (bukan cuma 1 split gold N=57) + OOF ensemble selection, grouping per hash-laporan
