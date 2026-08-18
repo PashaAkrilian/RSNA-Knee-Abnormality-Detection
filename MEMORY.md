@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-18T23:20:00+07:00
+> Last updated: 2026-08-18T23:40:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -50,6 +50,7 @@
 - **Submission pipeline**: v1 (`kaggle_kernel_submission/`, `rsna-knee-submission-v1-community-20-model`, reuse kode pilkwang, internet off) sudah SELESAI dibuat & lolos dev-test (3 studi stub, 0 error) — **BELUM PERNAH benar-benar disubmit** ke leaderboard (dipause krn TEMUAN tim sudah punya submission history sendiri, lihat §4).
 - **Model final terbaik proyek sejauh ini: val_macro_auc = 0.8195** (checkpoint v11, backbone tunggal). Skor publik TIM (submission nyata) sudah **0.920** (16 Agustus→18 Agustus, via fork `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` — bukan model kita, lihat §2) — peringkat **#130/1.886 tim**, sama dgn puluhan tim lain (commodity ceiling, lihat §2).
 - **Preprocessing v2 (geometri slice)**: **BELUM DIMULAI** secara teknis — arah sudah dikunci di §2 (item 1), rencana implementasi berikutnya, CPU-only, tidak butuh kuota GPU.
+- **Modeling v13 (TPU + LR scheduler)**: kernel baru `kaggle_kernel_modeling_tpu/rsna-knee-modeling-v13-tpu-sanity`, di-push 18 Agustus 23:37. Port `torch_xla` + `CosineAnnealingLR`, resume checkpoint v11 via `kernel_sources` langsung (bukan self-reference). **SANITY RUN** (`DEBUG_LIMIT_TRAIN=400`, `EPOCHS=2`) — validasi mekanisme dulu sebelum run penuh, BUKAN target beat 0,8195. Status: sedang berjalan, dipantau via Monitor background.
 
 ## 4. Constraint & Batasan Aktif
 - **Eksekusi ML HANYA di Kaggle** — sandbox lokal tidak punya `sklearn`/`torch`, disk ~4.7GB free. Semua verifikasi lokal pakai AUC manual (numpy rank-based, Mann-Whitney U).
@@ -65,7 +66,7 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Port kode training ke TPU (`torch_xla`)** — sudah dikonfirmasi TEKNIS BISA & antrian cuma ~30 menit (§4), tapi butuh rewrite kode (bukan toggle simpel) + idealnya fixed-shape batching. Worth investasi waktu sekarang (isi 4 hari nunggu GPU refresh), atau fokus ke preprocessing v2 dulu (§2 item 1) dan tunggu GPU refresh 22 Agustus utk lanjut training? Belum diputuskan.
+- **Hasil sanity run v13 TPU** (§3) belum diketahui saat catatan ini ditulis — kalau sukses, lanjut run penuh TPU (v13b/v14); kalau gagal, tunggu GPU refresh 22 Agustus. Belum ada keputusan lanjutan krn hasil belum masuk.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat

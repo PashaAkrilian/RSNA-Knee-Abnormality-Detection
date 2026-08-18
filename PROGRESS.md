@@ -324,6 +324,17 @@ Push kernel diagnostik kecil (`rsna-knee-tpu-diagnostic-torch-xla-check`, `enabl
 
 **Belum diputuskan**: port kode ke TPU sekarang (isi 4 hari nunggu GPU refresh) vs fokus ke preprocessing v2 dulu lalu train ulang pas GPU refresh 22 Agustus.
 
+## 21. v13: port ke TPU (torch_xla) + LR scheduler, sanity run (arahan 18 Agustus, "kalo sukses lanjutkan eksperimen strategi")
+
+TPU terverifikasi jalan (§20) — langsung lanjut eksekusi, bukan cuma riset. Kernel baru `kaggle_kernel_modeling_tpu/` (`rsna-knee-modeling-v13-tpu-sanity`), 2 perubahan sekaligus dari v11/v12:
+
+1. **Device/training-loop di-port ke `torch_xla`** — deteksi XLA duluan (sebelum CUDA), fallback CUDA lalu CPU tetap dipertahankan. `xm.mark_step()` ditambah tiap step, `gradient_checkpointing_enable()` dibungkus try/except (belum pernah dites kombinasinya dgn XLA), `torch.load` pakai `map_location="cpu"` (aman lintas device).
+2. **LR scheduler (`CosineAnnealingLR`)** — perbaikan langsung utk overfitting v12 (LR flat, 4 epoch tambahan semua lebih buruk dari checkpoint 0,8195). Diterapkan ke kedua param group (head+backbone), meluruh ke ~0 menjelang akhir training.
+
+**Ini SANITY RUN** (`DEBUG_LIMIT_TRAIN=400`, `EPOCHS=2`, `SAFETY_CUTOFF_SECONDS=1h`) — bukan run penuh, bukan target beat 0,8195. Tujuan: validasi mekanisme (XLA+grad-checkpoint+scheduler+resume checkpoint v11 via `kernel_sources` langsung, bukan self-reference) jalan benar di environment TPU yang belum pernah dipakai proyek ini, dan dapat estimasi waktu/epoch riil, sebelum commit ke run penuh yg makan kuota TPU besar — disiplin yg sama dgn kenapa v3/v5 dulu jadi run kecil/diagnostik dulu.
+
+Push 18 Agustus 23:37:01, sedang `QUEUED` di monitor. Kalau sukses: lanjut run PENUH TPU (v13b/v14, `DEBUG_LIMIT_TRAIN=None`, `EPOCHS` dinaikkan krn kuota TPU jauh lebih longgar). Kalau gagal: fallback ke GPU pas kuota refresh 22 Agustus (device-fallback logic sudah otomatis, kode tidak perlu ditulis ulang).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
