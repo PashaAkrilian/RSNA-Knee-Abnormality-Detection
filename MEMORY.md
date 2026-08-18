@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-18T22:40:00+07:00
+> Last updated: 2026-08-18T23:20:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -54,7 +54,8 @@
 ## 4. Constraint & Batasan Aktif
 - **Eksekusi ML HANYA di Kaggle** — sandbox lokal tidak punya `sklearn`/`torch`, disk ~4.7GB free. Semua verifikasi lokal pakai AUC manual (numpy rank-based, Mann-Whitney U).
 - **GPU wajib T4 (T4x2), HINDARI P100** (incompatible build PyTorch Kaggle) — set `machine_shape: "NvidiaTeslaT4"` di tiap `kernel-metadata.json`.
-- **Kuota GPU mingguan OVERRUN, masih 0.00h per 18 Agustus 2026** (`used` 30.43h dari 30.00h nominal). `refreshAt`: **22 Agustus 2026**. → **JANGAN push kernel GPU baru sebelum cek `kaggle quota` dulu.** **Kuota TPU 20h/minggu 100% BELUM DIPAKAI** — opsi eksperimen alternatif selama GPU terkunci (belum diverifikasi kompatibilitas `torch_xla` dgn kode kita).
+- **Kuota GPU mingguan OVERRUN, masih 0.00h per 18 Agustus 2026** (`used` 30.43h dari 30.00h nominal). `refreshAt`: **22 Agustus 2026**. → **JANGAN push kernel GPU baru sebelum cek `kaggle quota` dulu.**
+- **TPU sudah diverifikasi bisa dipakai** (probe `rsna-knee-tpu-diagnostic-torch-xla-check`, 18 Agustus): `torch_xla` 2.8.0 pre-installed di image Kaggle, `xm.xla_device()` + matmul + `transformers` import semua berhasil. **Antrian nyata terukur: ~28,6 menit dari push sampai `RUNNING`**, eksekusi ~1 menit tambahan. Kuota TPU 20h/minggu 100% belum kepakai. **Caveat**: kode training kita (CUDA-based) HARUS ditulis ulang pakai API `torch_xla` (`xm.xla_device()`, `xm.mark_step()`) — bukan cuma toggle `enable_tpu`; idealnya juga di-pad ke shape tetap dulu (XLA re-compile mahal kalau shape variabel) — biaya rekayasa nyata, belum dikerjakan.
 - **Leaderboard sungguhan (snapshot 18 Agustus 2026)**: #1 Brandon Low **0.951** (naik dari 0.950 hari ini). Top 20 cutoff 0.937. Top 50 cutoff 0.929. **Tim kita (Krazy KIller, #130/1886) di 0.920** — sama persis dgn puluhan tim lain yg fork notebook publik sama (`tonylica/rsna-knee-dino-radimagenet-rank-ensemble`, dibedah forensik di §2 & RESEARCH_NOTES §16). 1.886 tim total, kompetisi baru 12 hari jalan, gerak leaderboard sangat cepat.
 - **Submission harian dibatasi 5x/hari UNTUK SELURUH TIM** (bukan per-orang) — tim sudah punya kolaborator aktif (`nxtirfan`, kemungkinan "Muhammad Irfan") yang submit sendiri, riwayat 30+ submission sejak 6 Agustus 2026, skor terbaik tim **0.914** (16 Agustus 2026). → **Jangan submit sembarangan, koordinasi dulu supaya tidak boros kuota harian tim.**
 - **API LLM hosted**: BOLEH dipakai (ruling resmi host topic 733965), syarat layanan "reasonably accessible & minimal cost" ke semua peserta (Rules §2.6.b) — **status: SUDAH dikonfirmasi resmi, bukan lagi perlu verifikasi**. Implementasi (relabeling 4.349 studi non-gold via LLM) masih ditunda, prioritas saat ini di single-model strengthening.
@@ -64,7 +65,7 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Opsi eksperimen TPU** (§4, 20h nganggur) selama kuota GPU terkunci sampai 22 Agustus — worth dicoba atau tunggu GPU refresh saja? Belum diputuskan.
+- **Port kode training ke TPU (`torch_xla`)** — sudah dikonfirmasi TEKNIS BISA & antrian cuma ~30 menit (§4), tapi butuh rewrite kode (bukan toggle simpel) + idealnya fixed-shape batching. Worth investasi waktu sekarang (isi 4 hari nunggu GPU refresh), atau fokus ke preprocessing v2 dulu (§2 item 1) dan tunggu GPU refresh 22 Agustus utk lanjut training? Belum diputuskan.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat

@@ -316,6 +316,14 @@ Arahan: "score-nya mentok, apa strategi ke top 1". Ditemukan **skor tim sungguha
 
 **Strategi ke top 1** (detail & urutan penuh di RESEARCH_NOTES §16d): (1) **mulai SEKARANG, CPU-only, tanpa kuota GPU** — bangun ulang geometri slice preprocessing (urutan fisik `ImagePositionPatient`, crop sadar-laterality, handle 2-lutut, sampling "3+3+3"); (2) begitu kuota GPU refresh, lanjut fine-tune v11 pakai LR scheduler/decay (bukan flat spt v12 yg overfit); (3) k-fold CV proper; (4) baru setelah model sendiri kuat, masuk ke ensemble sbg anggota independen + arm RadImageNet MIT sendiri; (5) TTA flip; (6) opsi eksperimen kuota TPU (20h, 100% belum dipakai) selama GPU masih 0 sampai 22 Agustus.
 
+## 20. Probe TPU: teknis bisa, antrian ~28,6 menit (arahan 18 Agustus, "coba pakai TPU, antrinya berapa lama")
+
+Push kernel diagnostik kecil (`rsna-knee-tpu-diagnostic-torch-xla-check`, `enable_tpu: true`) buat ukur langsung, bukan nebak. **Hasil terukur nyata**: push 22:45:46 → `QUEUED` → `RUNNING` di t+1716s (**~28,6 menit antrian**) → `COMPLETE` di t+1782s (eksekusi ~1 menit). Log konfirmasi `torch_xla` 2.8.0 pre-installed di image Kaggle, `xm.xla_device()` + matmul + import `transformers` semua berhasil (`XLA_OK`) — **TPU secara teknis BISA dipakai, dan antriannya jauh lebih cepat dari dugaan (bukan berjam-jam)**.
+
+**Caveat penting**: `torch` di TPU image adalah build `2.8.0+cpu` (bukan cuda) — kode `KneeModel` kita yang berbasis CUDA harus ditulis ulang pakai API `torch_xla` (`xm.xla_device()`, `xm.mark_step()`), bukan cuma toggle `enable_tpu` di `kernel-metadata.json`. Idealnya juga dipad ke shape tetap dulu (variable slot-count per studi bikin XLA re-compile graph berulang, mahal). Ditemukan juga kompetitor lain di kompetisi ini (`ssstelmah/rsna-tpu-probe-a`) sudah provision `TpuV5E8` duluan — infrastrukturnya jelas dipakai kompetitor lain juga.
+
+**Belum diputuskan**: port kode ke TPU sekarang (isi 4 hari nunggu GPU refresh) vs fokus ke preprocessing v2 dulu lalu train ulang pas GPU refresh 22 Agustus.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
