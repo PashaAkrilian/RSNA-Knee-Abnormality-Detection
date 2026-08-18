@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-18T22:10:00+07:00
+> Last updated: 2026-08-18T22:40:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -31,6 +31,8 @@
   - `sohaibanwaar1203/kneemridataset` (data eksternal RS Rijeka Kroasia) **diizinkan dipakai** (lisensi cuma minta atribusi+sitasi, Rules kompetisi eksplisit izinkan data eksternal) — belum diimplementasikan.
   - `pilkwang/rsna-knee-weights` (paket 20-model DINOv2-small rank-mean ensemble, CC0) **dipakai sbg anggota ensemble independen** (bukan disuntik ke bobot kita) — evaluasi HARUS pakai `oof.npz` resmi (out-of-fold), JANGAN live-infer ke gold set (lihat §4 soal jebakan leakage).
   - Restriksi API LLM hosted **sudah DILONGGARKAN** (dikonfirmasi tidak melanggar Rules) — implementasi relabeling LLM DITUNDA dulu (bukan dibatalkan), fokus saat ini tetap penguatan single-model.
+  - **Skor 0,920 tim (via fork `tonylica/rsna-knee-dino-radimagenet-rank-ensemble`) adalah "commodity ceiling"** — puluhan tim lain (rank ~100-140+) punya skor identik krn fork notebook publik yang sama. BUKAN target akhir, BUKAN pencapaian unik — jangan disalahartikan sbg progress asli menuju top 1. Prioritas: bangun keunggulan yang TIDAK dibagikan publik (geometri slice, model sendiri yang lebih kuat), bukan menambah anggota fork lagi.
+  - **Prioritas eksperimen berikutnya terkunci** (hasil riset 18 Agustus, lihat §5 dulu → sekarang pindah kesini krn sudah diputuskan): (1) preprocessing v2 geometri slice (CPU-only, jalan sekarang tanpa nunggu kuota GPU) — urutan fisik `ImagePositionPatient`, crop sadar-laterality, handle 2-lutut-1-DICOM, sampling "3+3+3"; (2) begitu kuota GPU refresh, lanjut fine-tune v11 pakai LR scheduler/decay (v12 gagal krn LR flat → overfit); (3) k-fold CV proper (bukan 1 split gold N=57); (4) baru setelah model sendiri >~0,85-0,88 standalone, masuk ke ensemble sbg anggota independen + arm RadImageNet MIT sendiri; (5) TTA flip (item murah, terbukti dipakai semua kernel top, belum ada di pipeline kita).
 
 ## 3. Status Pipeline (overwrite tiap update)
 - **EDA**: SELESAI. `kaggle_kernel/` → `eda_results/`.
@@ -46,12 +48,14 @@
   - **Status: TIDAK ADA kernel training yang sedang berjalan.** Kuota GPU overrun (lihat §4). Menunggu arahan strategi berikutnya (lihat §5).
 - **Ensemble komunitas 20-model (`pilkwang/rsna-knee-weights`)**: dievaluasi via `oof.npz` resmi (leak-free) → **macro AUC 0.8360** (57 gold kita). Kernel `kaggle_kernel_ensemble/` (`rsna-knee-ensemble-v1-community-20-model`) sempat run tapi hasil pertamanya (0.9954) **bug leakage**, sudah dikoreksi via oof.npz secara offline (bukan re-run kernel). v2 kernel (tambah arm model kita + RadImageNet, blend nested-CV) **belum dibangun**.
 - **Submission pipeline**: v1 (`kaggle_kernel_submission/`, `rsna-knee-submission-v1-community-20-model`, reuse kode pilkwang, internet off) sudah SELESAI dibuat & lolos dev-test (3 studi stub, 0 error) — **BELUM PERNAH benar-benar disubmit** ke leaderboard (dipause krn TEMUAN tim sudah punya submission history sendiri, lihat §4).
-- **Model final terbaik proyek sejauh ini: val_macro_auc = 0.8195** (checkpoint v11, backbone tunggal). Skor publik TIM (submission nyata, bukan model kita) sudah di **0.914** (lihat §4).
+- **Model final terbaik proyek sejauh ini: val_macro_auc = 0.8195** (checkpoint v11, backbone tunggal). Skor publik TIM (submission nyata) sudah **0.920** (16 Agustus→18 Agustus, via fork `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` — bukan model kita, lihat §2) — peringkat **#130/1.886 tim**, sama dgn puluhan tim lain (commodity ceiling, lihat §2).
+- **Preprocessing v2 (geometri slice)**: **BELUM DIMULAI** secara teknis — arah sudah dikunci di §2 (item 1), rencana implementasi berikutnya, CPU-only, tidak butuh kuota GPU.
 
 ## 4. Constraint & Batasan Aktif
 - **Eksekusi ML HANYA di Kaggle** — sandbox lokal tidak punya `sklearn`/`torch`, disk ~4.7GB free. Semua verifikasi lokal pakai AUC manual (numpy rank-based, Mann-Whitney U).
 - **GPU wajib T4 (T4x2), HINDARI P100** (incompatible build PyTorch Kaggle) — set `machine_shape: "NvidiaTeslaT4"` di tiap `kernel-metadata.json`.
-- **Kuota GPU mingguan OVERRUN** — saat v12 selesai, `used` mencapai 30.30h dari nominal 30.00h/minggu, `remaining` floor di 0.00h. Kaggle TIDAK force-stop sesi yang sudah berjalan (temuan baru: sesi boleh selesai normal walau lewat kuota), tapi **kernel BARU kemungkinan tidak bisa di-push sampai kuota refresh**. `refreshAt` per data terakhir: **~22 Agustus 2026**. → **JANGAN push kernel baru sebelum cek `kaggle quota` dulu.**
+- **Kuota GPU mingguan OVERRUN, masih 0.00h per 18 Agustus 2026** (`used` 30.43h dari 30.00h nominal). `refreshAt`: **22 Agustus 2026**. → **JANGAN push kernel GPU baru sebelum cek `kaggle quota` dulu.** **Kuota TPU 20h/minggu 100% BELUM DIPAKAI** — opsi eksperimen alternatif selama GPU terkunci (belum diverifikasi kompatibilitas `torch_xla` dgn kode kita).
+- **Leaderboard sungguhan (snapshot 18 Agustus 2026)**: #1 Brandon Low **0.951** (naik dari 0.950 hari ini). Top 20 cutoff 0.937. Top 50 cutoff 0.929. **Tim kita (Krazy KIller, #130/1886) di 0.920** — sama persis dgn puluhan tim lain yg fork notebook publik sama (`tonylica/rsna-knee-dino-radimagenet-rank-ensemble`, dibedah forensik di §2 & RESEARCH_NOTES §16). 1.886 tim total, kompetisi baru 12 hari jalan, gerak leaderboard sangat cepat.
 - **Submission harian dibatasi 5x/hari UNTUK SELURUH TIM** (bukan per-orang) — tim sudah punya kolaborator aktif (`nxtirfan`, kemungkinan "Muhammad Irfan") yang submit sendiri, riwayat 30+ submission sejak 6 Agustus 2026, skor terbaik tim **0.914** (16 Agustus 2026). → **Jangan submit sembarangan, koordinasi dulu supaya tidak boros kuota harian tim.**
 - **API LLM hosted**: BOLEH dipakai (ruling resmi host topic 733965), syarat layanan "reasonably accessible & minimal cost" ke semua peserta (Rules §2.6.b) — **status: SUDAH dikonfirmasi resmi, bukan lagi perlu verifikasi**. Implementasi (relabeling 4.349 studi non-gold via LLM) masih ditunda, prioritas saat ini di single-model strengthening.
 - **Lisensi NonCommercial (CC-BY-NC)** — di-skip sbg kebijakan proyek (risiko lisensor asli, bukan larangan Rules kompetisi langsung).
@@ -59,8 +63,8 @@
 - **Commit HARUS TANPA trailer Co-Authored-By Claude** — aturan mutlak, berlaku semua commit di repo ini. Pesan commit multi-baris/berisi tanda kutip WAJIB pakai `git commit -F <tempfile>`, jangan inline `-m "..."` (pernah menyebabkan shell-quoting mishap).
 
 ## 5. Open Questions / Menunggu Keputusan User
-- **Strategi berikutnya menuju 0.950** (dari checkpoint v11=0.8195, belum plateau tapi v12 resume-4-epoch overfit): pilih salah satu atau kombinasi — (a) LR scheduler/decay utk lanjutkan fine-tune v11 lebih hati-hati, (b) k-fold CV proper + OOF ensemble selection (grouping per hash-laporan), (c) blend model kita (0.8195) + ensemble komunitas oof.npz (0.8360) + arm RadImageNet-ResNet50 MIT via nested-CV (resep 0.912–0.916 yang sudah diriset), (d) per-target specialist fine-tuning utk label lemah (Synovitis, Lateral Meniscus, MCL, Contusion). **Belum dijawab user.**
-- **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model) mau tetap disubmit (nilainya ~0.891, lebih rendah dari skor tim saat ini 0.914) atau ditahan sampai model kita sendiri lebih kuat? Belum ada arahan.
+- **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
+- **Opsi eksperimen TPU** (§4, 20h nganggur) selama kuota GPU terkunci sampai 22 Agustus — worth dicoba atau tunggu GPU refresh saja? Belum diputuskan.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat
@@ -76,7 +80,8 @@
 - Backbone: `metaresearch/dinov2` (Apache-2.0, Kaggle Model resmi)
 - Riset arsitektur & dataset lengkap: `docs/RESEARCH_NOTES.md` (§0–§15)
 - Progress kronologis lengkap: `PROGRESS.md`
-- Discussion penting: topic 733965 (ruling LLM API), topic 735304 (single-model score), topic 735154 ("3+3+3" slice sampling), topic 735121 (isu lisensi NC RadImageNet, belum dijawab host)
+- Discussion penting: topic 733965 (ruling LLM API), topic 735304 (single-model score), topic 735154 ("3+3+3" slice sampling), topic 735121 (isu lisensi NC RadImageNet, belum dijawab host), topic 735826 (bottleneck: geometri+label > backbone size), topic 735767 (final ceiling + inkonsistensi gold label), topic 735854 (PSA: codec DICOM offline + path submission), topic 735639 (2 lutut 1 DICOM)
+- Kernel resep 0,920 tim (dibedah forensik, bukan dipakai langsung): `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` — https://www.kaggle.com/code/tonylica/rsna-knee-dino-radimagenet-rank-ensemble
 
 ## Protokol Update (WAJIB diikuti agent apa pun yang bekerja di repo ini)
 

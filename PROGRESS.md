@@ -304,10 +304,24 @@ Log konfirmasi: `"RESUME: checkpoint v11 dimuat... (val_macro_auc sebelumnya: 0.
 
 **Model final terbaik sejauh ini: val_macro_auc 0,8195** (checkpoint v11, backbone tunggal DINOv2-base, unfreeze 6 blok). Kuota GPU sudah overrun — TIDAK push eksperimen baru sampai ada arahan Anda soal langkah selanjutnya atau kuota refresh (22 Agustus 2026).
 
+## 19. Kenapa skor "mentok" + bedah forensik resep 0,920 tim sendiri (`docs/RESEARCH_NOTES.md` §16)
+
+Arahan: "score-nya mentok, apa strategi ke top 1". Ditemukan **skor tim sungguhan sudah 0,920** (naik dari 0,914), via submission notebook publik `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` (fork, bukan model kita sendiri) — **peringkat #130 dari 1.886 tim**.
+
+**Diagnosis kunci**: 0,920 adalah **"commodity ceiling"** — puluhan tim (rank ~100-140+) punya skor IDENTIK 0,920 krn semua fork notebook publik yang sama. Bukan pencapaian unik kita, dan bukan jalan ke top 1 (rank 1-50 semua SUDAH di atas ceiling ini, 0,929-0,951). Gap: ke top 50 (0,929) +0,009, ke top 20 (0,937) +0,017, ke #1 Brandon Low (0,951, submit ulang HARI INI) +0,031.
+
+**Bedah forensik resep 0,920** (35 checkpoint: 20 DINOv2-small pilkwang + 5 DINOv3-small tonylica + 10 head RadImageNet 2-varian pakai encoder `marwanmath` NC-licensed, blend rank-space 4 tahap dgn bobot tetap per-target termasuk exclude Baker's/Fracture dari blend RadImageNet — persis pola §12b yg sudah kita riset). Pakai 336px (vs 224px kita), TTA flip, urutan slice fisik via `ImagePositionPatient`.
+
+**Bukti independen baru dari Discussion (18 Agustus)**: (1) eksperimen terkontrol kompetitor lain — tukar backbone ResNet34→DINOv2-Small dgn pipeline SAMA, hasil DINOv2 JUSTRU LEBIH BURUK (735826) — validasi kuat "geometri slice + kualitas label > ukuran backbone". (2) 58 studi gold TERBUKTI ada inkonsistensi internal (735767) — validasi lokal kita vs gold selalu ada batas akurasi bawaan. (3) 2 jebakan submission wajib dicek: codec DICOM offline (`pylibjpeg`/`gdcm`) & path `/kaggle/input/competitions/<slug>/` saat scored run (735854). (4) ~7 studi ada 2 lutut dalam 1 DICOM, bisa bikin crop naif miss total (735639).
+
+**Strategi ke top 1** (detail & urutan penuh di RESEARCH_NOTES §16d): (1) **mulai SEKARANG, CPU-only, tanpa kuota GPU** — bangun ulang geometri slice preprocessing (urutan fisik `ImagePositionPatient`, crop sadar-laterality, handle 2-lutut, sampling "3+3+3"); (2) begitu kuota GPU refresh, lanjut fine-tune v11 pakai LR scheduler/decay (bukan flat spt v12 yg overfit); (3) k-fold CV proper; (4) baru setelah model sendiri kuat, masuk ke ensemble sbg anggota independen + arm RadImageNet MIT sendiri; (5) TTA flip; (6) opsi eksperimen kuota TPU (20h, 100% belum dipakai) selama GPU masih 0 sampai 22 Agustus.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
-- [ ] **Keputusan Anda**: strategi berikutnya menuju 0,950 — opsi: (a) LR scheduler/decay utk lanjutkan fine-tune v11 lebih hati-hati, (b) k-fold CV + OOF ensemble selection, (c) blend model kita (0,8195) + ensemble komunitas (0,8360) + arm RadImageNet via nested-CV (resep 0,912-0,916 yg diriset), (d) per-target specialist utk label lemah. Kuota GPU overrun, tunggu refresh atau arahan Anda dulu sebelum eksperimen berikutnya.
+- [x] ~~Keputusan Anda: strategi berikutnya menuju 0,950~~ — DIJAWAB via riset §19: prioritas (1) geometri slice/preprocessing v2 (CPU-only, mulai sekarang), (2) LR scheduler pas kuota GPU refresh, (3) k-fold CV, (4) ensemble dgn anggota independen sendiri, (5) TTA, (6) opsi TPU
+- [ ] **Sedang dikerjakan**: preprocessing v2 — urutan fisik slice via `ImagePositionPatient`, crop sadar-laterality, handle 2-lutut-1-DICOM, sampling "3+3+3"
+- [ ] Setelah kuota GPU refresh (~22 Agustus): fine-tune v11 dgn LR scheduler/decay (ganti LR flat yg overfit di v12)
 - [ ] Verifikasi pola self-reference `kernel_sources` benar2 berhasil memuat checkpoint (cek log "RESUME: checkpoint v11 dimuat" begitu ada) — kalau gagal, ada fallback `[warn] CKPT_DIR tidak ketemu` yg training dari nol (bukan crash, tapi berarti eksperimen resume gagal & butuh pendekatan lain)
 - [ ] **Keputusan Anda soal API LLM hosted sudah DIJAWAB** (dilonggarkan, §16) — implementasi relabeling ditunda dulu, fokus ke single-model dulu sesuai arahan terbaru
 - [ ] Koordinasi dgn tim (kolaborator `nxtirfan` dkk.) soal submission — tim sudah di 0.914, jangan boros kuota 5x/hari

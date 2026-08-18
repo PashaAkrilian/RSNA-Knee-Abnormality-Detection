@@ -531,3 +531,64 @@ Thread "Are CC-BY-NC pretrained weights compatible with the winners open-licence
 ### 15e. Peringatan kualitas label dari sumber LLM (relevan langsung ke pilihan kita)
 
 Dari thread yang sama (735304): *"Do research on the labels. Learn what the model needs to see. LLMs are very wrong a lot of the time here without careful guidance."* — konsisten dgn temuan kita sendiri (flight0234 0.8991 vs gold, masih ada label lemah spt Synovitis 0.79, Lateral Meniscus di kisaran 0.7-an di beberapa evaluasi) — ruang perbaikan label MASIH ADA, bukan sudah maksimal.
+
+## 16. Kenapa skor "mentok" + bedah forensik resep 0.920 tim sendiri (arahan 18 Agustus 2026, "score mentok, apa strategi ke top 1")
+
+**Konteks baru penting: leaderboard sungguhan tim kita SUDAH DI 0.920** (team "Krazy KIller", `dimaspashaakrilian`+`nxtirfan`, 47 submission), naik dari 0.914 sebelumnya — via submission notebook `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` (bukan model kita sendiri, kernel publik yang di-fork). **Peringkat: #130 dari 1.886 tim.**
+
+### 16a. Leaderboard sungguhan 18 Agustus 2026 (snapshot lengkap, bukan cuma top 20)
+
+| rank | tim | skor |
+|---|---|---:|
+| 1 | Brandon Low | **0.951** (naik dari 0.950, submit HARI INI) |
+| 2 | MKhlystun | 0.947 |
+| 3 | CloseAI | 0.946 |
+| 5 | Pizza Boy | 0.942 |
+| 10 | Matteo Vitali | 0.941 |
+| 20 | YT | 0.937 |
+| 50 | Ivy | 0.929 |
+| 100-140+ | **puluhan tim termasuk kita (#130)** | **0.920 (persis sama, plateau)** |
+
+**Temuan kunci: skor 0.920 bukan pencapaian kita — itu "commodity ceiling".** Dari rank ~100 sampai ~140+ berjejer PULUHAN tim dengan skor 0.920 **identik sampai 3 desimal** — semua nge-fork notebook publik yang sama (`tonylica/rsna-knee-dino-radimagenet-rank-ensemble`, 73 votes, dan turunan²nya spt `amanatar/rsna-knee-super-ensemble-0-920`). Siapa pun yang copy-paste notebook itu otomatis dapat 0.920 — **tidak mendiferensiasi kita, dan bukan jalan ke top 1**, karena top 1-50 semuanya SUDAH melewati commodity ceiling ini (0.929-0.951) dgn sesuatu yang tidak dibagikan publik.
+
+**Gap konkret ke target**: 0.920 → top 50 (0.929) = **+0.009**. → top 20 (0.937) = **+0.017**. → #1 (0.951) = **+0.031**.
+
+### 16b. Bedah forensik: apa isi resep 0.920 (`tonylica/rsna-knee-dino-radimagenet-rank-ensemble`)
+
+Ditarik penuh via `kaggle kernels pull`. Ini "meta-solusi" hasil rantai kredit 12 kontributor publik berbeda (pilkwang, stevenleehans, lixin73, tonylica, marwanmath, prvsiyan, cf696666, romantamrazov, ieshanmeghani, sofiaanjenje, saidmohamedomary, sakhawathossen/ranjithragavan07) — **35 checkpoint + 1 encoder bersama**:
+
+- 20 checkpoint DINOv2-small (5-fold, milik pilkwang) — sama dgn `oof.npz` yang sudah kita evaluasi (0.8360 leak-free)
+- 5 checkpoint DINOv3-small (5-fold, milik tonylica)
+- 5 attention-head RadImageNet "reference" (E10, 3-plane layout)
+- 5 attention-head RadImageNet "E13" (4-slot fat-suppressed-crop layout, dipakai 2x di 2 slot-layout beda)
+- 1 encoder ResNet-50 RadImageNet BERSAMA (`marwanmath` — **lisensi CC-BY-NC**, item yang kita SENGAJA skip di proyek ini)
+
+**Pipeline blend (rank-space, bukan probability-space)**:
+1. DINOv2 branch: 6 slot @ **336px** (lebih tinggi dari 224px kita), 20 checkpoint → rank-avg
+2. DINOv3 branch: 6 slot @ 336px, 5 fold → rank-avg
+3. `transformer_parent = 0.55*DINOv2_rank + 0.45*DINOv3_rank`
+4. Rad branch: `0.50*reference_head_rank + 0.50*E13_head_rank` → rank lagi
+5. **E10** (10 target, exclude Baker's & Fracture): `0.50*transformer_parent + 0.50*Rad_branch` — **persis pola "per-target regression gate" yg sudah kita riset di §12b**, sekarang terkonfirmasi dipakai kernel nyata yang skor tim kita pakai
+6. E13 head dijalankan LAGI di slot-layout ke-3 ("E11") → second-pass rank
+7. **Final** (12 target): `0.85*E10_branch + 0.15*E11_second-pass`
+
+**Konfirmasi teknis lain via grep kode**: pakai **TTA (flip)**, crop berbasis **laterality**, dan urutan slice fisik dari **`ImagePositionPatient`** DICOM tag (bukan filename-order) — semua ini SEKARANG jadi standar di kernel publik top, bukan lagi trik tersembunyi.
+
+### 16c. Bukti independen baru dari Discussion (18 Agustus 2026) — kenapa "tambah checkpoint" bukan lagi jalan maju
+
+- **Thread "What is the real bottleneck now?" (735826)**: eksperimen terkontrol asli (bukan klaim) — satu kompetitor menukar backbone ResNet34→DINOv2-Small dgn PIPELINE & LABEL SAMA PERSIS, hasilnya **DINOv2 JUSTRU LEBIH BURUK** (OOF BCE 0.674 vs ResNet34 0.664). Kesimpulan kerja mereka: **"image geometry / slice selection + label quality > backbone size"** — validasi independen kuat utk arah yang sudah kita curigai (§15c: DINOv2-small→base cuma +0.0011).
+- **Thread "What Could the Final Ceiling Be?" (735767)**: kompetisi baru 12 hari jalan, sudah 1.832 tim (RSNA 2025 total cuma 1.149 tim) — leaderboard bergerak SANGAT cepat. Komentar penting: *"It's pretty easy to spot what looks like conflicting results in the 58 gold labels we have received"* — **58 studi gold ITU SENDIRI ada inkonsistensi internal** (mis. teks "small effusion" dilabel positif walau heuristik brief bilang cuma "moderate/large" yg positif) — validasi lokal kita vs gold-58 punya batas akurasi bawaan yang tidak bisa dihilangkan model manapun.
+- **Thread PSA (735854)**: 2 jebakan submission yang WAJIB dicek sebelum kita benar-benar submit kernel sendiri — (1) **codec DICOM `pylibjpeg`/`gdcm` HARUS di-bundle offline** (scored run tanpa internet, dataset ini punya series JPEG Lossless/JPEG2000 yang butuh codec ini, gagal SILENT kalau tidak ada), (2) path competition data saat submission sungguhan ada di `/kaggle/input/competitions/<slug>/...`, BUKAN path flat spt saat dev — kode discovery kita harus tangani dua-duanya.
+- **Thread "Two knees are better than one?" (735639)**: ~7 studi train punya KEDUA lutut dalam 1 DICOM — crop naif bisa 100% miss lutut (nge-flag fracture palsu krn crop kena tulang lain). Edge-case kecil tapi nyata utk pipeline crop kita.
+
+### 16d. Kesimpulan & strategi ke top 1 (bukan cuma re-fork commodity ensemble)
+
+**Kenapa "mentok"**: skor 0.8195 (model sendiri) dan 0.920 (tim, via fork) sama-sama representasi TITIK JENUH dari 2 pendekatan berbeda — model sendiri jenuh krn epoch tambahan dgn LR flat cuma overfit (v12), tim jenuh krn 0.920 adalah **lantai commodity** yang otomatis didapat siapa pun yang fork notebook publik yang sama — bukan lantai kemampuan kita. **Untuk lewat 0.920 dan mendekati 0.951, dibutuhkan sesuatu yang TIDAK dibagikan publik** — konsisten dgn §14 ("tidak ada jalan pintas terverifikasi ke atas 0.916" tapi sekarang ceiling publik naik jadi ~0.920).
+
+**Prioritas konkret (diurutkan by leverage & biaya, GPU kuota masih 0 sampai 22 Agustus)**:
+1. **[Bisa mulai SEKARANG, CPU-only, TIDAK butuh kuota GPU]** Bangun ulang geometri slice preprocessing: urutan fisik `ImagePositionPatient` + crop sadar-laterality + handle kasus 2-lutut-1-DICOM (735639) + eksplorasi sampling "3+3+3" (§15c). Ini pengungkit dgn BUKTI TERKUAT hari ini (735826, independen dari 2 sumber terpisah) dan belum kita implementasikan sama sekali.
+2. **Begitu kuota GPU refresh (~22 Agustus)**: lanjutkan fine-tuning model kita sendiri dari checkpoint v11 (0.8195) dgn **LR scheduler/decay** (bukan LR flat spt v12 yg overfit) — perbaikan langsung & murah utk masalah v12.
+3. **k-fold CV proper** (bukan 1 split gold N=57) — kurangi noise dari inkonsistensi label gold-58 yang sekarang terkonfirmasi nyata (735767).
+4. **Baru setelah model kita sendiri > ~0.85-0.88 standalone**: masukkan sbg anggota BARU yang genuinely independen ke ensemble (bukan cuma re-fork punya tonylica) — kombinasikan dgn arm RadImageNet MIT-licensed kita sendiri (bukan `marwanmath` NC), via rank-blend nested-CV (resep §12b).
+5. **TTA (flip)** — item murah, terbukti dipakai semua kernel top, belum ada di pipeline kita.
+6. **Kuota GPU 0 sampai 22 Agustus, tapi kuota TPU 20h BELUM DIPAKAI SAMA SEKALI** — opsi utk tidak menganggur 4 hari: eksperimen kecil `torch_xla` di Kaggle TPU utk lanjutkan progres tanpa nunggu refresh GPU (belum diverifikasi kompatibilitasnya dgn kode kita, perlu uji coba kecil dulu).
