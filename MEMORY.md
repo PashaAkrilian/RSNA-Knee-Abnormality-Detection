@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-19T18:40:00+07:00
+> Last updated: 2026-08-19T19:50:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -35,7 +35,8 @@
   - **v14 (TPU, cache v1, LR decay) mentok di 0,8159 — bukti ke-4 bahwa tuning training-schedule saja SUDAH MENTOK di config lama.** Prioritas dipindah ke geometri slice, DAN INI TERBUKTI BERHASIL: **v15 (TPU, cache preprocessing v2 — urutan slice fisik `ImagePositionPatient`) mencapai val_macro_auc 0,8304, MODEL TERBAIK BARU PROYEK** (naik dari checkpoint v11 0,8195, +0,0109). SATU-SATUNYA variabel yg beda dari v14 adalah data source — bukti langsung (bukan cuma laporan pihak lain) bahwa geometri slice adalah pengungkit nyata.
   - **TPU tervalidasi ~12x lebih cepat dari GPU T4** (~6,2 menit/epoch vs ~74 menit/epoch) — dipakai utk semua eksperimen sejak v13.
   - **Checkpoint v15 (0,8304) BELUM di-protect dgn guard** — kalau push versi baru ke slug `rsna-knee-modeling-v15-geom-v2-tpu`, WAJIB set `best_auc` awal ke 0,8304 (bukan -1,0), supaya tidak kena gotcha yg sama spt v11/v12 (checkpoint tertimpa/hilang dari akses `kernel_sources`).
-  - **Prioritas eksperimen berikutnya (updated 19 Agustus, pasca-v15)**: (1) item geometri lain yg masih tertunda — sampling "3+3+3", crop sadar-laterality, handle 2-lutut-1-DICOM — makin layak dicoba krn geometri sudah terbukti pengungkit nyata; (2) k-fold CV proper (bukan 1 split gold N=57, cukup noisy per-epoch); (3) skor lokal 0,8304 MENDEKATI tapi BELUM capai ambang "~0,85-0,88" utk masuk ensemble (roadmap lama §10) — masih perlu naik lagi sebelum digabung; (4) TTA flip (item murah, belum ada di pipeline kita).
+  - **Sampling "3+3+3" SUDAH DICOBA (v16) — NEGATIF, penyebab jelas**: channel R/G/B genuine dari 3 slice fisik berbeda (bukan grayscale-di-repeat) tidak bisa ditafsirkan patch embedding DINOv2 yg tetap beku (`unfreeze_last=6` tidak sampai ke patch embedding). Val_macro_auc 0,7737, lebih buruk dari v15 (0,8304). **Kalau mau dicoba lagi**: pisahkan "jendela sampling anchor" dari "channel-packing" — pakai 9 slice sbg 9 view independen grayscale-repeat (spt v15), BUKAN dipasang sbg RGB — atau unfreeze patch embedding juga (risiko lebih tinggi).
+  - **Prioritas eksperimen berikutnya (updated 19 Agustus, pasca-v16)**: (1) crop sadar-laterality, handle 2-lutut-1-DICOM (item geometri belum dicoba, risiko lebih rendah drpd channel-packing); (2) k-fold CV proper (bukan 1 split gold N=57, cukup noisy per-epoch); (3) skor lokal 0,8304 (v15, masih terbaik) MENDEKATI tapi BELUM capai ambang "~0,85-0,88" utk masuk ensemble (roadmap lama §10); (4) TTA flip (item murah, belum ada di pipeline kita).
   - **Gotcha operasional penting (masih berlaku)**: pola self-reference `kernel_sources` + guard checkpoint (v12) membuat checkpoint versi lama TIDAK BISA diakses kernel lain begitu versi terbaru kernel itu tidak menimpanya (`kernel_sources` selalu mount versi TERBARU, bukan versi spesifik). Kalau butuh akses checkpoint lintas-versi yg aman, simpan sbg Kaggle Dataset terpisah, jangan andalkan `kernel_sources` semata.
 
 ## 3. Status Pipeline (overwrite tiap update)
@@ -57,7 +58,7 @@
 - **v15 (modeling, cache v2, TPU) SELESAI — MODEL TERBAIK BARU**: `kaggle_kernel_modeling_v2geom/rsna-knee-modeling-v15-geom-v2-tpu`. val_macro_auc 0,8304, naik dari v14 (0,8159, cache v1) +0,0145 dan checkpoint v11 (0,8195) +0,0109 — SATU-SATUNYA variabel beda dari v14 adalah data source, geometri slice TERBUKTI pengungkit nyata.
 - **Modeling v13/v14 (TPU, cache v1) SELESAI**: `kaggle_kernel_modeling_tpu/rsna-knee-modeling-v13-tpu-sanity`. v13 fix bug XLA (grad checkpointing) + temuan operasional (checkpoint lama tidak ketemu via kernel_sources). v14 (12 epoch dari nol, LR decay): 0,8159 — TIDAK melampaui v11, sekarang SUDAH TERLAMPAUI oleh v15.
 - **Preprocessing v3 (sampling "3+3+3") SELESAI PENUH**: `kaggle_kernel_preprocessing_v3/rsna-knee-preprocessing-v3-3x3-anchor-sampling`. 3 anchor merata di jendela tengah stack + 2 tetangga fisik/anchor = 9 slice/series, dipasang sbg channel RGB genuine (bukan grayscale-repeat). 24.371/24.371 OK (0 error), 100% `n_slices_cached=9`, 100% `pos_source=ipp`. Output 7,53 GB, ~67,7 menit.
-- **v16 (modeling, cache v3, TPU) SEDANG BERJALAN**: `kaggle_kernel_modeling_v3geom/rsna-knee-modeling-v16-3x3-anchor-tpu`. `KneeModel.forward` diubah — `.repeat(1,3,1,1)` dihapus, channel RGB sekarang genuine. Pembanding: v15 (cache v2) = 0,8304 (terbaik saat ini). Push 19 Agustus 18:35.
+- **v16 (modeling, cache v3, TPU) SELESAI — NEGATIF**: `kaggle_kernel_modeling_v3geom/rsna-knee-modeling-v16-3x3-anchor-tpu`. val_macro_auc **0,7737 (epoch 8/8, masih naik saat berhenti)** — LEBIH BURUK dari v15 (0,8304) & v11 (0,8195). **Diagnosis**: `unfreeze_last=6` = patch embedding DINOv2 tetap beku, layer itu di-pretrain utk warna foto natural berkorelasi — channel R/G/B genuine dari 3 slice fisik berbeda (bukan grayscale-di-repeat identik) menyodorkan pola yg tidak bisa ditafsirkan layer beku itu. **Model final proyek TETAP v15 (0,8304)**, v16 tidak menggantikannya.
 
 ## 4. Constraint & Batasan Aktif
 - **Eksekusi ML HANYA di Kaggle** — sandbox lokal tidak punya `sklearn`/`torch`, disk ~4.7GB free. Semua verifikasi lokal pakai AUC manual (numpy rank-based, Mann-Whitney U).
@@ -73,7 +74,7 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Hasil v16 (sampling 3+3+3) belum diketahui saat catatan ini ditulis** (§3) — kalau val_macro_auc > 0,8304: representasi channel RGB genuine terbukti pengungkit tambahan, lanjut item geometri sisa (crop laterality, 2-lutut-1-DICOM) atau k-fold. Kalau plateau/turun: urutan fisik saja (v15) sudah menangkap manfaat utama, geometri channel bukan pengungkit besar tambahan — pertimbangkan k-fold CV atau mulai arah ensemble.
+- **Arah lanjutan pasca-v16 (negatif)**: pilih prioritas — (a) crop sadar-laterality + 2-lutut-1-DICOM (item geometri belum dicoba), (b) k-fold CV proper, (c) coba ulang 3+3+3 tapi sbg 9-view independen (bukan RGB-packing) atau unfreeze patch embedding, (d) mulai arah ensemble dgn v15 (0,8304) sbg anggota. Belum ada arahan eksplisit.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat

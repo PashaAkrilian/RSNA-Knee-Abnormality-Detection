@@ -389,6 +389,25 @@ Arahan user pasca-v15: "lanjut item geometri lain" (dari 3 pilihan: geometri lai
 
 **v16 dipush** (`kaggle_kernel_modeling_v3geom/`, TPU): BUKAN cuma ganti data source lagi — kode model ikut berubah krn bentuk cache berubah total (9 slice → reshape 3 anchor x 3 RGB). `KneeStudyDataset._load_slot` di-reshape, `KneeModel.forward` — baris `.repeat(1,3,1,1)` (dulu duplikasi grayscale) **dihapus**, channel RGB sekarang genuine dari 3 slice fisik berbeda. Arsitektur/hyperparameter lain identik dgn v15 (EPOCHS=8, LR terpisah, `CosineAnnealingLR`, TPU). Pembanding: v15 (cache v2, "16 linspace") = **0,8304** (model terbaik saat ini). Push 19 Agustus 18:35:07, sedang dipantau.
 
+## 26. v16 SELESAI — negatif: channel RGB genuine LEBIH BURUK, penyebab jelas (patch embedding beku)
+
+Push pertama ERROR (bug sendiri, cell diagnostik py salinan reshape lama, sudah diperbaiki & di-push ulang versi 2). Run ~51,5 menit. Val_macro_auc:
+
+| epoch | val_macro_auc | | epoch | val_macro_auc |
+|---|---:|---|---|---:|
+| 1 | 0,6301 | | 5 | 0,6590 |
+| 2 | 0,6454 | | 6 | 0,7275 |
+| 3 | 0,6478 | | 7 | 0,7596 |
+| 4 | 0,6681 | | **8** | **0,7737 (BEST, masih naik)** |
+
+**LEBIH BURUK dari v15 (0,8304) DAN v11 (0,8195)**. Beda dari v15/v11 (menanjak cepat, plateau ~0,80-0,83), v16 belajar jauh lebih lambat (train_loss stuck ~0,48-0,53 selama beberapa epoch), belum konvergen saat EPOCHS=8 habis (LR sudah ~0 krn cosine decay).
+
+**Diagnosis (bukan tebakan kosong)**: `unfreeze_last=6` berarti patch embedding (layer paling awal DINOv2) TETAP BEKU, dan layer itu di-pretrain mengharapkan channel R/G/B = warna foto natural yang berkorelasi. Skema lama (grayscale-di-*repeat*, v1/v2/v15) aman krn 3 channel identik = backbone tetap melihat citra abu-abu biasa (pola umum & robust utk fine-tuning backbone ImageNet pretrained ke domain grayscale). Skema baru (3 slice fisik berbeda sbg R/G/B genuine) menyodorkan pola channel yang jauh dari yang pernah dilihat patch embedding — krn layer itu beku, model tidak bisa belajar menafsirkannya.
+
+**Model final proyek TETAP v15 (0,8304)** — v16 tidak menggantikannya, tapi tervalidasi tidak merusak apa pun.
+
+**Implikasi utk eksperimen 3+3+3 ke depan (kalau mau dicoba lagi)**: (a) unfreeze patch embedding jugajuga (risiko lebih tinggi, kemungkinan OOM/butuh LR lebih hati-hati), atau (b) pisahkan "jendela sampling anchor" dari "channel-packing" — pakai 9 slice dari skema 3+3+3 sbg 9 VIEW independen (grayscale-repeat spt v15, rata-rata post-backbone), BUKAN dipasang sbg R/G/B — isolasi manfaat jendela-sampling tanpa risiko mismatch channel. (b) lebih murah & konsisten dgn temuan v15 (physical order = pengungkit, cara agregasi lama sudah terbukti aman).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
