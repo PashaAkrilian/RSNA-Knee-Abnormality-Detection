@@ -408,6 +408,22 @@ Push pertama ERROR (bug sendiri, cell diagnostik py salinan reshape lama, sudah 
 
 **Implikasi utk eksperimen 3+3+3 ke depan (kalau mau dicoba lagi)**: (a) unfreeze patch embedding jugajuga (risiko lebih tinggi, kemungkinan OOM/butuh LR lebih hati-hati), atau (b) pisahkan "jendela sampling anchor" dari "channel-packing" — pakai 9 slice dari skema 3+3+3 sbg 9 VIEW independen (grayscale-repeat spt v15, rata-rata post-backbone), BUKAN dipasang sbg R/G/B — isolasi manfaat jendela-sampling tanpa risiko mismatch channel. (b) lebih murah & konsisten dgn temuan v15 (physical order = pengungkit, cara agregasi lama sudah terbukti aman).
 
+## 27. v17 SELESAI — masih di bawah v15, "3+3+3" 2/2 gagal, kesimpulan diperjelas
+
+Arahan user pasca-v16: "coba ulang 3+3+3 tanpa RGB-packing" — 9 slice cache v3 dipakai sbg 9 view independen grayscale-repeat (pola v15/K_SLICE), bukan channel RGB. Run ~1 jam 43 menit (K_SLICE=9, ~2,25x lebih lama dari v15/v16 yg K_SLICE=4 atau proses 9 slice tapi jadi 3 forward-pass gambar RGB).
+
+| kernel | skema | val_macro_auc |
+|---|---|---:|
+| **v15 (terbaik)** | 4 view independen, tersebar PENUH 0-100% stack | **0,8304** |
+| v17 | 9 view independen, terkonsentrasi jendela TENGAH 20-80% | 0,7999 |
+| v16 | 9 slice sama, dipasang jadi channel RGB (gagal, channel-mismatch) | 0,7737 |
+
+v17 > v16 (mengonfirmasi RGB-packing memang sebagian penyebab kegagalan v16), **tapi v17 tetap < v15**. `train_loss` epoch 8 = 0,4493 (v17) vs 0,2985 (v15) — konvergensi jauh lebih lambat.
+
+**Kesimpulan baru (diperjelas lewat 2 eksperimen)**: bukan cuma channel-packing yg jadi masalah — **pembatasan sampling ke jendela tengah (20-80%) kemungkinan memotong informasi anatomi di ~40% ujung stack** yg justru terjangkau sampling penuh v15 (4 titik tersebar 0-100%). Ditambah, 3 dari 9 slice per anchor v17 berdekatan sangat rapat (nyaris duplikat fisik) — keragaman efektif lebih rendah drpd 4 titik v15 yg tersebar jauh satu sama lain.
+
+**2 dari 2 percobaan skema "3+3+3" (RGB-packing DAN independent-view) GAGAL mengalahkan v15.** Line riset ini dianggap sudah dieksplorasi cukup utk arsitektur/pipeline kita saat ini — bukan pengungkit lanjutan, kecuali skema sampling diubah total (mis. tetap 4 titik tapi tersebar penuh + smoothing/interpolasi, bukan jendela-tengah). **Model final proyek TETAP v15 (0,8304)**.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11

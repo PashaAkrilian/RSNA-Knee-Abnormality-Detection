@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-19T19:50:00+07:00
+> Last updated: 2026-08-19T21:40:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -35,8 +35,8 @@
   - **v14 (TPU, cache v1, LR decay) mentok di 0,8159 — bukti ke-4 bahwa tuning training-schedule saja SUDAH MENTOK di config lama.** Prioritas dipindah ke geometri slice, DAN INI TERBUKTI BERHASIL: **v15 (TPU, cache preprocessing v2 — urutan slice fisik `ImagePositionPatient`) mencapai val_macro_auc 0,8304, MODEL TERBAIK BARU PROYEK** (naik dari checkpoint v11 0,8195, +0,0109). SATU-SATUNYA variabel yg beda dari v14 adalah data source — bukti langsung (bukan cuma laporan pihak lain) bahwa geometri slice adalah pengungkit nyata.
   - **TPU tervalidasi ~12x lebih cepat dari GPU T4** (~6,2 menit/epoch vs ~74 menit/epoch) — dipakai utk semua eksperimen sejak v13.
   - **Checkpoint v15 (0,8304) BELUM di-protect dgn guard** — kalau push versi baru ke slug `rsna-knee-modeling-v15-geom-v2-tpu`, WAJIB set `best_auc` awal ke 0,8304 (bukan -1,0), supaya tidak kena gotcha yg sama spt v11/v12 (checkpoint tertimpa/hilang dari akses `kernel_sources`).
-  - **Sampling "3+3+3" SUDAH DICOBA (v16) — NEGATIF, penyebab jelas**: channel R/G/B genuine dari 3 slice fisik berbeda (bukan grayscale-di-repeat) tidak bisa ditafsirkan patch embedding DINOv2 yg tetap beku (`unfreeze_last=6` tidak sampai ke patch embedding). Val_macro_auc 0,7737, lebih buruk dari v15 (0,8304). **Kalau mau dicoba lagi**: pisahkan "jendela sampling anchor" dari "channel-packing" — pakai 9 slice sbg 9 view independen grayscale-repeat (spt v15), BUKAN dipasang sbg RGB — atau unfreeze patch embedding juga (risiko lebih tinggi).
-  - **Prioritas eksperimen berikutnya (updated 19 Agustus, pasca-v16)**: (1) crop sadar-laterality, handle 2-lutut-1-DICOM (item geometri belum dicoba, risiko lebih rendah drpd channel-packing); (2) k-fold CV proper (bukan 1 split gold N=57, cukup noisy per-epoch); (3) skor lokal 0,8304 (v15, masih terbaik) MENDEKATI tapi BELUM capai ambang "~0,85-0,88" utk masuk ensemble (roadmap lama §10); (4) TTA flip (item murah, belum ada di pipeline kita).
+  - **Sampling "3+3+3" SUDAH DICOBA 2x (v16, v17) — KEDUANYA NEGATIF, line riset ini DITUTUP**: v16 (channel RGB genuine) = 0,7737 (channel-mismatch, patch embedding beku). v17 (9 view independen grayscale-repeat, BUKAN RGB) = 0,7999 — lebih baik dari v16 tapi TETAP < v15 (0,8304). Kesimpulan diperjelas: bukan cuma channel-packing yg masalah — pembatasan sampling ke jendela TENGAH (20-80%) kemungkinan memotong info anatomi di ~40% ujung stack yg terjangkau sampling penuh v15 (4 titik tersebar 0-100%), ditambah 3 slice/anchor yg berdekatan rapat = keragaman efektif lebih rendah. **JANGAN coba lagi skema "3+3+3" tanpa perubahan besar** (mis. tetap sebar penuh 0-100% + smoothing, bukan jendela-tengah) — 2/2 percobaan sudah cukup bukti utk arsitektur/pipeline kita saat ini.
+  - **Prioritas eksperimen berikutnya (updated 19 Agustus, pasca-v17)**: (1) crop sadar-laterality, handle 2-lutut-1-DICOM (item geometri belum dicoba); (2) k-fold CV proper (bukan 1 split gold N=57, cukup noisy per-epoch); (3) skor lokal 0,8304 (v15, masih terbaik) MENDEKATI tapi BELUM capai ambang "~0,85-0,88" utk masuk ensemble (roadmap lama §10); (4) TTA flip (item murah, belum ada di pipeline kita).
   - **Gotcha operasional penting (masih berlaku)**: pola self-reference `kernel_sources` + guard checkpoint (v12) membuat checkpoint versi lama TIDAK BISA diakses kernel lain begitu versi terbaru kernel itu tidak menimpanya (`kernel_sources` selalu mount versi TERBARU, bukan versi spesifik). Kalau butuh akses checkpoint lintas-versi yg aman, simpan sbg Kaggle Dataset terpisah, jangan andalkan `kernel_sources` semata.
 
 ## 3. Status Pipeline (overwrite tiap update)
@@ -74,7 +74,7 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Arah lanjutan pasca-v16 (negatif)**: pilih prioritas — (a) crop sadar-laterality + 2-lutut-1-DICOM (item geometri belum dicoba), (b) k-fold CV proper, (c) coba ulang 3+3+3 tapi sbg 9-view independen (bukan RGB-packing) atau unfreeze patch embedding, (d) mulai arah ensemble dgn v15 (0,8304) sbg anggota. Belum ada arahan eksplisit.
+- **Arah lanjutan pasca-v17 (line "3+3+3" ditutup, 2/2 negatif)**: pilih prioritas — (a) crop sadar-laterality + 2-lutut-1-DICOM (item geometri belum dicoba), (b) k-fold CV proper, (c) mulai arah ensemble dgn v15 (0,8304) sbg anggota. Belum ada arahan eksplisit.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat
