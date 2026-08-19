@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-19T12:35:00+07:00
+> Last updated: 2026-08-19T18:40:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -56,6 +56,8 @@
 - **Preprocessing v2 (geometri slice) SELESAI PENUH**: `kaggle_kernel_preprocessing_v2/rsna-knee-preprocessing-v2-physical-slice-order`. 24.371/24.371 series (100%), ~72,5 menit, CPU-only. **100% pakai posisi fisik (`ipp`), 0 fallback**. Output 12,94 GB.
 - **v15 (modeling, cache v2, TPU) SELESAI — MODEL TERBAIK BARU**: `kaggle_kernel_modeling_v2geom/rsna-knee-modeling-v15-geom-v2-tpu`. val_macro_auc 0,8304, naik dari v14 (0,8159, cache v1) +0,0145 dan checkpoint v11 (0,8195) +0,0109 — SATU-SATUNYA variabel beda dari v14 adalah data source, geometri slice TERBUKTI pengungkit nyata.
 - **Modeling v13/v14 (TPU, cache v1) SELESAI**: `kaggle_kernel_modeling_tpu/rsna-knee-modeling-v13-tpu-sanity`. v13 fix bug XLA (grad checkpointing) + temuan operasional (checkpoint lama tidak ketemu via kernel_sources). v14 (12 epoch dari nol, LR decay): 0,8159 — TIDAK melampaui v11, sekarang SUDAH TERLAMPAUI oleh v15.
+- **Preprocessing v3 (sampling "3+3+3") SELESAI PENUH**: `kaggle_kernel_preprocessing_v3/rsna-knee-preprocessing-v3-3x3-anchor-sampling`. 3 anchor merata di jendela tengah stack + 2 tetangga fisik/anchor = 9 slice/series, dipasang sbg channel RGB genuine (bukan grayscale-repeat). 24.371/24.371 OK (0 error), 100% `n_slices_cached=9`, 100% `pos_source=ipp`. Output 7,53 GB, ~67,7 menit.
+- **v16 (modeling, cache v3, TPU) SEDANG BERJALAN**: `kaggle_kernel_modeling_v3geom/rsna-knee-modeling-v16-3x3-anchor-tpu`. `KneeModel.forward` diubah — `.repeat(1,3,1,1)` dihapus, channel RGB sekarang genuine. Pembanding: v15 (cache v2) = 0,8304 (terbaik saat ini). Push 19 Agustus 18:35.
 
 ## 4. Constraint & Batasan Aktif
 - **Eksekusi ML HANYA di Kaggle** — sandbox lokal tidak punya `sklearn`/`torch`, disk ~4.7GB free. Semua verifikasi lokal pakai AUC manual (numpy rank-based, Mann-Whitney U).
@@ -71,13 +73,15 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Arah lanjutan pasca-v15 (0,8304)**: pilih prioritas — (a) lanjut item geometri lain (3+3+3 sampling, crop laterality, 2-lutut-1-DICOM) mengejar skor lebih tinggi lagi sebelum masuk ensemble, (b) k-fold CV proper dulu utk validasi lebih stabil, (c) langsung coba masuk ke ensemble (blend dgn oof.npz pilkwang 0,8360 + RadImageNet) walau belum capai ambang "~0,85-0,88" yg direncanakan. Belum ada arahan eksplisit soal urutan.
+- **Hasil v16 (sampling 3+3+3) belum diketahui saat catatan ini ditulis** (§3) — kalau val_macro_auc > 0,8304: representasi channel RGB genuine terbukti pengungkit tambahan, lanjut item geometri sisa (crop laterality, 2-lutut-1-DICOM) atau k-fold. Kalau plateau/turun: urutan fisik saja (v15) sudah menangkap manfaat utama, geometri channel bukan pengungkit besar tambahan — pertimbangkan k-fold CV atau mulai arah ensemble.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat
 - Kompetisi: https://www.kaggle.com/competitions/rsna-knee-abnormality-detection
 - **Kernel aktif (source of truth modeling, model terbaik 0,8304)**: `dimaspashaakrilian/rsna-knee-modeling-v15-geom-v2-tpu` — https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-modeling-v15-geom-v2-tpu
-- Kernel preprocessing v2 (geometri slice, source of truth data): `dimaspashaakrilian/rsna-knee-preprocessing-v2-physical-slice-order`
+- Kernel modeling v16 (eksperimen sampling 3+3+3, sedang berjalan): `dimaspashaakrilian/rsna-knee-modeling-v16-3x3-anchor-tpu`
+- Kernel preprocessing v2 (urutan fisik, dipakai v15): `dimaspashaakrilian/rsna-knee-preprocessing-v2-physical-slice-order`
+- Kernel preprocessing v3 (sampling 3+3+3, dipakai v16): `dimaspashaakrilian/rsna-knee-preprocessing-v3-3x3-anchor-sampling`
 - Kernel modeling lama (v11, 0,8195, GPU, superseded oleh v15): `dimaspashaakrilian/rsna-knee-modeling-v11-fix-oom-grad-checkpoint` — https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-modeling-v11-fix-oom-grad-checkpoint
 - Kernel preprocessing: `dimaspashaakrilian/rsna-knee-preprocessing-pipeline`
 - Kernel weak-labeler: `dimaspashaakrilian/rsna-knee-weak-labeler-from-reports`

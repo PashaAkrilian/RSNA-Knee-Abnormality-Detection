@@ -381,6 +381,14 @@ Pola kurva mirip v11 (masih naik sampai epoch 6, sedikit dip di 7, parsial pulih
 
 **Langkah berikutnya**: (1) item geometri lain yg masih tertunda (3+3+3 sampling, crop laterality, handle 2-lutut-1-DICOM) makin layak dicoba krn geometri sudah terbukti pengungkit nyata; (2) skor lokal 0,8304 mendekati ambang "> ~0,85-0,88" yg jadi syarat sebelum masuk ke ensemble (roadmap lama §10) — belum tercapai penuh, masih perlu naik sedikit lagi; (3) k-fold CV proper masih relevan utk validasi yg lebih stabil (N=57 gold cukup noisy per-epoch).
 
+## 25. Preprocessing v3 (sampling "3+3+3") SELESAI PENUH + v16 dipush
+
+Arahan user pasca-v15: "lanjut item geometri lain" (dari 3 pilihan: geometri lain / k-fold / langsung ensemble). `kaggle_kernel_preprocessing_v3/` mengimplementasikan sampling "3+3+3" (Discussion 735154): 3 anchor merata di jendela tengah stack (20%-80%), tiap anchor + 2 tetangga fisik langsung dipasang sbg channel R/G/B **genuine** (bukan grayscale-di-*repeat* spt v1/v2). `get_sorted_files` (urutan fisik, v2) tidak berubah.
+
+**Sanity run (300 series) & run penuh (24.371 series, ~67,7 menit) SUKSES SEMPURNA: 100% OK (0 error), 100% `n_slices_cached=9`, 100% `pos_source=ipp`, 0 fallback.** Output 7,53 GB (lebih kecil dari v2 12,94 GB, wajar krn 9 slice vs 16/series). Lebih cepat dari v2 juga (~400-500 series/menit vs ~360/menit — cuma decode 9 slice, bukan 16).
+
+**v16 dipush** (`kaggle_kernel_modeling_v3geom/`, TPU): BUKAN cuma ganti data source lagi — kode model ikut berubah krn bentuk cache berubah total (9 slice → reshape 3 anchor x 3 RGB). `KneeStudyDataset._load_slot` di-reshape, `KneeModel.forward` — baris `.repeat(1,3,1,1)` (dulu duplikasi grayscale) **dihapus**, channel RGB sekarang genuine dari 3 slice fisik berbeda. Arsitektur/hyperparameter lain identik dgn v15 (EPOCHS=8, LR terpisah, `CosineAnnealingLR`, TPU). Pembanding: v15 (cache v2, "16 linspace") = **0,8304** (model terbaik saat ini). Push 19 Agustus 18:35:07, sedang dipantau.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
