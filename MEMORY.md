@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-19T02:15:00+07:00
+> Last updated: 2026-08-19T11:40:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -52,7 +52,8 @@
 - **Ensemble komunitas 20-model (`pilkwang/rsna-knee-weights`)**: dievaluasi via `oof.npz` resmi (leak-free) → **macro AUC 0.8360** (57 gold kita). Kernel `kaggle_kernel_ensemble/` (`rsna-knee-ensemble-v1-community-20-model`) sempat run tapi hasil pertamanya (0.9954) **bug leakage**, sudah dikoreksi via oof.npz secara offline (bukan re-run kernel). v2 kernel (tambah arm model kita + RadImageNet, blend nested-CV) **belum dibangun**.
 - **Submission pipeline**: v1 (`kaggle_kernel_submission/`, `rsna-knee-submission-v1-community-20-model`, reuse kode pilkwang, internet off) sudah SELESAI dibuat & lolos dev-test (3 studi stub, 0 error) — **BELUM PERNAH benar-benar disubmit** ke leaderboard (dipause krn TEMUAN tim sudah punya submission history sendiri, lihat §4).
 - **Model final terbaik proyek sejauh ini: val_macro_auc = 0.8195** (checkpoint v11, backbone tunggal). Skor publik TIM (submission nyata) sudah **0.920** (16 Agustus→18 Agustus, via fork `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` — bukan model kita, lihat §2) — peringkat **#130/1.886 tim**, sama dgn puluhan tim lain (commodity ceiling, lihat §2).
-- **Preprocessing v2 (geometri slice)**: **BELUM DIMULAI** secara teknis — arah sudah dikunci di §2 (item 1), rencana implementasi berikutnya, CPU-only, tidak butuh kuota GPU.
+- **Preprocessing v2 (geometri slice) SELESAI PENUH**: `kaggle_kernel_preprocessing_v2/rsna-knee-preprocessing-v2-physical-slice-order`. 24.371/24.371 series (100%), ~72,5 menit, CPU-only. **100% pakai posisi fisik (`ipp`), 0 fallback** — tervalidasi penuh di skala sebenarnya. Output 12,94 GB.
+- **v15 (modeling, cache v2, TPU) SEDANG BERJALAN**: `kaggle_kernel_modeling_v2geom/rsna-knee-modeling-v15-geom-v2-tpu`. Eksperimen isolasi variabel geometri — satu-satunya beda dari v14 adalah data source (cache v2 vs v1), semua hyperparameter lain identik. Pembanding: v14=0,8159, checkpoint v11=0,8195 (terbaik saat ini). Push 19 Agustus 11:36.
 - **Modeling v13/v14 (TPU) SELESAI SEMUA**: kernel `kaggle_kernel_modeling_tpu/` (slug `rsna-knee-modeling-v13-tpu-sanity`, sudah 3 versi push). v13 sanity run ketemu & fix 1 bug XLA (grad checkpointing tidak kompatibel device `xla`) + 1 temuan operasional (checkpoint v11 tidak ketemu via kernel_sources, lihat §2). v14 run penuh (12 epoch, dari nol, TPU, LR decay): **val_macro_auc terbaik 0,8159 — TIDAK melampaui checkpoint v11 (0,8195)**. TPU tervalidasi ~12x lebih cepat dari GPU T4. **Model final proyek TETAP checkpoint v11 (0,8195, GPU)**.
 
 ## 4. Constraint & Batasan Aktif
@@ -69,7 +70,7 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Lanjut ke preprocessing v2 (geometri slice) sekarang** — ini prioritas terkunci pasca-v14 (§2), belum mulai dikerjakan teknis. Menunggu konfirmasi/arahan lanjut atau ada prioritas lain yg didahulukan dulu.
+- **Hasil v15 belum diketahui saat catatan ini ditulis** (§3) — kalau val_macro_auc > 0,8195: geometri slice terbukti pengungkit, lanjut ke item berikutnya (3+3+3 sampling, crop laterality, k-fold). Kalau tetap plateau: kandidat penyebab lain (kualitas label, representasi slot terlalu kasar) perlu digali.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat

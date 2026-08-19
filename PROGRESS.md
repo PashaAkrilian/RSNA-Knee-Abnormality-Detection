@@ -356,6 +356,12 @@ Run penuh (12 epoch, 4.349 studi, dari nol, TPU, `CosineAnnealingLR`) selesai ~4
 
 **TPU tetap aset berharga** — bukan sbg pengungkit skor langsung di config ini, tapi sbg infrastruktur cepat utk iterasi preprocessing v2 & eksperimen berikutnya (12x lebih murah waktu drpd GPU T4), begitu prioritas #1 (geometri slice) siap diuji.
 
+## 23. Preprocessing v2 SELESAI PENUH (100% posisi fisik, 0 fallback) + v15 dipush
+
+`kaggle_kernel_preprocessing_v2/` selesai run penuh: **24.371/24.371 series (100%), ~72,5 menit, 24.369 OK / 2 ERROR**. Output 12,94 GB (mirip v1, 13,05 GB). **Diagnostik kunci: 100% series pakai `pos_source=ipp` (posisi fisik `ImagePositionPatient`), 0,00 rata-rata fallback** — fix urutan slice tervalidasi penuh di skala sebenarnya, bukan cuma sampel 300 series. Bonus temuan: 4 series ter-flag laterality `"B"` (Both, kemungkinan 2 lutut 1 DICOM — konsisten dgn temuan Discussion 735639).
+
+**v15 dipush** (`kaggle_kernel_modeling_v2geom/`, TPU): eksperimen isolasi variabel — SATU-SATUNYA beda dari v14 adalah `kernel_sources` menunjuk preprocessing v2 (bukan v1), semua hyperparameter lain identik (DINOv2-base, unfreeze 6, LR head/backbone terpisah, `CosineAnnealingLR`, `EPOCHS=8`). Pembanding: v14 (cache v1) = 0,8159, checkpoint v11 (GPU, cache v1) = 0,8195 (skor terbaik proyek). Push 19 Agustus 11:36:09, sedang dipantau.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
