@@ -424,6 +424,28 @@ v17 > v16 (mengonfirmasi RGB-packing memang sebagian penyebab kegagalan v16), **
 
 **2 dari 2 percobaan skema "3+3+3" (RGB-packing DAN independent-view) GAGAL mengalahkan v15.** Line riset ini dianggap sudah dieksplorasi cukup utk arsitektur/pipeline kita saat ini — bukan pengungkit lanjutan, kecuali skema sampling diubah total (mis. tetap 4 titik tapi tersebar penuh + smoothing/interpolasi, bukan jendela-tengah). **Model final proyek TETAP v15 (0,8304)**.
 
+## 28. v18 SELESAI: k-fold CV ungkap validasi 1-split selama ini cukup berisik (OOF 0,8068 vs v15 0,8304)
+
+Run ~4,5 jam (5 fold x 8 epoch, TPU). Hasil per-fold (best epoch):
+
+| fold | best val_macro_auc | n_val |
+|---|---:|---:|
+| 1 | 0,7915 | 12 |
+| 2 | 0,8400 | 11 |
+| 3 | 0,8670 | 11 |
+| 4 | 0,7949 | 11 |
+| 5 | 0,8698 | 12 |
+
+**Rata-rata per-fold: 0,8326 ± 0,0338** (rentang 0,7915–0,8698, **selisih 0,078 antar-fold**). **OOF macro AUC (gabungan semua 57 studi gold, tiap studi dinilai model yg tidak pernah melihatnya): 0,8068.**
+
+**Temuan metodologis penting**: selisih antar-fold (0,078, std 0,034) **jauh lebih besar** drpd selisih-selisih yg dikejar di eksperimen² sebelumnya (v15 vs v11: +0,0109; v16: -0,0567; v17: -0,0305). Ini berarti **validasi 1-split N=57 yg dipakai sejak v6 cukup berisik** — banyak "kemenangan/kekalahan" antar-versi yg tercatat sebelumnya bisa jadi sebagian mencerminkan noise split, bukan cuma perbedaan model murni. **OOF (0,8068) lebih rendah dari skor v15 (0,8304, single-split)** — indikasi v15 kemungkinan dapat split yg menguntungkan, bukan murni performa objektif terbaik.
+
+**Catatan penting, BUKAN pembatalan kesimpulan v16/v17**: diagnosis channel-mismatch v16 (patch embedding beku) tetap berdasar alasan arsitektur yg jelas, independen dari noise split — TAPI magnitude perbedaan yg diukur (v15 vs v16/v17) perlu dipandang lebih hati-hati skrg krn ternyata berada dlm/dekat noise floor yg baru terkuantifikasi.
+
+**5 checkpoint tersimpan** (`best_model_fold0-4.pt`) — kandidat kuat utk ensemble 5-model (murah, tidak perlu training baru, cuma rata-rata prediksi saat inferensi) yg berpotensi lebih stabil dari model tunggal manapun.
+
+**Implikasi ke depan**: (1) OOF/k-fold sekarang jadi metrik yg lebih dipercaya drpd single-split; (2) eksperimen berikutnya idealnya pakai framework k-fold ini, atau minimal sadar bahwa selisih single-split <0,03-0,08 belum tentu signifikan; (3) ensemble 5-fold checkpoint adalah langkah murah & wajar berikutnya.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11

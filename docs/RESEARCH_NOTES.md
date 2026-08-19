@@ -636,4 +636,28 @@ Kandidat (b) dari §19 dieksekusi: `kaggle_kernel_modeling_v3indep/` — cache v
 
 **Kesimpulan diperjelas lewat perbandingan v16 vs v17**: v17 > v16 mengonfirmasi channel-packing MEMANG sebagian penyebab kegagalan v16 (§18/19), TAPI v17 < v15 menunjukkan ada masalah kedua yg independen: **pembatasan sampling ke jendela TENGAH stack (20-80%) kemungkinan memotong informasi anatomi di ~40% ujung stack** yg justru terjangkau sampling penuh v15 (4 titik linspace tersebar 0-100%). Ditambah, 3 slice per anchor v17 berdekatan sangat rapat secara fisik (nyaris duplikat) — rata-rata dari 9 slice yg efektifnya cuma ~3 sudut pandang benar-benar beda (bukan 9), lebih sempit drpd 4 sudut pandang v15 yg tersebar jauh satu sama lain di seluruh rentang stack.
 
-**Keputusan: line riset "3+3+3" (Discussion 735154) DITUTUP utk proyek ini — 2 dari 2 implementasi (RGB-packing & independent-view) GAGAL mengalahkan v15.** Bukan berarti tekniknya salah secara umum, tapi utk arsitektur/pipeline kita saat ini (backbone unfreeze parsial, label training saat ini) tidak terbukti jadi pengungkit tambahan di atas sekadar urutan-fisik (v15) + sampling-sebar-penuh. Kandidat kalau mau dibuka lagi nanti: skema sampling yg TETAP sebar penuh 0-100% (bukan jendela-tengah) tapi menambah smoothing/interpolasi antar-slice fisik-berdekatan (beda dari packing-jadi-RGB maupun window-restriction yg sudah terbukti gagal keduanya). **Model final proyek TETAP v15 (0,8304)** — TIDAK tergantikan oleh v16 maupun v17.
+**Keputusan: line riset "3+3+3" (Discussion 735154) DITUTUP utk proyek ini — 2 dari 2 implementasi (RGB-packing & independent-view) GAGAL mengalahkan v15.** Bukan berarti tekniknya salah secara umum, tapi utk arsitektur/pipeline kita saat ini (backbone unfreeze parsial, label training saat ini) tidak terbukti jadi pengungkit tambahan di atas sekadar urutan-fisik (v15) + sampling-sebar-penuh. Kandidat kalau mau dibuka lagi nanti: skema sampling yg TETAP sebar penuh 0-100% (bukan jendela-tengah) tapi menambah smoothing/interpolasi antar-slice fisik-berdekatan (beda dari packing-jadi-RGB maupun window-restriction yg sudah terbukti gagal keduanya). **Model final proyek TETAP v15 (0,8304)** — TIDAK tergantikan oleh v16 maupun v17. **(Update pasca-§21: magnitude perbedaan v15 vs v16/v17 ternyata berada dekat noise-floor k-fold yg baru terkuantifikasi — diagnosis channel-mismatch v16 tetap valid, tapi lihat §21 sebelum terlalu yakin soal besaran bedanya.)**
+
+## 21. v18: k-fold CV ungkap validasi 1-split selama ini cukup berisik (20 Agustus 2026)
+
+Arahan user pasca-§20 (line "3+3+3" ditutup): "k-fold CV proper". Motivasi: validasi selama ini cuma 1 split tetap (semua gold->val N=57, semua weak->train) — cukup rawan noise utk perbandingan antar-eksperimen yg bedanya tipis (0,01-0,06), spt yg berulang kali terjadi di v15/v16/v17.
+
+**Implementasi** (`kaggle_kernel_modeling_kfold/`, TPU, cache preprocessing v2 spt v15): 57 studi gold dibagi 5 fold. Per fold, (K-1)/K studi gold (~45-46) DITAMBAHKAN ke training (ekstra sinyal label asli, bukan cuma dibuang ke validasi spt skema lama) + 1/K jadi validasi OOF. Tiap fold dilatih dari NOL, independen (bukan saling resume). Arsitektur/hyperparameter identik v15 (unfreeze 6, LR terpisah, `CosineAnnealingLR`, EPOCHS=8).
+
+**Hasil (run ~4,5 jam)**:
+
+| fold | best val_macro_auc | n_val |
+|---|---:|---:|
+| 1 | 0,7915 | 12 |
+| 2 | 0,8400 | 11 |
+| 3 | 0,8670 | 11 |
+| 4 | 0,7949 | 11 |
+| 5 | 0,8698 | 12 |
+
+Rata-rata per-fold: **0,8326 ± 0,0338** (rentang 0,7915–0,8698, **selisih 0,078 antar-fold**). **OOF macro AUC gabungan (57/57 studi gold, metrik paling terpercaya krn tiap studi dinilai model yg tak pernah melihatnya): 0,8068** — LEBIH RENDAH dari v15 single-split (0,8304).
+
+**Temuan metodologis besar**: selisih antar-fold (0,078) jauh melampaui selisih² yg selama ini dikejar antar-eksperimen (v15 vs v11: +0,0109; v16: -0,0567; v17: -0,0305 — semuanya berada DALAM rentang noise antar-fold yg baru terukur). Ini artinya **validasi 1-split N=57 yg dipakai sejak v6 CUKUP BERISIK utk membedakan perubahan sekecil itu dgn percaya diri**. v15 kemungkinan besar mendapat split yg kebetulan menguntungkan model itu, bukan murni krn model itu objektif terbaik.
+
+**Bukan berarti semua kesimpulan sebelumnya salah** — diagnosis v16 (channel-mismatch krn patch embedding beku) tetap berdasar alasan arsitektur yg independen dari noise split, dan geometri urutan-fisik (v2, dari v11=0,8195 GPU single-split ke v15=0,8304 TPU single-split) tetap perubahan besar (+0,011, sementara typical fold-to-fold noise ±0,034 satu arah bisa lebih besar dari itu — jadi bahkan lompatan v11->v15 pun perlu dipandang dgn kehati-hatian serupa, walau arah dan mekanismenya masuk akal secara independen: preprocessing v2 tervalidasi 100% pos_source=ipp di skala penuh, bukan artefak split).
+
+**Implikasi ke depan**: (1) **OOF/k-fold sekarang metrik yg lebih dipercaya** drpd single-split N=57 — dipakai utk eksperimen besar berikutnya kalau memungkinkan (walau ~4-5x lebih mahal waktu/kuota drpd 1 split); (2) **5 checkpoint fold tersimpan** (`best_model_fold0-4.pt`) — kandidat ensemble 5-model yg murah (tidak perlu training baru, cuma rata-rata prediksi saat inferensi), berpotensi lebih stabil dari model tunggal manapun krn menggabungkan 5 model yg dilatih di subset training berbeda; (3) target "0,85-0,88 sebelum masuk ensemble komunitas" (roadmap §8c) sekarang diukur relatif ke OOF 0,8068 (bukan 0,8304) — gap ke ambang itu lebih besar dari yg dikira sebelumnya.
