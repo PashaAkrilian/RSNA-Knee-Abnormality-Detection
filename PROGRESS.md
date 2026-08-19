@@ -335,6 +335,27 @@ TPU terverifikasi jalan (§20) — langsung lanjut eksekusi, bukan cuma riset. K
 
 Push 18 Agustus 23:37:01, sedang `QUEUED` di monitor. Kalau sukses: lanjut run PENUH TPU (v13b/v14, `DEBUG_LIMIT_TRAIN=None`, `EPOCHS` dinaikkan krn kuota TPU jauh lebih longgar). Kalau gagal: fallback ke GPU pas kuota refresh 22 Agustus (device-fallback logic sudah otomatis, kode tidak perlu ditulis ulang).
 
+## 22. v14 SELESAI: TPU ~12x lebih cepat terkonfirmasi, tapi skor plafon di ~0,82 (bukan config training lagi)
+
+Run penuh (12 epoch, 4.349 studi, dari nol, TPU, `CosineAnnealingLR`) selesai ~4.690 detik (~78 menit).
+
+| epoch | val_macro_auc | | epoch | val_macro_auc |
+|---|---:|---|---|---:|
+| 1 | 0,7357 | | 7 | 0,8023 |
+| 2 | 0,7480 | | 8 | 0,8001 |
+| 3 | 0,7422 | | 9 | 0,7939 |
+| 4 | 0,7696 | | 10 | 0,7958 |
+| 5 | 0,7789 | | 11 | 0,7970 |
+| **6** | **0,8159 (BEST)** | | 12 | 0,7973 |
+
+**Kecepatan TPU terkonfirmasi**: steady-state ~370 detik/epoch (~6,2 menit) utk data penuh — v11 di GPU T4 makan **~74 menit/epoch**. **~12x lebih cepat**, melebihi estimasi awal (~10x) dari sanity run.
+
+**Tapi val_macro_auc TIDAK melampaui checkpoint v11 (0,8195)** — cuma 0,8159 (beda 0,0036, dlm noise N=57). LR scheduler berhasil cegah collapse separah v12 (yg anjlok tajam ke 0,7988), tapi tetap plateau ~0,80-0,82 mulai epoch 6, walau LR terus meluruh ke ~1e-5/1e-7 di epoch 12.
+
+**Kesimpulan strategis (bukti ke-4: v7, v9, v11, v12, sekarang v14)**: arsitektur+config saat ini (DINOv2-base, unfreeze 6 blok, slot attention, label hybrid flight0234) punya **plafon keras di ~0,80-0,82 macro AUC**, TIDAK PEDULI variasi jadwal training (epoch banyak/sedikit, LR flat/decay, dari-nol/resume). Ini menegaskan ulang §16d: pengungkit berikutnya HARUS di luar training-schedule — geometri slice preprocessing (`ImagePositionPatient`, laterality, "3+3+3") + kualitas label, bukan lagi tuning training loop. **Model final terbaik proyek tetap checkpoint v11 (0,8195, GPU)** — v14 tidak menggantikannya, tapi tervalidasi tidak merusak apa pun (checkpoint v11 aman tersimpan terpisah).
+
+**TPU tetap aset berharga** — bukan sbg pengungkit skor langsung di config ini, tapi sbg infrastruktur cepat utk iterasi preprocessing v2 & eksperimen berikutnya (12x lebih murah waktu drpd GPU T4), begitu prioritas #1 (geometri slice) siap diuji.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11

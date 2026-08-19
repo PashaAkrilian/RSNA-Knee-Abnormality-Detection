@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-18T23:40:00+07:00
+> Last updated: 2026-08-19T02:15:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -32,7 +32,10 @@
   - `pilkwang/rsna-knee-weights` (paket 20-model DINOv2-small rank-mean ensemble, CC0) **dipakai sbg anggota ensemble independen** (bukan disuntik ke bobot kita) — evaluasi HARUS pakai `oof.npz` resmi (out-of-fold), JANGAN live-infer ke gold set (lihat §4 soal jebakan leakage).
   - Restriksi API LLM hosted **sudah DILONGGARKAN** (dikonfirmasi tidak melanggar Rules) — implementasi relabeling LLM DITUNDA dulu (bukan dibatalkan), fokus saat ini tetap penguatan single-model.
   - **Skor 0,920 tim (via fork `tonylica/rsna-knee-dino-radimagenet-rank-ensemble`) adalah "commodity ceiling"** — puluhan tim lain (rank ~100-140+) punya skor identik krn fork notebook publik yang sama. BUKAN target akhir, BUKAN pencapaian unik — jangan disalahartikan sbg progress asli menuju top 1. Prioritas: bangun keunggulan yang TIDAK dibagikan publik (geometri slice, model sendiri yang lebih kuat), bukan menambah anggota fork lagi.
-  - **Prioritas eksperimen berikutnya terkunci** (hasil riset 18 Agustus, lihat §5 dulu → sekarang pindah kesini krn sudah diputuskan): (1) preprocessing v2 geometri slice (CPU-only, jalan sekarang tanpa nunggu kuota GPU) — urutan fisik `ImagePositionPatient`, crop sadar-laterality, handle 2-lutut-1-DICOM, sampling "3+3+3"; (2) begitu kuota GPU refresh, lanjut fine-tune v11 pakai LR scheduler/decay (v12 gagal krn LR flat → overfit); (3) k-fold CV proper (bukan 1 split gold N=57); (4) baru setelah model sendiri >~0,85-0,88 standalone, masuk ke ensemble sbg anggota independen + arm RadImageNet MIT sendiri; (5) TTA flip (item murah, terbukti dipakai semua kernel top, belum ada di pipeline kita).
+  - **v14 (TPU, 12 epoch, dari nol, LR cosine decay, 19 Agustus) SELESAI — bukti ke-4 (setelah v7/v9/v11/v12) bahwa config saat ini (DINOv2-base, unfreeze 6 blok, slot attention, label flight0234) punya PLAFON KERAS ~0,80-0,82 macro AUC, TIDAK PEDULI variasi jadwal training.** Val_macro_auc terbaik 0,8159 (epoch 6), TIDAK melampaui checkpoint v11 (0,8195) — model final proyek TETAP checkpoint v11. **Kesimpulan: tuning training-schedule (epoch/LR/resume) SUDAH MENTOK, prioritas #1 (geometri slice + kualitas label) sekarang WAJIB, bukan lagi opsional.**
+  - **TPU tervalidasi ~12x lebih cepat dari GPU T4** (config sama: ~6,2 menit/epoch vs ~74 menit/epoch) — infrastruktur siap pakai utk iterasi preprocessing v2 & eksperimen berikutnya begitu itu siap, walau TIDAK menggeser plafon skor dgn sendirinya.
+  - **Prioritas eksperimen berikutnya (terkunci, updated 19 Agustus)**: (1) **SEKARANG PRIORITAS UTAMA** — preprocessing v2 geometri slice (CPU-only atau TPU) — urutan fisik `ImagePositionPatient`, crop sadar-laterality, handle 2-lutut-1-DICOM, sampling "3+3+3"; tuning training-schedule (LR/epoch/resume) TERBUKTI BUKAN lagi pengungkit, jangan diulang lagi tanpa perubahan data/geometri. (2) k-fold CV proper (bukan 1 split gold N=57); (3) baru setelah model sendiri >~0,85-0,88 standalone, masuk ke ensemble sbg anggota independen + arm RadImageNet MIT sendiri; (4) TTA flip (item murah, terbukti dipakai semua kernel top, belum ada di pipeline kita).
+  - **Gotcha operasional penting**: pola self-reference `kernel_sources` + guard checkpoint (v12) membuat checkpoint versi lama TIDAK BISA diakses kernel lain begitu versi terbaru kernel itu tidak menimpanya (versi terbaru yg selalu di-mount `kernel_sources`, bukan versi spesifik yg py checkpoint-nya) — v13/v14 menemukan ini saat CKPT_DIR=None. Kalau butuh checkpoint versi lama via kernel_sources lagi, JANGAN pakai pola self-reference+guard; simpan checkpoint sbg Kaggle Dataset terpisah kalau perlu diakses lintas-versi dgn aman.
 
 ## 3. Status Pipeline (overwrite tiap update)
 - **EDA**: SELESAI. `kaggle_kernel/` → `eda_results/`.
@@ -50,7 +53,7 @@
 - **Submission pipeline**: v1 (`kaggle_kernel_submission/`, `rsna-knee-submission-v1-community-20-model`, reuse kode pilkwang, internet off) sudah SELESAI dibuat & lolos dev-test (3 studi stub, 0 error) — **BELUM PERNAH benar-benar disubmit** ke leaderboard (dipause krn TEMUAN tim sudah punya submission history sendiri, lihat §4).
 - **Model final terbaik proyek sejauh ini: val_macro_auc = 0.8195** (checkpoint v11, backbone tunggal). Skor publik TIM (submission nyata) sudah **0.920** (16 Agustus→18 Agustus, via fork `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` — bukan model kita, lihat §2) — peringkat **#130/1.886 tim**, sama dgn puluhan tim lain (commodity ceiling, lihat §2).
 - **Preprocessing v2 (geometri slice)**: **BELUM DIMULAI** secara teknis — arah sudah dikunci di §2 (item 1), rencana implementasi berikutnya, CPU-only, tidak butuh kuota GPU.
-- **Modeling v13 (TPU + LR scheduler)**: kernel baru `kaggle_kernel_modeling_tpu/rsna-knee-modeling-v13-tpu-sanity`, di-push 18 Agustus 23:37. Port `torch_xla` + `CosineAnnealingLR`, resume checkpoint v11 via `kernel_sources` langsung (bukan self-reference). **SANITY RUN** (`DEBUG_LIMIT_TRAIN=400`, `EPOCHS=2`) — validasi mekanisme dulu sebelum run penuh, BUKAN target beat 0,8195. Status: sedang berjalan, dipantau via Monitor background.
+- **Modeling v13/v14 (TPU) SELESAI SEMUA**: kernel `kaggle_kernel_modeling_tpu/` (slug `rsna-knee-modeling-v13-tpu-sanity`, sudah 3 versi push). v13 sanity run ketemu & fix 1 bug XLA (grad checkpointing tidak kompatibel device `xla`) + 1 temuan operasional (checkpoint v11 tidak ketemu via kernel_sources, lihat §2). v14 run penuh (12 epoch, dari nol, TPU, LR decay): **val_macro_auc terbaik 0,8159 — TIDAK melampaui checkpoint v11 (0,8195)**. TPU tervalidasi ~12x lebih cepat dari GPU T4. **Model final proyek TETAP checkpoint v11 (0,8195, GPU)**.
 
 ## 4. Constraint & Batasan Aktif
 - **Eksekusi ML HANYA di Kaggle** — sandbox lokal tidak punya `sklearn`/`torch`, disk ~4.7GB free. Semua verifikasi lokal pakai AUC manual (numpy rank-based, Mann-Whitney U).
@@ -66,7 +69,7 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Hasil sanity run v13 TPU** (§3) belum diketahui saat catatan ini ditulis — kalau sukses, lanjut run penuh TPU (v13b/v14); kalau gagal, tunggu GPU refresh 22 Agustus. Belum ada keputusan lanjutan krn hasil belum masuk.
+- **Lanjut ke preprocessing v2 (geometri slice) sekarang** — ini prioritas terkunci pasca-v14 (§2), belum mulai dikerjakan teknis. Menunggu konfirmasi/arahan lanjut atau ada prioritas lain yg didahulukan dulu.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat
