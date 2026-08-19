@@ -362,6 +362,25 @@ Run penuh (12 epoch, 4.349 studi, dari nol, TPU, `CosineAnnealingLR`) selesai ~4
 
 **v15 dipush** (`kaggle_kernel_modeling_v2geom/`, TPU): eksperimen isolasi variabel — SATU-SATUNYA beda dari v14 adalah `kernel_sources` menunjuk preprocessing v2 (bukan v1), semua hyperparameter lain identik (DINOv2-base, unfreeze 6, LR head/backbone terpisah, `CosineAnnealingLR`, `EPOCHS=8`). Pembanding: v14 (cache v1) = 0,8159, checkpoint v11 (GPU, cache v1) = 0,8195 (skor terbaik proyek). Push 19 Agustus 11:36:09, sedang dipantau.
 
+## 24. v15 SELESAI — TEROBOSAN: geometri slice fisik terbukti naikkan skor, plafon lama tertembus
+
+Run ~55,5 menit (TPU). Val_macro_auc:
+
+| epoch | val_macro_auc | | epoch | val_macro_auc |
+|---|---:|---|---|---:|
+| 1 | 0,7268 | | 5 | 0,8104 |
+| 2 | 0,7724 | | **6** | **0,8304 (BEST)** |
+| 3 | 0,7976 | | 7 | 0,8152 |
+| 4 | 0,8074 | | 8 | 0,8179 |
+
+**val_macro_auc 0,8304 — MODEL TERBAIK BARU PROYEK**, melampaui checkpoint v11 (0,8195, +0,0109) dan v14 (0,8159, cache v1 di TPU, +0,0145). SATU-SATUNYA variabel yg diubah dari v14 adalah sumber cache gambar (preprocessing v2 vs v1) — semua hyperparameter lain identik. **Hipotesis dari riset Discussion (735826, §16c) sekarang TERBUKTI langsung lewat eksperimen sendiri, bukan cuma laporan pihak lain: geometri slice yang benar (urutan fisik `ImagePositionPatient`) adalah pengungkit nyata, menembus plafon ~0,80-0,82 yang mentok di 4 eksperimen berturut (v7/v9/v11/v12/v14).**
+
+Pola kurva mirip v11 (masih naik sampai epoch 6, sedikit dip di 7, parsial pulih di 8) — checkpoint tersimpan di epoch 6 (`kernel_sources: dimaspashaakrilian/rsna-knee-modeling-v15-geom-v2-tpu`, versi 1, **BELUM ada versi baru yang menimpanya** — kalau push versi baru ke slug ini nanti, WAJIB set `best_auc` awal ke 0,8304, bukan -1,0, biar tidak kena gotcha yg sama spt v11/v12).
+
+**Model final terbaru proyek: val_macro_auc = 0,8304** (checkpoint v15, TPU, cache preprocessing v2).
+
+**Langkah berikutnya**: (1) item geometri lain yg masih tertunda (3+3+3 sampling, crop laterality, handle 2-lutut-1-DICOM) makin layak dicoba krn geometri sudah terbukti pengungkit nyata; (2) skor lokal 0,8304 mendekati ambang "> ~0,85-0,88" yg jadi syarat sebelum masuk ke ensemble (roadmap lama §10) — belum tercapai penuh, masih perlu naik sedikit lagi; (3) k-fold CV proper masih relevan utk validasi yg lebih stabil (N=57 gold cukup noisy per-epoch).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11

@@ -603,3 +603,17 @@ Item 6 di §16d dieksekusi penuh, bukan cuma probe. Ringkas (detail lengkap di `
 - **v14 (run penuh, dari nol, TPU, 12 epoch, `CosineAnnealingLR`)**: SELESAI ~78 menit. **Kecepatan steady-state ~370 detik/epoch (~6,2 menit) utk data penuh (4.349 studi) — v11 di GPU T4 makan ~74 menit/epoch. TPU ~12x lebih cepat**, melebihi estimasi awal (~10x) dari sanity run. **Tapi val_macro_auc terbaik cuma 0,8159 (epoch 6) — TIDAK melampaui checkpoint v11 (0,8195)**, plateau/turun tipis di epoch 7-12 walau LR terus meluruh ke ~1e-5/1e-7.
 
 **Kesimpulan strategis (bukti independen ke-4, setelah v7/v9/v11/v12)**: arsitektur+config saat ini (DINOv2-base, unfreeze 6 blok, slot attention, label hybrid flight0234) punya **plafon keras ~0,80-0,82 macro AUC** — variasi jadwal training (epoch banyak/sedikit, LR flat/decay, dari-nol/resume, GPU/TPU) semuanya konvergen ke kisaran yg sama. Ini SELARAS PERSIS dgn temuan independen Discussion (735826, §16c) bahwa "geometri slice + kualitas label > ukuran backbone/tuning training". **TPU tervalidasi sbg infrastruktur berharga (12x lebih murah waktu) utk eksperimen berikutnya, tapi BUKAN pengungkit skor dgn sendirinya** — prioritas mutlak sekarang preprocessing v2 (geometri slice) + kualitas label, bukan lagi tuning training-schedule di config yang sama.
+
+## 18. Preprocessing v2 + v15: hipotesis geometri slice TERBUKTI lewat eksperimen sendiri (19 Agustus 2026)
+
+Prioritas §17 dieksekusi penuh sampai hasil terukur, bukan cuma dibangun.
+
+**Preprocessing v2** (`kaggle_kernel_preprocessing_v2/`): `process_one_series` diubah SATU hal — file DICOM per series diurutkan pakai posisi fisik (proyeksi `ImagePositionPatient` ke sumbu normal slice dari `ImageOrientationPatient`) sebelum pilih 16 titik linspace, bukan urutan nama file (v1). Fallback berjenjang: `SliceLocation` → `InstanceNumber` → urutan file asli. Diagnostik `pos_source`/`n_pos_fallback` ditambahkan ke manifest.
+
+**Hasil run penuh (24.371 series, ~72,5 menit, CPU-only): 100% `pos_source=ipp`, 0,00 rata-rata fallback** — dataset kompetisi ini ternyata konsisten menyediakan tag posisi DICOM lengkap, fix terpakai penuh tanpa pengecualian berarti (24.369 OK, 2 ERROR).
+
+**v15** (`kaggle_kernel_modeling_v2geom/`, TPU): eksperimen isolasi variabel murni — arsitektur/hyperparameter identik dgn v14, SATU-SATUNYA beda adalah `kernel_sources` menunjuk preprocessing v2 (bukan v1).
+
+**Hasil: val_macro_auc 0,8304 (epoch 6/8) — MODEL TERBAIK BARU PROYEK**, naik dari checkpoint v11 (0,8195, GPU, cache v1, +0,0109) dan v14 (0,8159, TPU, cache v1, +0,0145). **Ini menembus plafon ~0,80-0,82 yang mentok di 4 eksperimen berturut (v7/v9/v11/v12/v14, semuanya pakai cache v1)** — bukti langsung dari eksperimen sendiri (bukan cuma laporan Discussion) bahwa geometri slice adalah pengungkit nyata, konsisten dgn temuan §17/§16c.
+
+**Implikasi**: (1) item geometri lain yg belum dikerjakan (sampling "3+3+3", crop sadar-laterality, handle 2-lutut-1-DICOM) makin layak diprioritaskan; (2) skor 0,8304 mendekati tapi belum capai ambang "~0,85-0,88" yg direncanakan sbg syarat masuk ensemble (§8c); (3) pola kurva v15 mirip v11 (naik terus sampai epoch 6, dip tipis di 7, parsial pulih di 8) — indikasi epoch lebih banyak atau LR schedule yg disetel ulang (T_max lebih presisi ke titik puncak) berpotensi masih ada ruang naik lagi, belum tentu sudah plateau penuh spt v14.
