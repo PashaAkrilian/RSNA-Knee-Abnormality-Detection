@@ -446,6 +446,16 @@ Run ~4,5 jam (5 fold x 8 epoch, TPU). Hasil per-fold (best epoch):
 
 **Implikasi ke depan**: (1) OOF/k-fold sekarang jadi metrik yg lebih dipercaya drpd single-split; (2) eksperimen berikutnya idealnya pakai framework k-fold ini, atau minimal sadar bahwa selisih single-split <0,03-0,08 belum tentu signifikan; (3) ensemble 5-fold checkpoint adalah langkah murah & wajar berikutnya.
 
+## 29. Submission v2: pipeline ensemble 5-fold model KITA SENDIRI tervalidasi penuh (arahan "lanjut" pasca-v18)
+
+`kaggle_kernel_submission_v2/` — submission pertama proyek ini yang benar-benar pakai model kita sendiri (bukan reuse kode/bobot komunitas spt v1). Sumber: 5 checkpoint `rsna-knee-modeling-v18-kfold-5-tpu` (OOF macro AUC 0,8068).
+
+**Tantangan teknis yang diselesaikan**: `test_series` tidak punya cache preprocessing (v1/v2/v3 semuanya cuma proses `train_series`) — notebook ini decode DICOM mentah on-the-fly saat inferensi, pakai fungsi preprocessing PERSIS SAMA dgn preprocessing v2 (`get_sorted_files` urutan fisik, `preprocess_slice` clip per-grup) disalin langsung, dgn `group_norm_stats.csv` dipinjam dari preprocessing v2 (dihitung dari sampel train, konsisten dipakai utk test — praktik standar). Ensemble = rata-rata sigmoid sederhana 5 model. Prediksi ditulis sbg percentile rank per label (pola sama dgn kode komunitas).
+
+**Hasil dev-test (CPU, `test_series` stub 3 studi): SUKSES PENUH, 0 error.** `submission.csv` (3,13) format benar, cocok persis dgn `sample_submission.csv`. **Temuan penting: CPU ~58 detik/studi** — diekstrapolasi ke ~1.300 studi test sungguhan = **~21 jam, jauh melebihi batas 9 jam kompetisi**. Konfirmasi GPU/TPU WAJIB (bukan pilihan) utk submission sungguhan, sesuai pola kernel komunitas (GPU T4).
+
+**Status**: pipeline logika tervalidasi penuh, BELUM disubmit ke leaderboard sungguhan. Langkah sebelum submit sungguhan: (1) pindah ke GPU T4 + `enable_internet=false` (pola submission-ready standar) setelah kuota GPU refresh (~22 Agustus, 2 hari lagi); (2) koordinasi dgn tim (kuota submission 5x/hari UNTUK SELURUH TIM, tim sudah punya skor 0,920 dari fork komunitas).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11

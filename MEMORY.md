@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-20T03:35:00+07:00
+> Last updated: 2026-08-20T08:05:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -38,7 +38,8 @@
   - **Sampling "3+3+3" SUDAH DICOBA 2x (v16, v17) — KEDUANYA NEGATIF, line riset ini DITUTUP**: v16 (channel RGB genuine) = 0,7737 (channel-mismatch, patch embedding beku). v17 (9 view independen grayscale-repeat) = 0,7999 — lebih baik dari v16 tapi TETAP < v15 (0,8304, TAPI lihat catatan k-fold di bawah). **CATATAN PENTING (pasca-v18)**: magnitude perbedaan v15 vs v16/v17 (0,03-0,06) ternyata berada DALAM/DEKAT noise-floor k-fold yg baru terkuantifikasi (std antar-fold 0,034) — diagnosis channel-mismatch v16 tetap valid scr arsitektur, tapi jangan terlalu yakin soal MAGNITUDE bedanya.
   - **k-fold CV (v18) SELESAI — TEMUAN METODOLOGIS BESAR**: 5-fold CV atas 57 gold, tiap studi divalidasi model yg tak pernah melihatnya (OOF). **Hasil per-fold: 0,7915 / 0,8400 / 0,8670 / 0,7949 / 0,8698 (rata-rata 0,8326 ± 0,0338, rentang 0,078!). OOF macro AUC gabungan (metrik paling terpercaya): 0,8068 — LEBIH RENDAH dari v15 (0,8304, single-split).** Ini mengungkap validasi 1-split N=57 yg dipakai sejak v6 CUKUP BERISIK — selisih antar-fold (0,078) jauh lebih besar dari selisih² yg dikejar antar-eksperimen selama ini (biasanya 0,01-0,06). v15 kemungkinan dapat split yg menguntungkan, bukan murni performa objektif terbaik. **OOF/k-fold sekarang metrik yg lebih dipercaya drpd single-split** utk eksperimen berikutnya.
   - **5 checkpoint fold (v18) tersimpan** (`best_model_fold0-4.pt`) — kandidat kuat utk ensemble 5-model (murah, cuma rata-rata prediksi, tidak perlu training baru).
-  - **Prioritas eksperimen berikutnya (updated 20 Agustus, pasca-v18)**: (1) ensemble 5-fold checkpoint (murah, next logical step); (2) crop sadar-laterality, handle 2-lutut-1-DICOM; (3) OOF 0,8068 (bukan 0,8304) skrg jadi acuan jarak ke ambang "~0,85-0,88" utk masuk ensemble komunitas (roadmap lama §10) — masih ada gap lebih besar dari yg dikira; (4) TTA flip.
+  - **Submission v2 (ensemble 5-fold, model KITA SENDIRI) tervalidasi penuh** (`kaggle_kernel_submission_v2/`): dev-test CPU di `test_series` stub 3 studi SUKSES 0 error, format `submission.csv` benar. Decode DICOM mentah on-the-fly (test tidak punya cache), pakai fungsi preprocessing v2 (urutan fisik + clip per-grup, `group_norm_stats.csv` dipinjam dari preprocessing v2). **Temuan: CPU ~58 detik/studi → ekstrapolasi ~21 jam utk 1.300 studi test, jauh lewat batas 9 jam** — GPU/TPU WAJIB utk submission sungguhan. **BELUM disubmit ke leaderboard.**
+  - **Prioritas eksperimen berikutnya (updated 20 Agustus, pasca-submission v2)**: (1) begitu kuota GPU refresh (~22 Agustus): pindah submission v2 ke GPU T4 + `enable_internet=false`, koordinasi tim, lalu submit sungguhan; (2) crop sadar-laterality, handle 2-lutut-1-DICOM; (3) OOF 0,8068 (bukan 0,8304) skrg jadi acuan jarak ke ambang "~0,85-0,88" utk masuk ensemble komunitas (roadmap lama §10); (4) TTA flip.
   - **Gotcha operasional penting (masih berlaku)**: pola self-reference `kernel_sources` + guard checkpoint (v12) membuat checkpoint versi lama TIDAK BISA diakses kernel lain begitu versi terbaru kernel itu tidak menimpanya (`kernel_sources` selalu mount versi TERBARU, bukan versi spesifik). Kalau butuh akses checkpoint lintas-versi yg aman, simpan sbg Kaggle Dataset terpisah, jangan andalkan `kernel_sources` semata.
 
 ## 3. Status Pipeline (overwrite tiap update)
@@ -76,13 +77,15 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
-- **Arah lanjutan pasca-v18 (k-fold selesai, OOF 0,8068)**: pilih prioritas — (a) ensemble 5-fold checkpoint (murah, langkah logis berikutnya), (b) crop sadar-laterality + 2-lutut-1-DICOM, (c) mulai arah ensemble dgn oof.npz pilkwang + RadImageNet. Belum ada arahan eksplisit.
+- **Submit sungguhan submission v2 ke leaderboard** — pipeline tervalidasi penuh (dev-test 0 error), tapi butuh: (a) tunggu kuota GPU refresh (~22 Agustus) utk pindah ke GPU T4 (CPU terlalu lambat, ~21 jam vs batas 9 jam), (b) koordinasi dgn tim soal kuota submission 5x/hari bersama. Belum diputuskan kapan/apakah submit sekarang.
+- **Arah lain**: crop sadar-laterality + 2-lutut-1-DICOM, atau ensemble dgn oof.npz pilkwang + RadImageNet. Belum ada arahan eksplisit.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat
 - Kompetisi: https://www.kaggle.com/competitions/rsna-knee-abnormality-detection
 - **Kernel aktif (source of truth modeling, checkpoint operasional 0,8304 single-split / ~0,8068 OOF)**: `dimaspashaakrilian/rsna-knee-modeling-v15-geom-v2-tpu` — https://www.kaggle.com/code/dimaspashaakrilian/rsna-knee-modeling-v15-geom-v2-tpu
 - Kernel k-fold CV (5 checkpoint, OOF 0,8068, kandidat ensemble): `dimaspashaakrilian/rsna-knee-modeling-v18-kfold-5-tpu`
+- Kernel submission v2 (ensemble 5-fold, tervalidasi dev-test, BELUM disubmit sungguhan): `dimaspashaakrilian/rsna-knee-submission-v2-own-5fold-ensemble`
 - Kernel modeling v16 (eksperimen sampling 3+3+3, sedang berjalan): `dimaspashaakrilian/rsna-knee-modeling-v16-3x3-anchor-tpu`
 - Kernel preprocessing v2 (urutan fisik, dipakai v15): `dimaspashaakrilian/rsna-knee-preprocessing-v2-physical-slice-order`
 - Kernel preprocessing v3 (sampling 3+3+3, dipakai v16): `dimaspashaakrilian/rsna-knee-preprocessing-v3-3x3-anchor-sampling`
