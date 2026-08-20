@@ -508,6 +508,38 @@ Run ~53,5 menit (TPU, single-split spt v15). Val_macro_auc:
 
 **Model final proyek TETAP checkpoint v15 (0,8304 single-split) / v18 (0,8068 OOF, metrik paling terpercaya)** — v19 belum menggantikan, statusnya masih kandidat.
 
+## 33. v20 SELESAI: k-fold konfirmasi laterality canonicalization — TIDAK ADA peningkatan (OOF hampir identik)
+
+Run ~4,2 jam (5 fold x 8 epoch, TPU, cache preprocessing v4). Hasil per-fold (best epoch):
+
+| fold | best val_macro_auc | n_val |
+|---|---:|---:|
+| 1 | 0,8247 | 12 |
+| 2 | 0,8061 | 11 |
+| 3 | 0,9042 | 11 |
+| 4 | 0,8156 | 11 |
+| 5 | 0,8491 | 12 |
+
+Rata-rata per-fold: 0,8400 ± 0,0352 (rentang 0,8061–0,9042, spread 0,098 — bahkan lebih lebar dari v18). **OOF macro AUC: 0,8073** — dibanding v18 OOF (baseline, cache v2, tanpa laterality canon): **0,8068**. **Selisih +0,0005 — PRAKTIS NOL, bukan peningkatan nyata**, ini perbandingan apples-to-apples valid (sama-sama metrik OOF 5-fold).
+
+**Kesimpulan**: laterality canonicalization TIDAK terbukti membantu utk arsitektur kita, walau deteksi geometrisnya sendiri valid & tervalidasi kuat (97,4% akurat vs tag asli, run penuh 24.371 series sukses). **Penjelasan yg masuk akal**: arsitektur `KneeModel.forward` kita pakai `patch_mean = out[:, 1:].mean(1)` — mean-pooling atas SEMUA patch token DINOv2 SEBELUM masuk head, yg **menghilangkan informasi posisi spasial (kiri vs kanan dlm citra) hampir sepenuhnya**. Flip horizontal (kanonikalisasi) tidak mengubah rata-rata sekumpulan patch secara berarti, jadi fitur yg dihasilkan hampir sama baik di-flip maupun tidak. Beda dgn kernel referensi (`sadamtorres`, §23) yg pakai ATTENTION pooling berbasis posisi-slice — arsitektur itu memang butuh & bisa eksploitasi orientasi konsisten, milik kita tidak.
+
+**Pola berulang ke-2 (setelah v16/RGB-packing)**: teknik yg secara teori/di sumber lain terbukti bagus, tapi GAGAL memberi manfaat krn arsitektur KITA SPESIFIK (mean-pooling, bukan attention/posisi-aware) tidak bisa mengeksploitasinya. **Pelajaran umum utk eksperimen berikutnya**: sebelum adopsi teknik dari sumber lain, cek dulu apakah arsitektur kita punya "jalur" utk memanfaatkan sinyal itu (posisi, orientasi, channel, dst.) — kalau tidak, perbaikan data sebagus apa pun tidak akan terpakai.
+
+**Model final proyek TETAP checkpoint v15 (0,8304 single-split) / v18 (0,8068 OOF, metrik paling terpercaya)** — v20 tidak menggantikan (selisih dlm margin nol). Preprocessing v4 & kernel v19/v20 tetap tersimpan sbg referensi/arsip, tidak dipakai lanjut sbg source-of-truth.
+
+## 34. v21 (arsitektur anatomy-query) dibangun — push-1 ERROR, root cause ditemukan & diperbaiki, versi ke-2 sedang berjalan
+
+Setelah v20 menutup line laterality-canonicalization utk arsitektur SlotHead (mean-pooling, §33), riset lanjutan pasca-scraping 20 Agustus (§23/MEMORY §2) menemukan resep **prvsiyan V19**: kepala model berbasis **cross-attention per-diagnosis atas token anatomis** (bukan mean-pool), mengeklaim +0,00989 macro AUC tervalidasi (0,84199→0,85188, bootstrap P(gain>0)=0,998, gated 5-fold gold-firewalled). Ini persis "jalur" yg diidentifikasi hilang di v20 — kesimpulan §33 secara eksplisit menyebut arsitektur attention/posisi-aware SEHARUSNYA bisa eksploitasi laterality canon, beda dgn mean-pooling.
+
+**Dibangun `kaggle_kernel_modeling_v5_anatomyquery/` (v21, slug `rsna-knee-modeling-v21-anatomy-query-tpu`)**: ganti "slot bag" dgn **1 series terbaik per plane** (Sagittal/Coronal/Axial, skor `4*Fluid_Sensitive+3*Fat_Suppression`), 24 token anatomis (8/plane), tiap token = **triplet RGB genuine 3 slice berdekatan** (bukan grayscale-repeat), + plane embedding + position embedding (0..1 dlm plane), lalu **`AnatomyQueryHead`**: 12 query cross-attention per-diagnosis (`einsum` scaled dot-product, masked softmax) atas 24 token. Data source = cache preprocessing v4 (laterality canon); laterality utk Sagittal ditangani di LOAD TIME (`vol[::-1]` utk lutut kiri, krn cache v4 cuma flip Coronal/Axial). **Perbedaan kunci vs v16 (yg gagal krn RGB-packing)**: `AnatomyModel.__init__` sengaja **unfreeze `backbone.embeddings.patch_embeddings`** (selain 6 blok terakhir + layernorm) — mengatasi langsung akar masalah v16 (patch embedding beku tidak bisa menafsirkan channel R/G/B non-foto-natural). Total trainable params 43,4M (vs 42,9M skema lama). Struktur training: k-fold 5-fold sama persis pola v18/v20, EPOCHS=8, BATCH=4, LR head 1e-3/backbone 8e-6, safety cutoff 7 jam.
+
+**Push-1 ERROR**: `DATA_OK=False`, log cetak "100,0% studi dgn gambar KOSONG (train & val)" — guard keamanan mengabort training sebelum mulai. **Diagnosis dari log** (`mask.sum()=24,00/24,00` penuh — 0 file cache hilang; varians embedding 0,3238 — nonzero/normal; std prediksi sigmoid nonzero per label) membuktikan pipeline data SEBENARNYA BENAR — ini **false positive** di fungsi diagnostik, bukan bug data asli. **Root cause**: `AnatomyDataset._plane_tokens()` menormalisasi pixel ke skala **[0,1]** (`/255.0`) DI DALAM Dataset — beda dari v15-v20 yg tetap skala 0-255 mentah & normalisasi baru terjadi di `model.forward()`. Fungsi `dataset_stats()` (copy-paste dari notebook v15-v20) masih pakai ambang lama `img_means < 1.0` (benar utk skala 0-255, tapi SELALU true utk skala [0,1] dgn mean tipikal gambar non-kosong ~0,3-0,4) → 100% studi ter-flag "kosong" padahal tidak ada satupun yg benar-benar kosong.
+
+**Fix**: ambang diganti `img_means < 0,02` (sesuai skala [0,1]), + komentar penjelasan akar masalah utk referensi ke depan. Diverifikasi: `model.forward()` TIDAK dobel-normalisasi (sudah dikonfirmasi lewat komentar kode "sudah /255 + triplet RGB"), `ast.parse()` seluruh 23 cell sukses (syntax valid), grep memastikan tidak ada ambang `<1.0` lain yg tersisa di notebook. Di-push sbg **kernel versi 2** (2026-08-21 00:00:58), commit `e9db74c` ("Fix v21 ERROR: dataset_stats() pakai ambang skala lama, false-positive 'gambar kosong'"). Log lokal stale (`rsna-knee-modeling-v21-anatomy-query-tpu.log`) dihapus sebelum commit. Status terakhir: **QUEUED** di Kaggle, run belum menghasilkan OOF. Estimasi durasi ~4,5-5 jam (5-fold × 8 epoch, TPU). **Kuota TPU perlu diawasi** — sisa ~5,80h dari 20h/minggu per cek terakhir, run ini bisa menghabiskan sebagian besar sisanya.
+
+Jika v21 berhasil dan OOF-nya mengalahkan v18 (0,8068)/v20 (0,8073) secara meyakinkan (di luar noise ±0,03-0,08 yg terkuantifikasi di v18), ini akan jadi model final baru proyek — arsitektur ini secara spesifik mengatasi SEKALIGUS akar masalah v16 (patch embedding beku) dan v20 (mean-pooling buta posisi).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
