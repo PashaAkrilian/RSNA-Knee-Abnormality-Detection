@@ -491,6 +491,23 @@ Leaderboard #1 naik ke 0,952. Ditemukan kernel publik terbaik yang pernah dianal
 
 Detail lengkap di `docs/RESEARCH_NOTES.md` §23.
 
+## 32. v19 SELESAI — laterality canonicalization: inconclusive di single-split (sesuai peringatan sendiri)
+
+Run ~53,5 menit (TPU, single-split spt v15). Val_macro_auc:
+
+| epoch | val_macro_auc | | epoch | val_macro_auc |
+|---|---:|---|---|---:|
+| 1 | 0,7271 | | 5 | 0,8149 |
+| 2 | 0,7752 | | 6 | 0,8241 |
+| 3 | 0,8125 | | **7** | **0,8245 (BEST)** |
+| 4 | 0,8219 | | 8 | 0,8218 |
+
+**0,8245** — sedikit di bawah v15 (0,8304, cache v2, -0,0059) TAPI jauh di atas v18 OOF (0,8068, cache v2 5-fold, +0,0177). Mengingat noise antar-fold yg terukur di v18 (std 0,034, rentang 0,078), **selisih -0,0059 dari v15 PRAKTIS TIDAK BISA DIBEDAKAN dari noise single-split** — bukan bukti laterality canonicalization gagal, juga bukan bukti kuat berhasil. Ini persis skenario yg sudah diantisipasi di markdown eksperimen v19 sendiri sebelum run dimulai.
+
+**Status: INCONCLUSIVE, kandidat baik utk konfirmasi k-fold** (~4,5 jam TPU) sebelum disimpulkan — teknik ini punya dasar teori kuat (memperbaiki bug nyata: 4 label bisa belajar dari anatomi cermin-terbalik, tervalidasi 97,4% akurat vs tag Laterality asli) dan hasil single-split TIDAK lebih buruk secara berarti dari v15. **Belum diputuskan** apakah lanjut k-fold sekarang atau prioritas lain dulu — menunggu arahan user.
+
+**Model final proyek TETAP checkpoint v15 (0,8304 single-split) / v18 (0,8068 OOF, metrik paling terpercaya)** — v19 belum menggantikan, statusnya masih kandidat.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
