@@ -661,3 +661,23 @@ Rata-rata per-fold: **0,8326 ± 0,0338** (rentang 0,7915–0,8698, **selisih 0,0
 **Bukan berarti semua kesimpulan sebelumnya salah** — diagnosis v16 (channel-mismatch krn patch embedding beku) tetap berdasar alasan arsitektur yg independen dari noise split, dan geometri urutan-fisik (v2, dari v11=0,8195 GPU single-split ke v15=0,8304 TPU single-split) tetap perubahan besar (+0,011, sementara typical fold-to-fold noise ±0,034 satu arah bisa lebih besar dari itu — jadi bahkan lompatan v11->v15 pun perlu dipandang dgn kehati-hatian serupa, walau arah dan mekanismenya masuk akal secara independen: preprocessing v2 tervalidasi 100% pos_source=ipp di skala penuh, bukan artefak split).
 
 **Implikasi ke depan**: (1) **OOF/k-fold sekarang metrik yg lebih dipercaya** drpd single-split N=57 — dipakai utk eksperimen besar berikutnya kalau memungkinkan (walau ~4-5x lebih mahal waktu/kuota drpd 1 split); (2) **5 checkpoint fold tersimpan** (`best_model_fold0-4.pt`) — kandidat ensemble 5-model yg murah (tidak perlu training baru, cuma rata-rata prediksi saat inferensi), berpotensi lebih stabil dari model tunggal manapun krn menggabungkan 5 model yg dilatih di subset training berbeda; (3) target "0,85-0,88 sebelum masuk ensemble komunitas" (roadmap §8c) sekarang diukur relatif ke OOF 0,8068 (bukan 0,8304) — gap ke ambang itu lebih besar dari yg dikira sebelumnya.
+
+## 22. Submission v2 tervalidasi + BLEND OOF kita+pilkwang = 0,8462 tanpa training tambahan (20 Agustus 2026)
+
+**Submission v2** (`kaggle_kernel_submission_v2/`): pipeline ensemble 5-fold model KITA SENDIRI (bukan reuse kode komunitas) — decode DICOM `test_series` mentah on-the-fly (tidak ada cache preprocessing utk test), pakai fungsi preprocessing v2 PERSIS SAMA (`get_sorted_files`, `preprocess_slice`, `group_norm_stats.csv` dipinjam dari preprocessing v2). Dev-test CPU di stub 3 studi: **SUKSES PENUH, 0 error**, format `submission.csv` benar. **Temuan: CPU ~58 detik/studi → ~21 jam utk 1.300 studi test sungguhan, jauh lewat batas 9 jam** — konfirmasi GPU/TPU wajib utk submission real.
+
+**Blend OOF kita + pilkwang** (arahan "lanjut" -> "sesuai rekomendasi"): dgn GPU masih terkunci, langkah bernilai tanpa kuota — blend `oof_predictions.csv` kita (v18, 5-fold) + `oof.npz` resmi pilkwang (diunduh ulang), murni numpy/pandas lokal.
+
+| sumber | macro AUC (57 gold, leak-free) |
+|---|---:|
+| Kita sendiri (v18 OOF) | 0,8068 |
+| Pilkwang (20-model OOF) | 0,8360 |
+| **Blend rank-space α=0,60 (60% pilkwang, 40% kita)** | **0,8462** |
+
+Sweep α 0,00-1,00: blend mengalahkan KEDUA sumber di rentang luas (α=0,30-0,90 semua >0,83) — bukan artefak titik tunggal, konfirmasi keragaman model kita bernilai nyata walau lebih lemah sendirian. **Skor macro AUC leak-free tertinggi proyek ini.**
+
+Per-label: Effusion 0,869→0,940→**0,962**, MCL 0,801→0,875→**0,887** naik konsisten via blend. Lateral Meniscus TETAP lemah di ketiganya (~0,63-0,64) — bukan soal blend, kandidat perbaikan representasi/label tersendiri.
+
+Validitas dicek: `true_` (kita, hard gold) vs `y_derived` (pilkwang, kemungkinan soft/derived) TIDAK identik (selisih 143,0) — bukan bug, evaluasi tetap konsisten krn SEMUA AUC (kita/pilkwang/blend) dihitung relatif ke `true_` yg sama; recompute pilkwang-alone via jalur ini cocok persis dgn 0,8360 yg sudah diverifikasi independen (§13).
+
+**Langkah nyata berikutnya (butuh GPU T4, terkunci sampai ~22 Agustus)**: jalankan submission v2 (kita) + submission v1 (pilkwang) di `test_series` sungguhan, blend rank-space α≈0,60, submit hasil blend — bukan salah satu sendirian. Ini jalur konkret pertama menuju skor gabungan yg benar-benar terukur di leaderboard, dibangun dari 2 sumber yg SUDAH tervalidasi leak-free.

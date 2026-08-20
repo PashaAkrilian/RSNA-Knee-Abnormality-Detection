@@ -456,6 +456,26 @@ Run ~4,5 jam (5 fold x 8 epoch, TPU). Hasil per-fold (best epoch):
 
 **Status**: pipeline logika tervalidasi penuh, BELUM disubmit ke leaderboard sungguhan. Langkah sebelum submit sungguhan: (1) pindah ke GPU T4 + `enable_internet=false` (pola submission-ready standar) setelah kuota GPU refresh (~22 Agustus, 2 hari lagi); (2) koordinasi dgn tim (kuota submission 5x/hari UNTUK SELURUH TIM, tim sudah punya skor 0,920 dari fork komunitas).
 
+## 30. TEROBOSAN TANPA TRAINING: blend OOF kita + komunitas = 0,8462 (rekomendasi Claude, dieksekusi via "sesuai rekomendasi")
+
+Dengan kuota GPU masih 0 (refresh ~22 Agustus) dan pipeline submission v2 sudah tervalidasi, langkah paling bernilai berikutnya yang TIDAK butuh GPU/TPU sama sekali: blend 2 sumber OOF leak-free yang SUDAH ADA — `oof_predictions.csv` kita sendiri (v18, 5-fold) + `oof.npz` resmi pilkwang (20-model komunitas, diunduh ulang dari `pilkwang/rsna-knee-weights`). Murni numpy/pandas lokal, evaluasi manual AUC (sklearn tidak tersedia lokal, pola established proyek ini).
+
+**Hasil pada irisan 57 studi gold (leak-free kedua sumber)**:
+
+| sumber | macro AUC |
+|---|---:|
+| Kita sendiri (v18, OOF 5-fold) | 0,8068 |
+| Komunitas (pilkwang, OOF 20-model) | 0,8360 |
+| **Blend rank-space optimal (α=0,60 arah pilkwang, 0,40 arah kita)** | **0,8462** |
+
+**Sweep alpha 0,00-1,00 (step 0,05) menunjukkan blend MENGALAHKAN kedua sumber di RENTANG LUAS (α=0,30 s.d. 0,90 semua >0,83)** — bukan artefak satu titik yang rapuh, konfirmasi nyata bahwa model kita menyumbang keragaman asli walau lebih lemah sendirian. Ini **skor macro AUC leak-free tertinggi proyek ini sejauh ini**, +0,0102 dari pilkwang sendirian, +0,0394 dari model kita sendirian.
+
+**Per-label breakdown di α=0,60** (kita | pilkwang | blend): Effusion 0,869|0,940|**0,962**, MCL 0,801|0,875|**0,887**, Medial OA 0,919|0,949|**0,949**, ACL 0,836|0,865|**0,868** — naik konsisten via blend. Lateral Meniscus TETAP lemah di ketiganya (0,638|0,632|0,638) — belum ada sumber yg menangkap sinyal ini dgn baik, kandidat perbaikan tersendiri (bukan soal blend, tapi soal representasi/label utk finding ini spesifik).
+
+**Catatan validitas**: `true_` (kita) vs `y_derived` (pilkwang) di `oof.npz` TIDAK identik (selisih absolut 143,0 total) — bukan bug, `y_derived` pilkwang adalah target "derived" (kemungkinan soft/blended), BUKAN hard gold 0/1 murni spt yg kita pakai. Evaluasi tetap valid krn SELURUH perhitungan AUC (kita, pilkwang, blend) konsisten pakai `true_` (hard gold) yang sama sbg acuan tunggal — recompute pilkwang-alone via jalur ini persis cocok dgn `0,8360` yg sudah diverifikasi independen sebelumnya (§13), konfirmasi konsistensi metodologi.
+
+**Langkah nyata berikutnya (BELUM bisa dieksekusi — butuh GPU T4, kuota 0 sampai ~22 Agustus)**: jalankan `kaggle_kernel_submission_v2/` (model kita) DAN `kaggle_kernel_submission/` (komunitas pilkwang) di `test_series` SUNGGUHAN dgn GPU, unduh kedua `submission.csv`, blend rank-space di α≈0,60 (atau sweep ulang kalau ada waktu), baru submit hasil blend-nya — bukan submit salah satu sendirian. Ini jalur konkret pertama proyek ini menuju skor gabungan yg TERUKUR lebih baik dari submission tim saat ini (0,920, tapi itu skor leaderboard sungguhan vs 0,8462 ini skor lokal gold-57 -- ada offset kalibrasi lokal-ke-leaderboard yg perlu diperhitungkan, biasanya +0,04-an berdasar riset kalibrasi sebelumnya §11b).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11

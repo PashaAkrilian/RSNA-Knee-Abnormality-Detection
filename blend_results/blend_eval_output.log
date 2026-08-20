@@ -1,0 +1,46 @@
+OURS: 57 studi | PILKWANG gold: 58 studi
+Irisan studi (dipakai evaluasi & blend): 57
+Sanity cek label (harus 0): total selisih absolut true_ vs pk_true_ = 143.0
+
+Macro AUC (irisan 57 studi, leak-free keduanya):
+  Kita sendiri (v18, 5-fold OOF)      : 0.8068
+  Komunitas (pilkwang, 20-model OOF)   : 0.8360
+
+Sweep blend alpha (0=kita saja, 1=pilkwang saja), rank-space:
+  alpha=0.00  macro_auc=0.8068  <-- best so far
+  alpha=0.05  macro_auc=0.8090  <-- best so far
+  alpha=0.10  macro_auc=0.8147  <-- best so far
+  alpha=0.15  macro_auc=0.8178  <-- best so far
+  alpha=0.20  macro_auc=0.8232  <-- best so far
+  alpha=0.25  macro_auc=0.8289  <-- best so far
+  alpha=0.30  macro_auc=0.8325  <-- best so far
+  alpha=0.35  macro_auc=0.8354  <-- best so far
+  alpha=0.40  macro_auc=0.8396  <-- best so far
+  alpha=0.45  macro_auc=0.8412  <-- best so far
+  alpha=0.50  macro_auc=0.8431  <-- best so far
+  alpha=0.55  macro_auc=0.8444  <-- best so far
+  alpha=0.60  macro_auc=0.8462  <-- best so far
+  alpha=0.65  macro_auc=0.8453
+  alpha=0.70  macro_auc=0.8452
+  alpha=0.75  macro_auc=0.8444
+  alpha=0.80  macro_auc=0.8438
+  alpha=0.85  macro_auc=0.8417
+  alpha=0.90  macro_auc=0.8384
+  alpha=0.95  macro_auc=0.8363
+  alpha=1.00  macro_auc=0.8360
+
+BEST: alpha=0.60  macro_auc=0.8462
+
+Per-label AUC (kita | pilkwang | blend@0.60):
+  ACL                  0.8359 | 0.8649 | 0.8681
+  MCL                  0.8010 | 0.8750 | 0.8865
+  Medial Meniscus      0.7730 | 0.8462 | 0.8474
+  Lateral Meniscus     0.6381 | 0.6317 | 0.6381
+  Medial OA            0.9190 | 0.9492 | 0.9492
+  Lateral OA           0.7885 | 0.7055 | 0.7451
+  PF OA                0.7897 | 0.7976 | 0.8108
+  Effusion             0.8688 | 0.9403 | 0.9623
+  Synovitis            0.7716 | 0.7346 | 0.7722
+  Baker's              0.8037 | 0.9537 | 0.9287
+  Contusion            0.8698 | 0.8407 | 0.8650
+  Fracture             0.8219 | 0.8932 | 0.8811
