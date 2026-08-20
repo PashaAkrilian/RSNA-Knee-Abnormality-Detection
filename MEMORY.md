@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-20T08:35:00+07:00
+> Last updated: 2026-08-20T09:35:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -40,7 +40,8 @@
   - **5 checkpoint fold (v18) tersimpan** (`best_model_fold0-4.pt`) — kandidat kuat utk ensemble 5-model (murah, cuma rata-rata prediksi, tidak perlu training baru).
   - **Submission v2 (ensemble 5-fold, model KITA SENDIRI) tervalidasi penuh** (`kaggle_kernel_submission_v2/`): dev-test CPU di `test_series` stub 3 studi SUKSES 0 error, format `submission.csv` benar. Decode DICOM mentah on-the-fly (test tidak punya cache), pakai fungsi preprocessing v2 (urutan fisik + clip per-grup, `group_norm_stats.csv` dipinjam dari preprocessing v2). **Temuan: CPU ~58 detik/studi → ekstrapolasi ~21 jam utk 1.300 studi test, jauh lewat batas 9 jam** — GPU/TPU WAJIB utk submission sungguhan. **BELUM disubmit ke leaderboard.**
   - **Blend OOF kita + pilkwang = 0,8462 (α=0,60 pilkwang/0,40 kita)** — skor lokal leak-free tertinggi proyek, ditemukan TANPA training baru (§3). Robust di rentang α 0,30-0,90.
-  - **Prioritas eksperimen berikutnya (updated 20 Agustus, pasca-blend)**: (1) begitu kuota GPU refresh (~22 Agustus): jalankan `kaggle_kernel_submission_v2/` (kita) DAN `kaggle_kernel_submission/` (pilkwang) di test_series SUNGGUHAN, blend rank-space α≈0,60, submit hasil blend (bukan salah satu sendirian) — jalur konkret pertama menuju skor gabungan terukur; (2) Lateral Meniscus lemah di SEMUA sumber (kita/pilkwang/blend ~0,63-0,64) — kandidat perbaikan tersendiri; (3) crop sadar-laterality, handle 2-lutut-1-DICOM; (4) TTA flip.
+  - **Riset ulang 20 Agustus (Code/Discussion/eksternal)**: kernel `sadamtorres/domain-adaptation-beats-resolution-dinov2-on-knee` (LB 0,883) jadi referensi teknis terbaik yg ditemukan — 3 temuan actionable: (a) **laterality canonicalization** (hitung CENTER citra dari IPP+orientasi, kanonikalisasi SEMUA studi jadi "seolah lutut kanan" — TANPA ini 4 label medial/lateral bisa belajar dari anatomi cermin-terbalik separuh waktu, GAGAL DIAM-DIAM tanpa error) — prioritas ini NAIK signifikan; (b) kalibrasi lokal→LB ~+0,04-0,046 (bukan presisi, 1 dari 3 contoh sumbernya sendiri inkonsisten); (c) sumber sarankan rank-mean (bukan probability-mean, yg dipakai submission v2 kita sekarang) utk kombinasi model. Detail: `docs/RESEARCH_NOTES.md` §23.
+  - **Prioritas eksperimen berikutnya (updated 20 Agustus)**: (1) begitu kuota GPU refresh (~22 Agustus): jalankan `kaggle_kernel_submission_v2/` (kita) DAN `kaggle_kernel_submission/` (pilkwang) di test_series SUNGGUHAN, blend rank-space α≈0,60, submit hasil blend; (2) **laterality canonicalization** (temuan baru, dampak berpotensi besar); (3) ganti submission v2 ke rank-mean ensemble; (4) Lateral Meniscus lemah di SEMUA sumber (kita/pilkwang/blend ~0,63-0,64); (5) handle 2-lutut-1-DICOM; (6) TTA flip.
   - **Gotcha operasional penting (masih berlaku)**: pola self-reference `kernel_sources` + guard checkpoint (v12) membuat checkpoint versi lama TIDAK BISA diakses kernel lain begitu versi terbaru kernel itu tidak menimpanya (`kernel_sources` selalu mount versi TERBARU, bukan versi spesifik). Kalau butuh akses checkpoint lintas-versi yg aman, simpan sbg Kaggle Dataset terpisah, jangan andalkan `kernel_sources` semata.
 
 ## 3. Status Pipeline (overwrite tiap update)
@@ -79,7 +80,7 @@
 ## 5. Open Questions / Menunggu Keputusan User
 - **Koordinasi dgn tim** soal submission — apakah submission pipeline v1 (community-20-model, ~0.891) masih relevan disubmit sendiri, atau ditahan total krn tim sudah punya jalur skor lebih tinggi (0.920, fork tonylica)? Belum ada arahan eksplisit.
 - **Submit sungguhan blend (kita+pilkwang, target ~0,8462 lokal) ke leaderboard** — kedua pipeline inferensi tervalidasi (dev-test 0 error), blend ratio sudah diketahui (α=0,60), tapi butuh: (a) tunggu kuota GPU refresh (~22 Agustus) utk jalankan test_series sungguhan (CPU terlalu lambat, ~21 jam vs batas 9 jam), (b) koordinasi dgn tim soal kuota submission 5x/hari bersama (tim sudah di 0,920 dari sumber lain). Belum diputuskan kapan/apakah submit.
-- **Arah lain**: Lateral Meniscus lemah di semua sumber (kandidat perbaikan tersendiri), crop sadar-laterality + 2-lutut-1-DICOM, TTA flip. Belum ada arahan eksplisit soal urutan.
+- **Arah lain**: (a) **laterality canonicalization NAIK prioritas** (bukti dampak besar dari riset 20 Agustus — 4 label bisa gagal diam-diam tanpa ini, lihat §2), (b) Lateral Meniscus lemah di semua sumber, (c) 2-lutut-1-DICOM, (d) TTA flip, (e) submission v2 perlu dicek: ganti probability-mean → rank-mean utk ensemble. Belum ada arahan eksplisit soal urutan.
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
 ## 6. Referensi Cepat

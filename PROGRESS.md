@@ -476,6 +476,21 @@ Dengan kuota GPU masih 0 (refresh ~22 Agustus) dan pipeline submission v2 sudah 
 
 **Langkah nyata berikutnya (BELUM bisa dieksekusi — butuh GPU T4, kuota 0 sampai ~22 Agustus)**: jalankan `kaggle_kernel_submission_v2/` (model kita) DAN `kaggle_kernel_submission/` (komunitas pilkwang) di `test_series` SUNGGUHAN dgn GPU, unduh kedua `submission.csv`, blend rank-space di α≈0,60 (atau sweep ulang kalau ada waktu), baru submit hasil blend-nya — bukan submit salah satu sendirian. Ini jalur konkret pertama proyek ini menuju skor gabungan yg TERUKUR lebih baik dari submission tim saat ini (0,920, tapi itu skor leaderboard sungguhan vs 0,8462 ini skor lokal gold-57 -- ada offset kalibrasi lokal-ke-leaderboard yg perlu diperhitungkan, biasanya +0,04-an berdasar riset kalibrasi sebelumnya §11b).
 
+## 31. Riset ulang Code/Discussion/eksternal — teknik laterality canonicalization + koreksi ensemble (arahan "scan code+diskusi+model+artikel")
+
+Leaderboard #1 naik ke 0,952. Ditemukan kernel publik terbaik yang pernah dianalisis di kompetisi ini: **`sadamtorres/domain-adaptation-beats-resolution-dinov2-on-knee`** (LB 0,883, single-family 5-fold DINOv2-B, tulisan metodologi sangat detail & jujur soal kesalahan sendiri).
+
+**Temuan actionable utama**:
+1. **Laterality canonicalization (teknik BARU, prioritas naik signifikan)**: hitung CENTER citra (bukan corner) di ruang pasien dari `ImagePositionPatient`+`ImageOrientationPatient`, pakai tanda koordinat-x tentukan kiri/kanan, lalu kanonikalisasi SEMUA studi seolah lutut kanan (flip coronal/axial dari kiri, balik urutan sagittal). Tanpa ini, **4 dari 12 label (Medial/Lateral Meniscus, Medial/Lateral OA) belajar dari anatomi cermin-terbalik separuh waktu — gagal diam-diam, tanpa error, tanpa gejala**. Item "crop sadar-laterality" yang selama ini kita taruh prioritas rendah ternyata berpotensi dampak besar.
+2. **Kalibrasi lokal→LB ~+0,04-0,046** (didukung 2 dari 3 contoh sumber, 1 contoh sumber sendiri tidak konsisten — dilaporkan jujur, bukan dianggap presisi). Estimasi kasar: blend kita (0,8462 gold-57) → LB ~0,88-0,89.
+3. **Koreksi submission v2**: sumber menyarankan **rank-mean, bukan probability-mean**, utk kombinasi model ("averaging sigmoids lets the most confident member dominate"). Submission v2 kita saat ini pakai probability-mean — pertimbangkan ganti sebelum submit sungguhan.
+4. **Konfirmasi independen ke-3**: fine-tuning di resolusi sama menggerakkan label fokal jauh lebih besar drpd naikkan resolusi — validasi ulang temuan kita sendiri (v11→v15).
+5. **CLS+patch-mean concat** arsitektur kita PERSIS sama dgn kernel referensi ini — validasi independen pilihan kita sudah tepat.
+6. **Fracture = masalah label, bukan vision** (97% studi share 1 nilai target di sumber mereka) — tidak ada perbaikan model yg bisa atasi tanpa perbaikan label.
+7. Protokol OOF-vs-gold yang mereka sarankan (OOF pilih epoch, gold-58 putuskan arah) TERNYATA sudah konsisten dgn praktik kita sendiri (val_macro_auc training loop kita sudah pakai gold, bukan weak-label OOF) — tidak perlu diubah.
+
+Detail lengkap di `docs/RESEARCH_NOTES.md` §23.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
