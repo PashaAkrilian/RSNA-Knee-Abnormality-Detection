@@ -540,6 +540,35 @@ Setelah v20 menutup line laterality-canonicalization utk arsitektur SlotHead (me
 
 Jika v21 berhasil dan OOF-nya mengalahkan v18 (0,8068)/v20 (0,8073) secara meyakinkan (di luar noise ±0,03-0,08 yg terkuantifikasi di v18), ini akan jadi model final baru proyek — arsitektur ini secara spesifik mengatasi SEKALIGUS akar masalah v16 (patch embedding beku) dan v20 (mean-pooling buta posisi).
 
+## 35. v21 SELESAI penuh — OOF 0,6904, REGRESI vs v18/v20, tapi diagnosis mengungkap masalah STABILITAS training, bukan arsitektur yg fundamental buruk
+
+Run selesai penuh (status Kaggle COMPLETE) ~5,2 jam (5-fold × 8 epoch, TPU). Hasil per-fold (best epoch):
+
+| fold | best val_macro_auc | n_val |
+|---|---:|---:|
+| 1 | 0,6276 | 12 |
+| 2 | 0,8233 | 12 |
+| 3 | 0,8902 | 11 |
+| 4 | 0,6681 | 11 |
+| 5 | 0,6199 | 11 |
+
+Rata-rata per-fold: 0,7258 ± 0,1102 (rentang 0,6199–0,8902, spread 0,2703 — jauh lebih lebar dari v18/v20). **OOF macro AUC gabungan (57/57 gold): 0,6904** — di bawah v18 (0,8068) dan v20 (0,8073), turun cukup jauh (-0,116 vs v18).
+
+**Investigasi lebih dalam (bukan cuma angka akhir) — dibaca trajectory train_loss & val_auc PER EPOCH dari log Kaggle**, mengungkap pola yg TIDAK acak:
+
+- **Fold 2 & 3 (BAGUS)**: train_loss turun tajam & konsisten sepanjang 8 epoch (fold 2: 0,5798→0,3279; fold 3: 0,5920→0,3693) dan val_auc naik mulus mengikuti (fold 2: 0,66→0,82; fold 3: 0,72→0,89). Model di fold ini BENAR-BENAR BELAJAR, dan hasilnya (0,82-0,89) **lebih baik dari v18 OOF (0,8068)** — bukti arsitektur `AnatomyQueryHead` PUNYA potensi nyata saat optimisasi berjalan normal.
+- **Fold 1, 4, 5 (STUCK)**: train_loss NYARIS TIDAK BERGERAK sepanjang 8 epoch (mis. fold 5: 0,6067→0,5844, cuma turun 0,022 total; fold 4: 0,6056→0,5641). val_auc BOLAK-BALIK di sekitar tebakan acak (fold 5: 0,58→0,42→0,50→0,58→0,48→0,56→0,55→0,62; fold 4 serupa) — model gagal keluar dari basin optimisasi awal dalam budget yg ada (LR head decay dari 1e-3 ke ~3,8e-5 di epoch 8, jadi makin sulit "kabur" di epoch-epoch akhir kalau belum bergerak di awal).
+
+**Kesimpulan**: ini bukan kegagalan arsitektur murni (spt v16 yg 100% konsisten buruk krn channel-mismatch terstruktur) — ini **masalah STABILITAS training lintas seed/fold**. 2 dari 5 seed "beruntung" masuk basin bagus, 3 lainnya stuck. **Kandidat penyebab**: `AnatomyQueryHead.__init__` inisialisasi `query`/`cls_w` dgn `std=0,02` (kecil) dan `cls_b` mulai dari **nol** (bukan bias ke label-prior — trik stabilisasi standar utk multi-label imbang: `bias = log(p/(1-p))` dari base rate tiap label, supaya prediksi awal tidak seragam 0,5 utk semua studi & gradien awal lebih informatif). Dikombinasi dgn `patch_embeddings` yg BARU di-unfreeze (permukaan optimisasi lebih besar drpd v15-v20), kombinasi ini kemungkinan menciptakan lanskap loss yg lebih rawan terjebak di titik datar utk sebagian inisialisasi acak.
+
+**Keputusan**: checkpoint v21 **TIDAK dipakai**, model final proyek **TETAP v15 (0,8304 single-split) / v18 (0,8068 OOF)**. Line anatomy-query **ditutup UNTUK SEKARANG** (bukan permanen/gagal total) — draft perbaikan yg masuk akal utk dicoba kalau dilanjutkan: (a) init `cls_b` ke label-prior bias, (b) LR warmup beberapa ratus step pertama sebelum decay mulai, (c) mungkin batasi unfreeze ke patch_embeddings SETELAH beberapa epoch (curriculum unfreeze) drpd langsung dari awal. **Tidak di-eksekusi sekarang** krn alasan di §36.
+
+## 36. Kuota GPU+TPU habis total pasca v21 — semua eksperimen Kaggle berhenti sampai refresh
+
+Cek `kaggle quota` (2026-08-20 23:27 UTC, tepat setelah v21 selesai): **GPU 0,00h tersisa** (used 30,43h/30,00h nominal — overrun), **TPU 0,56h tersisa** (used 19,44h/20,00h — run v21 sendiri makan ~5,2 jam dari sisa yg cuma ~5,8h). `refreshAt` keduanya: **2026-08-22T00:00:00 UTC**, sekitar 24,5 jam dari waktu cek. **Tidak ada eksperimen training/inferensi Kaggle baru yg bisa dijalankan sampai refresh** — baik utk lanjut v21 (perbaikan stabilitas) maupun utk jalankan submission real (`kaggle_kernel_submission_v2/` butuh GPU/TPU utk infer 1.300 studi test dlm batas 9 jam, CPU-only ~21 jam terbukti tidak cukup di §29).
+
+**Prioritas begitu kuota kembali (urutan)**: (1) **submission real** — blend rank-space kita (v18) + pilkwang (α≈0,60, target lokal 0,8462) disubmit sungguhan ke leaderboard, INI YANG PALING BERHARGA krn satu2nya yg menggerakkan skor leaderboard nyata tanpa training tambahan; (2) ganti submission v2 dari probability-mean ke rank-mean ensemble; (3) kalau mau lanjut v21, terapkan fix stabilisasi (§35) dulu SEBELUM re-run — jangan ulang mentah2 dgn seed lain, buang kuota percuma; (4) evaluasi 3 teknik dari bedah `mattiaangeli/bend-the-knee-to-dinov3-ensembled` (riset terpisah, lihat MEMORY §2/RESEARCH_NOTES §24) sbg kandidat v22 kalau v21-fixed masih kurang.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
