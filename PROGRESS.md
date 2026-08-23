@@ -569,6 +569,63 @@ Cek `kaggle quota` (2026-08-20 23:27 UTC, tepat setelah v21 selesai): **GPU 0,00
 
 **Prioritas begitu kuota kembali (urutan)**: (1) **submission real** — blend rank-space kita (v18) + pilkwang (α≈0,60, target lokal 0,8462) disubmit sungguhan ke leaderboard, INI YANG PALING BERHARGA krn satu2nya yg menggerakkan skor leaderboard nyata tanpa training tambahan; (2) ganti submission v2 dari probability-mean ke rank-mean ensemble; (3) kalau mau lanjut v21, terapkan fix stabilisasi (§35) dulu SEBELUM re-run — jangan ulang mentah2 dgn seed lain, buang kuota percuma; (4) evaluasi 3 teknik dari bedah `mattiaangeli/bend-the-knee-to-dinov3-ensembled` (riset terpisah, lihat MEMORY §2/RESEARCH_NOTES §24) sbg kandidat v22 kalau v21-fixed masih kurang.
 
+## 37. Kuota refresh penuh (23 Agustus) + temuan riset terbesar proyek (§25 RESEARCH_NOTES) + build v5/v22
+
+**Kuota refresh**: `kaggle quota` per 23 Agustus 11:43 UTC — GPU 30,00h, TPU 20,00h, keduanya 0h
+terpakai (`refreshAt` 29 Agustus). Skor tim (submission real, tidak berubah sejak 20 Agustus):
+**0,922** (fork `mattiaangeli/bend-the-knee-to-dinov3-ensembled`), peringkat **#240/2.219 tim**.
+Leaderboard #1 tetap Brandon Low 0,952.
+
+**Arahan user** ("cek progres", lalu diberi 3 opsi lewat AskUserQuestion): "adopsi teknik datanya ke
+arsitektur kita sendiri (v22)" — bukan submit langsung checkpoint orang lain, bukan blend, tapi
+bangun model KITA SENDIRI pakai pelajaran dari riset.
+
+**Riset yg memicu ini**: ditemukan (via `kaggle kernels list --sort-by scoreDescending`, cara baru
+yg langsung urutkan skor tertinggi bukan cuma populer) notebook **`dreaddevelopment/knee-mri-twelve-
+findings-from-a-single-model`** — single model, **0,924 public LB, LEBIH TINGGI dari skor tim kita
+(0,922)**, checkpoint CC0 siap pakai. Dibedah lengkap (`docs/RESEARCH_NOTES.md` §25): backbone
+CoAtNet (bukan DINOv2), validasi lokal gold-58 0,9167 → LB 0,924 (offset cuma +0,0073, jauh lebih
+kecil dari klaim sadamtorres +0,04-0,046). 3 teknik data kunci: span sampling lebar 6-94% (relevan
+langsung ke Lateral Meniscus kita yg lemah), crop fisik 140mm+336px (konfirmasi independen ke-2
+setelah mattiaangeli §24), RGB-triplet BERHASIL krn backbone di-fine-tune penuh (bukti independen
+ke-2 bahwa akar masalah v16 = freeze-schedule, bukan RGB-packing itu sendiri).
+
+**Dibangun 2 kernel baru**:
+
+1. **`kaggle_kernel_preprocessing_v5_widecrop/`** (`rsna-knee-preprocessing-v5-widecrop-336`) —
+   copy dari v4 (laterality canon dipertahankan utuh), ganti `IMG_SIZE` 224→336, `CROP_MM` eksplisit
+   140mm (naik dari implisit ~112mm v2/v4), **`N_SLICES` 16→8** (kompensasi storage — 336px 2,25x
+   piksel/slice; v2/v4 di 16-slice/224px hasilnya ~13GB, kalau N_SLICES dibiarkan 16 estimasi jadi
+   ~29GB, MELEBIHI batas aman `/kaggle/working` ~21GB & safety-cutoff internal 16GB). Span sampling
+   TETAP PENUH 0-100% (linspace sama spt v2/v4) — window sempit sudah terbukti gagal (v16/v17, §26-27),
+   tidak diulang. Dipush 23 Agustus, status RUNNING (CPU-only).
+
+2. **`kaggle_kernel_modeling_v22_fulltune/`** (`rsna-knee-modeling-v22-widecrop-triplet-tpu`) — copy
+   dari v18 (k-fold, `SlotHead`, TERBUKTI stabil), 3 perubahan MINIMAL & terarah:
+   - `kernel_sources` → cache v5 (336px) ganti v2 (224px).
+   - `_load_slot` bangun **triplet RGB genuine** (`T_WINDOW=3` window/slot, 3 slice fisik berdekatan
+     sbg channel R/G/B) ganti grayscale-mean `K_SLICE=4` — teknik SAMA PERSIS v16 yg dulu gagal
+     (0,7737), TAPI kali ini didukung poin berikutnya.
+   - **`patch_embeddings` di-unfreeze** (selain `unfreeze_last=6`+layernorm) — SAMA PERSIS skema
+     v21, yg SUDAH TERBUKTI cukup (BUKAN perlu semua 12 blok) di 2 dari 5 fold-nya yg berhasil (OOF
+     0,82-0,89, §35). **Head SENGAJA TIDAK diganti** — tetap `SlotHead`, BUKAN `AnatomyQueryHead`
+     (penyebab regresi v21 adalah instabilitas HEAD-nya, bukan triplet RGB/patch-embed unfreeze-nya).
+
+   Hyperparameter training (LR head 1e-3/backbone 8e-6, EPOCHS=8, K_FOLDS=5, scheduler) DIPERTAHANKAN
+   identik v18 supaya perbandingan v18 vs v22 murni mengisolasi variabel data/arsitektur. Semua cell
+   yg wajib disinkronkan dgn perubahan shape tensor (dummy sanity check §6, diagnostik forward-pass
+   §7b — INI YG DULU LUPA di-update pas v16, `PROGRESS.md` §26) sudah diperiksa & disamakan manual,
+   diverifikasi `ast.parse()` seluruh 23 cell + grep pastikan tidak ada `K_SLICE`/`IMG_SIZE=224` sisa
+   di kode (cuma di komentar penjelasan, bukan kode aktif).
+
+   **Risiko disadari, didokumentasikan di kode**: ~1,7x kompute/memori per studi vs v18 (336px lebih
+   berat + patch-embed unfreeze). `BATCH_STUDIES=4` dipertahankan sbg percobaan pertama (TPU v5e-8
+   biasanya cukup lapang) — kalau OOM, turunkan ke 2-3 di push berikutnya. **Push v22 DITUNDA sampai
+   preprocessing v5 COMPLETE** (`kernel_sources` mount versi TERBARU sumbernya — push v22 sebelum v5
+   selesai = cache kosong/rusak, gotcha lama yg sudah pernah kena di v13/v14).
+
+**Status**: preprocessing v5 RUNNING, dipantau otomatis. v22 SIAP push begitu v5 selesai.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
