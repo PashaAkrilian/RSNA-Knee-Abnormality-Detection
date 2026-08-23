@@ -624,7 +624,8 @@ ke-2 bahwa akar masalah v16 = freeze-schedule, bukan RGB-packing itu sendiri).
    preprocessing v5 COMPLETE** (`kernel_sources` mount versi TERBARU sumbernya — push v22 sebelum v5
    selesai = cache kosong/rusak, gotcha lama yg sudah pernah kena di v13/v14).
 
-**Status**: preprocessing v5 RUNNING, dipantau otomatis. v22 SIAP push begitu v5 selesai.
+**Status**: preprocessing v5 SELESAI (status Kaggle COMPLETE, tanpa error terlapor). v22 sudah
+DI-PUSH (kernel version 1, 23 Agustus), sedang QUEUED/RUNNING di TPU, dipantau otomatis.
 
 ## Belum dikerjakan
 
