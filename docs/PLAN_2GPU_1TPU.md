@@ -1,169 +1,132 @@
-# RENCANA EKSEKUSI: 2×SESI GPU + 1×SESI TPU (status: MENUNGGU PERSETUJUAN — belum dieksekusi)
+# RENCANA EKSEKUSI 2×GPU + 1×TPU — REVISI 2 (status: MENUNGGU PERSETUJUAN)
 
-> Disusun 25 Agustus 2026. Konteks: tim 0.936 (#91/2.372), top-1 Brandon Low 0.952,
-> strategi induk di RESEARCH_NOTES §26f. Kuota saat penyusunan: GPU 29,79h / TPU 12,89h
-> (refresh 2026-08-29 00:00 UTC). Pelajaran penting: v22 gugur di 4/5 fold karena
-> safety time-limit → SEMUA run di bawah dirancang agar SELESAI penuh dalam budget.
-
----
-
-## Peta 3 sesi (urutan + dependensi)
-
-```
-Sesi 1 (GPU#1, ~8,5–9h)  ──artefak rank──►  offline fusion nested-CV (TANPA kuota)
-                                                    │
-Label engineering (kernel CPU, TANPA kuota) ──label──► Sesi 2 (TPU#1, ≤6,5h) train arm baru
-                                                    │ OOF ≥ 0,82?
-                                                    ▼
-                              Sesi 3 (GPU#2, ~3–6h) inferensi arm + fusion final
-```
-
-Sesi 1 dan jalur label-engineering saling INDEPENDEN (bisa jalan paralel).
-Sesi 2 menunggu label lolos gate. Sesi 3 menunggu Sesi 2 lolos gate OOF.
+> Revisi 25 Agustus 2026 malam, setelah konfirmasi submission history tim:
+> 0.936 = fork DINOsaur V4/V10 (best notebook publik), naik bertahap dari
+> 0.920→0.922→0.924→0.935→0.936 semuanya fork publik.
+>
+> DUA KOREKSI FUNDAMENTAL dari revisi ini:
+> 1. Self-run notebook apapun di akun kita HANYA melihat public test stub (3 studi).
+>    Artefak test skala penuh + prediksi test asli HANYA lahir saat SUBMIT
+>    (rerun server-side Kaggle). Jadi "harvest artefak dari self-run" dan
+>    "inferensi sendiri ke test penuh" sama-sama TIDAK BEGITU berguna/mungkin.
+> 2. Validasi pipeline 0.936 sudah terbukti oleh LB sendiri. Mengulang vanilla run
+>    = buang ~9h GPU tanpa informasi baru.
+>
+> Konsekuensi: GPU dialihkan ke hal yang BENAR-BENAR butuh compute fisik:
+> OOF harvest utk fusion tuning + integrasi arm baru ke notebook submission.
 
 ---
 
-## SESI 1 — GPU#1: Basis stack 0.936 milik kita sendiri
+## Fakta yang menjadi dasar revisi
 
-- **Kernel**: fork `prvsiyan/head-and-shoulders-knees-and-toes` → slug kita
-  `dimaspashaakrilian/rsna-knee-basis-v10` (judul JANGAN diubah setelah push —
-  gotcha slug self-reference). Machine shape WAJIB `"NvidiaTeslaT4"`.
-- **Tujuan**:
-  1. Validasi end-to-end mount standar jalan sampai submission.csv (basis yang KITA kontrol).
-  2. **Panen semua artefak rank intermediate** (`submission_transformer_0920.csv`,
-     `_raptor.csv`, csv E10/E13/pass-2, dsb.) → selanjutnya eksperimen fusion/bobot
-     dilakukan OFFLINE (numpy lokal/kernel CPU) TANPA makan kuota lagi.
-- **Estimasi**: stack dirancang budget 8–8,72h dari cap 9h → sisakan margin; JANGAN
-  tambah stage apapun di run ini (run vanilla dulu, modif belakangan).
-- **Milestone pemantauan** (urutan log):
-  1. Queue → RUNNING (antrian T4 bisa 10–40 menit)
-  2. Stage A: member manifest berjalan satu-satu (log per-member; boleh lambat di awal)
-  3. File `submission_public_0899.csv` muncul = Stage A frontier selesai
-  4. A5 blend @0.45 selesai → RadImageNet chain (log elapsed-minutes) → CoAtNet stage
-  5. `submission.csv` final ada, ukuran wajar (~baris = studi test × 12)
-- **Red flags**:
-  - System-RAM OOM di CoAtNet/DataParallel (known issue; versi port sudah sequential,
-    kalau tetap OOM → laporkan, jangan retry buta)
-  - Log "fallback"/`fillna(0.5)` luas = banyak studi gagal decode → STOP, investigasi
-  - Waktu lewat 8,9h tanpa submission.csv = kena cap 9h → run hangus (quota terpakai)
-
-## ANTARA SESI — kerja TANPA kuota compute
-
-1. **Label engineering severity-aware** (kernel CPU, internet ON — internet hanya
-   dilarang saat submission):
-   - Regex multilingual (lexicon sudah ada di stack publik) + LLM ensemble dengan
-     heuristik RESMI annotator dari Overview (moderate/large effusion, high-grade MCL
-     tear, borderline=negative, dst.) → soft target kontinu [0,1].
-   - Monotonicity + shrinkage ke prior + confidence floor; kalibrasi vs gold-58 IN-FOLD.
-   - **Gate GO/NO-GO: macro AUC label-baru vs gold-58 harus > flight0234 (0,8991).**
-     Evaluasi pakai numpy rank-based manual (sandbox lokal sudah terbukti bisa).
-2. **Fusion nested-CV offline** dari artefak Sesi 1: grouped 5-fold di gold-58 +
-   bootstrap 3000 draw → weight map per-target (pola kontrak antoinegg1 E10).
-   Hasil: daftar bobot kandidat untuk Sesi 3.
-3. Siapkan kode arm baru (arsitektur lixin73-style) + `kernel-metadata.json` TPU.
-
-## SESI 2 — TPU#1: Training arm sendiri dengan label baru
-
-- **Kernel**: `dimaspashaakrilian/rsna-knee-modeling-v23-lixinstyle-labelsv2`.
-- **Arsitektur**: DINOv2-SMALL + SlotHead attention ala `lixin73/rsna-knee-train-checkpoints`
-  (proj LN768→Linear768→256, slot_emb(6,256), query(12,256), out Linear256→12) —
-  BUKAN SlotHead mean-pooling kita (terbukti mentok di v16/v21/v22), bukan AnatomyQueryHead.
-- **Data**: cache preprocessing v5 (336px/crop140mm) + label severity-aware baru;
-  58 gold TIDAK PERNAH ditimpa (aturan tetap).
-- **Budget safety (pelajaran v22)**:
-  - Hard-cap total runtime ~6h: EPOCHS=6 (bukan 8) ATAU potong batch-window;
-    scheduler harus habis dalam 5/5 fold — **fold 5 WAJIB tuntas** (OOF N=57 invalid
-    kalau kurang).
-  - Checkpoint guard: `best_auc` awal = -1.0 (training dari nol) + simpan per-fold.
-  - Log per-epoch: train_loss + val_macro_auc per fold (format sama dgn v18-v22 supaya
-    greppable).
-- **Decision rule PRE-REGISTERED (disiplin anti-bias, pola Raihan)**:
-  - Setelah fold 0 & 1 selesai: jika rata-rata keduanya < 0,72 → HENTIKAN line
-    (jangan biarkan run lanjut — hemat ±4h TPU; fold awal rendah = pola v21 bimodal).
-  - Syarat masuk fusion: OOF gabungan ≥ 0,82 DAN tidak bimodal (std antar-fold < 0,06).
-  - Bandingkan head-to-head vs OOF v18 (0,8068) pada N gold yang sama.
-- **Red flags**: train_loss nyaris statis di ≥2 fold (pola v21); val_auc bolak-balik
-  acak; `DATA_OK=False` false-positive (cek dulu ambang skala [0,1] — gotcha v21 push-1).
-
-## SESI 3 — GPU#2: Inferensi arm baru + fusion final
-
-- **Kernel**: `dimaspashaakrilian/rsna-knee-infer-ownarm-v1` (T4x2).
-- **Isi**:
-  1. Load checkpoint fold terbaik/arm Sesi 2 → inferensi ke `test_series` penuh
-     (~1.300 studi) → `_ownarm.csv` rank-space. Pakai `RSNA_ORDER_CACHE` dari Sesi 1
-     kalau formatnya cocok (hemat 1–1,5h decoding-ordering).
-  2. Re-blend offline-in-kernel: artefak Sesi 1 + `_ownarm.csv` dengan weight map
-     hasil nested-CV → `submission.csv` kandidat.
-  3. Sisa waktu: hasilkan profil kedua (conservative diverse) sbg cadangan shakeup.
-- **Estimasi**: inferensi 1 arm DINOv2-small ~1,5–3h + blend menit → total 2–4h;
-  aman di bawah 9h.
-- **Red flags**: studi sukses <98% → jangan fusion, cek dulu studi yang gagal.
+- Skor tim per 25 Agu: 0.936 (#91/2.372) via `RSNA Knee | DINOsaur V4` V1+V2
+  (keduanya 0.936). Sebelumnya: toes-port 0.935, dread-CoAtNet 0.924,
+  bend-the-knee 0.922, tonylica 0.920 — semua fork publik.
+- 137 tim ≥ 0.936 → 0.936 adalah lantai komoditas. Naik = butuh sesuatu yang
+  TIDAK dibagikan publik: (a) label engineering severity-aware, (b) fusion weight
+  hasil nested-CV leak-free (bukan public-fit), (c) arm sendiri yang lebih kuat.
+- Kuota saat revisi: GPU 29,79h / TPU 12,89h (refresh 2026-08-29 00:00 UTC).
 
 ---
 
-## PLAYBOOK PEMANTAUAN (dipakai kapan pun, TANPA mengeksekusi apa pun sekarang)
+## LANGKAH 0 — GRATIS, TANPA KUOTA (kerjakan PERTAMA, sebelum sesi apapun)
 
-Setup awal tiap shell baru:
+### 0a. Inventarisasi artefak OOF yang SUDAH dipublikasikan orang
+Unduh & inspeksi lokal (dataset Kaggle, CPU saja):
+| Sumber | Artefak yang dicari | Status |
+|---|---|---|
+| `pilkwang/rsna-knee-weights` | `oof.npz` (20-model DINOv2) | SUDAH PUNYA (0.8360) |
+| `antoinegg1/rsna-knee-e9-radimagenet-heads-v15` + e11-diverse-heads-v20 | `v52_oof.csv`, kontrak nested (nested macro 0.862-0.873) | cek isi |
+| `mattiaangeli/knee-mri-fold-weights` | OOF A5 fold-family | cek |
+| `dreaddevelopment/raptor-knee-maxspan` + widedense | OOF CoAtNet (kemungkinan TIDAK ada — CoAtNet tidak pernah latih di gold-58, jadi inferensi langsung ke gold-58 = leak-free) | cek |
+| `lixin73/rsna-knee-train-checkpoints` | OOF arm lixin73 | cek |
+
+### 0b. Fusion nested-CV OFFLINE dari tabel OOF gabungan
+Join per-study-id di 57-58 gold → grouped 5-fold + bootstrap 3000 → weight map
+per-target antar-arm (pola kontrak antoinegg1 E10). Output: daftar bobot kandidat +
+estimasi gain. **Ini bisa memberi +0,002-0,004 tanpa menyentuh kuota GPU/TPU sedikit pun.**
+
+### 0c. Label engineering severity-aware (kernel CPU, internet ON)
+Regex multilingual + LLM ensemble dengan heuristik resmi Overview
+(moderate/large effusion, borderline=negative, dst.) → soft target [0,1],
+monotonic + shrinkage + confidence floor, kalibrasi IN-FOLD vs gold-58.
+**Gate: agreement/OOF > flight0234 (0.8991)** — evaluasi numpy manual lokal.
+
+---
+
+## SESI 1 — GPU#1: "Gold-OOF Harvest" (REVISI: 9h → ~2-4h)
+
+- **Kernel**: `dimaspashaakrilian/rsna-knee-oof-harvest-v1` (T4x2, internet off boleh).
+- **Isi**: inferensi arm-arm yang TIDAK punya OOF publik ke atas **57-58 studi gold**
+  (bukan 4.407 studi!):
+  1. CoAtNet MaxSpan v5 SWA (`dreaddevelopment/raptor-knee-maxspan`) — leak-free
+     karena corpus-nya tidak pernah melatih gold-58.
+  2. CoAtNet WideDense v4 (complement) — idem.
+  3. (Kalau 0a menemukan lubang lain, tambah di sini.)
+- **Output**: `_oof_coatnet_v5.csv`, `_oof_coatnet_v4.csv` (study_id × 12 kolom rank)
+  → disave sbg output kernel → dipakai Langkah 0b.
+- **Estimasi**: 58 studi × (62 window × 2 model) ≈ <2h termasuk decode DICOM.
+  Buffer sisanya: perluas ke ±300 studi train tambahan utk bootstrap weight yang
+  lebih stabil (opsional, stop kapan saja — incremental).
+- **Milestone hijau**: log per-studi sukses ≥98%, csv keluar lengkap 57 baris.
+- **Merah**: OOM (turunkan batch/window), studi gagal >2%.
+
+## SESI 2 — TPU#1: Training arm sendiri dgn label baru (TIDAK BERUBAH, ≤6,5h)
+
+- Kernel: `dimaspashaakrilian/rsna-knee-modeling-v23-lixinstyle-labelsv2`.
+- Arsitektur: DINOv2-small + SlotHead attention ala lixin73 (proj LN768→Lin768→256,
+  slot_emb(6,256), query(12,256)) — bukan mean-pooling (mentok di v16/v21/v22).
+- Data: cache v5 (336px/crop140mm) + label severity-aware baru; 58 gold tak tersentuh.
+- Budget: hard-cap ~6h, EPOCHS=6-8, WAJIB 5/5 fold selesai (pelajaran v22).
+- Decision rule PRE-REGISTERED: rata-rata fold 0+1 < 0,72 → STOP line;
+  masuk fusion hanya jika OOF ≥ 0,82 DAN std antar-fold < 0,06.
+
+## SESI 3 — GPU#2: Integrasi & validasi submission (REVISI: ringan, ~1-2h)
+
+- **Kernel**: `dimaspashaakrilian/rsna-knee-submit-v11-fusion` — fork DINOsaur V4
+  milik tim + modifikasi:
+  1. Sisipkan arm baru (checkpoint Sesi 2 di-mount sbg dataset) → inferensi IN-KERNEL
+     selama rerun scoring (biaya masuk budget 9h server-side — DINOv2-small
+     ≈ +1-2h, aman).
+  2. Ganti bobot fusion final dgn weight map hasil Langkah 0b (rank-space tetap).
+- **Validasi di akun kita hanya 3-studi stub** (menit, bukan jam): 0 error, format
+  submission.csv benar, semua stage selesai. Validasi skala penuh = saat submit
+  (server-side, TIDAK memakan kuota GPU kita).
+- **Submit = koordinasi nxtirfan** (kuota 5/hari TIM). Simpan 2 profil: fusion-tuned
+  + conservative.
+
+---
+
+## Anggaran revisi
+
+| Item | Lama | Revisi | Alasan |
+|---|---|---|---|
+| GPU#1 | ~9h vanilla run | **~2-4h OOF harvest** | self-run = 3 studi stub, percuma |
+| TPU#1 | ≤6,5h | ≤6,5h (tetap) | inti diferensiasi |
+| GPU#2 | ~3-6h infer test | **~1-2h integrasi+devtest** | test penuh = urusan server-side |
+| TOTAL | ~18h | **~10-12h** | sisa kuota jadi buffer eksperimen |
+
+## Playbook pemantauan (tetap berlaku, contoh per sesi revisi)
+
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
-```
-
-### 1. Cek status kernel (ringan, boleh sering)
-```bash
 kaggle kernels status dimaspashaakrilian/<slug>
-# COMPLETE | RUNNING | QUEUED | ERROR | CANCELACKNOWLEDGED
+kaggle kernels output dimaspashaakrilian/<slug> -p dir --file-pattern "log" -q
+grep -E "FOLD|OOF|val_macro_auc|ERROR|BATAS|sukses" *.log | tail -30
 ```
 
-### 2. Tarik log incremental (berat sedang, cukup 1x per jam)
-```bash
-mkdir -p /tmp/opencode/mon && cd /tmp/opencode/mon
-kaggle kernels output dimaspashaakrilian/<slug> -p . --file-pattern "log" -q
-grep -E "FOLD|OOF|val_macro_auc|ERROR|Traceback|selesai|BATAS" *.log | tail -30
-```
-
-### 3. Pola yang dicari per jenis sesi
-
-| Sesi | Hijau (lanjutkan) | Merah (intervensi) |
+| Sesi | Hijau | Merah |
 |---|---|---|
-| GPU basis (S1) | stage maju bertahap, file csv frontier muncul | RAM OOM, fillna(0.5) luas, >8,9h tanpa submission.csv |
-| TPU train (S2) | train_loss turun konsisten tiap fold, val_auc naik monoton | loss statis ≥2 fold (bimodal v21), val_auc acak, DATA_OK=False |
-| GPU infer (S3) | studi sukses ≥98%, _ownarm.csv lengkap | studi gagal >2%, OOM, waktu >8h |
+| GPU#1 harvest | ≥98% studi sukses, 57 baris csv lengkap | OOM, >2% gagal, csv kosong |
+| TPU#2 train | loss turun konsisten, val_auc naik monoton | loss statis ≥2 fold (bimodal v21), DATA_OK=False (gotcha ambang [0,1]) |
+| GPU#3 integrasi | 3-studi stub 0 error, format benar | error mount dataset checkpoint, OOM in-kernel |
 
-### 4. Ritme polling yang disarankan
-- Antrian TPU/GPU historis: 10–40 menit dari push → RUNNING. Jangan panik selama itu.
-- Saat RUNNING: cek `status` tiap ±30–45 menit; tarik `log` tiap ±1–2 jam cukup
-  (log besar, jangan spam).
-- Sesi TPU train: momen kritikal HANYA di akhir fold 0–1 (decision rule <0,72) dan
-  akhir fold 4 (kelengkapan 5/5).
+Ritme: status tiap ±30-45 menit; log tiap ±1-2 jam; momen kritikal TPU = akhir
+fold 0-1 (decision rule) dan akhir fold 4 (kelengkapan 5/5).
 
-### 5. Setelah COMPLETE
-```bash
-kaggle kernels output dimaspashaakrilian/<slug> -p ./out_<nama>
-```
-- S1 → verifikasi `submission.csv` + daftar artefak rank (JANGAN download semua file
-  kalau ribuan — pakai `--file-pattern`).
-- S2 → ambil `model_outputs/*.pt`, oof npz/log; hitung ulang OOF independen.
-- S3 → `submission.csv` siap diajukan (KOORDINASI dulu dgn nxtirfan — kuota 5/hari TIM).
-
----
-
-## Anggaran kuota & jadwal
-
-| Item | Estimasi | Kuota tersisa saat ini | Status |
-|---|---|---|---|
-| Sesi 1 GPU basis | ~8,5–9h | GPU 29,79h | muat, sisa ~21h |
-| Sesi 2 TPU train | ≤6,5h | TPU 12,89h | muat, sisa ~6h |
-| Sesi 3 GPU infer+fusion | ~2–4h (max 6h) | sisa GPU ~21h | muat |
-
-- Total worst-case: GPU ~15h (dr 29,79h), TPU 6,5h (dr 12,89h) — masih ada buffer
-  bahkan sebelum refresh 29 Agustus.
-- Kalau Sesi 2 gagal & perlu re-run setelah refresh kuota → jadwal tetap aman
-  (deadline entry merger 15 Okt, final 22 Okt).
-
-## Go/No-Go ringkas
-1. Label baru TIDAK mengalahkan 0,8991 → batalkan Sesi 2 (hemat TPU), langsung
-   Sesi 3 hanya utk fusion weight nested-CV dari artefak Sesi 1.
-2. Sesi 2 OOF < 0,82 atau bimodal → arm tidak masuk fusion; Sesi 3 tetap jalan
-   (fusion weight saja) — skor naik lebih kecil tapi gratis risiko.
-3. Sesi 1 ERROR → perbaiki mount lalu ulang SATU kali; dua kegagalan berturut =
-   audit manual sebelum boros kuota lagi.
+## Go/No-Go
+1. Langkah 0b menunjukkan gain nested-CV < +0,001 → GPU#1 harvest tetap jalan
+   (melengkapi tabel utk masa depan) tapi prioritas beralih ke Sesi 2.
+2. Label baru gagal gate 0,8991 → batalkan Sesi 2, Sesi 3 tetap (fusion-weight saja).
+3. Sesi 2 OOF < 0,82 / bimodal → arm tak masuk fusion; Sesi 3 pakai weight map 0b saja.
+4. Dua kegagalan berturut di sesi manapun → audit manual sebelum retry (jangan boros kuota).
