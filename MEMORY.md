@@ -90,7 +90,7 @@
 - **Commit HARUS TANPA trailer Co-Authored-By Claude** — aturan mutlak, berlaku semua commit di repo ini. Pesan commit multi-baris/berisi tanda kutip WAJIB pakai `git commit -F <tempfile>`, jangan inline `-m "..."` (pernah menyebabkan shell-quoting mishap).
 
 ## 5. Open Questions / Menunggu Keputusan User
-- **Eksekusi strategi §26f (RESEARCH_NOTES)** — arahan user diperlukan utk urutan: (A) fork prvsiyan toes/DINOsaur V10 sbg basis kode yang kita kontrol, (B) label engineering severity-aware + LLM ensemble (gate vs flight0234 0.8991), (C) fusion nested-CV di gold-58, (D) disiplin 2 final submissions profil beda.
+- **Rencana alokasi kuota 2×GPU + 1×TPU SUDAH DISUSUN (`docs/PLAN_2GPU_1TPU.md`), MENUNGGU PERSETUJUAN — belum ada yang dieksekusi**: Sesi 1 GPU = fork prvsiyan toes sbg basis kontrol + panen artefak rank (~8,5-9h); antara sesi = label engineering severity-aware (kernel CPU, gate >0,8991) + fusion nested-CV offline; Sesi 2 TPU = train arm lixin73-style dgn label baru (≤6,5h, WAJIB 5/5 fold selesai — pelajaran v22; decision rule pre-registered: rata2 fold 0+1 <0,72 → stop); Sesi 3 GPU = inferensi arm ke test_series + fusion final (~3-6h). Playbook pemantauan lengkap di file itu (perintah status/log, pola hijau/merah per sesi, ritme polling).
 - **Koordinasi dgn nxtirfan** soal kuota submission 5x/hari tim — siapa submit apa; jangan boros (tim sudah di 0.936 via jalur kolaborator).
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
