@@ -93,7 +93,11 @@ import numpy as np, pandas as pd, torch, torch.nn.functional as F, gc, math, ran
 
 DEV = 'cuda'
 LAB = KE['LAB']; N_T = len(LAB)
-fl = pd.read_csv('/kaggle/input/rsna-knee-hybrid-report-labels/report_labels_v4hybrid.csv')
+import glob as _glob
+_hits = _glob.glob('/kaggle/input/**/report_labels_v4hybrid.csv', recursive=True)
+tlog('label csv: ' + repr(_hits))
+assert _hits, 'flight label csv tidak ketemu di /kaggle/input'
+fl = pd.read_csv(_hits[0])
 fl['StudyInstanceUID'] = fl['StudyInstanceUID'].astype(str)
 FL = fl.set_index('StudyInstanceUID')
 CONF_COLS = {t: f'{t}__conf' for t in LAB}

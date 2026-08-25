@@ -1,5 +1,5 @@
 {
-  "id": "dimaspashaakrilian/rsna-knee-train-coatnet-flight-v1",
+  "id": "dimaspashaakrilian/rsna-knee-train-coatnet-flight-ft-v1",
   "title": "RSNA Knee - Train CoatNet flight ft v1",
   "code_file": "train_coatnet_v1.ipynb",
   "language": "python",
