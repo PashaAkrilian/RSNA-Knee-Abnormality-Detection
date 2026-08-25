@@ -1,0 +1,20 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-oof-harvest-v1",
+  "title": "RSNA Knee - OOF harvest CoAtNet gold58",
+  "code_file": "oof_harvest.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [
+    "dreaddevelopment/raptor-knee-maxspan",
+    "dreaddevelopment/raptor-knee-widedense",
+    "mattiaangeli/knee-mri-fold-weights"
+  ],
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ]
+}
