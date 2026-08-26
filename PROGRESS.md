@@ -727,6 +727,56 @@ Contusion/Fracture, titik lemah `flight0234`) — ini pengungkit yg paling mungk
 selama ini dari ensemble fork, BUKAN dari arm CoAtNet kita) utk dapat ground-truth offset gold→LB
 yg sebenarnya, sebelum lanjut iterasi lokal lebih jauh.
 
+## 39. Submit c5 sendirian ke leaderboard real (26 Agustus, arahan eksplisit user) — hasil MEMBANTAH pivot strategis 25 Agustus
+
+Sesuai arahan eksplisit user ("submit c5 sendirian ke leaderboard real"), dibangun kernel baru
+`kaggle_kernel_submit_c5_solo/` (`build_submit_c5_solo.py`) — reuse `main()` verbatim dari `_KE_SRC`
+(sudah tersimpan di `build_train_coatnet_ke_src.txt`), `ARMS` default SUDAH persis 1 arm c5 saja
+(`raptor_ft_coatnet_v5_full_swa.pt`, tanpa blend). Setelah exec KE, panggil `KE['main']()` eksplisit
+(tidak auto-run krn `__name__ != '__main__'` saat di-exec sbg namespace), salin `_raptor.csv` →
+`submission.csv`.
+
+**Gotcha operasional baru (2, keduanya didokumentasikan utk referensi ke depan)**:
+1. Push pertama kernel BARU (belum pernah ada) dgn title berisi tanda kurung `(no blend)` gagal
+   409 Conflict BERULANG (dicoba ulang beberapa kali dgn jeda 50s-3menit, tetap gagal) — beda dari
+   UPDATE kernel yg sudah ada (di situ title/slug mismatch cuma jadi WARNING, bukan error). Fix:
+   title dibersihkan jadi persis slugify ke id (`RSNA Knee - Submit c5 solo`, tanpa parenthetical)
+   — push langsung berhasil di percobaan pertama setelah fix.
+2. `kaggle competitions submit -k <kernel> -v <versi>` SENDIRIAN dapat 400 Bad Request generik.
+   Tanpa `-v` dapat pesan lebih jelas: "Code competition submissions require both the output file
+   name and the version number" — ternyata WAJIB sertakan `-f submission.csv` BERSAMAAN dgn `-k`
+   dan `-v`, 3-serangkai baru diterima ("1 submissions remaining today").
+
+**Kendala tambahan sebelum push**: 2 slot GPU batch akun (max 2 concurrent) penuh oleh kernel LAIN
+yg TIDAK terkait proyek RSNA (`metric-hack-last-call-update`, `v16-rc5-high-score-...` — kompetisi
+lain di akun yg sama) — ditunggu sampai keduanya selesai (status COMPLETE) sebelum push berhasil,
+BUKAN dihentikan paksa (bukan milik proyek ini, tidak diketahui statusnya penting/tidak bagi user).
+
+**Hasil submission (ID 55795592): public LB = 0,927.**
+
+| Sumber | Skor |
+|---|---:|
+| c5 lokal (gold-58, nested-CV) | 0,9206-0,9213 |
+| **c5 REAL LEADERBOARD (submission ini)** | **0,927** |
+| Ensemble tim eksisting (`rsna-base`/DINOsaur fork) | **0,936** |
+
+**c5 sendirian KALAH 0,009 dari ensemble tim** — bertentangan LANGSUNG dgn kesimpulan pivot 25
+Agustus ("c5 sendirian mengalahkan SEMUA blend LOKAL", §37). Offset gold→LB kecil & wajar (+0,006-
+0,007, konsisten pola dreaddevelopment), jadi BUKAN bug/kesalahan submission — perbedaannya genuin.
+
+**Diagnosis metodologis**: nested-CV di N=57 gold TERBUKTI tidak cukup besar utk mendeteksi manfaat
+diversity ensemble yg baru kelihatan nyata di skala test set asli (~1.300 studi tersembunyi) —
+selaras temuan independen sadamtorres (§23a poin 7: varian 224px/336px korelasi 0,901 TAPI ensemble
+tetap +0,006). Kesimpulan "single arm > ensemble" yg terlihat kuat di sampel kecil ternyata TIDAK
+bertahan di sampel besar — pelajaran umum: hati-hati generalisasi dari nested-CV N=57 ke keputusan
+strategis besar tanpa validasi silang di skala lebih besar (submission real) dulu.
+
+**Keputusan revisi**: submission tim TIDAK diganti — ensemble besar (0,936) tetap yg terbaik &
+dipakai. Arm CoAtNet kita (c5 asli atau hasil fine-tune `coatnet_flight_ft_v1.pt`, §38) lebih masuk
+akal diintegrasikan SBG TAMBAHAN ke ensemble yg sudah ada (`kaggle_kernel_submit_integration_v1/`
+sudah pernah dirintis utk ini) drpd diandalkan sbg pengganti tunggal. Kuota submission tim tersisa
+1 hari ini.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
