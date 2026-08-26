@@ -190,8 +190,14 @@ for ep in range(EPOCHS):
             yb = torch.from_numpy(y_lab[si])[None].to(DEV)           # (1, 12)
             wb = torch.from_numpy(W_CONF[si])[None].to(DEV)          # (1, 12)
             with torch.autocast('cuda', dtype=torch.float16):
-                p = torch.sigmoid(model(xb).float())
-                loss = (F.binary_cross_entropy(p, yb, reduction='none') * wb).mean()
+                logits = model(xb).float()
+                # v3 ERROR (26 Agustus): sigmoid+binary_cross_entropy eksplisit di dalam
+                # autocast() DILARANG pytorch ("unsafe to autocast") krn cek-nya berdasar
+                # NAMA OP, bukan dtype runtime aktual -- walau logits sudah di-.float() di
+                # atas. Fix resmi yg direkomendasikan pesan errornya sendiri: gabung jadi
+                # binary_cross_entropy_with_logits (aman di-autocast, scr matematis setara
+                # sigmoid+BCE, malah lebih stabil numerik).
+                loss = (F.binary_cross_entropy_with_logits(logits, yb, reduction='none') * wb).mean()
             scaler.scale(loss).backward()
             ep_loss += float(loss.detach())
             del vol, mask, xw
