@@ -6,15 +6,17 @@ evaluasi akhir di gold-58 -> pembanding jujur utk c5 (0.9206).
 Komponen model/preprocess dipakai ulang VERBATIM dari _KE_SRC (notebook publik),
 jadi checkpoint hasilnya kompatibel dgn semua pipeline inferensi Raptor/DINOsaur.
 """
-import ast, json
+import json
 from pathlib import Path
 
 REPO = Path("/home/pasha-akrilian/Documents/RSNA Knee Abnormality Detection")
 OUT = REPO / "kaggle_kernel_train_coatnet_v1"
-SRC_TXT = Path("/tmp/opencode/nb/raptor45w65/rsna-knee-raptor-v45-w065.txt")
-
-line = [l for l in SRC_TXT.read_text().splitlines() if l.startswith("_KE_SRC")][0]
-ke_src = ast.literal_eval(line.split("=", 1)[1].strip())
+# v2 (26 Agustus): sumber asli /tmp/opencode/nb/... sudah hilang (ephemeral, beda sesi) --
+# ke_src sekarang disimpan sbg file terpisah yg DI-COMMIT ke repo (bukan /tmp), supaya builder
+# ini reproducible lintas sesi. Isinya sama persis (di-extract dari notebook v1 yg sudah pernah
+# di-push), bukan sumber baru.
+SRC_TXT = REPO / "build_train_coatnet_ke_src.txt"
+ke_src = SRC_TXT.read_text()
 
 SETUP = SETUP = '''\
 import os, sys, subprocess, time
@@ -134,8 +136,8 @@ def rand_windows(vol, mask, k, res):
     return torch.from_numpy(wins)
 
 EPOCHS = int(os.environ.get('EPOCHS', '4'))
-K_WIN = 12
-MICRO = int(os.environ.get('MICRO', '12'))
+K_WIN = 12  # v2: micro-batching MICRO dihapus (dead-code no-op krn K_WIN==MICRO==12 default,
+            # lihat komentar fix di loop bawah) -- 1 forward per studi memakai semua K_WIN window.
 ACC_STUDIES = 8          # optimizer step tiap 8 studi (grad-accum)
 LR_HEAD, LR_BB, WD = 1e-3, 2e-5, 0.05
 WARMUP = 300
@@ -169,18 +171,29 @@ for ep in range(EPOCHS):
         sid = train_ids[si]
         try:
             vol, mask = load_study(sid)
-            xw = rand_windows(vol, mask, K_WIN, RES)
-            yt = torch.from_numpy(y_lab[si])[None].repeat(xw.shape[0], 1)
-            wt = torch.from_numpy(W_CONF[si])[None].repeat(xw.shape[0], 1)
-            for mb0 in range(0, xw.shape[0], MICRO):
-                xb = xw[mb0:mb0 + MICRO].to(DEV)
-                yb = yt[mb0:mb0 + MICRO].to(DEV)
-                wb = wt[mb0:mb0 + MICRO].to(DEV)
-                with torch.autocast('cuda', dtype=torch.float16):
-                    p = torch.sigmoid(model(xb).float())
-                    loss = (F.binary_cross_entropy(p, yb, reduction='none') * wb).mean()
-                scaler.scale(loss / max(1, xw.shape[0] // MICRO)).backward()
-                ep_loss += float(loss.detach())
+            xw = rand_windows(vol, mask, K_WIN, RES)              # (K, 3, H, W)
+            # BUG v1 (ERROR run 26 Agustus): RaptorClassifier.encode() didesain utk input 5D
+            # (B_studi, K_window, 3, H, W) -- lihat cell _KE_SRC: `B, K = x.shape[:2]` lalu
+            # `x.flatten(0,1)` menggabung B & K sblm masuk backbone, HARUS 5D. Kode lama
+            # langsung slice `xw[mb0:mb0+MICRO]` (4D, tanpa dim batch-studi) lalu panggil
+            # `model(xb)` -- encode() salah tafsir MICRO sbg B & channel(3) sbg K, flatten
+            # jadi (MICRO*3, H, W) 3D, PyTorch auto-unsqueeze ke (1, MICRO*3, H, W) --
+            # persis match traceback: "expected input[1, 36, 384, 384] to have 3 channels,
+            # but got 36" (MICRO=12 default -> 12*3=36). Selain itu label direpeat per-window
+            # (`yt=...repeat(xw.shape[0],1)`) padahal head SUDAH pool atas semua K window jadi
+            # SATU prediksi per studi -- salah konsep, bukan cuma salah shape.
+            # FIX: 1 forward per studi, xw di-unsqueeze(0) jadi (1,K,3,H,W) sesuai desain
+            # encode(), label/weight TIDAK direpeat (1 nilai per studi, bukan per window).
+            # K_WIN==MICRO==12 secara default jadi loop micro-batch lama itu efektif no-op
+            # (cuma 1 iterasi) -- dihapus, bukan cuma dipertahankan sbg dead code.
+            xb = xw.unsqueeze(0).to(DEV)                             # (1, K, 3, H, W)
+            yb = torch.from_numpy(y_lab[si])[None].to(DEV)           # (1, 12)
+            wb = torch.from_numpy(W_CONF[si])[None].to(DEV)          # (1, 12)
+            with torch.autocast('cuda', dtype=torch.float16):
+                p = torch.sigmoid(model(xb).float())
+                loss = (F.binary_cross_entropy(p, yb, reduction='none') * wb).mean()
+            scaler.scale(loss).backward()
+            ep_loss += float(loss.detach())
             del vol, mask, xw
         except torch.cuda.OutOfMemoryError:
             torch.cuda.empty_cache()
@@ -250,7 +263,10 @@ nb = {"cells": [{**c, "metadata": {}, "outputs": [], "execution_count": None}
 OUT.mkdir(exist_ok=True)
 (OUT / "train_coatnet_v1.ipynb").write_text(json.dumps(nb, indent=1))
 meta = {
-    "id": "dimaspashaakrilian/rsna-knee-train-coatnet-flight-v1",
+    # v2: id disamakan dgn slug AKTUAL yg sudah live di Kaggle (push-1 pakai "-ft-", bukan
+    # id asli builder ini) -- supaya build script SELALU push versi baru ke kernel yg SAMA,
+    # bukan diam2 bikin slug duplikat baru.
+    "id": "dimaspashaakrilian/rsna-knee-train-coatnet-flight-ft-v1",
     "title": "RSNA Knee - Train CoatNet flight ft v1",
     "code_file": "train_coatnet_v1.ipynb",
     "language": "python", "kernel_type": "notebook", "is_private": True,
