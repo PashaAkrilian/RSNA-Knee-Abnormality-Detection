@@ -777,6 +777,31 @@ akal diintegrasikan SBG TAMBAHAN ke ensemble yg sudah ada (`kaggle_kernel_submit
 sudah pernah dirintis utk ini) drpd diandalkan sbg pengganti tunggal. Kuota submission tim tersisa
 1 hari ini.
 
+## 40. Riset Discussion segar (26 Agustus, arahan "scraping seluruh strategi, beri strateginya")
+
+Karena Code-tab (skor tertinggi) sudah dibedah habis 2 hari terakhir dan makin obfuscated/susah
+digali lebih jauh, riset kali ini fokus ke Discussion terbaru (post 24-26 Agustus, belum pernah
+dibaca) + 1 pengujian lokal langsung dari klaim yg ditemukan. Detail penuh: `docs/RESEARCH_NOTES.md`
+§27, ringkasan di `MEMORY.md` §2.
+
+Ringkasan cepat 4 temuan: (1) Synovitis lemah krn cuma 16% laporan menyebutnya eksplisit + RadImageNet
+pretraining terbukti membantu label ini scr independen; (2) hipotesis GAP/mean-pooling melunakkan
+sinyal temuan kecil (relevan langsung ke `SlotHead` kita); (3) peringatan checkpoint-selection di
+gold-58 bisa menyesatkan — **langsung terverifikasi via pengalaman kita sendiri** (c5-solo menang
+lokal 0,9206 tapi kalah real LB 0,927 vs ensemble tim 0,936, persis pola yg diperingatkan); (4)
+duplicate-report leakage (194 studi/47 grup) diverifikasi via `reference_metadata/train.csv` lokal.
+
+Diuji lokal (`label_engineering/blend_labels.py`, tanpa GPU, <1 menit): blend tabel label
+(flight0234+stevenleehans+pilkwang) — **hasil negatif**, tidak ada kombinasi yg mengalahkan
+flight0234 sendirian (0,8991 vs blend terbaik 0,8978). Line ditutup.
+
+**Strategi disintesis & disampaikan ke user** (6 poin, ranked): (1) bangun arm RadImageNet sendiri
+(target Synovitis); (2) ganti GAP jadi spatial attention pooling di level patch (kandidat arsitektur
+baru genuin, target Lateral Meniscus/PF OA/MCL); (3) perbaiki k-fold split soal duplicate-report
+(utang teknis kecil); (4) disiplin proses — submission real jadi pemutus keputusan besar, bukan
+gold-58 saja; (5) blend label ditutup; (6) LLM API relabeling tetap prioritas tertinggi jangka
+panjang (SEMUA sumber independen sepakat label ~0,89-0,90 adalah plafon single-model).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
