@@ -1,6 +1,6 @@
 {
   "id": "dimaspashaakrilian/rsna-knee-submit-c5-solo",
-  "title": "RSNA Knee - Submit c5 solo (no blend)",
+  "title": "RSNA Knee - Submit c5 solo",
   "code_file": "submit_c5_solo.ipynb",
   "language": "python",
   "kernel_type": "notebook",

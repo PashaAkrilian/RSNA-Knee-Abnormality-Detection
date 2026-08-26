@@ -81,7 +81,11 @@ OUT.mkdir(exist_ok=True)
 (OUT / "submit_c5_solo.ipynb").write_text(json.dumps(nb, indent=1))
 meta = {
     "id": "dimaspashaakrilian/rsna-knee-submit-c5-solo",
-    "title": "RSNA Knee - Submit c5 solo (no blend)",
+    # title HARUS bersih slugify ke id (tanpa tanda kurung/kata tambahan) -- title lama
+    # "... (no blend)" bikin push pertama (kernel belum ada) 409 Conflict berulang, diduga
+    # krn slug hasil title tidak cocok id saat proses CREATE (beda dgn UPDATE kernel yg
+    # sudah ada, di situ mismatch cuma jadi warning bukan error).
+    "title": "RSNA Knee - Submit c5 solo",
     "code_file": "submit_c5_solo.ipynb",
     "language": "python", "kernel_type": "notebook", "is_private": True,
     "enable_gpu": True, "enable_tpu": False, "enable_internet": False,
