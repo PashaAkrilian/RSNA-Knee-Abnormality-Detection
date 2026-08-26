@@ -802,6 +802,53 @@ baru genuin, target Lateral Meniscus/PF OA/MCL); (3) perbaiki k-fold split soal 
 gold-58 saja; (5) blend label ditutup; (6) LLM API relabeling tetap prioritas tertinggi jangka
 panjang (SEMUA sumber independen sepakat label ~0,89-0,90 adalah plafon single-model).
 
+## 41. v23 (spatial attention pooling) SELESAI — sendirian tidak menang, tapi mengungkap pola komplementer bernilai: blend v18+v23 = OOF terbaik baru keluarga SlotHead
+
+Semua 5 fold selesai stabil (rentang 0,7891-0,8717, spread mirip noise floor v18 — TIDAK ada
+instabilitas spt v21/v22). **OOF gabungan 57/57: 0,7967** — sedikit di bawah v18 (0,8068, -0,0101),
+dalam noise floor yg sudah terkuantifikasi (std antar-fold ~0,03).
+
+Sesuai kriteria keputusan yg sudah ditulis di notebook SEBELUM hasil keluar ("kalau v23 ~= v18 atau
+lebih rendah, hipotesis GAP-sebagai-pembatas tidak terbukti"), macro AUC sendirian TIDAK
+mengonfirmasi hipotesis. TAPI dibongkar per-label (`blend_results/blend_v18_v23.py`), ceritanya
+jauh lebih menarik:
+
+| Label | v18 (GAP) | v23 (SpatialAttnPool) | delta |
+|---|---:|---:|---:|
+| **Medial Meniscus** | 0,773 | 0,876 | **+0,103** |
+| **Lateral Meniscus** | 0,638 | 0,702 | **+0,064** |
+| Effusion | 0,869 | 0,920 | +0,051 |
+| Fracture | 0,822 | 0,852 | +0,030 |
+| PF OA | 0,790 | 0,795 | +0,005 |
+| ACL | 0,836 | 0,837 | +0,001 |
+| Lateral OA | 0,789 | 0,767 | -0,022 |
+| Synovitis | 0,772 | 0,722 | -0,049 |
+| Baker's | 0,804 | 0,754 | -0,050 |
+| Medial OA | 0,919 | 0,868 | -0,051 |
+| Contusion | 0,870 | 0,774 | -0,096 |
+| MCL | 0,801 | 0,694 | -0,107 |
+
+**Spatial attention pooling menang TELAK di kedua Meniscus** — PERSIS hipotesis yg diuji
+(`docs/RESEARCH_NOTES.md` §27b): robekan meniscus adalah fitur kecil-diskret, GAP melunakkannya,
+attention spasial menangkapnya. TAPI kalah di temuan yg sifatnya DIFUS/tersebar (MCL sprain,
+edema kontusio, penebalan sinovial, OA) — attention yg fokus sempit kehilangan sinyal yg
+tersebar luas di area yg lebih besar, GAP justru lebih cocok utk pola ini.
+
+**Blend rank-mean v18+v23** (tanpa training tambahan, murni pandas lokal): **0,8176 @ α(v18)≈0,5-
+0,65 — OOF TERBAIK BARU keluarga SlotHead**, melampaui v18 (0,8068) +0,0108. Robust di rentang
+lebar (α 0,30-0,85 semua >0,81) — diverifikasi BUKAN artefak titik tunggal, sweep penuh tersimpan
+di `blend_results/blend_v18_v23_output.log`.
+
+**Kesimpulan**: v23 BUKAN eksperimen gagal spt v21/v22 — nilainya bukan sbg pengganti v18,
+tapi sbg ANGGOTA ENSEMBLE yang genuinely diverse (spesialisasi berlawanan per-label). 10 checkpoint
+tersedia (5 fold v18 + 5 fold v23). **Belum diuji di submission real** — perlu kernel inferensi baru
+yg load 10 checkpoint & blend, atau setidaknya validasi lanjut sebelum pakai kuota submission.
+
+**Ide v24 (belum dibangun)**: daripada 2 model terpisah di-blend, gabung GAP+SpatialAttnPool sbg
+2 fitur PARALEL dlm SATU forward pass (mis. concat [CLS, GAP-mean, spatial-attn-pool] sebelum
+`SlotHead`) — biarkan attention per-label `SlotHead` yg sudah ada belajar sendiri kombinasi optimal
+per temuan, tanpa perlu 2x biaya training terpisah.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11

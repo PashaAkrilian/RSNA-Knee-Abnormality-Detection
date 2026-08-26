@@ -1,0 +1,41 @@
+studi overlap: 57
+
+--- per-label: v18(GAP) vs v23(SpatialAttnPool) ---
+  MCL                  v18=0.8010  v23=0.6939  delta=-0.1071
+  Contusion            v18=0.8698  v23=0.7742  delta=-0.0956
+  Medial OA            v18=0.9190  v23=0.8683  delta=-0.0508
+  Baker's              v18=0.8037  v23=0.7537  delta=-0.0500
+  Synovitis            v18=0.7716  v23=0.7222  delta=-0.0494
+  Lateral OA           v18=0.7885  v23=0.7668  delta=-0.0217
+  ACL                  v18=0.8359  v23=0.8371  delta=+0.0013
+  PF OA                v18=0.7897  v23=0.7950  delta=+0.0053
+  Fracture             v18=0.8219  v23=0.8519  delta=+0.0299
+  Effusion             v18=0.8688  v23=0.9195  delta=+0.0506
+  Lateral Meniscus     v18=0.6381  v23=0.7020  delta=+0.0639
+  Medial Meniscus      v18=0.7730  v23=0.8759  delta=+0.1030
+
+--- sweep alpha (bobot v18) ---
+  alpha(v18)=0.00  macro=0.7967
+  alpha(v18)=0.05  macro=0.7989
+  alpha(v18)=0.10  macro=0.8027
+  alpha(v18)=0.15  macro=0.8051
+  alpha(v18)=0.20  macro=0.8084
+  alpha(v18)=0.25  macro=0.8099
+  alpha(v18)=0.30  macro=0.8142
+  alpha(v18)=0.35  macro=0.8163
+  alpha(v18)=0.40  macro=0.8172
+  alpha(v18)=0.45  macro=0.8166
+  alpha(v18)=0.50  macro=0.8172
+  alpha(v18)=0.55  macro=0.8169
+  alpha(v18)=0.60  macro=0.8170
+  alpha(v18)=0.65  macro=0.8176
+  alpha(v18)=0.70  macro=0.8163
+  alpha(v18)=0.75  macro=0.8156
+  alpha(v18)=0.80  macro=0.8152
+  alpha(v18)=0.85  macro=0.8140
+  alpha(v18)=0.90  macro=0.8108
+  alpha(v18)=0.95  macro=0.8076
+  alpha(v18)=1.00  macro=0.8068
+
+BEST: macro=0.8176 @ alpha(v18)=0.65
+v18 alone=0.8068 | v23 alone=0.7967 | blend terbaik=0.8176 (++0.0108 vs v18)
