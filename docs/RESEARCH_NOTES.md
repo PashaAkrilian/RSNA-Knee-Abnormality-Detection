@@ -819,3 +819,99 @@ Prinsip: (1) jangan kejar desimal ke-3 public LB — 137 tim sudah numpuk di 0.9
 - **Fase C — fusion nested-CV (berkelanjutan)**: optimasi weight per-target antar-arm (stack 0.936 + arm kita + pilkwang OOF) via nested grouped-CV di gold-58 + bootstrap (pola kontrak antoinegg1 E10), BUKAN grid di public LB. Ukur leave-one-arm-out.
 - **Fase D — disiplin akhir (Okt)**: 2 final submissions profil beda; semua keputusan pakai gold-58 OOF + bootstrap CI; koordinasi kuota 5 submit/hari dgn nxtirfan.
 - Realisme target: +0.002-0.004 dari fusion tuning (→0.938-0.940, top-50); +0.005-0.010 lagi kalau label engineering berhasil (→0.943-0.950, top-10); mengalahkan 0.952 butuh eksekusi sempurna + shakeup menguntungkan — bukan hal yg bisa dijamin, tapi jalur satu-satunya dgn expected value positif adalah label engineering, karena semua jalur lain sudah commodity.
+
+## 27. Riset Discussion segar (26 Agustus, arahan "scraping seluruh strategi, beri strateginya") — 3 temuan actionable + 1 temuan negatif diuji langsung
+
+Setelah c5-solo real-LB (0,927) membantah pivot 25 Agustus (§26), riset ulang fokus ke Discussion
+terbaru (bukan Code-tab lagi — sudah dibedah habis, top score obfuscated/tidak bisa digali lebih
+jauh) + 1 pengujian lokal langsung (tanpa GPU) dari klaim yg ditemukan.
+
+### 27a. Root cause Synovitis (topic 737566, `starkhushi`) — konfirmasi independen + fix konkret
+
+Synovitis (titik lemah kita, 0,79-0,815 di semua sumber) TERNYATA punya penjelasan tegas: **cuma
+~16% dari 4.407 laporan menyebut istilah synovitis SAMA SEKALI** (dicek di 9 bahasa) — sisanya label
+diinferensi, bukan dibaca. Label table TERBAIK pun cuma 0,79-0,893 setuju dgn radiolog di label ini
+— model dilatih dari "guru" yg sendiri cuma ~79-89% benar. **Fix yg TERBUKTI membantu penulis**:
+**encoder pretrained RadImageNet capai 0,78 di Synovitis vs 0,62-0,72 utk model ImageNet-pretrained**
+— domain medical-pretraining spesifik membantu label yg sinyalnya halus/samar. Kita PUNYA akses ke
+RadImageNet (MIT-licensed, sudah dicatat sbg opsi backbone alternatif sejak lama, TAPI belum pernah
+dibangun sbg arm sendiri — cuma dipakai via komponen ensemble komunitas). Ide kedua dari penulis:
+infer Synovitis dari co-mention Effusion (korelasi ~0,5 di studi ber-anotasi) saat istilah eksplisit
+tidak ada — belum pernah dicoba siapa pun setahu penulisnya.
+
+### 27b. Hipotesis pooling spasial utk temuan kecil/tipis (topic 737597) — LANGSUNG relevan ke kelemahan Lateral Meniscus kita
+
+Post ablasi jujur & rinci (EfficientNet-B0, 0,7815 OOF/0,870 public) menemukan pola per-label yg
+PERSIS sama dgn kita: temuan besar/diskret/posisi-tetap (Baker's 0,855, ACL 0,853, Effusion 0,843)
+bagus; temuan tipis/kecil/berjenjang (Lateral Meniscus 0,740, PF OA 0,748, MCL 0,758) buruk.
+**Hipotesis penulis (belum diuji, cuma diajukan)**: robekan meniscus ~3mm cuma ~0,01% dari frame
+288px — **global average pooling (GAP)/mean-pooling MELUNAKKAN sinyal itu sampai hilang**. Kandidat
+fix yg diajukan: ROI crop di sekitar joint line, ATAU **spatial attention pooling** (bukan GAP)
+supaya model belajar KE MANA harus melihat, bukan rata-rata semua patch. **INI LANGSUNG relevan**:
+arsitektur `SlotHead` kita (v11-v22 SEMUA varian) pakai `patch_mean = out[:,1:].mean(1)` — PERSIS
+GAP yg dicurigai penulis sbg akar masalah. Kita BELUM PERNAH coba attention SPASIAL di level patch
+(v21's `AnatomyQueryHead` attention-nya di level WINDOW/slice, bukan di level patch-dalam-gambar) —
+ini kandidat arsitektur BARU & BEDA dari semua yg sudah dicoba (v11-v22), bukan pengulangan.
+
+Post yg sama juga MENGONFIRMASI independen 2 temuan kita: (a) laterality mirror-effect diuji &
+DITOLAK signifikan (selaras v20 kita); (b) deteksi lateralitas geometris dari center-image di ruang
+pasien resolve 4274/4407 studi, cocok 98,4% dgn tag asli — HAMPIR PERSIS metodologi kita (97,4%).
+
+### 27c. PERINGATAN METODOLOGIS (topic 737454, notebook `starkhushi/rsna-knee-which-report-labels-should-you-train-on`) — checkpoint selection di gold-58 bisa MENYESATKAN
+
+Kutipan penting: *"In my own runs the model that ranked LAST on those 58 [gold] ranked FIRST on the
+leaderboard."* Saran penulis: **gold-58 utk PELAPORAN, JANGAN utk SELEKSI CHECKPOINT** — pakai
+holdout weak-label lebih besar (ratusan studi) utk seleksi, baru gold-58 utk laporan akhir. **Ini
+selaras LANGSUNG dgn pengalaman kita sendiri hari ini**: c5 lokal (0,9206, "menang" di nested-CV
+N=57) ternyata KALAH di real LB (0,927) dari ensemble tim (0,936) — persis pola yg diperingatkan.
+**Pelajaran diserap**: jangan lagi bikin keputusan strategis BESAR (ganti submission tim, pilih
+arsitektur final) murni dari perbandingan gold-57/58 — submission real adalah pemutus utk keputusan
+besar, gold-58 cuma kompas AWAL.
+
+**Temuan tambahan yg SAMA PENULIS ungkap & KITA VERIFIKASI LANGSUNG di data lokal kita** (bukan cuma
+percaya klaimnya): **194 studi berbagi Report BYTE-IDENTICAL di 47 grup** (grup terbesar 37 studi) —
+diverifikasi via `reference_metadata/train.csv` lokal (`pd.read_csv(...).Report.value_counts()`),
+angka kita (194/47) dekat dgn klaim penulis (131/46, beda snapshot data mungkin). **1 dari 58 studi
+gold kita TERNYATA berbagi report dgn studi lain (non-gold)** — risiko leakage kecil tapi nyata di
+skema k-fold kita (v18-v22): studi weak-label kembarannya SELALU ada di training (WEAK_STUDIES tidak
+di-fold), jadi 1 fold yg menahan studi gold itu utk validasi kemungkinan tetap "bocor" sedikit lewat
+kembaran reportnya. **Belum diperbaiki** (dampaknya kecil, 1/58, tapi dicatat sbg utang teknis).
+
+### 27d. Diuji LANGSUNG (lokal, tanpa GPU): blend tabel label — HASIL NEGATIF, flight0234 tetap terbaik
+
+Post 737454 menyarankan blend stevenleehans+pilkwang lebih baik dari salah satu sendirian (utk
+MEREKA, yg tidak punya flight0234). Diuji dgn data KITA (`blend_labels.py`, unduh 3 tabel via
+`kaggle datasets download`, skor manual vs 58 gold, murni pandas lokal < 1 menit):
+
+| Sumber | macro AUC vs gold-58 |
+|---|---:|
+| **flight0234 (dipakai sekarang)** | **0,8991** |
+| mean(flight, pilkwang) | 0,8978 |
+| mean(flight, steven) | 0,8952 |
+| mean(flight, steven, pilkwang) | 0,8935 |
+| stevenleehans v4 blend | 0,8927 |
+| mean(steven, pilkwang) | 0,8930 |
+| pilkwang v2 | 0,8700 |
+
+**TIDAK ADA blend yg mengalahkan flight0234 sendirian** — beda dari kasus penulis krn flight0234
+SUDAH lebih akurat dari steven/pilkwang individual, jadi mencampurnya dgn sumber lebih lemah
+menariknya turun, bukan naik (kebalikan dari nested-CV OOF blend prediksi kita yg dulu BERHASIL,
+§22 — di situ semua sumber sebanding kualitasnya, di sini tidak). **Kesimpulan: line ditutup,
+flight0234 TETAP satu-satunya label source, TIDAK perlu blend tabel lagi.**
+
+### 27e. Sintesis strategi (ranked, per urgensi/biaya)
+
+1. **[Medium, GPU, belum dicoba]** Bangun arm RadImageNet-pretrained sendiri (kita punya lisensi
+   MIT-nya) — target spesifik Synovitis & temuan halus lain, konfirmasi independen §27a.
+2. **[Besar, riset+GPU, arsitektur baru genuin]** Ganti `patch_mean.mean(1)` (GAP) di `SlotHead`
+   dgn spatial attention pooling atas grid patch token — kandidat langsung utk kelemahan Lateral
+   Meniscus/PF OA/MCL, BELUM PERNAH dicoba (beda dari v21 yg attention-nya di level window bukan
+   patch-dalam-gambar). Prioritas riset berikutnya kalau lanjut bangun model sendiri.
+3. **[Kecil, gratis, utang teknis]** Perbaiki k-fold split supaya grup duplicate-report (194 studi/
+   47 grup) tidak terpecah gold/weak lintas fold — kebersihan metodologi, dampak kecil tapi nyata.
+4. **[Disiplin proses, gratis]** JANGAN lagi pilih arsitektur/model final murni dari gold-57/58 —
+   submission real WAJIB jadi pemutus utk keputusan besar (pelajaran dari c5-solo hari ini + §27c).
+5. **[Ditutup]** Blend tabel label — TIDAK membantu, jangan diulang (§27d).
+6. **[Tetap prioritas tertinggi jangka panjang]** LLM API relabeling severity-aware — SEMUA sumber
+   independen (kita, sadamtorres, starkhushi, k256.dev/PC Jimmmy) sepakat label ~0,89-0,90 adalah
+   plafon single-model, arsitektur/pooling sebagus apa pun mentok di situ tanpa label lebih baik.

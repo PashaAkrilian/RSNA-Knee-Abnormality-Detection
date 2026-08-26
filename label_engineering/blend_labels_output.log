@@ -1,0 +1,28 @@
+gold studies: 58
+--- individual tables ---
+flight0234 (v4hybrid, kita pakai) macro=0.8991  coverage=58/58
+stevenleehans v4 blend           macro=0.8927  coverage=58/58
+pilkwang report_labels_v2        macro=0.8700  coverage=57/58
+
+--- blends (rata-rata sederhana, semua tabel yang overlap) ---
+studi overlap 3 tabel: 57/58
+mean(flight, steven)             macro=0.8952
+mean(flight, pilk)               macro=0.8978
+mean(steven, pilk)               macro=0.8930
+mean(flight, steven, pilk)       macro=0.8935
+mean(flight*0.6, steven*0.4)     macro=0.8959
+mean(flight*0.7, steven*0.3)     macro=0.8962
+
+--- per-label (flight0234 vs blend flight+steven, N= 57 ) ---
+  Fracture             flight=0.871  blend=0.815  delta=-0.057
+  ACL                  flight=0.987  blend=0.987  delta=+0.000
+  MCL                  flight=0.968  blend=0.968  delta=+0.000
+  Medial Meniscus      flight=0.950  blend=0.950  delta=+0.000
+  Lateral Meniscus     flight=0.879  blend=0.879  delta=+0.000
+  Medial OA            flight=0.932  blend=0.932  delta=+0.000
+  Lateral OA           flight=0.832  blend=0.832  delta=+0.000
+  PF OA                flight=0.897  blend=0.897  delta=+0.000
+  Effusion             flight=0.874  blend=0.874  delta=+0.000
+  Synovitis            flight=0.815  blend=0.815  delta=+0.000
+  Baker's              flight=0.944  blend=0.944  delta=+0.000
+  Contusion            flight=0.852  blend=0.852  delta=+0.000
