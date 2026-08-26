@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory. Update bagian relevan setiap ada temuan/keputusan baru.
 > Jangan tambah terus ke bawah — overwrite bagian yang sudah usang.
-> Last updated: 2026-08-26T13:40:00+07:00
+> Last updated: 2026-08-26T20:15:00+07:00
 
 ## 1. Fakta Kompetisi (jarang berubah)
 - Kompetisi: [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, 1.611 tim.
@@ -96,7 +96,7 @@
 
 ## 5. Open Questions / Menunggu Keputusan User
 - **LLM API key utk relabeling — PRIORITAS NAIK pasca hasil fine-tune 26 Agustus**: fine-tune penuh CoAtNet di atas `flight0234` TIDAK mengalahkan baseline off-the-shelf c5 (0,9193 < 0,9206) — bukti langsung bahwa label `flight0234` (capped 0,8991 vs gold) sudah jadi PEMBATAS NYATA, bukan cuma dugaan. Kalau user punya/mau sediakan API key (OpenAI/Anthropic/Gemini), label severity-aware via LLM bisa dibangun (ruling 733965 mengizinkan); target perbaikan: Synovitis/LatOA/Contusion/Fracture (titik lemah flight). Tanpa itu, `flight0234` = label final & fine-tuning lebih lanjut kemungkinan besar TIDAK akan membantu banyak lagi.
-- **Submit c5 (0,9206 lokal) SENDIRIAN ke leaderboard real — BELUM PERNAH DICOBA**: skor publik tim (0,936) datang dari ensemble besar community fork, BUKAN dari arm CoAtNet kita. Belum ada data ground-truth soal bagaimana c5 SENDIRIAN performa di leaderboard real (offset gold→LB tidak pasti linear, §2). Worth 1 slot submission (dari kuota 5x/hari tim) utk validasi langsung — tapi perlu koordinasi tim dulu (§4).
+- **Submit c5 SENDIRIAN — SUDAH DIEKSEKUSI 26 Agustus (arahan eksplisit user)**: kernel `kaggle_kernel_submit_c5_solo/` (dibangun dari nol, reuse `main()` verbatim dari `_KE_SRC`, ARMS=1 arm c5 saja). **Gotcha operasional baru**: title kernel dgn tanda kurung `(no blend)` bikin 409 Conflict berulang saat CREATE pertama kali (beda dari UPDATE kernel yg sudah ada, di situ mismatch cuma warning) — fix: title HARUS bersih slugify persis ke id. **Gotcha submission CLI**: `kaggle competitions submit -k <kernel> -v <versi>` SENDIRIAN tidak cukup, WAJIB sertakan `-f submission.csv` juga ("Code competition submissions require both the output file name and the version number") — 3 command beda baru berhasil. **Submission ID 55795592, status PENDING** (menunggu Kaggle re-run kernel vs test set ASLI ~1.300 studi, bukan stub 3-studi yg dipakai saat push biasa). Kuota submission tim: 1 tersisa hari ini (3 dari `rsna-base` + 1 ini = 4/5 terpakai).
 - **Koordinasi dgn nxtirfan** soal kuota submission 5x/hari tim — siapa submit apa; jangan boros (tim sudah di 0.936 via jalur kolaborator).
 - **Review manual** studi gold `...72853333...` yang ter-flag "exclude" di audit exhaustive (kemungkinan anomali kalibrasi/overexposure) — apakah tetap dipakai di training/validasi atau dikeluarkan?
 
