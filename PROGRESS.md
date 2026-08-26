@@ -704,6 +704,29 @@ persis rekomendasi resmi di pesan errornya sendiri. Diverifikasi `ast.parse()` O
 tidak ada lagi `torch.sigmoid(model(...))` tersisa. Di-push sbg **kernel version 4**, status:
 RUNNING — cache fase-1 mengulang lagi (~47 menit), training baru mulai setelahnya.
 
+**Push-4 SELESAI PENUH, TANPA ERROR — tapi hasil TIDAK lolos gate**: cache 4407/4407 (~44 menit),
+training 4 epoch mulus tanpa hambatan (`loss`: 0,5586 → 0,5438 → 0,5206 → 0,5041, turun monoton,
+TIDAK ada tanda instabilitas spt v21/v22 kita sendiri) — total durasi run ~4,6 jam. **Evaluasi
+gold-58 akhir: MACRO AUC = 0,9193** — dibanding baseline off-the-shelf c5 (`v5_full_swa`,
+0,9206-0,9213 dari harvest §38 atas): **SEDIKIT LEBIH RENDAH**, gate "≥ c5" TIDAK lolos.
+
+**Diagnosis**: selisihnya kecil (-0,0013 s/d -0,002) tapi arahnya konsisten negatif, bukan cuma
+noise acak (training sendiri stabil/mulus, jadi bukan masalah optimisasi). Penjelasan paling masuk
+akal: label `flight0234` yg dipakai utk fine-tune HANYA capai 0,8991 vs gold asli (§ label
+engineering, 25 Agustus) — menyeret model yg SUDAH kuat (c5, hasil training sebelumnya dgn resep
+tak diketahui persis) sedikit ke arah kualitas sinyal yg lebih rendah drpd representasi implisit
+yg sudah dipelajarinya. **Ini BUKTI LANGSUNG (bukan cuma dugaan lagi) bahwa kualitas label sudah
+jadi pembatas nyata** — fine-tuning arsitektur/resep lebih dalam kemungkinan besar TIDAK banyak
+membantu lebih jauh tanpa label yg lebih baik dari `flight0234`.
+
+**Keputusan**: checkpoint hasil fine-tune ini **TIDAK dipakai** — c5 asli (0,9206) TETAP arm lokal
+terbaik proyek. Prioritas berikutnya (2 opsi, saling melengkapi bukan saling eksklusif): (1)
+**minta akses API LLM** dari user utk relabeling severity-aware (target Synovitis/Lat OA/
+Contusion/Fracture, titik lemah `flight0234`) — ini pengungkit yg paling mungkin menembus 0,92+;
+(2) **submit c5 SENDIRIAN ke leaderboard real** (belum pernah dicoba — skor publik tim 0,936
+selama ini dari ensemble fork, BUKAN dari arm CoAtNet kita) utk dapat ground-truth offset gold→LB
+yg sebenarnya, sebelum lanjut iterasi lokal lebih jauh.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
