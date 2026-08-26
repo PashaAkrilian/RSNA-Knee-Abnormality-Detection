@@ -627,6 +627,70 @@ ke-2 bahwa akar masalah v16 = freeze-schedule, bukan RGB-packing itu sendiri).
 **Status**: preprocessing v5 SELESAI (status Kaggle COMPLETE, tanpa error terlapor). v22 sudah
 DI-PUSH (kernel version 1, 23 Agustus), sedang QUEUED/RUNNING di TPU, dipantau otomatis.
 
+## 38. Rekonsiliasi konteks (26 Agustus) + fix bug shape 5D/4D di training CoAtNet arm sendiri
+
+**Catatan rekonsiliasi**: antara §37 dan sini, sesi ini sempat kehilangan jejak percakapan
+(context compaction) — pekerjaan besar terjadi tanpa tercatat rinci di PROGRESS.md (baru
+ketauan lewat `git log`/`git reflog` saat mau commit v22, ternyata HEAD sudah 10 commit di
+depan pemahaman lokal). Ringkasan hasil pekerjaan itu (detail lengkap ada di `MEMORY.md` §2/§3,
+`docs/RESEARCH_NOTES.md` §26, `blend_results/FUSION_V2_RESULTS.md`, `label_engineering/`):
+
+- Tim fork `prvsiyan/head-and-shoulders-knees-and-toes` (replika DINOsaur V10) → skor tim naik
+  **0,922 → 0,936** (#91/2.372).
+- Scraping mendalam 25 Agustus membedah seluruh stack 0,936 (24-member DINOv2/DINOv3 + RadImageNet
+  chain + dual CoAtNet correlation-gated).
+- **Harvest OOF CoAtNet (GPU, 6,5 menit) mengungkap TEMUAN PIVOT**: `v5_full_swa` CoAtNet
+  SENDIRIAN = **0,9206-0,9213 gold-57/58, mengalahkan SEMUA blend** (uniform-7=0,9055, nested-CV
+  terbaik=0,9148). Fusion v2 (`blend_results/fusion_nested_cv_v2.py`) mengonfirmasi: ensembling
+  TIDAK membantu di skala N=57 ini.
+- **Keputusan strategis**: jalan ke 0,95+ = SATU arm lebih kuat dari c5 (fine-tune penuh +
+  label lebih baik), BUKAN ensemble tuning lebih lanjut. v22 kita sendiri (DINOv2 SlotHead) resmi
+  ditutup sbg jalur — 3x berturut2 (v16/v21/v22) gagal, kesimpulan: `SlotHead` mean-pooling tidak
+  bisa manfaatkan triplet-RGB atau patch-embed-unfreeze secara konsisten.
+- Label engineering round-1 (severity-aware lexicon) SELESAI tapi GATE belum lolos — semua varian
+  di bawah `flight0234` (0,8991). Tanpa API LLM, `flight0234` tetap label terbaik yg ada.
+- **Mulai bangun arm sendiri**: fine-tune PENUH CoAtNet (init dari checkpoint c5
+  `raptor_ft_coatnet_v5_full_swa.pt`) di atas label `flight0234` (confidence-weighted), gold-58
+  tidak ikut latih (held out utk evaluasi jujur, target kalahkan 0,9206).
+
+**Fix bug baru (26 Agustus, sesi ini)**: kernel `rsna-knee-train-coatnet-flight-ft-v1` push-2
+("train v2 running", commit terakhir sblm rekonsiliasi) ternyata **ERROR**, bukan sukses jalan
+spt tersirat dari judul commit. Log: `RuntimeError: Given groups=1, weight of size [64, 3, 3, 3],
+expected input[1, 36, 384, 384] to have 3 channels, but got 36 channels instead`.
+
+**Diagnosis**: `RaptorClassifier.encode()` (kode verbatim dari notebook publik dread/c5) didesain
+utk input **5D** `(B_studi, K_window, 3, H, W)` — `B, K = x.shape[:2]` lalu `x.flatten(0,1)`
+menggabung dim batch-studi & window SEBELUM masuk backbone. Training loop custom kita (`FASE 2` di
+`build_train_coatnet.py`) malah slice `xw[mb0:mb0+MICRO]` — **4D**, TANPA dimensi batch-studi —
+lalu panggil `model(xb)` langsung. Akibatnya `encode()` salah tafsir `MICRO` (=12) sbg dimensi B
+dan channel(3) sbg dimensi K, lalu `.flatten(0,1)` menggabungkan `MICRO*3=36` jadi satu axis —
+persis cocok dgn pesan error (36 channel). Bug SEKUNDER yg ikut ketemu: label `yt`/`wt` di-`repeat`
+per-window (`[None].repeat(xw.shape[0],1)`) — padahal head `RaptorClassifier` SUDAH melakukan
+attention-pooling atas SEMUA K window jadi SATU prediksi per studi; me-repeat label per-window
+mengasumsikan tiap window adalah sampel independen, bertentangan dgn arsitektur pooling yg
+sebenarnya dipakai.
+
+**Fix**: satu forward pass per studi — `xb = xw.unsqueeze(0)` → `(1, K, 3, H, W)` (sesuai desain
+asli `encode()`), label/weight TIDAK direpeat (`yb`/`wb` shape `(1,12)`, satu nilai per studi).
+Loop micro-batch lama dihapus sepenuhnya (bukan dipertahankan sbg dead code) — secara default
+`K_WIN==MICRO==12` jadi loop itu SELALU cuma 1 iterasi, murni sisa desain yg tidak sempat
+disederhanakan setelah asumsi micro-batching berubah.
+
+**Sekalian diperbaiki**: `build_train_coatnet.py` (script generator notebook, source-of-truth)
+tadinya baca `_KE_SRC` dari `/tmp/opencode/nb/raptor45w65/...` — path ephemeral yg SUDAH HILANG
+lintas sesi (ketauan pas mau re-run build script). Diganti baca dari
+`build_train_coatnet_ke_src.txt` yg SEKARANG DI-COMMIT ke repo (isi sama persis, cuma dipindah
+supaya reproducible). `id` di kernel-metadata juga disamakan ke slug AKTUAL yg sudah live
+(`...-flight-ft-v1`, builder lama masih pakai `...-flight-v1` tanpa "-ft-") supaya push
+berikutnya update kernel yg sama, bukan bikin duplikat diam-diam.
+
+Diverifikasi: `ast.parse()` semua 4 cell notebook hasil regenerasi OK, grep konfirmasi kode buggy
+lama (loop micro-batch, label-repeat) sudah tidak ada di jalur eksekusi. Di-push sbg **kernel
+version 3**, status: RUNNING. **Catatan**: `/kaggle/tmp/volcache` (cache FASE 1) kemungkinan besar
+TIDAK persist lintas `kernel push` terpisah (container baru tiap push) — push-3 realistiknya
+mengulang ~50 menit caching dari nol walau push-2 dulu sudah pernah menyelesaikannya; belum
+diverifikasi langsung, cukup diwaspadai saat baca log durasi run ini.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
