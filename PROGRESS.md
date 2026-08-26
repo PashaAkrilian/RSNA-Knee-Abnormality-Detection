@@ -691,6 +691,19 @@ TIDAK persist lintas `kernel push` terpisah (container baru tiap push) — push-
 mengulang ~50 menit caching dari nol walau push-2 dulu sudah pernah menyelesaikannya; belum
 diverifikasi langsung, cukup diwaspadai saat baca log durasi run ini.
 
+**Push-3 ternyata ERROR juga** (bug ke-2, beda dari yg di atas): cache fase-1 lolos PENUH
+(4407/4407, ~47 menit — **konfirmasi cache TIDAK persist lintas push**, harus ulang tiap kali),
+training mulai (`model siap res=384 | steps=2174`), tapi crash di forward-loss PERTAMA:
+`RuntimeError: torch.nn.functional.binary_cross_entropy and torch.nn.BCELoss are unsafe to
+autocast... use binary_cross_entropy_with_logits`. Root cause: PyTorch `autocast()` melarang
+kombo `sigmoid()`+`binary_cross_entropy()` eksplisit berdasar **nama operasi**, bukan dtype
+runtime aktual — walau logits sudah di-`.float()` sebelum sigmoid, tetap kena block krn masih
+lexically di dalam context `autocast()`. **Fix**: ganti jadi `F.binary_cross_entropy_with_logits`
+langsung atas logits mentah (skip `torch.sigmoid` eksplisit) — setara matematis, aman autocast,
+persis rekomendasi resmi di pesan errornya sendiri. Diverifikasi `ast.parse()` OK + grep pastikan
+tidak ada lagi `torch.sigmoid(model(...))` tersisa. Di-push sbg **kernel version 4**, status:
+RUNNING — cache fase-1 mengulang lagi (~47 menit), training baru mulai setelahnya.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
