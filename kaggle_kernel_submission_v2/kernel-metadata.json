@@ -5,14 +5,16 @@
   "language": "python",
   "kernel_type": "notebook",
   "is_private": true,
-  "enable_gpu": false,
+  "enable_gpu": true,
   "enable_tpu": false,
-  "enable_internet": true,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
   "dataset_sources": [],
   "competition_sources": ["rsna-knee-abnormality-detection"],
   "kernel_sources": [
     "dimaspashaakrilian/rsna-knee-preprocessing-v2-physical-slice-order",
-    "dimaspashaakrilian/rsna-knee-modeling-v18-kfold-5-tpu"
+    "dimaspashaakrilian/rsna-knee-modeling-v18-kfold-5-tpu",
+    "dimaspashaakrilian/rsna-knee-modeling-v23-spatialpool-tpu"
   ],
   "model_sources": ["metaresearch/dinov2/PyTorch/base/1"]
 }
