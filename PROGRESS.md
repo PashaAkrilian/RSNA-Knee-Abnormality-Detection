@@ -875,6 +875,39 @@ benar2 bertahan di skala nyata, mengingat pelajaran c5-solo (§39 PROGRESS, §27
 bahwa perbandingan lokal N=57-58 bisa menyesatkan. (2) arm RadImageNet sendiri (§27a, target
 Synovitis) — investasi lebih besar (backbone baru), ditunda sampai (1) selesai divalidasi.
 
+## 43. Submission v3: ensemble v18+v23 (10 checkpoint, rank-mean) — dev-test bersih, disubmit real
+
+Sesuai prioritas yg dicatat setelah v24 gagal (§42): validasi blend v18+v23 (OOF lokal terbaik
+0,8176) di leaderboard real, bukan cuma percaya angka lokal N=57 begitu saja (pelajaran c5-solo,
+§39: lokal bisa menyesatkan).
+
+**Perubahan di `kaggle_kernel_submission_v2/`** (slug lama dipakai ulang, isi baru sepenuhnya):
+- Tambah `KneeModelV23` (`SpatialAttnPool`) berdampingan `KneeModelV18` (GAP) — dua kelas
+  arsitektur beda, checkpoint HARUS dipisah per asal `kernel_sources` (nama file sama persis
+  `best_model_fold{0-4}.pt` di kedua kernel, tapi struktur `state_dict` beda — glob nama file
+  polos spt v2 lama TIDAK cukup, harus filter by path).
+- **Fix pending lama sekalian dibereskan**: ensembling ganti dari `np.mean(preds)` (probability-
+  mean) jadi rank-mean equal-weight lintas 10 model — sesuai temuan riset sadamtorres (§23a:
+  "averaging sigmoids lets the most confident member dominate; AUC reads order"). Restrukturisasi
+  perlu krn rank butuh distribusi lintas SEMUA studi test dulu (bukan bisa dihitung per-studi
+  spt probability-mean) — `infer_study()` sekarang return prediksi MENTAH per-model (bukan sudah
+  dirata-ratakan), rank+gabung baru terjadi setelah loop test PENUH selesai.
+- `kernel-metadata.json`: `enable_gpu=true, machine_shape=NvidiaTeslaT4, enable_internet=false`
+  (config submission-siap, bukan CPU dev-test lagi), tambah `kernel_sources` v23.
+
+**Dev-test (kernel version 2, stub 3-studi) SUKSES TOTAL, tanpa perlu perbaikan apa pun**:
+`device: cuda` (GPU jalan), semua paket (pydicom/transformers/sklearn) preinstalled walau
+`enable_internet=false` (tidak perlu fallback wheel), 5 checkpoint v18 + 5 checkpoint v23 SEMUA
+ketemu & termuat benar ke kelas yg tepat (tidak ada `state_dict` mismatch), 3/3 studi berhasil
+diinferensi, rank-mean blend terhitung benar (`all_preds shape: (3, 10, 12)`). **Total ~74 detik**
+(~57s setup+load 10 model, ~17s murni inferensi 3 studi = ~5,7 detik/studi) → ekstrapolasi test
+set asli (~1.300 studi) **~2 jam, jauh di bawah batas 9 jam kompetisi** — JAUH lebih cepat dari
+estimasi CPU lama (~21 jam utk 5 model saja, §29).
+
+**Disubmit real** (submission ID `55820944`, 27 Agustus): "Ensemble v18(GAP)+v23(SpatialAttnPool)
+10-checkpoint rank-mean, OOF lokal terbaik 0,8176 - validasi vs ensemble tim 0,936". Status PENDING,
+menunggu skor publik. Kuota submission tim tersisa 4 hari ini.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
