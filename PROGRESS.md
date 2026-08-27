@@ -849,6 +849,32 @@ yg load 10 checkpoint & blend, atau setidaknya validasi lanjut sebelum pakai kuo
 `SlotHead`) — biarkan attention per-label `SlotHead` yg sudah ada belajar sendiri kombinasi optimal
 per temuan, tanpa perlu 2x biaya training terpisah.
 
+## 42. v24 (dual-pool dalam 1 model) SELESAI — negatif, line ditutup, kesimpulan diperjelas
+
+Semua 5 fold selesai stabil (0,759-0,856, tidak ada instabilitas). **OOF: 0,7968** — nyaris identik
+dgn v23 sendirian (0,7967, delta +0,0001, murni noise), TIDAK mendekati blend manual v18+v23
+(0,8176).
+
+Kriteria keputusan sudah ditulis di notebook v24 SEBELUM hasil keluar (spy tidak bias menilai
+belakangan): "v24≤0,8068 → SlotHead gagal manfaatkan fitur tambahan, kembali ke blend manual
+v18+v23 sbg hasil terbaik." **Hasil jatuh persis di kategori ini.**
+
+**Pelajaran metodologis yg diperoleh**: memberi SATU model fitur input lebih kaya (GAP+attention
+digabung jadi satu vektor) TIDAK bisa mereplikasi manfaat MELATIH DUA MODEL independen lalu blend
+prediksinya. Sumber "diversity" yg bikin blend v18+v23 menang (0,8176) ternyata BUKAN dari
+arsitektur gabungan itu sendiri, tapi dari 2× training run terpisah (random init beda, urutan data
+beda, trajectory optimisasi beda) — dua hal yang genuinely berbeda, bukan bisa disubstitusi.
+
+**Keputusan final**: line "dual-pool dalam 1 model" DITUTUP, tidak dilanjutkan lagi. **Hasil terbaik
+keluarga SlotHead proyek TETAP blend manual v18+v23 (0,8176)** — checkpoint v24 TIDAK dipakai.
+
+**Prioritas berikutnya** (2 opsi, urutan disarankan): (1) **validasi blend v18+v23 di leaderboard
+real** — kita punya 10 checkpoint (5 fold v18 + 5 fold v23), tinggal bangun/update kernel inferensi
+utk ensemble & rank-mean blend, lalu submit. Ini menguji langsung apakah keunggulan 0,8176 lokal
+benar2 bertahan di skala nyata, mengingat pelajaran c5-solo (§39 PROGRESS, §27c RESEARCH_NOTES)
+bahwa perbandingan lokal N=57-58 bisa menyesatkan. (2) arm RadImageNet sendiri (§27a, target
+Synovitis) — investasi lebih besar (backbone baru), ditunda sampai (1) selesai divalidasi.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
