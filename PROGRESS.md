@@ -908,6 +908,47 @@ estimasi CPU lama (~21 jam utk 5 model saja, §29).
 10-checkpoint rank-mean, OOF lokal terbaik 0,8176 - validasi vs ensemble tim 0,936". Status PENDING,
 menunggu skor publik. Kuota submission tim tersisa 4 hari ini.
 
+## 44. HASIL submission v3: 0,837 real LB — line DINOv2+SlotHead (v11-v24) DITUTUP RESMI, kesimpulan strategis besar
+
+Submission 55820944 selesai: **0,837 public LB**. Offset dari OOF lokal (0,8176) = **+0,019**,
+arahnya WAJAR (positif, model kuat cenderung LB > lokal, sesuai pola umum) — TAPI angka absolutnya
+jauh di bawah c5-solo (0,927, §39) dan ensemble tim (0,936).
+
+**Rekap 2 tes real-LB minggu ini, keduanya kalah dari submission tim eksisting**:
+
+| Sumber | OOF lokal | Real LB |
+|---|---:|---:|
+| c5 CoAtNet solo | 0,9206-0,9213 | 0,927 |
+| Blend v18+v23 (DINOv2 SlotHead) | 0,8176 | **0,837** |
+| Ensemble tim (fork community, `rsna-base`) | — | **0,936** (masih terbaik) |
+
+**Kesimpulan strategis besar**: arsitektur rumahan kita (DINOv2-base + slot-bag + `SlotHead`) —
+SEMUA 14 varian yg pernah dicoba dari v11 sampai v24 (breakthrough unfreeze dalam, geometri slice
+v2, sampling "3+3+3" v16/v17, k-fold v18, laterality canon v19/v20, anatomy-query v21, widecrop+
+triplet v22, spatial-attn-pool v23, dual-pool v24) — **plafon nyatanya di real leaderboard cuma
+~0,84**, gap ~0,09-0,10 dari CoAtNet arm SOLO (0,927), apalagi dari ensemble tim (0,936). Ini BUKAN
+lagi soal butuh 1-2 eksperimen lagi utk nutup gap — 14 percobaan sistematis (mencakup hampir semua
+sumbu variasi yg masuk akal: freeze-schedule, geometri, sampling, laterality, pooling) sudah cukup
+utk simpulkan DINOv2-base+SlotHead SECARA FUNDAMENTAL bukan arsitektur yg kompetitif utk kompetisi
+ini, terlepas dari tuning lebih lanjut.
+
+**Keputusan**: line DINOv2+SlotHead **DITUTUP RESMI**, tidak ada v25 dst di jalur ini. Checkpoint
+v18/v20/v23 disimpan sbg arsip riset (bukti kerja & pembelajaran metodologis), TIDAK dipakai lanjut
+sbg model produksi.
+
+**Pelajaran metodologis diperbarui** (setelah 2 kasus real-LB minggu ini): OOF gold-58 CUKUP
+RELIABLE utk ranking relatif ANTAR-VARIAN dalam SATU keluarga arsitektur (semua eksperimen v18-v24
+konsisten arah lokal↔real) — TAPI offset absolut ke real-LB BISA JAUH BEDA antar-ARSITEKTUR BEDA
+TOTAL (CoAtNet offset +0,007 vs SlotHead offset +0,019, base rate keduanya beda jauh). Jangan
+generalisasi angka OOF mentah lintas-arsitektur tanpa validasi submission real.
+
+**Prioritas final yg tersisa** (per `MEMORY.md` §5, urutan): (1) **LLM API key relabeling** —
+satu-satunya lever besar yg BELUM PERNAH dicoba; dua jalur besar lain (arsitektur SlotHead DAN
+fine-tune CoAtNet di label flight0234) SAMA-SAMA sudah dicoba & mentok, keduanya kembali ke
+kesimpulan yg sama: kualitas label adalah pembatas nyata; (2) arm RadImageNet (§27a) sbg pelengkap
+kalau (1) tidak memungkinkan; (3) submission tim TETAP 0,936 — TIDAK diganti apa pun yg kita bangun
+sendiri sejauh ini.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
