@@ -11,12 +11,19 @@ INPUT_DIR = REPO / "label_engineering" / "relabel_chunks_input"
 OUT_DIR = REPO / "label_engineering" / "relabel_out_backup"
 OUT_DIR.mkdir(exist_ok=True)
 
+# chunk_19's raw input has a known data-quality issue: 2 of its 209 rows are a
+# corrupted CSV split of a single real study's Report text (broken quoting in the
+# original dataset, not something we introduced). The true study count is 208,
+# and out_19.csv correctly holds all 208 real studies (verified + recovered
+# manually, see commit 00966bc). Special-case it here so status stays accurate.
+EXPECTED_OVERRIDES = {19: 208}
+
 done, missing = [], []
 for i in range(20):
     inp = INPUT_DIR / f"chunk_{i:02d}.csv"
     if not inp.exists():
         continue
-    n_expected = len(pd.read_csv(inp))
+    n_expected = EXPECTED_OVERRIDES.get(i, len(pd.read_csv(inp)))
     out = OUT_DIR / f"out_{i:02d}.csv"
     if out.exists():
         try:
