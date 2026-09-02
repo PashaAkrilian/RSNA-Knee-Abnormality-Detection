@@ -949,6 +949,74 @@ kesimpulan yg sama: kualitas label adalah pembatas nyata; (2) arm RadImageNet (�
 kalau (1) tidak memungkinkan; (3) submission tim TETAP 0,936 — TIDAK diganti apa pun yg kita bangun
 sendiri sejauh ini.
 
+## 45. Relabeling LLM tanpa API key terpisah — pilot + scale-up penuh 4.349 studi SELESAI, blend baru siap dipakai (28 Agustus – 2 September)
+
+**Insight pemicu (user, 28 Agustus)**: "kenapa engga langsung relabeling menggunakan disini aja
+engga usah menggukan API kan ini ngikutnya APINya Anthropic" — sesi Claude Code ini SUDAH jalan di
+atas API Anthropic, jadi TIDAK perlu prosedur API key terpisah spt yg direncanakan sebelumnya
+(§44 prioritas 1). Claude bisa baca teks `Report` (9 bahasa: Inggris ~37%, Spanyol, Yunani,
+Bulgaria/Cyrillic, Jerman, Kroasia/Serbia, Turki, Belanda, Prancis) & hasilkan label 12-kolom
+sendiri — SAMA PERSIS semangat ruling 733965 (LLM API utk proses Report text diizinkan Rules §2.6.b).
+
+**Pilot 58 studi gold (blind read — jawaban TIDAK dilihat dulu, baru discore setelahnya)**: macro
+AUC Claude sendirian = **0,8953**, kompetitif vs sumber LLM eksternal terbaik yg ada (flight0234
+0,8991, stevenleehans v4 0,8927, pilkwang v2 0,8700). **Blend rank-mean flight0234+Claude =
+0,9047 @ α(flight)=0,6 — MENGALAHKAN KEDUANYA sendirian**, robust di rentang α 0,2-0,9 (semua >0,90).
+User memilih skala: "Skala penuh 4.349 studi (Rekomendasi)" atas 2 opsi yg ditawarkan.
+
+**Eksekusi scale-up — 2 kali gagal total krn rate-limit + scratchpad wipe, direstart dgn sistem
+checkpoint**: percobaan pertama (10 subagent paralel @~436 studi) SEMUA kena `429 rate_limit`
+(monthly spend limit) di tengah jalan, lalu jeda ~7,5 jam menyebabkan scratchpad di-wipe TOTAL —
+semua progres yg TIDAK sempat di-commit ke git HILANG (cuma pilot yg selamat, sudah di git).
+Percobaan kedua (20 chunk lebih kecil @~218 studi, gelombang 4 agent) — gelombang 1 (chunk 00-03)
+berhasil & langsung di-backup, tapi gelombang 2 (chunk 04-07) kena rate-limit lagi DAN scratchpad
+di-wipe KEDUA KALINYA sebelum sempat diselamatkan. **User instruksikan eksplisit**: "coba tambahkan
+sistem checkpoint agar tidak menjalankan ulang dari awal".
+
+**Sistem checkpoint yang dibangun** (dan terbukti bekerja sampai selesai):
+- Input 20 chunk `label_engineering/relabel_chunks_input/chunk_00..19.csv` di-commit ke repo git
+  (bukan scratchpad) — jadi tidak pernah perlu diregenerasi ulang meski scratchpad wipe lagi.
+- Tiap subagent diinstruksikan menulis output LANGSUNG ke path repo
+  `label_engineering/relabel_out_backup/out_XX.csv` (bukan scratchpad), inkremental per sub-batch
+  ~25-30 baris (append, bukan tulis-ulang) — jadi kalau agent mati di tengah (429, disconnect API),
+  baris yg SUDAH ditulis tetap selamat di disk.
+- `label_engineering/relabel_status.py` — skrip cek status: banding row-count `chunk_XX.csv` vs
+  `out_XX.csv` per chunk, laporkan DONE/PARTIAL/MISSING — dijalankan tiap siklus utk tau persis
+  chunk mana yg perlu di-resume.
+- Begitu 1 agent selesai (bukan nunggu 1 gelombang penuh 3 agent), progresnya LANGSUNG di-commit+push
+  ke git — pola ini yg menyelamatkan semua progres parsial lewat ~6 kejadian rate-limit berikutnya
+  (reset time bervariasi tiap kejadian: 3:30, 8:30, 1:30, 2:20 WIB — bukan jendela kalender tetap).
+- Kalau agent gagal di tengah, baris yg sudah tertulis di-diff terhadap UID input chunk utk hitung
+  "remainder" persis (bukan reproses dari nol), lalu remainder itu dikirim ke agent kecil baru.
+  Beberapa kali agent yg dilaporkan "failed" oleh notifikasi rate-limit ternyata SUDAH selesai
+  menulis semua barisnya sebelum betul-betul mati — jadi tiap "failed" tetap dicek row-count aktual
+  di disk dulu sebelum diasumsikan perlu di-resume.
+
+**Temuan data quality**: 2 dari 4.351 baris chunk-input ternyata bukan 2 studi terpisah, melainkan
+pecahan 1 laporan yg sama akibat bug quoting CSV di `reference_metadata/train.csv` ASLI (bukan bug
+yg kita buat) — direkonstruksi manual via cross-reference ke `train.csv`, studi asli berhasil
+dipulihkan & diberi label (bukan data yg hilang, cuma representasinya rusak di source file).
+
+**Hasil akhir — 100% coverage, disimpan ke git**:
+- `label_engineering/claude_labels_nongold_full.csv` — **4.349 studi unik berlabel**, semua nilai
+  valid [0,1], tanpa null, coverage 100% terhadap 4.351 baris scope chunk asli (minus 2 baris korup
+  yg sudah dipulihkan jadi 1 studi valid).
+- `label_engineering/blend_fullscale.py` — re-validasi metodologi rank-mean di gold-58: **mereproduksi
+  PERSIS hasil pilot (macro=0,9047 @ α(flight)=0,60)**, alpha-sweep penuh 0,00-1,00 dicoba, 0,60
+  terbukti puncak global (bukan cuma lokal di sekitar 0,6 dari pilot).
+  Korelasi raw-value Claude vs flight0234 (4.349 studi non-gold, dua sumber LLM independen):
+  0,78-0,98 per label (Fracture terendah 0,785, Medial Meniscus tertinggi 0,975) — sinyal kuat
+  keduanya menangkap pola nyata dari teks laporan, cukup independen utk saling melengkapi (bukan
+  cuma noise yg kebetulan mirip).
+- `label_engineering/blended_labels_fullscale_train.csv` — **4.349 baris, rank-mean α(flight)=0,60,
+  siap dipakai sbg label training CoAtNet fine-tune berikutnya.**
+
+**Belum dikerjakan (next step)**: jalankan `build_train_coatnet.py` (ganti sumber label dari
+flight0234-only ke `blended_labels_fullscale_train.csv`) di Kaggle, validasi gold-58 (target: kalahkan
+baseline c5 0,9206 DAN fine-tune flight0234-only sebelumnya yg gagal di 0,9193 — §38), lalu KALAU
+menang, submit real ke leaderboard utk konfirmasi (jangan ulang kesalahan metodologis §39: keputusan
+besar wajib dikonfirmasi submission real, gold-58 nested-CV terbukti bisa menyesatkan lintas-arsitektur).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
