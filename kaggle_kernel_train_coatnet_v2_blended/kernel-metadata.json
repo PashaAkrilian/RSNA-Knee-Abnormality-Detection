@@ -1,5 +1,5 @@
 {
-  "id": "dimaspashaakrilian/rsna-knee-train-coatnet-v2-blended",
+  "id": "dimaspashaakrilian/rsna-knee-train-coatnet-v2-blended-labels",
   "title": "RSNA Knee - Train CoatNet v2 blended labels",
   "code_file": "train_coatnet_v2_blended.ipynb",
   "language": "python",

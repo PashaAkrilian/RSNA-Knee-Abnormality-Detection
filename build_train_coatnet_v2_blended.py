@@ -276,7 +276,11 @@ meta = {
     # v2: id disamakan dgn slug AKTUAL yg sudah live di Kaggle (push-1 pakai "-ft-", bukan
     # id asli builder ini) -- supaya build script SELALU push versi baru ke kernel yg SAMA,
     # bukan diam2 bikin slug duplikat baru.
-    "id": "dimaspashaakrilian/rsna-knee-train-coatnet-v2-blended",
+    # id disamakan dgn slug AKTUAL yg live di Kaggle (push-1: judul "...v2 blended labels"
+    # tidak persis slugify ke "...v2-blended", Kaggle nambah "-labels" -- warning kosmetik,
+    # bukan 409 krn ini push pertama tanpa tanda kurung, tapi id di sini disamakan spy builder
+    # berikutnya push ke kernel yg SAMA, bukan diam2 bikin slug baru).
+    "id": "dimaspashaakrilian/rsna-knee-train-coatnet-v2-blended-labels",
     "title": "RSNA Knee - Train CoatNet v2 blended labels",
     "code_file": "train_coatnet_v2_blended.ipynb",
     "language": "python", "kernel_type": "notebook", "is_private": True,
