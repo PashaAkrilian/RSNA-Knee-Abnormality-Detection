@@ -102,3 +102,30 @@ print("out of range:", ((blended_full[label_cols] < 0) | (blended_full[label_col
 print("nulls:", blended_full[label_cols].isnull().sum().sum())
 print("\nper-label mean (blended, full scale):")
 print(blended_full[label_cols].mean().round(3))
+
+
+# ---- Addendum (v3, post-hoc after v2 negative result) ----
+# v2 CoAtNet fine-tune trained on this rank-mean blend scored 0.9170 gold-58 -- WORSE than
+# flight0234-only (0.9193) and c5 baseline (0.9206), despite rank-mean scoring BETTER as a
+# label-matching metric (0.9047 vs 0.8991). Root cause: rank(pct=True) forces every label
+# column into an artificially uniform distribution, destroying the true base-rate skew that
+# BCE training needs -- good for AUC (rank-only), bad as a literal regression target.
+# Fix: raw-probability-mean instead of rank-mean, preserving calibration. See PROGRESS.md §46.
+if __name__ == "__main__":
+    print("\n\n=== v3 addendum: raw-probability-mean blend (calibration-preserving) ===")
+    best_alpha_raw, best_macro_raw = None, -1
+    for alpha in np.arange(0.0, 1.01, 0.05):
+        blend = alpha * flight + (1 - alpha) * claude
+        m, _ = macro_auc(gold, blend, common)
+        if m > best_macro_raw:
+            best_macro_raw, best_alpha_raw = m, alpha
+    print(f"BEST raw-mean: alpha(flight)={best_alpha_raw:.2f}  macro={best_macro_raw:.4f}")
+
+    blended_full_raw = best_alpha_raw * flight_full + (1 - best_alpha_raw) * claude_full
+    blended_full_raw = blended_full_raw.reset_index()
+    out_path_raw = f"{REPO}/label_engineering/blended_labels_fullscale_train_rawmean.csv"
+    blended_full_raw.to_csv(out_path_raw, index=False)
+    print(f"saved: {out_path_raw}  ({len(blended_full_raw)} rows)")
+    print("out of range:", ((blended_full_raw[label_cols] < 0) | (blended_full_raw[label_cols] > 1)).any().any())
+    print("per-label std (raw-mean, full scale):")
+    print(blended_full_raw[label_cols].std().round(3))

@@ -1017,6 +1017,43 @@ baseline c5 0,9206 DAN fine-tune flight0234-only sebelumnya yg gagal di 0,9193 �
 menang, submit real ke leaderboard utk konfirmasi (jangan ulang kesalahan metodologis §39: keputusan
 besar wajib dikonfirmasi submission real, gold-58 nested-CV terbukti bisa menyesatkan lintas-arsitektur).
 
+## 46. v2 CoAtNet fine-tune (label blended rank-mean) SELESAI — HASIL NEGATIF, root cause ditemukan: rank-mean merusak kalibrasi target BCE
+
+**Hasil**: `kaggle_kernel_train_coatnet_v2_blended` selesai training (4 epoch, loss turun monoton
+0,5635→0,5582→0,5485→0,5431, tidak ada tanda bug). **MACRO AUC gold-58 = 0,9170** — LEBIH RENDAH
+dari KEDUA pembanding: c5 baseline (0,9206) DAN v1 fine-tune flight0234-only (0,9193). Regresi
+nyata, bukan noise (gap 0,0023-0,0036 dari kedua baseline).
+
+**Ini kontra-intuitif**: label blend rank-mean SKOR LEBIH TINGGI sbg predictor vs gold-58 (0,9047
+vs flight0234 sendirian 0,8991, §45) — tapi model yg DILATIH pakai label itu skor LEBIH RENDAH.
+Dua metrik yg beda: (1) AUC label-vs-gold (threshold-free, cuma peduli urutan ranking) vs
+(2) AUC model-terlatih-vs-gold (peduli MAGNITUDE target krn loss BCE literal minimize
+`-y*log(p)-(1-y)*log(1-p)` dgn `y` = label kontinu qt).
+
+**Root cause (dianalisis lokal, tanpa GPU)**: rank-mean (`pd.Series.rank(pct=True)`) MEMAKSA tiap
+kolom label jadi distribusi **uniform** (by construction — itu definisi percentile rank), MENGHAPUS
+skew asli tiap label (mis. Fracture yg secara alami base-rate rendah, sebagian besar studi memang
+prob rendah) — jadi target BCE effectively kehilangan sinyal kalibrasi/prevalensi yg model perlu
+pelajari, walau URUTAN relatif antar studi (yg dipakai AUC) tetap benar. **Rank-mean bagus utk
+ensembling PREDIKSI MODEL (dipakai sukses di `kaggle_kernel_submission_v2` §32-33) krn di situ yg
+dibutuhkan cuma urutan relatif utk threshold-free eval — TAPI SALAH utk label TARGET TRAINING**,
+yg butuh magnitude terkalibrasi, bukan cuma urutan.
+
+**Fix yg diuji (lokal, cepat)**: ganti rank-mean → **raw-probability-mean** (weighted average nilai
+probabilitas mentah, TANPA transformasi rank) — preserve skew/kalibrasi asli. Alpha-sweep gold-58:
+puncak **α(flight)=0,70, macro=0,9033** (sedikit di bawah rank-mean 0,9047 sbg label-matching
+metric, TAPI ini WAJAR krn raw-mean tidak "curang" pakai urutan optimal spt rank — yg penting
+apakah SKOR MODEL TERLATIH lebih baik, bukan skor label-matching). Std per label jauh lebih dekat
+ke distribusi asli flight0234 (mis. Medial Meniscus: rank-blend std=0,285 vs raw-blend std=0,399
+vs flight_raw std=0,427 — raw-blend jauh lebih mirip bentuk distribusi asli, bukan uniform paksa).
+
+**Keputusan**: bangun v3 dgn label raw-probability-mean (α=0,70) sbg target training, retest di
+Kaggle. Kalau v3 MENANG vs v1 (0,9193) DAN c5 (0,9206) → konfirmasi hipotesis rank-mean adalah
+akar masalah, blend jadi berguna. Kalau v3 TETAP kalah → kemungkinan blending label report dgn
+sumber independen TIDAK membantu fine-tuning CoAtNet sama sekali (label flight0234 murni tetap
+superior sbg training signal walau kalah sbg label-matching metric thd blend) — line label-blending
+utk TRAINING (bukan cuma evaluasi) perlu ditutup, balik ke flight0234 murni sbg training source.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
