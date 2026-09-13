@@ -915,3 +915,100 @@ flight0234 TETAP satu-satunya label source, TIDAK perlu blend tabel lagi.**
 6. **[Tetap prioritas tertinggi jangka panjang]** LLM API relabeling severity-aware — SEMUA sumber
    independen (kita, sadamtorres, starkhushi, k256.dev/PC Jimmmy) sepakat label ~0,89-0,90 adalah
    plafon single-model, arsitektur/pooling sebagus apa pun mentok di situ tanpa label lebih baik.
+
+## 28. Riset ulang leaderboard + Code-tab (13 September, arahan "riset dengan mendalam gimana caranya mengalahkan peringkat pertama")
+
+Sesi ini pertama kali kaggle CLI aktif lokal (lihat MEMORY.md §4) — riset dilakukan LANGSUNG via API
+resmi (`kaggle competitions leaderboard -d`, `kaggle kernels list --sort-by scoreDescending`,
+`kaggle kernels pull`), bukan scraping tidak langsung spt sebelumnya. Discussion tab TIDAK bisa
+diakses (SPA, butuh JS; `claude-in-chrome` extension tidak terpasang di environment ini) — riset ini
+murni dari leaderboard resmi + kode Code-tab publik, TIDAK ada input Discussion baru.
+
+### 28a. Leaderboard bergeser signifikan dalam ~3 minggu (25 Agu → 13 Sep)
+
+| | 25 Agustus | 13 September | Δ |
+|---|---:|---:|---:|
+| #1 | Brandon Low, 0,952 | **Scott Willis, 0,956** (125 submission) | +0,004 |
+| #10 cutoff | 0,945 | 0,952 | +0,007 |
+| #20 cutoff | 0,943 | 0,950 | +0,007 |
+| #50 cutoff | 0,937 | 0,946 | +0,009 |
+| #100 cutoff | ~0,936 | 0,943 | +0,007 |
+| Jumlah tim | 2.372 | 3.633 | +1.261 |
+| **Tim kita (Krazy KIller)** | **0,936, #91** | **0,941, #213** | **skor +0,005, rank turun** |
+
+**Skor kita naik tapi rank turun** — bukti langsung "commodity ceiling terus naik" lebih cepat dari
+kita: submission history tim (`kaggle competitions submissions`) menunjukkan SEMUA kenaikan 0,936→
+0,941 berasal dari fork ulang notebook publik yang terus diupdate authornya (bukan arm riset sendiri
+— arm sendiri, c5-solo 0,927 dan v18+v23 SlotHead 0,837, TETAP jauh di bawah fork commodity). Gap ke
+#1 PRAKTIS TIDAK BERUBAH (+0,016 → +0,015) walau skor absolut kita naik — seluruh lapangan bergerak
+bersama.
+
+### 28b. Evolusi commodity 0,937→0,941 TERDOKUMENTASI SENDIRI oleh komunitas (langka, biasanya obfuscated)
+
+Notebook `evgendvorkin/rsna-baseline` (125 votes, kini bagian dari fork chain tim kita) punya markdown
+cell eksplisit "Evolution of Public Solutions: 0.937 → 0.94 → 0.941" — jarang sekali top-notebook
+mendokumentasikan diff-nya sendiri sejelas ini:
+
+- **0,937 — "Head and Shoulders, Knees and Toes"** (prvsiyan, = DINOsaur V10 port, sudah lama kita
+  kenal): CoAtNet 4-arm (v5/v10/v5-reverse/v8), outer CoAtNet weight GLOBAL 0,60 (semua label sama).
+- **0,937→0,94 (+0,003) — "Hybrid Raptor Lateral Meniscus R100"** (renta0426): SATU perubahan bedah —
+  reproduksi persis parent 0,939, ganti outer-routing HANYA utk Lateral Meniscus jadi CoAtNet 100% /
+  Transformer-ensemble 0% (semua 11 label lain tetap bit-for-bit 0,60/0,40). Insight: isolasi 1 label
+  bermasalah, kasih bobot penuh ke arm yg TERBUKTI menang di label itu — BUKAN retraining apa pun.
+- **0,94→0,941 (+0,001) — "Bend the Knee to the Dinosaurs (ALL PUBLIC)"** (mattiaangeli): tambah arm
+  CoAtNet baru (checkpoint publik `mattiaangeli/rsna-knee-coat-resgated-ep10-top3`) — 384px adjacent-
+  slice triplet → CoAtNet RMLP-2 → **"finding-specific GATED SPATIAL head" + "protected global-
+  average residual"** (persis hipotesis §27b kita: attention spasial utk temuan kecil, GAP dilindungi
+  sbg fallback utk temuan difus) — dicampur ke arm Raptor via `private_alpha=0,40`.
+
+**Kode blend final di-ekstrak langsung** (cell `_coat_substitute`/blend akhir, `bend-the-knee-to-the-
+dinosaurs.ipynb`): default `_coatnet_weight = 0.60` semua label, di-override `{'ACL': 0.675,
+'Medial Meniscus': 0.70, 'Lateral Meniscus': 1.00, 'Lateral OA': 0.675, 'Fracture': 0.675}` — angka
+ini HASIL PROBING PUBLIC LB manual penulis (bukan nested-CV), risiko overfit persis yg diperingatkan
+§27c/§26f sendiri. **Nama file checkpoint arm CoAtNet mereka**: `raptor_ft_coatnet_v5_full_swa.pt`
+(w=0,60 dominan), `_v10_full.pt` (w=0,10), `_v5_full_swa.pt`-reverse (w=0,10), `_v8_full_swa.pt`
+(w=0,20) — **PERSIS checkpoint c5/v5_full_swa yg SUDAH kita harvest OOF-nya sendiri (0,9206-0,9213
+gold-58, §22/GPU#1 harvest)**. Konfirmasi langsung: seluruh komunitas top memang berdiri di atas
+dataset checkpoint publik yg SAMA (`dreaddevelopment/raptor-knee-maxspan`) yg sudah lama kita analisis.
+
+### 28c. Celah nyata yang KITA punya, komunitas TIDAK: v3 CoAtNet fine-tune (0,9234) mengalahkan checkpoint stock yg dipakai SEMUA notebook di atas
+
+Checkpoint `raptor_ft_coatnet_v5_full_swa.pt` yg dapat bobot dominan (0,60, bahkan sampai 1,00 utk
+Lateral Meniscus) di SETIAP notebook top saat ini skornya 0,9206-0,9213 gold-58 — **v3 kita (fine-
+tune di atas label blend raw-mean flight0234+Claude, lihat MEMORY.md §3/PROGRESS.md §47) = 0,9234,
+LEBIH TINGGI dari checkpoint stock yg mereka semua pakai.** Tidak ada satu pun notebook publik yg
+scrape sesi ini menerapkan relabeling LLM skala penuh (4.349 studi) sbg training signal — semua masih
+pakai label eksternal mentah (flight0234/steven/pilkwang) atau regex. **Ini satu-satunya lever yg
+BUKAN commodity** — satu-satunya cara realistis mengalahkan lapangan yang bergerak sama cepatnya
+adalah bawa sesuatu yang tidak mereka punya, bukan mengejar tuning bobot yang sama.
+
+### 28d. Strategi menuju top-1, versi diperbarui (gap sekarang: 0,941 → 0,956, tetap +0,015)
+
+Prinsip tidak berubah dari §26f (jangan kejar desimal public LB, itu sudah dibuktikan overfit —
+`Scott Willis 125 submission`), tapi rencana konkretnya diperbarui dgn celah v3 di atas:
+
+1. **[Prioritas 1, murah, GPU sedikit]** Submit checkpoint v3 SENDIRIAN dulu ke LB real utk konfirmasi
+   (WAJIB, sesuai pelajaran c5-solo §27c — gold-58 menang TIDAK menjamin LB menang). Kalau checkpoint
+   c5 solo dulu = 0,9206 gold-58 → 0,927 LB (offset +0,006), v3 (0,9234 gold-58) REALISTIS diharapkan
+   ~0,929-0,932 LB SENDIRIAN — bukan pemenang sendirian, tapi sinyal apakah layak masuk ensemble.
+2. **[Prioritas 2, kalau (1) positif]** Ganti/tambah checkpoint v3 SEBAGAI arm CoAtNet di pipeline
+   "Bend the Knee to the Dinosaurs" (source sudah ada lokal, `code_research/dinosaurs/`) — ganti
+   `raptor_ft_coatnet_v5_full_swa.pt` dgn v3, atau tambah sbg arm ke-5 dgn bobot kecil dulu (diversity-
+   safe) — ini gabungkan keunggulan label kita DENGAN seluruh stack DINOv2+DINOv3+RadImageNet+per-
+   label-routing yg sudah proven, drpd coba kalahkan 0,941 pakai arm kita sendirian (sudah terbukti
+   berkali-kali TIDAK cukup — SlotHead 0,837, c5-solo 0,927).
+3. **[Prioritas 3, disiplin metodologi, gratis]** JANGAN tiru bobot per-label komunitas (0,675/0,70/
+   1,00) mentah-mentah — itu hasil probing 125-submission, rawan overfit public LB (persis §26f/§27c).
+   Kita PUNYA infra nested-CV gold-58 (pola antoinegg1 E10/E9) — pakai itu utk cari bobot per-label
+   SENDIRI antara (arm publik + v3 + stock CoAtNet), lebih kemungkinan robust ke private LB.
+4. **[Prioritas 4, sudah lama diantre]** Arm RadImageNet target Synovitis (§27a) — makin diperkuat:
+   §27b/28b (gated spatial pooling) & Synovitis SAMA-SAMA masih titik lemah v3 kita (0,84) MAUPUN
+   pola umum industri.
+5. **[Disiplin akhir]** Pilih 2 final submission profil beda (agresif ikut fork terbaru vs konservatif
+   diversity-safe) — proteksi shakeup private LB, sesuai §26f poin Fase D, makin relevan krn #1
+   sekarang py 125 submission (sinyal fit yg sangat spesifik ke public LB).
+
+**Realisme (diperbarui)**: gap +0,015 SAMA besarnya dgn 3 minggu lalu meski usaha maksimal — lapangan
+bergerak bersama. Tidak ada jaminan #1 bisa dikalahkan; jalur dgn expected-value positif TETAP hanya
+yang membawa sesuatu yg TIDAK dimiliki commodity crowd (label engineering kita, §28c) dikombinasikan
+DENGAN (bukan pengganti) stack publik yg sudah proven — bukan arsitektur baru dari nol.
