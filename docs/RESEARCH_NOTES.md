@@ -1012,3 +1012,80 @@ Prinsip tidak berubah dari §26f (jangan kejar desimal public LB, itu sudah dibu
 bergerak bersama. Tidak ada jaminan #1 bisa dikalahkan; jalur dgn expected-value positif TETAP hanya
 yang membawa sesuatu yg TIDAK dimiliki commodity crowd (label engineering kita, §28c) dikombinasikan
 DENGAN (bukan pengganti) stack publik yg sudah proven — bukan arsitektur baru dari nol.
+
+## 29. Riset mendalam pasca-hasil-null + keputusan mandiri (13 September malam, arahan user "riset dengan sangat mendalam dan putuskan sendiri")
+
+### 29a. EKONOMI KUOTA — kendala sebenarnya, bukan jumlah submission (temuan operasional terpenting sesi ini)
+
+Diukur langsung via `kaggle quota` sebelum/sesudah: **7,55h → 17,27h = ~9,7 GPU-jam untuk SATU
+submission pipeline penuh** (plus 2 dev-test ~7 menit). Mesin T4×2, jadi ≈4,8 jam wall-clock —
+artinya juga: **run submission kemarin TIDAK kehabisan waktu** (batas 9 jam, terpakai ~4,8 jam),
+sehingga hipotesis "arm v3 di-skip oleh self-gating waktu" **hampir pasti SALAH** — arm v3
+kemungkinan besar memang jalan, efeknya saja yang di bawah resolusi 3 desimal leaderboard.
+
+**Implikasi strategis**: sisa kuota 12,73h (refresh 19 Sep) = cukup untuk SATU pipeline penuh lagi
+(9,7h) ATAU satu training run (~7-9h), TIDAK KEDUANYA. Submission solo 1-arm jauh lebih murah
+(~4,6 GPU-jam, terukur 6,2 detik/studi × 1.322 studi ≈ 2,3 jam wall). **Kuota, bukan kuota
+submission harian (5/hari), yang jadi pembatas nyata.** Semua perencanaan eksperimen ke depan wajib
+pakai angka ini.
+
+### 29b. v3 vs c5: BUKAN redundan — justru lebih beragam dari arm yang sudah mereka blend
+
+Hipotesis awal "v3 = c5 yang di-fine-tune, jadi terlalu mirip untuk menambah nilai" **DIUJI dan
+DITOLAK**: korelasi Pearson rata-rata (58 gold, `oof_coatnet_v5_full_swa.csv` dari harvest kita
+sendiri vs `train_coatnet_v3_rawmean_gold_preds.csv`):
+
+| pasangan | korelasi |
+|---|---:|
+| **v3 vs c5 (kita vs stock)** | **0,938** |
+| c5 vs c4_full (dua arm yg SUDAH sama-sama dipakai di ensemble publik) | 0,955 |
+
+v3 **lebih tidak berkorelasi** dgn c5 dibanding c4 yang sudah mereka anggap layak jadi anggota.
+Per label, divergensi terbesar: **Synovitis 0,751** (v3 melihat Synovitis sangat berbeda) —
+menarik krn Synovitis titik lemah universal. Jadi v3 SAH sbg anggota ensemble, bukan duplikat.
+
+Uji blend lokal di 58 gold (aproksimasi arm CoAtNet: 0,75·c5 + 0,25·c4 = 0,9220):
+- tambah v3 α=0,15 → 0,9254 · α=0,25 → 0,9264 · α=0,40 → **0,9265 (puncak)**
+- ganti c5 dgn v3 → 0,9264
+- **v3 DAN c5 dua-duanya, v3 lebih berat (0,50·v3 + 0,25·c5 + 0,25·c4) → 0,9280 (terbaik)**
+
+Artinya: struktur ideal = pertahankan c5, TAMBAH v3 dgn bobot ≥ c5 — bukan ganti, bukan α kecil.
+
+### 29c. Sumber label publik BARU diuji (qwen, tonylin, zhen931) — naif menang, nested-CV MEMBALIKKAN
+
+Ditemukan 4 dataset label baru yg belum pernah kita uji. Skor vs 58 gold:
+
+| sumber | macro AUC |
+|---|---:|
+| **`tonylin1026/rsna-knee-refined-soft-labels`** | **0,9027** |
+| `flight0234` (tulang punggung kita sekarang) | 0,8991-0,8999 |
+| Claude pilot (punya kita) | 0,8953-0,8961 |
+| `zhen931/rsna-knee-weak-labels-v8` | 0,8700 |
+| `laymond/...qwen3-8b-weak-labels` (Qwen 32B) | 0,8429 |
+
+`tonylin1026` ternyata **sumber label publik terkuat yang pernah kita ukur** — mengalahkan
+flight0234. Grid-search 4-sumber menemukan blend 0,9069 (flight .3/claude .1/tony .6) vs blend kita
+sekarang 0,9040 → tampak +0,0029.
+
+**TAPI nested-CV (bobot dipilih di 4 fold, diukur di fold ke-5 yg tak terlihat) MEMBALIKKAN
+kesimpulan**: blend baru **0,9010** vs blend lama (flight .7 + claude .3) **0,9033**; bootstrap
+2.000 resample: **P(blend baru lebih baik) = 0,342** — lebih sering LEBIH BURUK. Bobot per-fold
+juga tidak stabil (flight 0,0-0,3; tony 0,6-0,9). **Kesimpulan: "peningkatan" itu murni overfitting
+ke 58 studi.** Label training kita sekarang TETAP yang terbaik; line "tambah sumber label publik"
+sekarang sudah DITUTUP 2× (§27d dgn steven/pilkwang, §29c dgn tony/qwen/zhen) — **plafon label
+report publik ≈ 0,903 OOF, jangan diulang lagi.** Temuan ini menyelamatkan 7-9 jam kuota yang
+nyaris dipakai melatih ulang di atas label yang sebenarnya lebih buruk.
+
+### 29d. Keputusan mandiri: eksperimen MURAH yang paling menentukan dulu
+
+Menolak opsi "ulangi pipeline penuh dgn α lebih besar" (9,7 GPU-jam untuk efek yg kemungkinan besar
+tetap tak terbaca di 3 desimal, dan TIDAK bisa didiagnosis krn log run submission tak pernah
+diekspos Kaggle — §MEMORY §4). Sebagai gantinya: **submit v3 SENDIRIAN** (`rsna-knee-submit-v3-solo`,
+~4,6 GPU-jam) — harness, K_EVAL=42, dan struktur SAMA PERSIS dgn c5-solo yang sudah pernah disubmit
+real (0,927, 26 Agustus). Satu-satunya variabel beda = bobot checkpoint.
+
+**Kenapa ini eksperimen paling bernilai**: memberi jawaban apple-to-apple atas pertanyaan inti yang
+belum pernah terjawab — *apakah label engineering kita benar-benar menghasilkan model lebih baik di
+data nyata, atau keunggulan +0,0028 di 58 gold cuma noise?* Hasilnya menentukan apakah investasi
+training besar (v4, 7-9 jam kuota) layak sama sekali. Eksperimen murah yang meng-de-risk keputusan
+mahal.
