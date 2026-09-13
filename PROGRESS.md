@@ -1147,13 +1147,40 @@ sebelum push kedua.
 **SUDAH DISUBMIT REAL** (submission 56196772, 13 Sep 02:00 UTC) — kuota tim: 4/5 tersisa hari ini.
 Deskripsi submission: "Bend the Knee to the Dinosaurs (0.941 base) + our v3 CoAtNet arm (raw-mean
 flight0234+Claude relabel FT, gold-58=0.9234) blended at alpha=0.15, self-gated for safety".
-**Hasil (public LB) BELUM diketahui saat entri ini ditulis** — run hidden-test (~1.300 studi,
-pipeline penuh: 20+5+RadImageNet+5×CoAtNet+v3) kemungkinan makan waktu jauh lebih lama dari
-dev-test 3-studi (~3,5 menit), monitor background terpasang utk polling status tiap 5 menit.
-**Update hasil real menyusul di entri berikutnya begitu status keluar dari PENDING** — jangan
-declare menang/kalah sebelum angka sungguhan keluar (pelajaran §39/§44: gold-58 menang ≠ LB menang,
-di sini bahkan skala validasinya cuma "kode jalan bersih", belum ada validasi skor lokal sama sekali
-utk KOMBINASI spesifik ini).
+
+**HASIL REAL (dicek ulang di sesi berikutnya, ~11 jam kemudian — monitor background sempat mati
+krn sesi terputus, dicek manual): MACRO AUC public LB = 0,941 — SAMA PERSIS dgn base pipeline TANPA
+v3 (byte-identik 3 desimal).** Tim tetap di posisi #223/3.653 (leaderboard terus tumbuh; skor #1
+tidak berubah, 0,956).
+
+**Diagnosis — TIDAK BISA dipastikan penyebabnya, 2 hipotesis bersaing**: dicoba 3 cara berbeda
+utk menarik log run submission REAL (`kaggle kernels output` slug polos, `/2`, `/3` eksplisit) —
+**SEMUANYA cuma mengembalikan log dev-test stub 3-studi yg SAMA (durasi 0,058 jam identik)**, BUKAN
+log run sungguhan (1.322 studi test asli, harusnya berjam-jam). **Kesimpulan operasional penting**:
+Kaggle code-competition SENGAJA tidak mengekspos log/output dari run submission sungguhan via API
+(mencegah kebocoran info test set) — `kaggle kernels output` HANYA PERNAH mengembalikan hasil "Save
+& Run All" biasa (stub publik), TIDAK PERNAH hasil submission run, walau kernel version-nya sama.
+**Ini keterbatasan permanen, dicatat sbg pengetahuan operasional baru** utk semua eksperimen
+submission-langsung ke depan — kita TIDAK PERNAH bisa lihat log run sungguhan, cuma skor akhirnya.
+
+Dua hipotesis yg TIDAK bisa dibedakan tanpa info tambahan:
+1. **Arm v3 di-skip total oleh self-gating waktu** — base pipeline (20+5+RadImageNet+CoAtNet
+   4-arm+resgated) kemungkinan sudah pakai sebagian besar budget 9 jam (versi lama pipeline ini,
+   RESEARCH_NOTES §26c, punya "adaptive degradation ladder" bertarget 8-8,72 jam/9 jam) — kalau sisa
+   < 10 menit saat giliran v3, kodenya skip total by design, hasil = 100% identik dgn base (SESUAI
+   temuan 0,941=0,941 persis).
+2. **Arm v3 jalan tapi kontribusinya washed out** — bobot α=0,15 di atas ensemble yg SUDAH berisi
+   4+ varian CoAtNet lain mungkin memang terlalu kecil utk menggeser rank-blend melewati ambang
+   pembulatan 3 desimal — selaras temuan lama proyek sendiri (§16/§26d: "LB desimal ke-3 sering
+   tidak resolvable").
+
+**Keputusan**: JANGAN buru-buru simpulkan "v3 tidak berguna" — data yg ada TIDAK CUKUP utk
+membedakan 2 hipotesis di atas. Opsi diagnostik: (a) submit v3 SENDIRIAN (langkah asli §28d yg
+dilewati) utk dapat titik data independen ttg apakah v3 punya lift nyata di real LB, terlepas dari
+masalah integrasi; (b) naikkan α jauh lebih tinggi utk tes berikutnya (kalau hipotesis 2 benar,
+sinyal harusnya lebih kelihatan); (c) submit build APA ADANYA (tanpa v3, kernel dinosaurs polos)
+sbg kontrol utk pastikan base pipeline itu sendiri REPRODUCIBLE persis 0,941 (bukan varian by
+chance) — belum dilakukan, kuota tersisa hari ini perlu dicek ulang sebelum eksperimen lanjutan.
 
 ## Belum dikerjakan
 
