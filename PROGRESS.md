@@ -1214,3 +1214,31 @@ reference_metadata/            Salinan CSV metadata kompetisi
 README.md                      Dokumentasi teknis detail per komponen
 PROGRESS.md                    File ini
 ```
+
+## 49. v3 SOLO = 0,932 di LB nyata vs c5 solo 0,927 — LABEL ENGINEERING TERBUKTI BEKERJA (13 September sore)
+
+Eksperimen yang diputuskan mandiri (arahan user "riset sangat mendalam dan putuskan sendiri"),
+dipilih justru KARENA murah tapi informasinya menentukan — detail alasan di RESEARCH_NOTES §29d.
+
+**Hasil: `rsna-knee-submit-v3-solo` (submission 56207189) = 0,932 public LB.**
+Pembanding langsung: `c5 solo` (submission 55795592, 26 Agustus) = **0,927**. Harness `_KE_SRC`
+SAMA PERSIS, `K_EVAL=42` sama, 1 arm tanpa blend, sama-sama tanpa TTA tambahan — **satu-satunya
+variabel yang berbeda adalah bobot checkpoint**. Jadi:
+
+> **Fine-tune di atas label blend raw-mean (flight0234 + relabeling Claude 4.349 studi) memberi
+> +0,005 macro AUC di leaderboard NYATA dibanding checkpoint stock yang dipakai seluruh komunitas.**
+
+Ini menjawab pertanyaan yang menggantung sejak §47: keunggulan +0,0028 di 58 studi gold BUKAN noise
+— transfernya ke data nyata bahkan lebih besar (+0,005). Line label engineering (§45-§47) TERBUKTI
+memberi nilai nyata, bukan cuma lokal.
+
+**Catatan kuota (koreksi estimasi §29a)**: run solo ternyata cuma memakan **1,24 GPU-jam**
+(17,27h → 18,51h), jauh lebih murah dari perkiraan 4,6 jam. Submission 1-arm = eksperimen murah;
+pipeline penuh = ~9,7 GPU-jam. Sisa kuota setelah ini: 11,49h (refresh 19 Sep).
+
+**Tindak lanjut langsung (berjalan)**: `rsna-knee-submit-v3-inarm` — integrasi v3 SECARA BENAR ke
+pipeline publik 0,941, yaitu sebagai ANGGOTA di dalam daftar `ARMS` arm CoAtNet (bukan ditempel di
+luar hasil akhir seperti percobaan pertama yang hasilnya null). Bobot baru: **v3 0,35 (terbesar)**,
+c5 0,30 (tetap dipertahankan demi diversity), v10 0,08, v5-reverse 0,07, v8 0,20. Dasar bobot:
+(a) v3 terbukti > c5 di LB nyata (+0,005), (b) uji blend lokal §29b menunjukkan konfigurasi terbaik
+adalah mempertahankan c5 sambil memberi v3 bobot >= c5. Tidak ada logika lain yang disentuh.
