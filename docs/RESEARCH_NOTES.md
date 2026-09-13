@@ -1089,3 +1089,48 @@ belum pernah terjawab — *apakah label engineering kita benar-benar menghasilka
 data nyata, atau keunggulan +0,0028 di 58 gold cuma noise?* Hasilnya menentukan apakah investasi
 training besar (v4, 7-9 jam kuota) layak sama sekali. Eksperimen murah yang meng-de-risk keputusan
 mahal.
+
+### 29e. HASIL DECISIVE: v3 solo = 0,932 vs c5 solo = 0,927 di LB NYATA (+0,005)
+
+Eksperimen §29d terjawab: **label engineering kita TERBUKTI menghasilkan model lebih baik di data
+nyata**, bukan artefak 58 studi gold. Selisih di LB nyata (+0,005) bahkan LEBIH BESAR dari selisih
+di gold-58 (+0,0028). Ini juga berarti checkpoint `c5` — yang jadi **arm dominan (w=0,60) di SEMUA
+notebook publik teratas** — sekarang punya pengganti yang lebih baik, dan cuma kita yang punya.
+
+Koreksi estimasi kuota: run solo 1-arm cuma **1,24 GPU-jam** (bukan 4,6h spt diperkirakan §29a).
+Pipeline penuh tetap ~9,7 GPU-jam. Submission solo = eksperimen murah, pakai sesering perlu.
+
+### 29f. DIAGNOSIS GURU-vs-MURID per label — membalikkan asumsi lama "bottleneck = label"
+
+Diagnosis yg disarankan §26d ("bandingkan extractor label vs gold, lalu image-model vs extractor")
+akhirnya DIJALANKAN (58 gold, guru = label training v3 [flight .7 + claude .3], murid = prediksi
+model v3):
+
+| Label | Guru (label) | Murid (v3) | Selisih | Tafsir |
+|---|---:|---:|---:|---|
+| PF OA | 0,9003 | 0,8571 | **−0,0431** | model tertinggal → **headroom MODELING** |
+| Lateral OA | 0,8491 | 0,8124 | **−0,0368** | model tertinggal → **headroom MODELING** |
+| Lateral Meniscus | 0,8826 | 0,8472 | **−0,0354** | model tertinggal → **headroom MODELING** |
+| ACL | 0,9865 | 0,9828 | −0,0037 | ~setara |
+| MCL / Medial Meniscus / Fracture | 0,976 / 0,957 / 0,905 | 0,982 / 0,968 / 0,932 | +0,006…+0,027 | label mulai jadi plafon |
+| Medial OA / Baker's | 0,934 / 0,924 | 0,980 / 0,971 | +0,046 / +0,047 | label jadi plafon |
+| Synovitis | 0,7820 | 0,8399 | **+0,0579** | model MELAMPAUI guru |
+| Contusion | 0,8758 | 0,9406 | **+0,0648** | model MELAMPAUI guru |
+| Effusion | 0,8665 | 0,9689 | **+0,1025** | model MELAMPAUI guru |
+| **RATA-RATA** | **0,9033** | **0,9234** | **+0,0202** | |
+
+**Kesimpulan yg mengubah arah strategi**: di **8 dari 12 label, model SUDAH MELAMPAUI kualitas
+labelnya sendiri** — artinya "bottleneck = kualitas label" (asumsi proyek sejak Agustus, §26d/§27e)
+**TIDAK LAGI BERLAKU secara umum**. Itu juga menjelaskan kenapa 2 percobaan menambah sumber label
+publik gagal (§27d, §29c): labelnya memang sudah bukan pengungkit utama.
+
+**Pengungkit yg tersisa jelas & terukur**: cuma **3 label** (PF OA, Lateral OA, Lateral Meniscus)
+di mana model masih tertinggal 0,035-0,043 dari gurunya sendiri. Kalau ketiganya ditarik naik
+sampai setara gurunya saja → **≈ +0,010 macro AUC** — persis ordo besaran gap ke papan atas.
+
+**Ketiganya satu keluarga**: temuan kecil/terlokalisir/berjenjang (osteoarthritis patellofemoral,
+OA lateral, robekan meniscus lateral) — PERSIS kelas temuan yg §27b hipotesiskan butuh **spatial
+attention pooling, bukan GAP**, yg v23 kita sendiri sudah buktikan menaikkan meniscus +0,06-0,10
+vs GAP, dan yg komunitas baru saja adopsi lewat "gated spatial head" di arm 0,941 mereka (§28b).
+Tiga jalur bukti independen menunjuk ke mekanisme yg sama. **Ini desain v4: CoAtNet + gated spatial
+pooling head, dilatih di label kita yg sudah tervalidasi, dgn bobot loss ekstra utk 3 label itu.**

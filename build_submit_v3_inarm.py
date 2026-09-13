@@ -56,6 +56,23 @@ NEW_ARMS = (
     '     "reverse": False, "w": 0.30},\\n'
 )
 
+# Pipeline mereka mem-PIN checkpoint yg boleh dimuat (nama + ukuran persis) lewat
+# find_weight_file(); checkpoint asing ditolak `unpinned Raptor checkpoint` (ini yg bikin
+# dev-test v1 ERROR). Kita daftarkan checkpoint kita dgn cara yg TIDAK melemahkan pengaman
+# mereka: cabang khusus utk file KITA (tetap wajib match tepat 1 file + ukuran persis),
+# sedangkan logika pin utk checkpoint MEREKA dibiarkan utuh apa adanya.
+OLD_GATE = "    if fname not in by_name:\\n        raise RuntimeError(f\\'unpinned Raptor checkpoint: {fname}\\')"
+NEW_GATE = (
+    "    if fname == \\'coatnet_rawmean_ft_v3.pt\\':\\n"
+    "        _ours = sorted(glob.glob(\\'/kaggle/input/**/coatnet_rawmean_ft_v3.pt\\', recursive=True))\\n"
+    "        if len(_ours) != 1:\\n"
+    "            raise RuntimeError(f\\'expected one ours-v3 checkpoint, found {_ours}\\')\\n"
+    "        if os.path.getsize(_ours[0]) != 292874395:\\n"
+    "            raise RuntimeError(f\\'ours-v3 checkpoint size mismatch: {os.path.getsize(_ours[0])}\\')\\n"
+    "        return _ours[0]\\n"
+    + OLD_GATE
+)
+
 patched = 0
 for cell in nb["cells"]:
     if cell["cell_type"] != "code":
@@ -63,6 +80,8 @@ for cell in nb["cells"]:
     src = "".join(cell["source"])
     if OLD_ARMS not in src:
         continue
+    assert OLD_GATE in src, "gate 'unpinned Raptor checkpoint' tidak ketemu verbatim"
+    src = src.replace(OLD_GATE, NEW_GATE, 1)
     src = src.replace(OLD_ARMS, NEW_ARMS, 1)
     # turunkan bobot dua arm pelengkap supaya total tetap 1,0 (harness menormalisasi, ini utk kejelasan)
     src = src.replace('"reverse": False, "w": 0.10}', '"reverse": False, "w": 0.08}', 1)

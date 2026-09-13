@@ -1242,3 +1242,35 @@ luar hasil akhir seperti percobaan pertama yang hasilnya null). Bobot baru: **v3
 c5 0,30 (tetap dipertahankan demi diversity), v10 0,08, v5-reverse 0,07, v8 0,20. Dasar bobot:
 (a) v3 terbukti > c5 di LB nyata (+0,005), (b) uji blend lokal §29b menunjukkan konfigurasi terbaik
 adalah mempertahankan c5 sambil memberi v3 bobot >= c5. Tidak ada logika lain yang disentuh.
+
+## 50. v3 IN-ARM: integrasi benar ke pipeline publik — dev-test bersih, disubmit real (13 September malam)
+
+Perbaikan struktural atas percobaan hybrid yang hasilnya null (§48). Bedanya mendasar:
+
+| | §48 (hybrid, NULL) | §50 (in-arm, ini) |
+|---|---|---|
+| Titik sisip | rank-blend di ATAS submission.csv final | **anggota di dalam daftar `ARMS` arm CoAtNet** |
+| Bobot v3 | α=0,15 atas seluruh ensemble | **w=0,35 (terbesar)**, c5 turun 0,60→0,30 |
+| Masalahnya | v3 "bersaing dgn dirinya sendiri" (c5 induknya sudah di dalam), efek encer | v3 menggantikan sebagian peran c5 di slot dominan, lalu ikut diperkuat per-label routing mereka |
+| Dasar bukti | belum ada bukti LB | **v3 solo 0,932 > c5 solo 0,927 (§49)** + uji blend lokal §29b |
+
+**Gotcha yang ditemukan (penting untuk dicatat)**: push pertama ERROR —
+`RuntimeError: unpinned Raptor checkpoint: coatnet_rawmean_ft_v3.pt`. Pipeline publik itu
+**mem-PIN checkpoint yang boleh dimuat** (`find_weight_file`): whitelist nama file + path eksplisit
++ **verifikasi ukuran file persis**. Checkpoint asing ditolak mentah-mentah. Diperbaiki dgn menambah
+cabang khusus untuk checkpoint kita yang TETAP memverifikasi (harus match tepat 1 file + ukuran
+292.874.395 byte), tanpa melemahkan pin milik mereka. **Dev-test murah (~2 menit) menangkap ini —
+kalau langsung submit, 9,7 GPU-jam + 1 slot submission hangus.**
+
+**Dev-test v2 BERSIH**: log mengonfirmasi `[arm 0] ours-v3-rawmean` termuat & jalan, kelima arm
+berurutan, dan baris blend menunjukkan bobot persis rancangan
+(`ours-v3 0.35, maxspan-v5 0.30, v10 0.08, v5-reverse 0.07, v8 0.20`), lalu `_coat_substitute`
+(resgated blend α=0,40) dan per-label outer routing mereka tetap berjalan normal.
+
+**DISUBMIT REAL** (13 Sep malam). Kuota GPU setelah submit: 10,90h tersisa; kuota submission tim:
+2/5 tersisa hari ini. Hasil menyusul.
+
+**Ekspektasi jujur**: kalau perbaikan arm CoAtNet (+0,005 terukur di level solo) diteruskan oleh
+bobot per-label mereka (CoAtNet dapat 0,60-1,00 tergantung label), perkiraan kasar +0,003-0,005 →
+**0,944-0,946**. Tapi ini tetap ekstrapolasi; efek ensemble hampir selalu teredam, dan §48 sudah
+membuktikan intuisi bisa meleset. Angka realnya yang memutuskan.
