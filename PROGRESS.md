@@ -1109,6 +1109,52 @@ JANGAN treat 0,9234 sbg kemenangan final sebelum submission real — butuh kerne
 (checkpoint `coatnet_rawmean_ft_v3.pt`, 292MB, masih di Kaggle output belum ditarik ke dataset permanen)
 + koordinasi kuota submission tim (5x/hari, ada nxtirfan) sebelum dieksekusi.
 
+## 48. Hybrid submission: v3 CoAtNet arm disisipkan ke pipeline publik terbaik (0,941) — DIBANGUN, DIUJI, DISUBMIT REAL (13 September, arahan eksplisit user "gabungkan dengan hasil yang sudah ada dan submit")
+
+Eksekusi langsung dari strategi §28d (RESEARCH_NOTES): user secara eksplisit minta jangan cuma
+riset, tapi benar-benar bangun & submit gabungan notebook publik terbaik + hasil kita sendiri
+("kemarin itu mentok di 80 persen" — merujuk plafon arm SlotHead/CoAtNet solo kita sendiri).
+
+**Pendekatan**: fork kernel kita sendiri yg sudah proven `bend-the-knee-to-the-dinosaurs-7d6471`
+(real LB 0,941, arsitektur DINOv2 20-model + DINOv3 5-fold + RadImageNet + CoAtNet 4-arm+resgated
++ per-label outer-routing) — BUKAN membangun dari nol, krn arm kita sendiri sudah berkali-kali
+terbukti tidak cukup kuat sendirian (SlotHead 0,837 LB; c5-solo 0,927 LB). Ditambah SATU cell baru
+di ujung pipeline yg menyisipkan checkpoint v3 kita (fine-tune CoAtNet di atas label blend raw-mean
+flight0234+Claude, gold-58=0,9234, §47) sbg arm tambahan, rank-blend α=0,15 (stack publik tetap
+dominan 85%).
+
+**Desain keselamatan (krn menempel di pipeline milik orang lain yg sensitif waktu, budget 9 jam,
+margin riil tidak diketahui pasti)**:
+1. Self-gating waktu — pakai global `T0` milik notebook itu sendiri, hitung sisa waktu ke batas
+   9 jam, skip seluruhnya kalau sisa < 10 menit.
+2. Deadline internal DI DALAM loop per-studi (patch `build_train_coatnet_ke_src.txt`) — kalau lambat,
+   berhenti lebih awal, studi yg belum sempat diproses otomatis tetap di rank netral 0,5 (sudah jadi
+   default array di kode asli) — degradasi lembut, bukan timeout keras.
+3. SELURUH blok dibungkus try/except luas — kegagalan apa pun (checkpoint hilang, OOM, exception
+   tak terduga) di-log lalu **submission.csv yg sudah proven (0,941) dibiarkan utuh**. Penyisipan
+   ini SECARA DESAIN cuma bisa menolong atau diam, tidak bisa merusak punya mereka.
+4. `K_EVAL` diturunkan 42→16 utk arm v3 ini spesifik (hemat waktu, wajar krn bobot blend kecil).
+
+**Bug tertangkap & diperbaiki tepat sesuai desain**: push pertama (v1) ERROR internal
+(`NameError: _v3_os tidak terdefinisi`, typo penamaan variabel) — TAPI try/except bekerja PERSIS
+seperti dirancang: notebook keseluruhan tetap COMPLETE, submission.csv dasar (0,941) tidak
+tersentuh, cuma pesan log "[v3-arm] FAILED, keeping existing submission.csv untouched". Diperbaiki,
+push kedua (v2) bersih: log `[v3-arm] blended OUR CoAtNet ... into submission.csv at alpha=0.15`
+muncul, dev-test (3-studi stub) SUKSES, format submission.csv benar (13 kolom, rank [0,1], no NaN).
+Blend logic (align by StudyInstanceUID, rank-mean) diverifikasi terpisah dgn data dummy lokal
+sebelum push kedua.
+
+**SUDAH DISUBMIT REAL** (submission 56196772, 13 Sep 02:00 UTC) — kuota tim: 4/5 tersisa hari ini.
+Deskripsi submission: "Bend the Knee to the Dinosaurs (0.941 base) + our v3 CoAtNet arm (raw-mean
+flight0234+Claude relabel FT, gold-58=0.9234) blended at alpha=0.15, self-gated for safety".
+**Hasil (public LB) BELUM diketahui saat entri ini ditulis** — run hidden-test (~1.300 studi,
+pipeline penuh: 20+5+RadImageNet+5×CoAtNet+v3) kemungkinan makan waktu jauh lebih lama dari
+dev-test 3-studi (~3,5 menit), monitor background terpasang utk polling status tiap 5 menit.
+**Update hasil real menyusul di entri berikutnya begitu status keluar dari PENDING** — jangan
+declare menang/kalah sebelum angka sungguhan keluar (pelajaran §39/§44: gold-58 menang ≠ LB menang,
+di sini bahkan skala validasinya cuma "kode jalan bersih", belum ada validasi skor lokal sama sekali
+utk KOMBINASI spesifik ini).
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
