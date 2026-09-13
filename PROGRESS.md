@@ -1054,6 +1054,61 @@ sumber independen TIDAK membantu fine-tuning CoAtNet sama sekali (label flight02
 superior sbg training signal walau kalah sbg label-matching metric thd blend) — line label-blending
 utk TRAINING (bukan cuma evaluasi) perlu ditutup, balik ke flight0234 murni sbg training source.
 
+## 47. v3 CoAtNet fine-tune (raw-probability-mean blend) DITEMUKAN SELESAI di Kaggle (13 September) — HASIL POSITIF, MENANG vs c5 baseline, konfirmasi hipotesis §46
+
+**Konteks penemuan**: sesi ini dimulai dari permintaan user "pelajari project ini dan progres apa yang
+sudah dicapai", lalu pertanyaan susulan soal ketersediaan `kaggle.json` utk push remote dari terminal
+lokal. Kredensial sudah ada (`~/.kaggle/kaggle.json`, akun dimaspashaakrilian) tapi CLI `kaggle` belum
+terpasang di sandbox container ini (fresh container, `pip`/`ensurepip` pun tidak ada) — dipasang via
+`sudo apt-get install python3-pip pipx` + `pipx install kaggle` (hindari `pip install --user` krn
+PEP 668 externally-managed-environment). Setelah CLI aktif & auth terverifikasi (akun cocok, kernel
+riwayat muncul), dicek status semua kernel CoAtNet training — ternyata
+**`dimaspashaakrilian/rsna-knee-train-coatnet-v3-rawmean` (dibangun 2 September, commit `ea36e7d`,
+saat itu cuma tercatat "built") sudah berstatus `KernelWorkerStatus.COMPLETE`** — belum pernah ditarik
+hasilnya krn CLI lokal belum pernah aktif sejak kernel itu dipush. Ini murni gap operasional (kernel
+selesai jalan sendiri di Kaggle, tidak ada yg mengecek), bukan kerja baru yg sengaja dijadwalkan.
+
+**Hasil (ditarik via `kaggle kernels output ... -p .`, log `.log` + `train_coatnet_v3_rawmean_gold_preds.csv`,
+diverifikasi ulang independen via `manual_auc` lokal — angka log & hitung ulang match persis)**:
+
+```
+MACRO AUC gold-58 (final, full-ft, label blended RAW-MEAN flight+claude): 0.9234
+pembanding: c5=0.9206, v1 flight0234-only=0.9193, v2 rank-mean blend=0.9170 (REGRESI)
+```
+
+Training 4 epoch, loss monoton turun (0,5535→0,5415→0,5260→0,5144), tidak ada tanda instabilitas,
+runtime ~4,6 jam (16.581 detik) GPU T4. Per-label AUC (58 gold, urut lemah→kuat):
+
+| Label | AUC | Label | AUC |
+|---|---|---|---|
+| Lateral OA | 0,8124 | Contusion | 0,9406 |
+| Synovitis | 0,8399 | Medial Meniscus | 0,9675 |
+| Lateral Meniscus | 0,8472 | Effusion | 0,9689 |
+| PF OA | 0,8571 | Baker's | 0,9710 |
+| Fracture | 0,9319 | Medial OA | 0,9798 |
+| | | MCL | 0,9819 |
+| | | ACL | 0,9828 |
+
+Titik lemah (Lateral OA, Synovitis, Lateral Meniscus, PF OA) konsisten dgn pola lama yg berulang kali
+tercatat di proyek ini (§25/§27a: Synovitis sulit krn cuma ~16% laporan sebut eksplisit; Lateral
+Meniscus titik lemah historis sejak v15-v24).
+
+**Signifikansi**: ini adalah **MACRO AUC gold-58 tertinggi proyek utk model tunggal** (mengalahkan c5
+off-the-shelf 0,9206, dan seluruh keluarga SlotHead v11-v24 yg plafonnya ~0,80-0,83 OOF). Sekaligus
+**mengkonfirmasi diagnosis §46**: masalah v2 memang rank-mean merusak kalibrasi BCE target (bukan
+blending label report itu sendiri yg salah) — raw-probability-mean menyelesaikannya. Blending 2 sumber
+LLM independen (flight0234 + Claude) sbg training signal TERBUKTI bermanfaat, asal transformasinya
+tepat.
+
+**BELUM dilakukan (keputusan menunggu user, alasan metodologis eksplisit)**: submit checkpoint v3 ke
+leaderboard real. Proyek ini SUDAH 2 KALI kena pelajaran pahit bahwa kemenangan di gold-58 lokal tidak
+otomatis bertahan di real LB (c5-solo §39: menang nested-CV lokal 0,9206 tapi cuma 0,927 di LB, kalah
+dari ensemble tim 0,936; v18+v23 blend §44: 0,8176 lokal jadi cuma 0,837 LB). Selisih v3 vs c5 (+0,0028)
+JAUH lebih kecil dari margin yg dulu terbukti tidak reliable lintas lokal→LB. **Rekomendasi eksplisit**:
+JANGAN treat 0,9234 sbg kemenangan final sebelum submission real — butuh kernel inferensi/submission baru
+(checkpoint `coatnet_rawmean_ft_v3.pt`, 292MB, masih di Kaggle output belum ditarik ke dataset permanen)
++ koordinasi kuota submission tim (5x/hari, ada nxtirfan) sebelum dieksekusi.
+
 ## Belum dikerjakan
 
 - [x] ~~Tunggu hasil v12~~ — SELESAI, val_macro_auc TIDAK melampaui 0,8195 (overfitting), model final tetap checkpoint v11
