@@ -1215,3 +1215,43 @@ overfitting ke 58 studi yg sudah 2x terjadi.
 independen (§27d steven/pilkwang, §29c tony/qwen/zhen, §30d jev/saisahanas/xhaitanya) dan
 SELALU kalah dari blend flight+Claude kita begitu diukur jujur. Plafon label report publik
 ≈ 0,903 OOF. Pengungkit yang tersisa ada di MODELING & ENSEMBLING, bukan label.
+
+## 31. AKAR PENYEBAB dua hasil null akhirnya ketemu: bobot GLOBAL vs PER-LABEL (26 September)
+
+Diuji dgn data yang SUDAH ada (tanpa GPU): prediksi gold-58 milik v3 kita vs proksi cabang CoAtNet
+publik (0,75·c5 + 0,25·c4, keduanya dari harvest kita sendiri). Bobot dipilih **nested-CV 5-fold**
+(dari 4 fold, diukur di fold ke-5), lalu diuji bootstrap 2.000 resample.
+
+| skema | OOF macro | bootstrap P(> publik) |
+|---|---:|---:|
+| publik saja | 0,9220 | — |
+| blend bobot **GLOBAL** | 0,9241 | 0,758 |
+| blend bobot **PER-LABEL** | **0,9296** | **0,989** |
+
+Bobot v3 yang terpilih per label (rata-rata lintas fold):
+
+| v3 DOMINAN | w | v3 nyaris NOL | w |
+|---|---:|---|---:|
+| Baker's | 0,85 | Lateral Meniscus | 0,01 |
+| PF OA | 0,80 | MCL | 0,03 |
+| Synovitis | 0,75 | Lateral OA | 0,05 |
+| ACL | 0,69 | | |
+| Fracture | 0,67 | | |
+
+**Ini menjelaskan tuntas kedua hasil null (§48 α=0,15 global; §50 w=0,35 global di ARMS)**: satu
+bobot global memaksa kompromi antara label di mana v3 JAUH lebih baik (w optimal 0,7-0,85) dan
+label di mana v3 MERUGIKAN (w optimal ~0). Rata-ratanya saling meniadakan -> 0,941 -> 0,941, dua
+kali, persis seperti yang teramati.
+
+**Konsekuensi langsung utk rencana:**
+1. **Penggantian checkpoint menyeluruh (§build_submit_ourarms) BUKAN skema optimal** — itu setara
+   memaksa w=1,0 di SEMUA label, padahal data bilang w≈0 utk Lateral Meniscus/MCL/Lateral OA.
+   Pertahankan arm publik, TAMBAHKAN arm kita, lalu bobot per-label.
+2. Skema yang benar = **§48 diulang TAPI per-label**: jalankan pipeline publik apa adanya, jalankan
+   arm kita, lalu blend dgn bobot per-label hasil pengukuran (bukan tebakan). Implementasinya
+   justru lebih sederhana krn tidak perlu menyentuh internal mereka.
+3. Bobot itu HARUS diukur terhadap ensemble publik PENUH (bukan proksi CoAtNet saja) — inilah
+   gunanya kernel panen gold-58 yang sedang antri.
+4. Catatan silang §29f: v3 dapat bobot ~0 justru di 2 dari 3 label "headroom modeling"
+   (Lateral Meniscus, Lateral OA) — konsisten, di situ v3 memang lemah (0,847 & 0,812), jadi arm
+   publik lebih dipercaya. Perbaikan 3 label itu tetap pekerjaan modeling terpisah (v4/v5).
