@@ -1270,3 +1270,31 @@ Dgn 58 studi, bobot per-label berpotensi overfit, jadi diuji penyusutan ke arah 
 
 Monoton — sinyalnya cukup kuat sehingga bobot per-label bertahan di fold yang tak terlihat, tanpa
 perlu disusutkan. Dipakai apa adanya.
+
+### 31b. Batas proksi: kenapa kernel panen WAJIB, bukan opsional
+
+Dicoba menyusun tiruan ensemble publik tanpa GPU: cabang Transformer = OOF resmi 20-model DINOv2
+`pilkwang` (diunduh HANYA `oof.npz`, 368 KB — bukan 1,65 GB bobotnya), cabang CoAtNet = proksi
+0,75·c5+0,25·c4, digabung memakai **bobot routing per-label ASLI mereka** yang diekstrak dari kode
+d4-blend (0,60 default; ACL/Lat OA/Fracture 0,675; Medial Meniscus 0,70; Lateral Meniscus 1,00).
+
+| komponen | gold-58 |
+|---|---:|
+| cabang Transformer (pilkwang DINOv2) | 0,8400 |
+| cabang CoAtNet (proksi) | 0,9220 |
+| **tiruan ensemble publik** | **0,9131** |
+| v3 kita | 0,9234 |
+
+**Tiruan ini TERBUKTI meleset**: stack asli mencetak 0,943 di LB, sementara tiruannya cuma 0,9131
+di gold-58. Bandingkan offset yang diketahui utk v3 (gold-58 0,9234 → LB 0,932, ≈ +0,01): kalau
+offset serupa berlaku, tiruan ini setara ~0,923 LB — jauh di bawah 0,943 yang sebenarnya. Sebabnya
+jelas: cabang Transformer asli bukan cuma 20-model DINOv2, tapi juga DINOv3 5-fold + RadImageNet
+(E10/E13/V48) + kalibrator, yang semuanya tidak ada di proksi.
+
+**Konsekuensi**: bobot per-label yang dihitung terhadap proksi ini akan TERLALU MEMIHAK model kita
+(karena pembandingnya dibuat lebih lemah dari aslinya) — dipakai submit justru berisiko merugikan.
+Terlihat juga dari gejalanya: terhadap proksi lemah ini, bobot global (0,9238) hampir menyamai
+per-label (0,9241), padahal terhadap proksi CoAtNet yang lebih realistis selisihnya lebar
+(0,9241 vs 0,9296). **Maka bobot final HARUS diukur dari output kernel panen (pipeline publik
+sungguhan di 58 studi gold), bukan dari tiruan apa pun.** Ini sekaligus alasan kernel
+`submit_perlabel` sengaja BELUM dipush.
