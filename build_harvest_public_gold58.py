@@ -84,6 +84,15 @@ for _u in _gold:
 print('symlink series dibuat:', _n, flush=True)
 assert _n == len(_gold), 'ada studi gold tanpa direktori series'
 
+# pipeline juga membaca berkas sisi-TRAIN dari root yg sama (mis. plan_cache() memakai
+# train.csv utk menghitung ukuran cache) -- run pertama gagal di sini. Symlink apa adanya.
+for _f in ['train.csv', 'train_series.csv', 'train_series', 'train_images', 'test_images']:
+    _s = _REAL / _f
+    if _s.exists() and not (_G / _f).exists():
+        os.symlink(_s, _G / _f)
+print('berkas train ikut di-symlink:', [f for f in ['train.csv', 'train_series.csv',
+      'train_series'] if (_G / f).exists()], flush=True)
+
 os.environ['RSNA_COMP_ROOT'] = str(_G)
 print('RSNA_COMP_ROOT =', os.environ['RSNA_COMP_ROOT'], flush=True)
 print('submission.csv hasil run ini = prediksi ensemble publik di 58 studi GOLD', flush=True)
