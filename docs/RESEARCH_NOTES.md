@@ -1134,3 +1134,57 @@ attention pooling, bukan GAP**, yg v23 kita sendiri sudah buktikan menaikkan men
 vs GAP, dan yg komunitas baru saja adopsi lewat "gated spatial head" di arm 0,941 mereka (§28b).
 Tiga jalur bukti independen menunjuk ke mekanisme yg sama. **Ini desain v4: CoAtNet + gated spatial
 pooling head, dilatih di label kita yg sudah tervalidasi, dgn bobot loss ekstra utk 3 label itu.**
+
+## 30. Simulasi ensemble: syarat kuantitatif untuk mengejar papan atas (26 September)
+
+Konteks: dua percobaan menyisipkan v3 ke ensemble publik (§48 α=0,15 di luar; §50 w=0,35 di dalam
+ARMS) SAMA-SAMA menghasilkan 0,941 persis. Sebelum membakar kuota untuk percobaan ke-3, dilakukan
+simulasi Monte-Carlo (N=1.322 studi = ukuran test asli, prevalensi per label diambil dari 58 gold,
+kekuatan sinyal dikalibrasi supaya 1 model = 0,932 = skor v3 solo di LB nyata).
+
+### 30a. Menumpuk model SEJENIS mentok — keberagaman arsitektur yang menentukan
+
+| jumlah model | ρ=0,98 | ρ=0,94 | ρ=0,88 | ρ=0,80 |
+|---:|---:|---:|---:|---:|
+| 1 | 0,9305 | 0,9312 | 0,9320 | 0,9326 |
+| 4 | 0,9333 | 0,9371 | 0,9407 | 0,9468 |
+| 12 | 0,9336 | 0,9373 | 0,9420 | 0,9511 |
+
+ρ=0,94 adalah korelasi TERUKUR v3 vs c5 (§29b) — yaitu dua CoAtNet yang beda sumber label. Artinya
+**melatih lebih banyak CoAtNet di label kita akan mentok di ~0,937**, berapa pun jumlahnya. Ini
+sekaligus menurunkan nilai v4 (CoAtNet lagi, cuma beda bobot loss) — bukan pengungkit besar.
+
+### 30b. TAPI model tambahan harus KUAT juga, bukan cuma beragam (koreksi penting)
+
+Simulasi lanjutan dgn model tambahan yang LEBIH LEMAH (0,900, realistis utk backbone baru yang
+dilatih dari ImageNet, bukan dari checkpoint kuat):
+
+| komposisi | bobot SAMA | bobot DIOPTIMALKAN | w(model kuat) |
+|---|---:|---:|---:|
+| v3 sendirian | 0,9334 | 0,9334 | — |
+| v3 + 1 lemah (ρ=0,85) | 0,9237 | 0,9335 | 0,98 |
+| v3 + 4 lemah (ρ=0,85) | 0,9180 | 0,9331 | 0,97 |
+| v3 + 4 lemah (ρ=0,75) | 0,9288 | 0,9373 | 0,68 |
+| v3 + 6 lemah (ρ=0,75) | 0,9289 | 0,9377 | 0,65 |
+
+**Dua pelajaran keras:**
+1. **Rata-rata berbobot sama dgn model lebih lemah MERUSAK** (0,9334 → 0,9180). Bobot wajib
+   dioptimalkan; pada ρ=0,85 bobot optimal utk model lemah nyaris NOL (w_kuat 0,97) — artinya
+   model lemah yang tidak cukup beragam TIDAK LAYAK dimasukkan sama sekali.
+2. Bahkan pada ρ=0,75 (beda arsitektur sungguhan), 6 model tambahan @0,900 cuma memberi **+0,004**
+   — jauh dari +0,015 yang dibutuhkan utk mengejar 0,959.
+
+**Konsekuensi strategi**: rencana "latih banyak backbone baru dari ImageNet" GUGUR — hasilnya
+terlalu lemah untuk memberi lompatan. Anggota ensemble baru harus **kuat (~0,93) DAN beragam
+(ρ≤0,8)** sekaligus. Kandidat yang memenuhi keduanya: **fine-tune checkpoint PUBLIK yang sudah kuat
+tapi keluarga arsitekturnya beda dari CoAtNet** (DINOv2/DINOv3 SlotHead — kodenya `class SlotHead`,
+`class Model`, `build_model()` semuanya TERLIHAT di notebook publik d4-blend, dan checkpoint
+20-member pilkwang tersedia) **di atas label hasil relabeling kita** — kombinasi yang belum dimiliki
+siapa pun.
+
+### 30c. Catatan metodologis untuk diri sendiri
+
+Teks kesimpulan pada percobaan simulasi pertama sempat ditulis SEBELUM melihat angkanya, dan
+ternyata bertentangan dgn hasil (mengklaim "model lemah tetap menolong", padahal angkanya turun).
+Dikoreksi di §30b. Pelajaran: jangan menyiapkan kalimat kesimpulan di dalam skrip sebelum hasil
+keluar — tulis kesimpulan hanya setelah membaca angkanya.
