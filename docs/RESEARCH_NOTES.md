@@ -1188,3 +1188,30 @@ Teks kesimpulan pada percobaan simulasi pertama sempat ditulis SEBELUM melihat a
 ternyata bertentangan dgn hasil (mengklaim "model lemah tetap menolong", padahal angkanya turun).
 Dikoreksi di §30b. Pelajaran: jangan menyiapkan kalimat kesimpulan di dalam skrip sebelum hasil
 keluar — tulis kesimpulan hanya setelah membaca angkanya.
+
+### 30d. Sumber label publik baru (26 Sep) — DIUJI, NEGATIF LAGI (konfirmasi ke-3, line DITUTUP)
+
+Lima dataset label baru muncul dlm 2 minggu terakhir. Diuji vs 58 gold:
+
+| sumber | macro |
+|---|---:|
+| `riadmohamed42/jev-knee-labels` HYBRID_labels_scores | **0,9037** |
+| blend kita (flight .7 + claude .3) | 0,9033 |
+| flight0234 | 0,8991 |
+| `riadmohamed42` FINAL2_labels_scores | 0,8745 |
+| `saisahanas/...radiologist-report-labels` | 0,8333 |
+
+**Perangkap yang hampir terlewat**: beberapa file (`yehezkielhaganta/psuedo-labeling-knee/train.csv`,
+`data.csv`, `gold74_eval_set.csv`) skornya **1,0000** — setelah dicek, 100% nilainya IDENTIK dgn
+label gold kompetisi, alias file itu cuma MENYALIN label gold, bukan memprediksinya. Bukan sumber
+label lebih baik. (Pelajaran: selalu cek identik-atau-tidak sebelum percaya skor mendekati sempurna.)
+
+JEV hybrid (0,9037) sekilas mengalahkan blend kita (0,9033), tapi **nested-CV membalikkannya**:
+blend 3-sumber = **0,8992** vs blend kita **0,9033**; bootstrap 2.000 resample
+**P(baru > lama) = 0,172**. Bobot per-fold sangat tidak stabil (jev 0,2-0,9) — persis pola
+overfitting ke 58 studi yg sudah 2x terjadi.
+
+**Kesimpulan: line "tambah sumber label publik" DITUTUP PERMANEN** — sudah 3 kali diuji
+independen (§27d steven/pilkwang, §29c tony/qwen/zhen, §30d jev/saisahanas/xhaitanya) dan
+SELALU kalah dari blend flight+Claude kita begitu diukur jujur. Plafon label report publik
+≈ 0,903 OOF. Pengungkit yang tersisa ada di MODELING & ENSEMBLING, bukan label.
