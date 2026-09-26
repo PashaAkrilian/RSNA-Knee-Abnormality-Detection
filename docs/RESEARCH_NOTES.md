@@ -1255,3 +1255,18 @@ kali, persis seperti yang teramati.
 4. Catatan silang §29f: v3 dapat bobot ~0 justru di 2 dari 3 label "headroom modeling"
    (Lateral Meniscus, Lateral OA) — konsisten, di situ v3 memang lemah (0,847 & 0,812), jadi arm
    publik lebih dipercaya. Perbaikan 3 label itu tetap pekerjaan modeling terpisah (v4/v5).
+
+### 31a. Uji shrinkage bobot per-label — tidak diperlukan
+
+Dgn 58 studi, bobot per-label berpotensi overfit, jadi diuji penyusutan ke arah bobot global
+(w = s·w_perlabel + (1-s)·w_global), semuanya diukur nested-CV:
+
+| s (1 = murni per-label) | OOF | P(> publik) |
+|---:|---:|---:|
+| 0,00 (global murni) | 0,9241 | 0,757 |
+| 0,50 | 0,9272 | 0,949 |
+| 0,75 | 0,9283 | 0,979 |
+| **1,00 (per-label murni)** | **0,9296** | **0,989** |
+
+Monoton — sinyalnya cukup kuat sehingga bobot per-label bertahan di fold yang tak terlihat, tanpa
+perlu disusutkan. Dipakai apa adanya.
