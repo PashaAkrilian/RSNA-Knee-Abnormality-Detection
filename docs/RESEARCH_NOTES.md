@@ -1369,3 +1369,41 @@ konfidensi rendah) — guru praktis tak informatif di sebagian besar pasangan (s
 situlah murid paling berguna. Tapi varian w_murid fungsi (1-conf) tidak mengalahkan konstan:
 konstan w=0,6-0,7 -> 0,9348-0,9350; (1-conf)^0,5 -> 0,9342; 0,4+0,4(1-conf) -> 0,9340; 1-conf ->
 0,9274. Dipakai: konstan w=0,5 (sisi konservatif: murid fold dilatih 75% data).
+
+## 33. HASIL PANEN: gold-58 TERKONTAMINASI untuk stack publik — rencana bobot per-label vs pipeline penuh gugur (30 September)
+
+Kernel panen (`rsna-knee-harvest-public-gold58`, pipeline d4-blend di 58 studi gold lewat env
+`RSNA_COMP_ROOT` + direktori palsu ber-symlink) berjalan 21 menit, menyelesaikan semua tahap publik,
+lalu crash di sel "OUR LEG 2/3" (kaki ensemble privat penulis induk: `_EFF6`/`_ENS14` = None krn
+dataset-nya tidak terpasang di fork). **Keluaran TETAP tersimpan walau kernel ERROR**
+(`kaggle kernels output` mengembalikan semua berkas yg ditulis sebelum crash) — dan itu cukup.
+
+| keluaran antara | gold-58 macro |
+|---|---:|
+| `submission.csv` = `_public_probe22.csv` = `_pipeline_stage.csv` (pipeline publik penuh) | **0,9515** |
+| `_coat_family_rank.csv` (resgated + D4 + …, rank) | 0,9315 |
+| `_raptor.csv` | 0,9353 |
+| `_raptor_public.csv` (Raptor 4-arm murni publik) | 0,9254 |
+| `_coat_arm.csv`, `_coat_repairv1.csv` | 0,9101 / 0,9103 |
+| `submission_checkpoint_rank_mean.csv` (tahap DINOv2 20-anggota) | 0,9088 |
+| v3 kita (referensi) | 0,9234 |
+
+### 33a. KONTAMINASI: gold-58 tidak bisa dipakai menimbang stack publik
+Stack publik mencetak **0,9515 di gold-58 tapi 0,943 di LB** (selisih −0,008; model bersih spt v3
+justru +0,009: gold 0,9234 → LB 0,932). Bukti kontaminasi di komponennya: tahap DINOv2 = 0,9088 di
+sini padahal OOF resmi pilkwang cuma 0,840 (anggota dilatih dgn gold; persis bug kebocoran §13);
+kalibrator RadImageNet (88 fitur) dan seleksi checkpoint "top3" pun memakai gold-58.
+
+**Konsekuensi**: bobot blend per-label yg diukur TERHADAP OUTPUT PUBLIK di gold-58 akan bias
+(publik tampak terlalu kuat → bobot arm kita terlalu kecil). Rencana §31 ("ukur bobot vs pipeline
+penuh") **GUGUR**. Yang tetap BERSIH di gold-58: (i) model kita sendiri (gold tak pernah ikut latih),
+(ii) cabang Raptor c5/v10/v8 (dreaddevelopment melaporkan gold-58 sbg held-out). Jadi:
+- perbandingan ANTAR-ARM (mis. round-2 vs stock) di gold-58 = VALID;
+- keputusan integrasi ke ensemble publik harus lewat LB nyata, bukan gold-58.
+
+### 33b. Arah integrasi yang dipilih (dari bukti, bukan tebakan)
+Jangan tempel arm di luar dgn bobot global (§48/§50 = nihil) dan jangan ukur bobot vs publik penuh
+(§33a). Gunakan jalur yang sudah punya routing per-label tuning-an komunitas: **tukar SELURUH
+keluarga arm CoAtNet di ARMS dgn versi berlabel-fusi kita** (`build_submit_ourarms.py`) — routing
+luar per-label mereka (CoAtNet 0,60-1,00 tergantung label) tetap utuh dan otomatis menimbang arm baru
+per label. Syarat masuk: round-2 terbukti > stock di gold-58 (bersih) DAN solo-LB > 0,932.
