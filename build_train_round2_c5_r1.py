@@ -77,7 +77,8 @@ CDIR = '/kaggle/tmp/volcache'
 os.makedirs(CDIR, exist_ok=True)
 import glob as _g
 MOUNTED = {}
-for _d in _g.glob('/kaggle/input/**/volcache', recursive=True):
+for _d in (_g.glob('/kaggle/input/*/volcache') + _g.glob('/kaggle/input/*/*/volcache')
+           + _g.glob('/kaggle/input/*/*/*/volcache')):   # kedalaman terbatas: JANGAN '**' (820rb berkas kompetisi)
     if os.path.isdir(_d):
         for _f in os.listdir(_d):
             if _f.endswith('.npz'):
@@ -113,7 +114,10 @@ import numpy as np, pandas as pd, torch, torch.nn.functional as F, gc, math, ran
 DEV = 'cuda'
 LAB = KE['LAB']; N_T = len(LAB)
 import glob as _glob
-_hits = _glob.glob('/kaggle/input/**/fused_labels_r1.csv', recursive=True)
+def _bglob(name):
+    return [p for d in ('/kaggle/input/*/', '/kaggle/input/*/*/', '/kaggle/input/*/*/*/')
+            for p in _glob.glob(d + name)]
+_hits = _bglob('fused_labels_r1.csv')
 tlog('label csv: ' + repr(_hits))
 assert _hits, 'blended label csv tidak ketemu di /kaggle/input'
 fl = pd.read_csv(_hits[0])

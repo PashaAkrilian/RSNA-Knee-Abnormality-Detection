@@ -95,7 +95,8 @@ CDIR = '/kaggle/tmp/volcache'
 os.makedirs(CDIR, exist_ok=True)
 import glob as _g
 MOUNTED = {}
-for _d in _g.glob('/kaggle/input/**/volcache', recursive=True):
+for _d in (_g.glob('/kaggle/input/*/volcache') + _g.glob('/kaggle/input/*/*/volcache')
+           + _g.glob('/kaggle/input/*/*/*/volcache')):   # kedalaman terbatas: JANGAN '**' (820rb berkas kompetisi)
     if os.path.isdir(_d):
         for _f in os.listdir(_d):
             if _f.endswith('.npz'):
@@ -135,7 +136,10 @@ FOLD = int(os.environ['FOLD']); NFOLD = int(os.environ['NFOLD'])
 EPOCHS = int(os.environ['EPOCHS']); INIT = os.environ['INIT']
 K_EVAL_OOF = 32
 
-_hits = _glob.glob('/kaggle/input/**/report_labels_blended_rawmean_v1.csv', recursive=True)
+def _bglob(name):
+    return [p for d in ('/kaggle/input/*/', '/kaggle/input/*/*/', '/kaggle/input/*/*/*/')
+            for p in _glob.glob(d + name)]
+_hits = _bglob('report_labels_blended_rawmean_v1.csv')
 tlog('label csv: ' + repr(_hits))
 assert _hits, 'blended label csv tidak ketemu di /kaggle/input'
 fl = pd.read_csv(_hits[0])

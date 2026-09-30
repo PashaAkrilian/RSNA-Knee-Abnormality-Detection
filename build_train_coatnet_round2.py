@@ -57,6 +57,13 @@ ke_src = must_replace(ke_src, "K_EVAL = 42", f"K_EVAL = {G['k_eval']}")
 base = must_replace(base, "report_labels_blended_rawmean_v1.csv", f"fused_labels_r{R}.csv", 99)
 base = must_replace(base, "dimaspashaakrilian/rsna-knee-blended-report-labels-rawmean-v1",
                     f"dimaspashaakrilian/rsna-knee-fused-labels-r{R}")
+# --- pencarian berkas label: kedalaman terbatas, JANGAN '**' (menelusuri 820rb berkas kompetisi) ---
+_old_glob = f"_hits = _glob.glob('/kaggle/input/**/fused_labels_r{R}.csv', recursive=True)"
+base = must_replace(base, _old_glob,
+    "def _bglob(name):\n"
+    "    return [p for d in ('/kaggle/input/*/', '/kaggle/input/*/*/', '/kaggle/input/*/*/*/')\n"
+    "            for p in _glob.glob(d + name)]\n"
+    f"_hits = _bglob('fused_labels_r{R}.csv')")
 # --- checkpoint init & dataset-nya ---
 base = must_replace(base, "KE['find_weight_file']('raptor_ft_coatnet_v5_full_swa.pt')",
                     f"KE['find_weight_file']({G['ckpt']!r})")
@@ -77,7 +84,8 @@ def cache_one(sid):
 os.makedirs(CDIR, exist_ok=True)
 import glob as _g
 MOUNTED = {}
-for _d in _g.glob('/kaggle/input/**/volcache', recursive=True):
+for _d in (_g.glob('/kaggle/input/*/volcache') + _g.glob('/kaggle/input/*/*/volcache')
+           + _g.glob('/kaggle/input/*/*/*/volcache')):   # kedalaman terbatas: JANGAN '**' (820rb berkas kompetisi)
     if os.path.isdir(_d):
         for _f in os.listdir(_d):
             if _f.endswith('.npz'):
