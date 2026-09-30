@@ -1347,3 +1347,25 @@ batas 2 sesi GPU batch DIBAGI dgn proyek lain → jangan rencanakan memakai semu
 
 Cache DICOM (tiap kernel GPU bayar ~0,75 jam hanya utk decode) dipindah ke 3 kernel CPU
 (`rsna-knee-volcache-s{0,1,2}`, tanpa kuota GPU, jalan paralel) dan dimount via kernel_sources.
+
+### 32d. Hipotesis prior-situs (site) — DIBANTAH, ditutup
+
+Prevalensi label guru berbeda besar antar situs (proksi = bahasa laporan): PF OA Kroasia 0,62 &
+Prancis 0,63 vs Bulgaria/Serbia 0,22; Lateral OA 0,52 vs 0,15; simpangan baku antar-situs 0,11-0,13
+utk label OA — dan OA (PF OA, Lateral OA) adalah label terlemah kita. Diuji apakah menggeser logit v3
+dgn log-odds prior situs menambah AUC terhadap GOLD (anotasi gambar, bebas dari gaya penulisan laporan):
+
+| beta (kekuatan prior) | 0 | 0,25 | 0,5 | 1,0 |
+|---|---:|---:|---:|---:|
+| macro gold-58 | 0,9234 | 0,9218 | 0,9192 | 0,9140 |
+
+Turun monoton, PF OA ikut memburuk (0,857 → 0,833). Model gambar sudah menangkap info situs
+(penampilan scanner), ATAU perbedaan prevalensi itu sebagian gaya pelaporan, bukan prevalensi nyata.
+(Caveat: n=58, bahasa cuma proksi kasar situs.) Line ini ditutup.
+
+### 32e. Fusi adaptif-konfidensi — tidak lebih baik dari fusi konstan
+Tabel guru ternyata penuh nilai DEFAULT konstan (~0,2325 utk label yang tak disebut laporan,
+konfidensi rendah) — guru praktis tak informatif di sebagian besar pasangan (studi,label), dan di
+situlah murid paling berguna. Tapi varian w_murid fungsi (1-conf) tidak mengalahkan konstan:
+konstan w=0,6-0,7 -> 0,9348-0,9350; (1-conf)^0,5 -> 0,9342; 0,4+0,4(1-conf) -> 0,9340; 1-conf ->
+0,9274. Dipakai: konstan w=0,5 (sisi konservatif: murid fold dilatih 75% data).
