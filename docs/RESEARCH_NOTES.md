@@ -1298,3 +1298,52 @@ per-label (0,9241), padahal terhadap proksi CoAtNet yang lebih realistis selisih
 (0,9241 vs 0,9296). **Maka bobot final HARUS diukur dari output kernel panen (pipeline publik
 sungguhan di 58 studi gold), bukan dari tiruan apa pun.** Ini sekaligus alasan kernel
 `submit_perlabel` sengaja BELUM dipush.
+
+## 32. NOISY-STUDENT: label fusi guru+murid jauh lebih baik dari keduanya (30 September)
+
+Konteks: posisi 30 Sep = #462/4613, 0,943 (#1 rhoskeri 0,961, gap 0,018, 22 hari tersisa).
+Notebook induk `ryokucha/rsna-knee-d4-blend-0946-ours10` (terdokumentasi oleh forker
+`yamadan96/...d4-public0946`): **0,946 dicapai dgn mencampur ensemble ConvNeXt PRIVAT milik
+penulisnya sebesar 10% ke pipeline publik 0,943** — bukti langsung +0,003 dari satu keluarga model
+privat yang kuat & berbeda arsitektur (persis syarat "kuat DAN beragam" dari §30b).
+
+### 32a. Uji: fusi label laporan (guru) + prediksi gambar (murid) terhadap gold-58
+
+| w_murid | guru + v3 | guru + pilkwang (DINOv2, lemah) |
+|---:|---:|---:|
+| 0,0 (guru saja) | 0,9033 | 0,9033 |
+| 0,2 | 0,9164 | 0,9110 |
+| 0,4 | 0,9290 | 0,9083 |
+| **0,5** | **0,9317** | 0,9037 |
+| **0,6** | **0,9342** | 0,8943 |
+| 0,8 | 0,9296 | 0,8699 |
+| 1,0 (murid saja) | 0,9234 | 0,8400 |
+
+- Murid KUAT (v3, gold-58 0,9234) + guru: fusi **0,9317-0,9342**, melampaui KEDUANYA
+  (+0,030 di atas guru, +0,011 di atas murid). Kurva mulus & datar di w=0,4-0,8 → bukan puncak
+  kebetulan. Penyebab: kesalahan label-laporan dan kesalahan model-gambar independen.
+- Bahkan murid LEMAH (pilkwang, 0,84) menaikkan guru 0,9033 → 0,9110 (nested-CV per-label 0,9108,
+  bootstrap P=0,935; global 0,9068, P=0,875). Korelasi guru~murid cuma 0,658.
+- Makin kuat muridnya makin besar gain: 0,84 → +0,008; 0,923 → +0,031.
+
+### 32b. Konsekuensi: satu putaran noisy-student
+label_fusi = (1-w)·guru + w·murid_OOF  (raw-probability-mean, bukan rank — pelajaran §46 soal
+kalibrasi BCE) → latih ulang → model lebih baik. SYARAT KERAS: prediksi murid utk tiap studi lemah
+harus OUT-OF-FOLD; kalau model sudah melihat studi itu, ia cuma menggaungkan label guru. Makanya
+K-fold CoAtNet (4 fold, fold sadar-GRUP krn 194 studi berbagi laporan identik, §27c).
+
+**Risiko yang diketahui**: checkpoint c5 (init) sudah pernah dilatih penulisnya pada SEMUA studi
+lemah dgn label mirip guru → prediksi held-out-nya bisa "bocor" sebagian. Kernel K-fold menyertakan
+PROBE: model inisial (pra-latih) memprediksi 150 studi lemah vs gold (tak pernah dilihat siapa pun)
+dan membandingkan korelasinya. Kalau kontaminasi berat → ganti init ke bobot ImageNet bersih
+(dataset `mohamed3abdelrazik/coatnet-rmlp-2-rw-384-sw-in12k-ft-in1k` tersedia offline).
+
+### 32c. Koreksi fakta operasional (PENTING)
+Klaim saya sebelumnya "7 submission fork publik menghabiskan ~22 jam kuota (~3 jam/submission)"
+**TIDAK TERBUKTI**: akun ini juga menjalankan proyek lain (`casmi26-*`, `fase-c-qlora-train`,
+`fase-a-*`) yang memakai kuota & slot GPU yang sama. Biaya riil per submission RSNA tak diketahui;
+estimasi lama (~9,7 jam) dan baru (~3 jam) sama-sama tak bisa dipegang. Kuota GPU (30h/minggu) dan
+batas 2 sesi GPU batch DIBAGI dgn proyek lain → jangan rencanakan memakai semuanya.
+
+Cache DICOM (tiap kernel GPU bayar ~0,75 jam hanya utk decode) dipindah ke 3 kernel CPU
+(`rsna-knee-volcache-s{0,1,2}`, tanpa kuota GPU, jalan paralel) dan dimount via kernel_sources.
