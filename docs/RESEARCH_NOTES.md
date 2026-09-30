@@ -1407,3 +1407,25 @@ Jangan tempel arm di luar dgn bobot global (§48/§50 = nihil) dan jangan ukur b
 keluarga arm CoAtNet di ARMS dgn versi berlabel-fusi kita** (`build_submit_ourarms.py`) — routing
 luar per-label mereka (CoAtNet 0,60-1,00 tergantung label) tetap utuh dan otomatis menimbang arm baru
 per label. Syarat masuk: round-2 terbukti > stock di gold-58 (bersih) DAN solo-LB > 0,932.
+
+### 33c. Penyisiran checkpoint publik lain (30 Sep) — tidak ada "makan siang gratis"
+
+Dicek 4 dataset checkpoint yang baru muncul (membaca struktur state-dict TANPA torch lewat
+unpickler minimal, dan berkas receipt/JSON kecil):
+
+| dataset | isi | temuan |
+|---|---|---|
+| `damoonshahhosseini/ct02-teacher-blend-coatnet-checkpoint` | CoAtNet, latih di "teacher blend" | **GAGAL dilatih**: gold AUC 0,52-0,58, loss mandek ~0,90 (receipt-nya sendiri) |
+| `shingo257/rsna-knee-trained-checkpoints-v1` | ConvNeXt-small 5-fold + Swin-small | lemah (**gold 0,868**, 224px) & skema keluaran beda (head meniskus/tulang/cairan) — tak kompatibel |
+| `ernestorafaelperez/angelus-rsna-knee-gold-weights-v5` | resgated "gold", matriks blend | dilatih dgn label GOLD (kontaminasi utk eval) & matriks blend-nya utk skema lain (PCL dst) |
+| `kawaharataishi/rsna-knee-coatnet-distilled-checkpoint` | `coatnet_384_full_cohort_swa.pt` | drop-in Raptor (clsW 12×1024, att.*, res 384), `auc` 0,9231 — sekelas c5/v3; tambahan CoAtNet marginal |
+
+Kesimpulan: tak ada keluarga arsitektur kuat-dan-beragam yang tinggal ambil. Keragaman yang kuat
+harus dilatih sendiri di atas label yang lebih baik (§32) — bukan dipungut.
+
+### 33d. Catatan operasional
+- `/tmp` hanya 2,7 GB dan 2,0 GB-nya dipakai sesi proyek LAIN (`Vlm-Edge-Jetson`, bukan milik RSNA,
+  tidak disentuh). Unduhan >200 MB pakai `~/.cache/rsna_scratch` (disk rumah), hapus setelah dipakai.
+- Kolom `size` dari `kaggle kernels files` TIDAK bisa dipercaya: semua berkas npz cache tampil
+  "1034" padahal aslinya 5,6 MB (diverifikasi dgn mengunduh satu berkas: (64,336,336), mean 86, 64/64
+  irisan terisi). Jangan menyimpulkan cache "kosong" dari listing itu.
