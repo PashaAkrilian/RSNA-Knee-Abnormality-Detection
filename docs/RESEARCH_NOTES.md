@@ -1429,3 +1429,22 @@ harus dilatih sendiri di atas label yang lebih baik (§32) — bukan dipungut.
 - Kolom `size` dari `kaggle kernels files` TIDAK bisa dipercaya: semua berkas npz cache tampil
   "1034" padahal aslinya 5,6 MB (diverifikasi dgn mengunduh satu berkas: (64,336,336), mean 86, 64/64
   irisan terisi). Jangan menyimpulkan cache "kosong" dari listing itu.
+
+## 34. TPU terbukti bisa melatih CoAtNet (2 Okt) + hambatan antrian lintas-proyek
+
+**Probe** (`rsna-knee-tpu-probe-coatnet`, torch 2.8 + torch_xla, TPU Kaggle): CoAtNet-RMLP-2 384px, K=12
+window, forward+backward+AdamW di XLA. Kompilasi ~50 dtk dua kali (langkah 0 dan 1), lalu **0,5 dtk/langkah
+stabil**, loss turun (0,74 → 0,65). Kuota TPU 20 jam/minggu terpisah dari GPU. Estimasi 1 fold (3.261 studi
+x 3 epoch) ~80-90 mnt vs ~130 mnt di T4.
+
+**Keputusan desain port (`build_train_coatnet_kfold_tpu.py`)**: bentuk tensor tetap (window diisi ulang sampai
+12; bentuk berubah = rekompilasi ~50 dtk), autocast bf16 'xla' dgn bobot tetap fp32 (BUKAN `XLA_USE_BF16`:
+bobot ikut bf16 dan update LR 2e-5 hilang di bawah resolusi bf16), tanpa GradScaler, `mark_step` per studi,
+LR dikuantisasi 30 level sbg pengaman rekompilasi, checkpoint disimpan dari state_dict di CPU. Belum
+terbukti di data nyata — run pertama akan menunjukkan apakah autocast xla dan kecepatan sesuai.
+
+**Hambatan**: akun ini berbagi kuota & slot dgn proyek lain. Batas sesi: GPU batch 2, **TPU batch 1**. Kernel
+TPU proyek lain (`fase-t-...-smoke-tpu` QUEUED, `fase-a-orchestrator-tpu` macet `CANCEL_ACKNOWLEDGED`)
+menahan slot TPU; GPU habis (37,4/30 jam terpakai, dihabiskan `tuning-seimbang-*`). Kernel milik proyek
+lain TIDAK dihapus. Penjaga otomatis (`auto_launch.sh`, proses terpisah) mencoba kirim fold 2 ke TPU dan,
+setelah refresh GPU (3 Okt 07:00 WIB, sisa >=10 jam), meluncurkan fold 3 (dan fold 2 bila TPU belum jalan) di GPU.
