@@ -1,0 +1,23 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-kfold-tpu-c5-f2",
+  "title": "RSNA Knee - KFold TPU c5 f2",
+  "code_file": "kfold_tpu_c5_f2.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": true,
+  "enable_internet": false,
+  "dataset_sources": [
+    "dimaspashaakrilian/rsna-knee-blended-report-labels-rawmean-v1",
+    "dreaddevelopment/raptor-knee-maxspan"
+  ],
+  "kernel_sources": [
+    "dimaspashaakrilian/rsna-knee-volcache-s0",
+    "dimaspashaakrilian/rsna-knee-volcache-s1",
+    "dimaspashaakrilian/rsna-knee-volcache-s2"
+  ],
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ]
+}
