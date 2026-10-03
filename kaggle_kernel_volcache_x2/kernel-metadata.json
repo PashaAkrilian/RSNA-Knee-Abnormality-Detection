@@ -1,0 +1,14 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-volcache-x2",
+  "title": "RSNA Knee - Volcache x2",
+  "code_file": "volcache_x2.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ]
+}
