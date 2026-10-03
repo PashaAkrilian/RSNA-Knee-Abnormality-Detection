@@ -1448,3 +1448,17 @@ TPU proyek lain (`fase-t-...-smoke-tpu` QUEUED, `fase-a-orchestrator-tpu` macet 
 menahan slot TPU; GPU habis (37,4/30 jam terpakai, dihabiskan `tuning-seimbang-*`). Kernel milik proyek
 lain TIDAK dihapus. Penjaga otomatis (`auto_launch.sh`, proses terpisah) mencoba kirim fold 2 ke TPU dan,
 setelah refresh GPU (3 Okt 07:00 WIB, sisa >=10 jam), meluncurkan fold 3 (dan fold 2 bila TPU belum jalan) di GPU.
+
+### 34a. 4 Okt: fold di GPU+TPU, bug penjaga, dan cache yang cocok geometri
+- Penjaga otomatis semalam TIDAK meluncurkan apa pun: ia membaca kolom `total` (30) dari `kaggle quota`
+  alih-alih `remaining`, jadi kondisi ">=10 jam" tak pernah bermakna. Kerugian ±19 jam waktu proses (bukan
+  kuota). Diluncurkan manual: fold 3 (GPU), fold 2 (GPU) dan fold 2 versi TPU (validasi port, konfigurasi sama).
+- Batas sesi akun: GPU 2, TPU 1, **CPU 5**.
+- **Ketidakcocokan geometri ditemukan**: cache awal (`volcache-s*`) = 336px, 64 irisan, rentang 6-94%. Pipeline
+  publik memakai c5 di rentang 2-98% (336px), v10 384px/64 irisan, v8 384px/44 irisan rentang 6-94%.
+  Penulis arm menekankan irisan tepi penting utk meniskus lateral (label terlemah kita). Putaran-2 dilatih pada
+  cache yg cocok: `w` (336/2-98%) utk c5, `x` (384/64/2-98%) utk v10, `y` (384/44/6-94%) utk v8
+  (`build_volcache_cpu2.py`, CPU saja). Fold OOF (murid) tetap di cache lama — murid hanya sumber pseudo-label.
+- Medali: untuk ~4.600 tim, aturan Kaggle standar (bila berlaku di kompetisi ini): perunggu = top 10%, perak =
+  top 5%, emas = top 10 + 0,2% tim. Kita 0,943 ≈ batas perunggu; 0,946 ≈ perak. (Ambang diperiksa dari leaderboard
+  di langkah berikutnya, bukan diasumsikan.)

@@ -1,0 +1,27 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-train-round2-v8-r1",
+  "title": "RSNA Knee - Train round2-v8-r1",
+  "code_file": "rsna-knee-train-round2-v8-r1.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [
+    "dimaspashaakrilian/rsna-knee-fused-labels-r1",
+    "dreaddevelopment/raptor-knee-maxspan",
+    "dreaddevelopment/raptor-knee-widedense",
+    "dreaddevelopment/raptor-knee-native384",
+    "mattiaangeli/knee-mri-fold-weights"
+  ],
+  "kernel_sources": [
+    "dimaspashaakrilian/rsna-knee-volcache-y0",
+    "dimaspashaakrilian/rsna-knee-volcache-y1",
+    "dimaspashaakrilian/rsna-knee-volcache-y2"
+  ],
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ]
+}

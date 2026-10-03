@@ -16,9 +16,9 @@
     "mattiaangeli/knee-mri-fold-weights"
   ],
   "kernel_sources": [
-    "dimaspashaakrilian/rsna-knee-volcache-s0",
-    "dimaspashaakrilian/rsna-knee-volcache-s1",
-    "dimaspashaakrilian/rsna-knee-volcache-s2"
+    "dimaspashaakrilian/rsna-knee-volcache-w0",
+    "dimaspashaakrilian/rsna-knee-volcache-w1",
+    "dimaspashaakrilian/rsna-knee-volcache-w2"
   ],
   "competition_sources": [
     "rsna-knee-abnormality-detection"

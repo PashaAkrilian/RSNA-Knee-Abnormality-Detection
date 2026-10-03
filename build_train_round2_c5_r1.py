@@ -307,7 +307,7 @@ meta = {
         "dreaddevelopment/raptor-knee-maxspan",
         "mattiaangeli/knee-mri-fold-weights",
     ],
-    "kernel_sources": [f"dimaspashaakrilian/rsna-knee-volcache-s{i}" for i in range(3)],
+    "kernel_sources": [f"dimaspashaakrilian/rsna-knee-volcache-w{i}" for i in range(3)],
     "competition_sources": ["rsna-knee-abnormality-detection"],
 }
 (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))

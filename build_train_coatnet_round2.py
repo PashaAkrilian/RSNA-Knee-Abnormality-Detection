@@ -25,6 +25,7 @@ SLOTS64 = ("[('Sagittal', 1, 18), ('Sagittal', 0, 14), ('Coronal', 1, 12), "
            "('Coronal', 0, 8), ('Axial', -1, 12)]")
 SLOTS44 = ("[('Sagittal', 1, 12), ('Sagittal', 0, 10), ('Coronal', 1, 8), "
            "('Coronal', 0, 6), ('Axial', -1, 8)]")
+CACHE_TAG = {"c5": "w", "v10": "x", "v8": "y"}   # lihat build_volcache_cpu2.py: w=336/.02-.98, x=384/SLOTS64/.02-.98, y=384/SLOTS44/.06-.94
 GEOM = {
     "c5":  dict(ckpt="raptor_ft_coatnet_v5_full_swa.pt", img=336, slots=SLOTS64, k_eval=42,
                 ds="dreaddevelopment/raptor-knee-maxspan"),
@@ -118,7 +119,7 @@ base = must_replace(base, '"code_file": "train_coatnet_v3_rawmean.ipynb"', f'"co
 base = must_replace(base, 'REPO = Path("/home/pasha-akrilian/Documents/RSNA Knee Abnormality Detection")',
                     'REPO = Path(__file__).resolve().parent')
 base = must_replace(base, '"competition_sources": ["rsna-knee-abnormality-detection"],\n}',
-                    '"kernel_sources": [f"dimaspashaakrilian/rsna-knee-volcache-s{i}" for i in range(3)],\n'
+                    '"kernel_sources": [f"dimaspashaakrilian/rsna-knee-volcache-' + CACHE_TAG[INIT] + '{i}" for i in range(3)],\n'
                     '    "competition_sources": ["rsna-knee-abnormality-detection"],\n}')
 # harness yang sudah dipatch ditanam langsung (jangan baca ulang berkas aslinya)
 base = must_replace(base, "ke_src = SRC_TXT.read_text()", "ke_src = _KE_SRC_PATCHED")
