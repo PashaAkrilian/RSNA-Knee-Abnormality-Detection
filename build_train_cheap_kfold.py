@@ -28,6 +28,8 @@ SEED = int(sys.argv[4]) if len(sys.argv) > 4 else 1
 NFOLD = int(sys.argv[5]) if len(sys.argv) > 5 else 6
 TAGX = sys.argv[6] if len(sys.argv) > 6 else ""
 LABELS = sys.argv[7] if len(sys.argv) > 7 else "r1"
+OPTS = dict(kv.split("=") for kv in sys.argv[9].split(",")) if len(sys.argv) > 9 and sys.argv[9] else {}
+# opsi: bs (studi/forward), acc (akumulasi), warmup, kwin (window/studi saat latih), bias_init (1 = bias kepala di logit prior), ema, lr (lr_bb)
 SMOKE = len(sys.argv) > 8 and sys.argv[8] == "smoke"     # uji jalur kode: 48 studi latih, 1 epoch, fold 0 (GPU0) & fold 1 (GPU1)
 if SMOKE:
     TAGX = TAGX + "-smoke"
@@ -40,6 +42,10 @@ ARCHS = {
     # timm resnet50.a1_in1k (kunci = timm = torchvision)
     "resnet50":      dict(arch="resnet50", ds="ildarlukmanov/resnet50-a1-in1k-timm", rel="model.safetensors",
                           match="resnet50", lr_bb=2e-4),
+    # RadImageNet ResNet-50 (1,35 jt citra MEDIS, termasuk MRI lutut); sumber HF Lab-Rasool, upstream_license=MIT.
+    # kunci backbone.{0,1,4,5,6,7}.* -> timm conv1/bn1/layer1..4 ; normalisasi mean=std=0,5 (sama dgn encoder Rad pipeline publik)
+    "radresnet50":   dict(arch="resnet50", ds="shigechan/radimagenet-resnet50-official", rel="ResNet50.pt",
+                          match="", lr_bb=2e-4, fmt="rad", norm="rad"),
     # keluarga lain (timm, safetensors) dari dataset dl-vision-weights
     "convnext_tiny": dict(arch="convnext_tiny", ds=DLW, rel=_dlw("convnext_tiny.fb_in22k_ft_in1k"), match="", lr_bb=1e-4),
     "convnext_small": dict(arch="convnext_small", ds=DLW, rel=_dlw("convnext_small.fb_in22k_ft_in1k"), match="", lr_bb=8e-5),
@@ -72,7 +78,7 @@ CFG = json.loads(os.environ['CFG'])
 ARCH, RES, EPOCHS, SEED, NFOLD = CFG['arch'], int(CFG['res']), int(CFG['epochs']), int(CFG['seed']), int(CFG['nfold'])
 FOLDS = [int(x) for x in os.environ['FOLDS'].split(',') if x != '']
 LR_BB, LR_HEAD, WD = float(CFG['lr_bb']), 2e-3, 0.02
-K_WIN, BS, ACC, K_EVAL, WARMUP = 12, 4, 2, 42, 150
+K_WIN, BS, ACC, K_EVAL, WARMUP = int(CFG.get('kwin', 12)), int(CFG.get('bs', 4)), int(CFG.get('acc', 2)), 42, int(CFG.get('warmup', 150))
 DEV = 'cuda'
 OUTTAG = CFG['outtag']
 tlog(f'worker mulai | arch={ARCH} res={RES} epochs={EPOCHS} seed={SEED} nfold={NFOLD} folds={FOLDS}')
@@ -126,6 +132,8 @@ def label_arrays(ids):
     return y, (0.5 + np.clip(c, 0, 1)).astype(np.float32)
 
 MEAN = KE['_MEAN']; STD = KE['_STD']
+if CFG.get('norm') == 'rad':
+    MEAN = torch.full((3, 1, 1), 0.5); STD = torch.full((3, 1, 1), 0.5)
 
 def _resize(t, res):
     if t.shape[-1] != res:
@@ -192,8 +200,18 @@ def make_model():
     bb = KE['build_backbone'](ARCH, pretrained=False)
     wf = find_weights(CFG['rel'], CFG['match'])
     assert len(wf) == 1, f"bobot pra-latih harus tepat 1: {wf}"
-    from safetensors.torch import load_file
-    sd = load_file(wf[0])
+    if CFG.get('fmt') == 'rad':
+        raw = torch.load(wf[0], map_location='cpu', weights_only=True); sd = {}
+        for k, v in raw.items():
+            k2 = k[len('backbone.'):] if k.startswith('backbone.') else k
+            head, _, rest = k2.partition('.')
+            if head == '0': sd['conv1.' + rest] = v
+            elif head == '1': sd['bn1.' + rest] = v
+            elif head in ('4', '5', '6', '7'): sd[f'layer{int(head) - 3}.' + rest] = v
+            else: raise RuntimeError(f'kunci RadImageNet tak dikenal: {k}')
+    else:
+        from safetensors.torch import load_file
+        sd = load_file(wf[0])
     r = bb.load_state_dict(sd, strict=False)
     tlog(f'bobot {wf[0][-70:]}: missing={list(r.missing_keys)[:5]} unexpected={list(r.unexpected_keys)[:5]}')
     assert len(r.missing_keys) == 0, 'bobot tak lengkap'
@@ -243,6 +261,10 @@ for FOLD in FOLDS:
     Y, W = label_arrays(train_ids)
     tlog(f'=== FOLD {FOLD}/{NFOLD}: latih={len(train_ids)} held-out={len(held_ids)} gold={len(gold_ids)}')
     model = make_model().to(DEV)
+    if CFG.get('bias_init'):
+        pr = np.clip((W * Y).sum(0) / W.sum(0), 0.02, 0.98)
+        with torch.no_grad(): model.clsb.copy_(torch.logit(torch.tensor(pr, dtype=torch.float32)).to(DEV))
+        tlog('bias kepala diinisialisasi ke logit prior: ' + ' '.join(f'{x:.2f}' for x in pr))
     head_params = list(model.norm.parameters()) + list(model.att.parameters()) + [model.clsW, model.clsb]
     hp = {id(p) for p in head_params}
     bb_decay = [p for p in model.backbone.parameters() if p.ndim > 1]
@@ -257,7 +279,7 @@ for FOLD in FOLDS:
         sc = min(1.0, (s + 1) / WARMUP) * 0.5 * (1 + math.cos(math.pi * min(1.0, s / total_steps)))
         for g, b in zip(opt.param_groups, base_lrs): g['lr'] = b * sc
     scaler = torch.amp.GradScaler('cuda')
-    ema = EMA(model); ema_model = copy.deepcopy(model)
+    ema = EMA(model, float(CFG.get('ema', 0.998))); ema_model = copy.deepcopy(model)
     dl = torch.utils.data.DataLoader(TrainDS(train_ids, Y, W), batch_size=BS, shuffle=True, drop_last=True,
                                      num_workers=3, worker_init_fn=worker_init, prefetch_factor=3, persistent_workers=True)
     tlog(f'steps={total_steps} ({steps_per_epoch}/epoch) lr_bb={LR_BB} lr_head={LR_HEAD}')
@@ -285,7 +307,7 @@ for FOLD in FOLDS:
         tlog(f'=== f{FOLD} EPOCH {ep+1}/{EPOCHS} loss={ep_loss/max(1,nb):.4f} ({time.time()-t_ep:.0f}s) | gold-58 diag: raw={macro(Pr,Yg):.4f} ema={macro(Pe,Yg):.4f}')
     del dl
     # simpan EMA + OOF
-    torch.save({'arch': ARCH, 'res': RES, 'model': {k: v.detach().cpu() for k, v in ema_model.state_dict().items()}},
+    torch.save({'arch': ARCH, 'res': RES, 'norm': CFG.get('norm', 'imagenet'), 'model': {k: v.detach().cpu() for k, v in ema_model.state_dict().items()}},
                f'/kaggle/working/{OUTTAG}_f{FOLD}.pt')
     Ph = predict(ema_model, held_ids); Pg = predict(ema_model, gold_ids)
     oof = pd.DataFrame(np.vstack([Ph, Pg]), columns=LAB)
@@ -356,8 +378,11 @@ tlog('SELESAI')
 '''
 
 CFG = dict(arch=A["arch"], res=RES, epochs=EPOCHS, seed=SEED, nfold=NFOLD, lr_bb=A["lr_bb"],
-           rel=A["rel"], match=A["match"], label_file=LFILE, outtag=f"cheap_{ARCH}{TAGX}_s{SEED}".replace("-", "_"),
-           smoke=SMOKE)
+           rel=A["rel"], match=A["match"], fmt=A.get("fmt", "safetensors"), norm=A.get("norm", "imagenet"), label_file=LFILE, outtag=f"cheap_{ARCH}{TAGX}_s{SEED}".replace("-", "_"),
+           smoke=SMOKE, bs=int(OPTS.get("bs", 4)), acc=int(OPTS.get("acc", 2)), warmup=int(OPTS.get("warmup", 150)),
+           kwin=int(OPTS.get("kwin", 12)), bias_init=int(OPTS.get("bias_init", 0)), ema=float(OPTS.get("ema", 0.998)))
+if "lr" in OPTS:
+    CFG["lr_bb"] = float(OPTS["lr"])
 
 cells = [
     "KE_SRC = " + repr(ke_src) + "\nWORKER_SRC = " + repr(WORKER) + "\nCFG = " + repr(CFG) + "\n",

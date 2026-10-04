@@ -1534,3 +1534,21 @@ berpekerja. **Satu sesi Kaggle = 2 GPU T4**; trainer lama hanya memakai cuda:0 -
 (2x hasil per jam kuota). Smoke test (48 studi) lolos end-to-end; run penuh `rsna-knee-cheap-resnet50-s1` berjalan.
 (3) Rencana: bila gold-58 ensemble 6-fold >= ~0,92 -> (a) fusi pseudo-label putaran-2 dari OOF murah + OOF CoAtNet,
 (b) keluarga CNN lain (ConvNeXt-tiny, EffNet-B3) utk keragaman, (c) submit solo utk ukur LB, (d) masukkan sbg arm tambahan.
+
+### 36b. Bukti langsung "fleet murid" di papan atas + mekanisme blend yang bisa dipakai (4 Okt)
+- Notebook publik `pjmathematician/rsna-knee-d4-blend` (versi terbaru) memuat sel 30-32 "OUR LEG": menyimpan keluaran publik,
+  menjalankan "fleet murid" (`S_dist`, `S_coat`, `S_cnxl`; 8 + 43 bobot dari dataset PRIVAT `rsna-knee-eff6-assets` /
+  `rsna-knee-ens14-assets`, skrip `infer_kernel.py`) lalu mem-blend di ruang RANK dgn **satu bobot global `RSNA_OURS_W`=0,45**
+  (alasan penulis: bobot per-label di 870 studi memberi +0,0026 dari noise murni). Tanpa aset privat semua leg gugur ke
+  keluaran publik (0,943). Pengaman: gerbang cakupan, gerbang fraksi-ikat 0,5, gerbang kolom konstan, pemulihan otomatis.
+  Korelasi rank leg-vs-publik yg diukur penulis offline: **0,75-0,89**.
+- Skor leaderboard 3 Okt para penulis publik yg menambah leg privat: pjmathematician **0,947** (#141, dasar publik 0,943 -> +0,004),
+  mattiaangeli 0,950 (#100), jiweiliu/Theo Viel 0,951 (#82), dreaddevelopment 0,945 (#248). Penulis yg hanya menjalankan
+  pipeline publik: 0,943 (romantamrazov, prvsiyan, evgendvorkin, yamadan96...). `ryo` (ryokucha) = 0,943 (klaim 0,946 tak terbukti).
+- Kesimpulan: fleet murid (model kuat + beragam, dilatih di pseudo-label) yg di-blend ~0,3-0,45 memang bernilai ~+0,004 s/d +0,008.
+  Itu persis jalur kita. Integrasi akan memakai pola sel yg sama (stash publik -> leg milik kita -> blend rank berbobot global ->
+  pemulihan otomatis), bukan mengubah bagian dalam pipeline publik. Waktu: pipeline publik d4-blend ~4,5-6 jam (header notebook:
+  DINOsaur ~4,5 jam, Speedy Raptors ~1,5 jam), jadi tersisa ~2-3 jam utk leg kita di bawah batas 9 jam.
+- Data eksternal MRI lutut (MRNet, fastMRI+, OAI, KneeMRI, KneeXNet): status lisensi/akses BELUM diputuskan host (thread 743416);
+  hanya KneeCoT yg dilarang jelas. KEPUTUSAN: tidak memakai data/bobot MRI lutut eksternal (risiko diskualifikasi > manfaat);
+  bobot pra-latih citra umum/medis publik berlisensi permisif tetap dipakai (ImageNet; RadImageNet MIT di hulu).
