@@ -33,18 +33,24 @@ if SMOKE:
     TAGX = TAGX + "-smoke"
     EPOCHS = 1
 
+DLW = "inyalala/dl-vision-weights"     # 10 GB; hf_weights/models--timm--<nama>/snapshots/<hash>/model.safetensors
+def _dlw(name):
+    return f"hf_weights/models--timm--{name}/snapshots/*/model.safetensors"
 ARCHS = {
     # timm resnet50.a1_in1k (kunci = timm = torchvision)
-    "resnet50":   dict(arch="resnet50", ds="ildarlukmanov/resnet50-a1-in1k-timm", file="model.safetensors",
-                       fmt="safetensors", lr_bb=2e-4, match="resnet50"),
-    # torchvision resnet50 IMAGENET1K_V1
-    "resnet50tv": dict(arch="resnet50", ds="truthr/resnet50-pytorch-pretrained", file="resnet50-19c8e357.pth",
-                       fmt="torch", lr_bb=2e-4, match="resnet50"),
+    "resnet50":      dict(arch="resnet50", ds="ildarlukmanov/resnet50-a1-in1k-timm", rel="model.safetensors",
+                          match="resnet50", lr_bb=2e-4),
+    # keluarga lain (timm, safetensors) dari dataset dl-vision-weights
+    "convnext_tiny": dict(arch="convnext_tiny", ds=DLW, rel=_dlw("convnext_tiny.fb_in22k_ft_in1k"), match="", lr_bb=1e-4),
+    "convnext_small": dict(arch="convnext_small", ds=DLW, rel=_dlw("convnext_small.fb_in22k_ft_in1k"), match="", lr_bb=8e-5),
+    "effb3":         dict(arch="efficientnet_b3", ds=DLW, rel=_dlw("efficientnet_b3.ra2_in1k"), match="", lr_bb=3e-4),
+    "resnext50":     dict(arch="resnext50_32x4d", ds=DLW, rel=_dlw("resnext50_32x4d.a1h_in1k"), match="", lr_bb=2e-4),
+    "swin_tiny":     dict(arch="swin_tiny_patch4_window7_224", ds=DLW, rel=_dlw("swin_tiny_patch4_window7_224.ms_in1k"), match="", lr_bb=1e-4),
 }
 assert ARCH in ARCHS, f"arch tak dikenal: {ARCH} (pilihan {list(ARCHS)})"
 A = ARCHS[ARCH]
 TAG = f"cheap-{ARCH}{TAGX}-s{SEED}"
-SLUG = f"rsna-knee-{TAG}"
+SLUG = f"rsna-knee-{TAG}".replace("_", "-")     # slug Kaggle: tanpa garis bawah
 OUTDIR = REPO / f"kaggle_kernel_{TAG.replace('-', '_')}"
 LABELDS = {"r1": ("dimaspashaakrilian/rsna-knee-fused-labels-r1", "fused_labels_r1.csv")}
 assert LABELS in LABELDS, f"label tak dikenal: {LABELS}"
@@ -175,18 +181,21 @@ def worker_init(_):
     np.random.seed(s); random.seed(s)
 
 # ---------------- model ----------------
+def find_weights(rel, match=''):
+    hits = set()
+    for base in ('/kaggle/input/', '/kaggle/input/*/', '/kaggle/input/*/*/', '/kaggle/input/*/*/*/', '/kaggle/input/*/*/*/*/'):
+        for p in glob.glob(base + rel):
+            if match in p.lower(): hits.add(os.path.realpath(p))
+    return sorted(hits)
+
 def make_model():
     bb = KE['build_backbone'](ARCH, pretrained=False)
-    wf = [p for p in _bglob(CFG['weights_file']) if CFG['match'] in p.lower()]
-    assert len(wf) == 1, f'bobot pra-latih harus tepat 1: {wf}'
-    if CFG['fmt'] == 'safetensors':
-        from safetensors.torch import load_file
-        sd = load_file(wf[0])
-    else:
-        sd = torch.load(wf[0], map_location='cpu', weights_only=False)
-        if isinstance(sd, dict) and 'state_dict' in sd: sd = sd['state_dict']
+    wf = find_weights(CFG['rel'], CFG['match'])
+    assert len(wf) == 1, f"bobot pra-latih harus tepat 1: {wf}"
+    from safetensors.torch import load_file
+    sd = load_file(wf[0])
     r = bb.load_state_dict(sd, strict=False)
-    tlog(f'bobot {os.path.basename(wf[0])}: missing={list(r.missing_keys)[:5]} unexpected={list(r.unexpected_keys)[:5]}')
+    tlog(f'bobot {wf[0][-70:]}: missing={list(r.missing_keys)[:5]} unexpected={list(r.unexpected_keys)[:5]}')
     assert len(r.missing_keys) == 0, 'bobot tak lengkap'
     return KE['RaptorClassifier'](bb, F_dim=bb.num_features)
 
@@ -346,8 +355,8 @@ if files:
 tlog('SELESAI')
 '''
 
-CFG = dict(arch=A["arch"], res=RES, epochs=EPOCHS, seed=SEED, nfold=NFOLD, lr_bb=A["lr_bb"], fmt=A["fmt"],
-           weights_file=A["file"], match=A["match"], label_file=LFILE, outtag=f"cheap_{ARCH}{TAGX}_s{SEED}".replace("-", "_"),
+CFG = dict(arch=A["arch"], res=RES, epochs=EPOCHS, seed=SEED, nfold=NFOLD, lr_bb=A["lr_bb"],
+           rel=A["rel"], match=A["match"], label_file=LFILE, outtag=f"cheap_{ARCH}{TAGX}_s{SEED}".replace("-", "_"),
            smoke=SMOKE)
 
 cells = [
