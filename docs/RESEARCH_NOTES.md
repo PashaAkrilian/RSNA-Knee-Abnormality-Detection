@@ -1504,3 +1504,33 @@ Rata-rata bobot dari fine-tune c5 yg sama (init identik): soup_folds4 0,9221/0,9
 0,9213/0,9230, soup_all6 0,9221/**0,9245**, soup_v3_r2 0,9206/0,9222 — ≈ c5 stok (0,9221) dan jauh di bawah
 ensemble 4 model terpisah (0,9286). Rata-rata bobot meruntuhkan keragaman antar-model yang justru sumber gain
 ensemble; keuntungan harus dibayar dgn inferensi tiap model terpisah (+22 mnt/arm di pipeline publik).
+
+## 36. Diskusi 735304 (4 Okt): jalur "pseudo-label + model kecil" menggeser prioritas
+
+**Sumber**: thread "Best single-model score" (114 komentar), dibaca 4 Okt 2026 lewat Chrome. Semua angka di bawah adalah
+klaim peserta (peringkat leaderboard saat komentar ditulis), BELUM terverifikasi, tetapi konsisten satu sama lain:
+- ResNet-50 5-fold 224px = 0,954 (peringkat 13); CoAtNet 2.5D 224px single-fold = 0,950 (51); Qwen3.5-2B (LoRA +
+  vision encoder) 384px single-fold = 0,950 (64); CoAtNet 288px 0,938 -> 0,949 HANYA dgn perbaikan label (47);
+  ResNet kecil 224px single-fold 0,936-0,938, latih ~5 menit, 5-fold 0,947 (9); DINOv2 / EffNet-B4 / ResNet50 5-fold
+  ~0,940-0,942 (119); 0,942 mentah / 0,943 dgn TTA di 288px (8).
+- Resep yg berulang: **pseudo-label multi-guru lewat OOF** ("weak-label dari beberapa sumber (publik, API, lokal) ->
+  model guru -> pseudo-label -> model akhir; biaya API < $5"), model kecil beresolusi rendah, fold. Kutipan inti:
+  "On the 58 provided labels, my OOF predictions were already closer to the radiologists than the extracted labels the
+  model was trained on... labels were the bottleneck" (51) -- temuan yg SAMA dgn §29f kita (model melampaui guru).
+  Chris Deotte (118): model dgn pseudo-label "can match our best ensemble CV score". Satu tim 0,943 melaporkan 1 arm
+  eksternal berkorelasi 0,83 bernilai +0,004 di LB.
+- Hal yg sudah kita punya: label fusi (guru + murid OOF) = 0,9348 di gold-58. Yang BELUM kita punya: model murah
+  beresolusi rendah yg dilatih di label itu, dan fold lengkap utk pseudo-label putaran-2.
+
+**Verifikasi klaim "0946"**: fork `ryokucha/rsna-knee-d4-blend-0946-ours10` dan `yamadan96/rsna-knee-d4-public0946` bernama
+"0946", tetapi yamadan96 sendiri mengoreksi: pipeline publiknya = 0,943; 0,946 hanya "bila" ditambah ensemble ConvNeXt-tiny
+PRIVAT (dua checkpoint single-fold, bobot 10%). Dataset-nya privat (403) dan di leaderboard 3 Okt tim `ryo` = 0,943.
+Jadi klaim itu TIDAK terverifikasi -- tidak dijadikan dasar keputusan. (Pipeline publik terbaik tetap 0,943.)
+
+**Keputusan (4 Okt, ~11:15 WIB)**: (1) seed ke-2 CoAtNet-384 dari ImageNet (`inet-gpu-s2`) dihentikan -- 6 jam kuota utk
+keluarga yg sama dgn arm stok tak sebanding dgn jalur murah; s1 dibiarkan sbg penentu. (2) Bangun `build_train_cheap_kfold.py`:
+CNN kecil (ResNet-50 timm A1, 224px) 6 fold sadar-grup di label fusi r1, 4 studi/forward (BatchNorm), EMA, DataLoader
+berpekerja. **Satu sesi Kaggle = 2 GPU T4**; trainer lama hanya memakai cuda:0 -> proses kedua di cuda:1 GRATIS
+(2x hasil per jam kuota). Smoke test (48 studi) lolos end-to-end; run penuh `rsna-knee-cheap-resnet50-s1` berjalan.
+(3) Rencana: bila gold-58 ensemble 6-fold >= ~0,92 -> (a) fusi pseudo-label putaran-2 dari OOF murah + OOF CoAtNet,
+(b) keluarga CNN lain (ConvNeXt-tiny, EffNet-B3) utk keragaman, (c) submit solo utk ukur LB, (d) masukkan sbg arm tambahan.
