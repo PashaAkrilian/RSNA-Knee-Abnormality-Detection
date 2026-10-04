@@ -1498,3 +1498,9 @@ Biaya per arm Raptor tambahan ≈ +22 menit (log panen: 4 arm = 4,04 dtk/studi p
 
 Uji berjalan: **model soup** (rata-rata bobot 4 fold + v3 + r2c5, semua dari init c5 yang sama) — bila satu
 model hasil rata-rata mendekati ensemble-nya, keuntungan ensemble didapat dgn biaya inferensi satu arm.
+
+### 35a. Model soup — NEGATIF (ditutup)
+Rata-rata bobot dari fine-tune c5 yg sama (init identik): soup_folds4 0,9221/0,9233 (42/94 window), soup_folds4_v3
+0,9213/0,9230, soup_all6 0,9221/**0,9245**, soup_v3_r2 0,9206/0,9222 — ≈ c5 stok (0,9221) dan jauh di bawah
+ensemble 4 model terpisah (0,9286). Rata-rata bobot meruntuhkan keragaman antar-model yang justru sumber gain
+ensemble; keuntungan harus dibayar dgn inferensi tiap model terpisah (+22 mnt/arm di pipeline publik).
