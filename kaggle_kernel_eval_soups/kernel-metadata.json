@@ -1,0 +1,21 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-eval-soups",
+  "title": "RSNA Knee - Eval soups",
+  "code_file": "eval_soups.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "machine_shape": "NvidiaTeslaT4",
+  "kernel_sources": [
+    "dimaspashaakrilian/rsna-knee-volcache-w0",
+    "dimaspashaakrilian/rsna-knee-volcache-w1",
+    "dimaspashaakrilian/rsna-knee-volcache-w2",
+    "dimaspashaakrilian/rsna-knee-soup"
+  ],
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ]
+}

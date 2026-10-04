@@ -1462,3 +1462,39 @@ setelah refresh GPU (3 Okt 07:00 WIB, sisa >=10 jam), meluncurkan fold 3 (dan fo
 - Medali: untuk ~4.600 tim, aturan Kaggle standar (bila berlaku di kompetisi ini): perunggu = top 10%, perak =
   top 5%, emas = top 10 + 0,2% tim. Kita 0,943 ≈ batas perunggu; 0,946 ≈ perak. (Ambang diperiksa dari leaderboard
   di langkah berikutnya, bukan diasumsikan.)
+
+## 35. HASIL PUTARAN-2 noisy-student (4 Okt) — label lebih bagus TIDAK menghasilkan model lebih bagus; ensemble yang membantu
+
+Rantai yang terbukti: label guru 0,9033 → 4 murid fold OOF → label fusi (w=0,5) **0,9348** terhadap gold
+(+0,032), dgn murid yang bersih (gold tak pernah ikut latih). Tapi **model yang dilatih di label fusi
+TIDAK lebih baik**:
+
+| model (bersih thd gold, gold-58) | stok | putaran-2 | selisih |
+|---|---:|---:|---:|
+| c5 (harness 42 window) | 0,9213 | **0,9200** | −0,001 |
+| v8 | 0,9116 | 0,9138 | +0,002 |
+| v3 (label raw-mean, putaran-1) | 0,9213 | 0,9234 | +0,002 (LB solo: +0,005) |
+
+Penyebab yang masuk akal: noise gold-58 (SE ~0,01 per model tunggal) jauh di atas selisih label; model sudah
+melampaui kualitas guru (§29f) sehingga label yg sedikit lebih baik bukan lagi pembatas. Yang TERUKUR membantu
+adalah **menjumlahkan beberapa fine-tune berbeda** (semuanya bersih thd gold):
+
+| | gold-58 |
+|---|---:|
+| cabang Raptor stok (.6/.1/.1/.2, 94 window; dari panen gold) | 0,9254 |
+| rata-rata 4 murid fold (tiap fold 75% data, label guru) | 0,9286 |
+| stok + v3 (α=0,4) | 0,9299 |
+| stok + 4 murid fold (α=0,6) | **0,9310** |
+| stok + v3 + r2c5 + r2v8 | ~0,928 |
+
+Semua gabungan jenuh di ~0,93 (+0,004–0,006 atas stok) — **sama persis dgn peringatan simulasi §30a**: model
+sejenis (korelasi c5~c5-reverse 0,994, c5~v10 0,964, c5~v8 0,945) tak bisa menembus ~0,93. Keluarga CoAtNet
+sudah habis diperas; langkah berikutnya yang bermakna harus keluarga BERBEDA yang kuat.
+
+Perbaikan fakta: kuota GPU mingguan TIDAK berkurang oleh submission kompetisi (kuota tetap 0,10 jam setelah
+submission rekan tim 3 Okt) — klaim lama "~9,7 jam GPU/submission" salah (itu pemakaian proyek lain di akun).
+Satu-satunya batas submission adalah anggaran internal 8 jam di pipeline (melewatinya = tidak ada submission).
+Biaya per arm Raptor tambahan ≈ +22 menit (log panen: 4 arm = 4,04 dtk/studi pada 2 GPU).
+
+Uji berjalan: **model soup** (rata-rata bobot 4 fold + v3 + r2c5, semua dari init c5 yang sama) — bila satu
+model hasil rata-rata mendekati ensemble-nya, keuntungan ensemble didapat dgn biaya inferensi satu arm.
