@@ -30,6 +30,8 @@ TAGX = sys.argv[6] if len(sys.argv) > 6 else ""
 LABELS = sys.argv[7] if len(sys.argv) > 7 else "r1"
 OPTS = dict(kv.split("=") for kv in sys.argv[9].split(",")) if len(sys.argv) > 9 and sys.argv[9] else {}
 # opsi: bs (studi/forward), acc (akumulasi), warmup, kwin (window/studi saat latih), bias_init (1 = bias kepala di logit prior), ema, lr (lr_bb)
+OPTS2 = dict(kv.split("=") for kv in sys.argv[10].split(",")) if len(sys.argv) > 10 and sys.argv[10] else None
+# OPTS2 (argumen ke-10) = resep KEDUA utk GPU1 pada FOLD YANG SAMA (mode probe): kunci opsi sama + arch= res= epochs=
 SMOKE = len(sys.argv) > 8 and sys.argv[8] == "smoke"     # uji jalur kode: 48 studi latih, 1 epoch, fold 0 (GPU0) & fold 1 (GPU1)
 if SMOKE:
     TAGX = TAGX + "-smoke"
@@ -80,6 +82,7 @@ FOLDS = [int(x) for x in os.environ['FOLDS'].split(',') if x != '']
 LR_BB, LR_HEAD, WD = float(CFG['lr_bb']), 2e-3, 0.02
 K_WIN, BS, ACC, K_EVAL, WARMUP = int(CFG.get('kwin', 12)), int(CFG.get('bs', 4)), int(CFG.get('acc', 2)), 42, int(CFG.get('warmup', 150))
 DEV = 'cuda'
+NW = int(os.environ.get('NW', '3'))
 OUTTAG = CFG['outtag']
 tlog(f'worker mulai | arch={ARCH} res={RES} epochs={EPOCHS} seed={SEED} nfold={NFOLD} folds={FOLDS}')
 
@@ -239,7 +242,7 @@ def macro(P, Y): return float(np.nanmean([auc1(Y[:, j], P[:, j]) for j in range(
 @torch.no_grad()
 def predict(model_, ids):
     model_.eval(); out = []
-    dl = torch.utils.data.DataLoader(EvalDS(ids), batch_size=1, shuffle=False, num_workers=3, worker_init_fn=worker_init)
+    dl = torch.utils.data.DataLoader(EvalDS(ids), batch_size=1, shuffle=False, num_workers=NW, worker_init_fn=worker_init)
     for xw in dl:
         try:
             with torch.autocast('cuda', dtype=torch.float16):
@@ -281,7 +284,7 @@ for FOLD in FOLDS:
     scaler = torch.amp.GradScaler('cuda')
     ema = EMA(model, float(CFG.get('ema', 0.998))); ema_model = copy.deepcopy(model)
     dl = torch.utils.data.DataLoader(TrainDS(train_ids, Y, W), batch_size=BS, shuffle=True, drop_last=True,
-                                     num_workers=3, worker_init_fn=worker_init, prefetch_factor=3, persistent_workers=True)
+                                     num_workers=NW, worker_init_fn=worker_init, prefetch_factor=3, persistent_workers=True)
     tlog(f'steps={total_steps} ({steps_per_epoch}/epoch) lr_bb={LR_BB} lr_head={LR_HEAD}')
     step = 0
     for ep in range(EPOCHS):
@@ -334,10 +337,13 @@ tlog(f'GPU terlihat: {torch.cuda.device_count()} | {[torch.cuda.get_device_name(
 NG = max(1, torch.cuda.device_count())
 folds = list(range(CFG['nfold'])) if not CFG.get('smoke') else list(range(min(2, CFG['nfold'])))
 assign = {g: [f for f in folds if f % NG == g] for g in range(NG)}
-tlog(f'pembagian fold per GPU: {assign}')
+CFGS = {g: CFG for g in range(NG)}
+if CFG_B is not None and NG >= 2:      # mode probe: dua resep pada fold yg SAMA
+    assign = {0: [CFG['probe_fold']], 1: [CFG['probe_fold']]}; CFGS = {0: CFG, 1: CFG_B}
+tlog(f'pembagian fold per GPU: {assign} | probe={CFG_B is not None}')
 procs = {}
 for g, fl in assign.items():
-    env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(g), FOLDS=','.join(map(str, fl)), GTAG=str(g), CFG=json.dumps(CFG))
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(g), FOLDS=','.join(map(str, fl)), GTAG=str(g), CFG=json.dumps(CFGS[g]))
     fh = open(f'/kaggle/working/worker{g}.log', 'w')
     procs[g] = (subprocess.Popen([sys.executable, '-u', '/kaggle/working/worker.py'], env=env, stdout=fh, stderr=subprocess.STDOUT), fh)
 pos = {g: 0 for g in procs}
@@ -354,6 +360,8 @@ for g, (p, fh) in procs.items(): tlog(f'pekerja g{g} selesai rc={p.returncode}')
 # ---- gabung: ensemble gold-58 lintas fold ----
 LAB = ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis', "Baker's", 'Contusion', 'Fracture']
 files = sorted(glob.glob(f"/kaggle/working/oof_{CFG['outtag']}_f*.csv"))
+if CFG_B is not None:
+    tlog('MODE PROBE: ringkasan per resep dilewati (lihat baris "FOLD ... SELESAI" tiap GPU)'); files = []
 tlog(f'berkas OOF: {len(files)}')
 if files:
     ROOT = [p for p in ('/kaggle/input/competitions/rsna-knee-abnormality-detection', '/kaggle/input/rsna-knee-abnormality-detection') if os.path.exists(p + '/train.csv')][0]
@@ -383,9 +391,26 @@ CFG = dict(arch=A["arch"], res=RES, epochs=EPOCHS, seed=SEED, nfold=NFOLD, lr_bb
            kwin=int(OPTS.get("kwin", 12)), bias_init=int(OPTS.get("bias_init", 0)), ema=float(OPTS.get("ema", 0.998)))
 if "lr" in OPTS:
     CFG["lr_bb"] = float(OPTS["lr"])
+CFG["probe_fold"] = int(OPTS.get("probe_fold", 0))
+CFG_B = None
+if OPTS2 is not None:
+    B = dict(CFG)
+    arch_b = OPTS2.get("arch", ARCH)
+    assert arch_b in ARCHS, f"arch ke-2 tak dikenal: {arch_b}"
+    AB = ARCHS[arch_b]
+    B.update(arch=AB["arch"], rel=AB["rel"], match=AB["match"], fmt=AB.get("fmt", "safetensors"), norm=AB.get("norm", "imagenet"), lr_bb=AB["lr_bb"])
+    for k_, v_ in OPTS2.items():
+        if k_ in ("bs", "acc", "warmup", "kwin", "bias_init"): B[k_] = int(v_)
+        elif k_ == "ema": B["ema"] = float(v_)
+        elif k_ == "lr": B["lr_bb"] = float(v_)
+        elif k_ in ("res", "epochs"): B[k_] = int(v_)
+    B["outtag"] = CFG["outtag"] + "_B"
+    CFG["outtag"] = CFG["outtag"] + "_A"
+    CFG_B = B
+    CFG["probe"] = True
 
 cells = [
-    "KE_SRC = " + repr(ke_src) + "\nWORKER_SRC = " + repr(WORKER) + "\nCFG = " + repr(CFG) + "\n",
+    "KE_SRC = " + repr(ke_src) + "\nWORKER_SRC = " + repr(WORKER) + "\nCFG = " + repr(CFG) + "\nCFG_B = " + repr(CFG_B) + "\n",
     PARENT,
 ]
 nb = {"cells": [{"cell_type": "code", "source": c.splitlines(keepends=True), "metadata": {}, "outputs": [], "execution_count": None}
@@ -399,11 +424,19 @@ meta = {
     "id": f"dimaspashaakrilian/{SLUG}", "title": f"RSNA Knee - Cheap {ARCH}{TAGX} s{SEED}", "code_file": NAME,
     "language": "python", "kernel_type": "notebook", "is_private": True,
     "enable_gpu": True, "enable_tpu": False, "enable_internet": False, "machine_shape": "NvidiaTeslaT4",
-    "dataset_sources": [LDS, A["ds"]],
+    "dataset_sources": list(dict.fromkeys([LDS, A["ds"]] + ([ARCHS[OPTS2.get("arch", ARCH)]["ds"]] if OPTS2 else []))),
     "kernel_sources": [f"dimaspashaakrilian/rsna-knee-volcache-w{i}" for i in range(3)],
     "competition_sources": ["rsna-knee-abnormality-detection"],
 }
 (OUTDIR / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
+# paket mandiri utk Colab (colab/<tag>/): harness, worker, cfg
+COLAB = REPO / "colab" / TAG.replace("-", "_")
+COLAB.mkdir(parents=True, exist_ok=True)
+_cv = lambda t: t.replace("/kaggle/working/_ke_src.py", "/content/colab_pkg/_ke_src.py").replace("/kaggle/input", "/content/kin").replace("/kaggle/working", "/content/kw")   # /kaggle read-only di Colab
+(COLAB / "_ke_src.py").write_text(_cv(ke_src))
+(COLAB / "worker.py").write_text(_cv(WORKER))
+(COLAB / "cfg.json").write_text(json.dumps(CFG))
+(COLAB / "datasets.json").write_text(json.dumps({"label_ds": LDS, "weights_ds": A["ds"]}))
 # kerangka sintaks: kompilasi tiap sel + worker
 import ast
 for c in cells:
