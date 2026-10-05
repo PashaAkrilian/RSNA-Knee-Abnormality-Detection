@@ -1564,3 +1564,16 @@ berpekerja. **Satu sesi Kaggle = 2 GPU T4**; trainer lama hanya memakai cuda:0 -
 - Submisi real 5 Okt: students4 w.35 (56846031), rad6 w.30 (56846312), **fleet2 = publik .60 + murid CoAtNet .20 + reader .20**.
 - Operasional: unduhan ribuan berkas cache oleh VM Colab memakai token yg sama -> Kaggle API 429 berjam-jam; baca log kernel lewat
   halaman web (Chrome) bila API dibatasi. CLI Colab kadang mem-"prune" sesi saat exec gagal sesaat -> `colab/readopt.py`.
+
+### 36d. HASIL: leg luar MENURUNKAN skor (6 Okt) -> pindah ke penggantian arm DI DALAM stack
+| submisi (basis = pj d4-blend terbaru, identik sel-demi-sel dgn fork 72e30e = 0,943) | LB |
+|---|---:|
+| + leg 4 murid CoAtNet, w 0,35 | 0,942 |
+| + leg RadImageNet-ResNet50 6 fold 6 epoch, w 0,30 | 0,942 |
+| fleet2: publik .60 + murid .20 + reader ConvNeXt goodpjw .20 | 0,942 |
+Ketiganya -0,001. Model yg lebih lemah dari stack (solo 0,929-0,934) diblend 0,30-0,40 mengencerkan stack; bukti +0,001 milik goodpjw
+(reader 0,30) tidak mereplikasi di sini (dalam batas noise 3 desimal, tapi arahnya konsisten negatif utk kita). Fleet pjmathematician
+(+0,004 pd w 0,45) pasti jauh lebih kuat dari punya kita -> JANGAN ulang leg luar lemah.
+Arah baru: perkuat cabang DOMINAN dari dalam: `build_submit_inarm2.py` mengganti berkas di ARMS cell 27 (c5 & c5-reverse -> r2c5, v8 ->
+r2v8; v10 stok), menambah akar ke ASSET_ROOTS (pencari aset tidak mem-pin hash arm Raptor), dan menetralkan sel 31 asli pj (crash
+`_EFF6 None` bila aset privat tak ada). Dev-run lolos; disubmit 6 Okt.
