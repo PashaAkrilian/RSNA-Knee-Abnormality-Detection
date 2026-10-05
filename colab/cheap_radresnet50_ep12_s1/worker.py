@@ -13,7 +13,8 @@ ARCH, RES, EPOCHS, SEED, NFOLD = CFG['arch'], int(CFG['res']), int(CFG['epochs']
 FOLDS = [int(x) for x in os.environ['FOLDS'].split(',') if x != '']
 LR_BB, LR_HEAD, WD = float(CFG['lr_bb']), 2e-3, 0.02
 K_WIN, BS, ACC, K_EVAL, WARMUP = int(CFG.get('kwin', 12)), int(CFG.get('bs', 4)), int(CFG.get('acc', 2)), 42, int(CFG.get('warmup', 150))
-DEV = 'cuda'
+import torch_xla.core.xla_model as xm
+DEV = xm.xla_device()
 NW = int(os.environ.get('NW', '3'))
 OUTTAG = CFG['outtag']
 tlog(f'worker mulai | arch={ARCH} res={RES} epochs={EPOCHS} seed={SEED} nfold={NFOLD} folds={FOLDS}')
@@ -117,7 +118,9 @@ class EvalDS(torch.utils.data.Dataset):
     def __len__(self): return len(self.ids)
     def __getitem__(self, i):
         z = np.load(MOUNTED[self.ids[i]]); vol, mask = z['vol'], z['mask']
-        return eval_windows_aa(vol, mask, K_EVAL, RES)
+        x_ = eval_windows_aa(vol, mask, K_EVAL, RES)
+        if x_.shape[0] < K_EVAL: x_ = x_[[i % x_.shape[0] for i in range(K_EVAL)]]
+        return x_
 
 def worker_init(_):
     s = (torch.initial_seed() + 12345) % (2 ** 31)
@@ -158,7 +161,7 @@ class EMA:
         self.sd = {k: v.detach().clone().float() if v.is_floating_point() else v.detach().clone() for k, v in model.state_dict().items()}
     @torch.no_grad()
     def update(self, model):
-        self.n += 1; d = min(self.decay, (1 + self.n) / (10 + self.n))
+        self.n += 1; d = self.decay
         for k, v in model.state_dict().items():
             if v.is_floating_point(): self.sd[k].mul_(d).add_(v.detach().float(), alpha=1 - d)
             else: self.sd[k].copy_(v)
@@ -177,7 +180,7 @@ def predict(model_, ids):
     dl = torch.utils.data.DataLoader(EvalDS(ids), batch_size=1, shuffle=False, num_workers=NW, worker_init_fn=worker_init)
     for xw in dl:
         try:
-            with torch.autocast('cuda', dtype=torch.float16):
+            with torch.autocast('xla', dtype=torch.bfloat16):
                 p = torch.sigmoid(model_(xw.to(DEV)).float())
             out.append(p[0].cpu().numpy())
         except Exception as e:
@@ -212,8 +215,8 @@ for FOLD in FOLDS:
     total_steps = steps_per_epoch * EPOCHS
     def set_lr(s):
         sc = min(1.0, (s + 1) / WARMUP) * 0.5 * (1 + math.cos(math.pi * min(1.0, s / total_steps)))
+        sc = max(1, round(sc * 20)) / 20
         for g, b in zip(opt.param_groups, base_lrs): g['lr'] = b * sc
-    scaler = torch.amp.GradScaler('cuda')
     ema = EMA(model, float(CFG.get('ema', 0.998))); ema_model = copy.deepcopy(model)
     dl = torch.utils.data.DataLoader(TrainDS(train_ids, Y, W), batch_size=BS, shuffle=True, drop_last=True,
                                      num_workers=NW, worker_init_fn=worker_init, prefetch_factor=3, persistent_workers=True)
@@ -221,25 +224,26 @@ for FOLD in FOLDS:
     step = 0
     for ep in range(EPOCHS):
         model.train(); torch.backends.cudnn.benchmark = True
-        ep_loss, nb = 0.0, 0; t_ep = time.time()
+        ep_loss, nb = torch.zeros((), device=DEV), 0; t_ep = time.time()
         opt.zero_grad(set_to_none=True)
         for bi, (xb, yb, wb) in enumerate(dl):
             xb, yb, wb = xb.to(DEV, non_blocking=True), yb.to(DEV), wb.to(DEV)
-            with torch.autocast('cuda', dtype=torch.float16):
+            with torch.autocast('xla', dtype=torch.bfloat16):
                 logits = model(xb)
             loss = (F.binary_cross_entropy_with_logits(logits.float(), yb, reduction='none') * wb).mean()
-            scaler.scale(loss / ACC).backward()
-            ep_loss += float(loss.detach()); nb += 1
+            (loss / ACC).backward()
+            ep_loss = ep_loss + loss.detach(); nb += 1
             if (bi + 1) % ACC == 0:
-                set_lr(step); scaler.unscale_(opt)
+                set_lr(step)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
-                scaler.step(opt); scaler.update(); opt.zero_grad(set_to_none=True); ema.update(model); step += 1
+                opt.step(); opt.zero_grad(set_to_none=True); ema.update(model); step += 1
+            xm.mark_step()
             if (bi + 1) % 200 == 0:
-                tlog(f'f{FOLD} ep{ep+1} {(bi+1)*BS}/{len(train_ids)} loss~{ep_loss/nb:.4f} lr_bb={opt.param_groups[0]["lr"]:.2e} {(time.time()-t_ep):.0f}s')
+                tlog(f'f{FOLD} ep{ep+1} {(bi+1)*BS}/{len(train_ids)} loss~{float(ep_loss)/nb:.4f} lr_bb={opt.param_groups[0]["lr"]:.2e} {(time.time()-t_ep):.0f}s')
         torch.backends.cudnn.benchmark = False
         ema_model.load_state_dict({k: v.to(ema_model.state_dict()[k].dtype) for k, v in ema.sd.items()})
         Pr = predict(model, gold_ids); Pe = predict(ema_model, gold_ids)
-        tlog(f'=== f{FOLD} EPOCH {ep+1}/{EPOCHS} loss={ep_loss/max(1,nb):.4f} ({time.time()-t_ep:.0f}s) | gold-58 diag: raw={macro(Pr,Yg):.4f} ema={macro(Pe,Yg):.4f}')
+        tlog(f'=== f{FOLD} EPOCH {ep+1}/{EPOCHS} loss={float(ep_loss)/max(1,nb):.4f} ({time.time()-t_ep:.0f}s) | gold-58 diag: raw={macro(Pr,Yg):.4f} ema={macro(Pe,Yg):.4f}')
     del dl
     # simpan EMA + OOF
     torch.save({'arch': ARCH, 'res': RES, 'norm': CFG.get('norm', 'imagenet'), 'model': {k: v.detach().cpu() for k, v in ema_model.state_dict().items()}},
@@ -252,5 +256,5 @@ for FOLD in FOLDS:
     Th = FL.loc[held_ids, LAB].fillna(0.28).values.astype(float)
     cs = [np.corrcoef(Ph[:, j], Th[:, j])[0, 1] for j in range(N_T)]
     tlog(f'*** FOLD {FOLD} SELESAI | gold-58 (EMA) = {macro(Pg, Yg):.4f} | korelasi(OOF, label fusi) rata2 = {np.nanmean(cs):.4f}')
-    del model, ema_model, opt, ema; torch.cuda.empty_cache()
+    del model, ema_model, opt, ema
 tlog('WORKER DONE')

@@ -336,6 +336,8 @@ import torch
 tlog(f'GPU terlihat: {torch.cuda.device_count()} | {[torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())]}')
 NG = max(1, torch.cuda.device_count())
 folds = list(range(CFG['nfold'])) if not CFG.get('smoke') else list(range(min(2, CFG['nfold'])))
+if CFG.get('only_folds'): folds = list(CFG['only_folds'])
+if CFG.get('tpu'): os.environ.setdefault('PJRT_DEVICE', 'TPU'); os.environ.setdefault('NW', '8')
 assign = {g: [f for f in folds if f % NG == g] for g in range(NG)}
 CFGS = {g: CFG for g in range(NG)}
 if CFG_B is not None and NG >= 2:      # mode probe: dua resep pada fold yg SAMA
@@ -385,10 +387,44 @@ if files:
 tlog('SELESAI')
 '''
 
+def tpuify(w):
+    """Port worker CUDA -> XLA (TPU): bentuk tetap, autocast bf16, tanpa GradScaler, mark_step, LR terkuantisasi, EMA peluruhan konstan."""
+    def must(t, a, b):
+        assert a in t, "pola TPU tak ketemu: " + a[:70]
+        return t.replace(a, b)
+    w = must(w, "DEV = 'cuda'\n", "import torch_xla.core.xla_model as xm\nDEV = xm.xla_device()\n")
+    # EMA: peluruhan konstan (nilai skalar berubah = kompilasi ulang di XLA)
+    w = must(w, "self.n += 1; d = min(self.decay, (1 + self.n) / (10 + self.n))", "self.n += 1; d = self.decay")
+    # eval: jumlah window tetap K_EVAL (ulang indeks) -> satu grafik
+    w = must(w, "        return eval_windows_aa(vol, mask, K_EVAL, RES)\n",
+             "        x_ = eval_windows_aa(vol, mask, K_EVAL, RES)\n"
+             "        if x_.shape[0] < K_EVAL: x_ = x_[[i % x_.shape[0] for i in range(K_EVAL)]]\n"
+             "        return x_\n")
+    w = must(w, "            with torch.autocast('cuda', dtype=torch.float16):\n                p = torch.sigmoid(model_(xw.to(DEV)).float())",
+             "            with torch.autocast('xla', dtype=torch.bfloat16):\n                p = torch.sigmoid(model_(xw.to(DEV)).float())")
+    # LR terkuantisasi 20 level
+    w = must(w, "        for g, b in zip(opt.param_groups, base_lrs): g['lr'] = b * sc",
+             "        sc = max(1, round(sc * 20)) / 20\n        for g, b in zip(opt.param_groups, base_lrs): g['lr'] = b * sc")
+    w = must(w, "    scaler = torch.amp.GradScaler('cuda')\n", "")
+    w = must(w, "        ep_loss, nb = 0.0, 0; t_ep = time.time()", "        ep_loss, nb = torch.zeros((), device=DEV), 0; t_ep = time.time()")
+    w = must(w, "            with torch.autocast('cuda', dtype=torch.float16):\n                logits = model(xb)",
+             "            with torch.autocast('xla', dtype=torch.bfloat16):\n                logits = model(xb)")
+    w = must(w, "            scaler.scale(loss / ACC).backward()\n            ep_loss += float(loss.detach()); nb += 1",
+             "            (loss / ACC).backward()\n            ep_loss = ep_loss + loss.detach(); nb += 1")
+    w = must(w, "                set_lr(step); scaler.unscale_(opt)\n", "                set_lr(step)\n")
+    w = must(w, "                scaler.step(opt); scaler.update(); opt.zero_grad(set_to_none=True); ema.update(model); step += 1",
+             "                opt.step(); opt.zero_grad(set_to_none=True); ema.update(model); step += 1")
+    w = must(w, "            if (bi + 1) % 200 == 0:", "            xm.mark_step()\n            if (bi + 1) % 200 == 0:")
+    w = must(w, "loss~{ep_loss/nb:.4f}", "loss~{float(ep_loss)/nb:.4f}")
+    w = must(w, "loss={ep_loss/max(1,nb):.4f}", "loss={float(ep_loss)/max(1,nb):.4f}")
+    w = must(w, "del model, ema_model, opt, ema; torch.cuda.empty_cache()", "del model, ema_model, opt, ema")
+    return w
+
 CFG = dict(arch=A["arch"], res=RES, epochs=EPOCHS, seed=SEED, nfold=NFOLD, lr_bb=A["lr_bb"],
            rel=A["rel"], match=A["match"], fmt=A.get("fmt", "safetensors"), norm=A.get("norm", "imagenet"), label_file=LFILE, outtag=f"cheap_{ARCH}{TAGX}_s{SEED}".replace("-", "_"),
            smoke=SMOKE, bs=int(OPTS.get("bs", 4)), acc=int(OPTS.get("acc", 2)), warmup=int(OPTS.get("warmup", 150)),
-           kwin=int(OPTS.get("kwin", 12)), bias_init=int(OPTS.get("bias_init", 0)), ema=float(OPTS.get("ema", 0.998)))
+           kwin=int(OPTS.get("kwin", 12)), bias_init=int(OPTS.get("bias_init", 0)), ema=float(OPTS.get("ema", 0.998)),
+           tpu=int(OPTS.get("tpu", 0)), only_folds=[int(x) for x in OPTS["folds"].split("+")] if "folds" in OPTS else None)
 if "lr" in OPTS:
     CFG["lr_bb"] = float(OPTS["lr"])
 CFG["probe_fold"] = int(OPTS.get("probe_fold", 0))
@@ -409,6 +445,9 @@ if OPTS2 is not None:
     CFG_B = B
     CFG["probe"] = True
 
+if CFG.get("tpu"):
+    WORKER = tpuify(WORKER)
+    compile(WORKER, "<worker_tpu>", "exec")
 cells = [
     "KE_SRC = " + repr(ke_src) + "\nWORKER_SRC = " + repr(WORKER) + "\nCFG = " + repr(CFG) + "\nCFG_B = " + repr(CFG_B) + "\n",
     PARENT,
@@ -423,7 +462,8 @@ NAME = f"{SLUG}.ipynb"
 meta = {
     "id": f"dimaspashaakrilian/{SLUG}", "title": f"RSNA Knee - Cheap {ARCH}{TAGX} s{SEED}", "code_file": NAME,
     "language": "python", "kernel_type": "notebook", "is_private": True,
-    "enable_gpu": True, "enable_tpu": False, "enable_internet": False, "machine_shape": "NvidiaTeslaT4",
+    **({"enable_gpu": False, "enable_tpu": True, "enable_internet": False} if CFG.get("tpu") else
+       {"enable_gpu": True, "enable_tpu": False, "enable_internet": False, "machine_shape": "NvidiaTeslaT4"}),
     "dataset_sources": list(dict.fromkeys([LDS, A["ds"]] + ([ARCHS[OPTS2.get("arch", ARCH)]["ds"]] if OPTS2 else []))),
     "kernel_sources": [f"dimaspashaakrilian/rsna-knee-volcache-w{i}" for i in range(3)],
     "competition_sources": ["rsna-knee-abnormality-detection"],
