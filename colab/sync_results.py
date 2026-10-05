@@ -24,6 +24,13 @@ for k in folds:
         if not (out / f).exists():
             r = run(f"colab download -s {sess} {vm}/{f} {out}/{f}"); print(f, "ok" if (out / f).exists() else r.stderr[-200:])
 (out / "dataset-metadata.json").write_text(json.dumps({"title": slug.replace("-", " "), "id": f"dimaspashaakrilian/{slug}", "licenses": [{"name": "CC0-1.0"}]}))
-exists = run(f"kaggle datasets status dimaspashaakrilian/{slug}").stdout.strip().lower().startswith("ready")
-cmd = f"kaggle datasets version -p {out} -m 'folds {','.join(folds)}'" if exists else f"kaggle datasets create -p {out}"
-r = run(cmd); print(r.stdout[-300:], r.stderr[-300:])
+import time as _t
+for attempt in range(6):
+    r = run(f"kaggle datasets version -p {out} -m 'folds {','.join(folds)}'")
+    txt = r.stdout + r.stderr
+    if "not found" in txt.lower() or "404" in txt:
+        r = run(f"kaggle datasets create -p {out}"); txt = r.stdout + r.stderr
+    if "429" in txt or "Too Many Requests" in txt:
+        print("429 -> tunggu 90 dtk"); _t.sleep(90); continue
+    break
+print(txt[-400:])
