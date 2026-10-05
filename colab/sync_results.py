@@ -11,8 +11,10 @@ sess = sys.argv[3] if len(sys.argv) > 3 else "rsna"
 vm = sys.argv[4] if len(sys.argv) > 4 else "/content/kw"
 env = {**os.environ, "PATH": os.environ["PATH"] + ":" + os.path.expanduser("~/.local/bin")}
 def run(c, **k): return subprocess.run(c, shell=True, capture_output=True, text=True, env=env, **k)
-ls = run(f"echo \"import os; print('\\\\n'.join(sorted(os.listdir('{vm}'))))\" | colab exec -s {sess}").stdout.split("\n")
-files = [l.strip() for l in ls if l.strip().startswith((tag + "_f", "oof_" + tag + "_f"))]
+import ast
+raw = subprocess.run(["colab", "exec", "-s", sess], input=f"import os; print(sorted(os.listdir('{vm}')))\n", capture_output=True, text=True, env=env).stdout
+lst = [l for l in raw.splitlines() if l.startswith("[") and "'" in l]
+files = [x for x in (ast.literal_eval(lst[-1]) if lst else []) if x.startswith((tag + "_f", "oof_" + tag + "_f"))]
 folds = sorted({f.rsplit("_f", 1)[1].split(".")[0] for f in files if f.endswith(".pt")} & {f.rsplit("_f", 1)[1].split(".")[0] for f in files if f.endswith(".csv")})
 print("fold selesai:", folds)
 if not folds: sys.exit("belum ada fold selesai")
