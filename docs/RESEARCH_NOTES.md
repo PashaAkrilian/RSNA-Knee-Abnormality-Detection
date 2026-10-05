@@ -1552,3 +1552,15 @@ berpekerja. **Satu sesi Kaggle = 2 GPU T4**; trainer lama hanya memakai cuda:0 -
 - Data eksternal MRI lutut (MRNet, fastMRI+, OAI, KneeMRI, KneeXNet): status lisensi/akses BELUM diputuskan host (thread 743416);
   hanya KneeCoT yg dilarang jelas. KEPUTUSAN: tidak memakai data/bobot MRI lutut eksternal (risiko diskualifikasi > manfaat);
   bobot pra-latih citra umum/medis publik berlisensi permisif tetap dipakai (ImageNet; RadImageNet MIT di hulu).
+
+### 36c. Bukti publik ke-2 + fleet gabungan (5 Okt)
+- Notebook publik baru `goodpjw2008/rsna-knee-stack-2-5d-convnext-mil-lb-0-944`: stack publik 0,943 + reader **ConvNeXt-Tiny 2.5D +
+  transformer studi** yang dilatih mandiri (5 fold grup-laporan, soft target = rata-rata 4 tabel label publik, 14 epoch @256px,
+  0,4 mm/px, FOV 154 mm, 6 series) -> **reader saja 0,929 (3 fold), blend 70/30 = 0,944**. Bobot + kode inferensi publik
+  (`goodpjw2008/rsna-knee-2-5d-convnext-reader`, train.py ada di dataset). Konsisten dgn §36b: keluarga independen ~0,93 pada bobot 0,3 = +0,001.
+- Tab Code menampilkan skor versi PENULIS (aset privat ikut): d4-blend 0,946, d4-lite/s75 0,945; fork kita tanpa aset privat = 0,943.
+- `build_submit_plus.py reader=goodpjw w2=...` menyisipkan sel sumber reader (kaggle_base/goodpjw_reader_cells_20261004.json) dan
+  menjalankannya sbg leg-2 (slot RSNA_EFF_W sel blend pj) dgn batas waktu subprocess. Dev-run lolos.
+- Submisi real 5 Okt: students4 w.35 (56846031), rad6 w.30 (56846312), **fleet2 = publik .60 + murid CoAtNet .20 + reader .20**.
+- Operasional: unduhan ribuan berkas cache oleh VM Colab memakai token yg sama -> Kaggle API 429 berjam-jam; baca log kernel lewat
+  halaman web (Chrome) bila API dibatasi. CLI Colab kadang mem-"prune" sesi saat exec gagal sesaat -> `colab/readopt.py`.

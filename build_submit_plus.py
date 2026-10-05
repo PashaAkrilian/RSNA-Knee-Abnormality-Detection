@@ -28,6 +28,8 @@ K_EVAL = int(A.get("k_eval", 42))
 WEIGHTS = [float(x) for x in A["weights"].split(",")] if A.get("weights") else [1.0] * len(FILES)
 W = float(A.get("w", 0.35))
 NEED_H = float(A.get("need_h", 1.2))
+READER = A.get("reader", "")                 # "goodpjw" = sertakan reader ConvNeXt-Tiny 2.5D publik (LB solo 0,929) sbg leg-2
+W2 = float(A.get("w2", 0.0))                 # bobot leg-2 (reader) di sel blend 32 (RSNA_EFF_W)
 assert len(WEIGHTS) == len(FILES)
 SLUG = f"rsna-knee-d4-plus-{NAME}".replace("_", "-")     # sama dgn slug yg diturunkan Kaggle dari judul "RSNA Knee - D4 plus <name>"
 OUT = REPO / f"kaggle_kernel_d4plus_{NAME.replace('-', '_')}"
@@ -161,8 +163,49 @@ finally:
     try: _tc.cuda.empty_cache()
     except Exception: pass
 '''
+READER_LEG = r"""
+# ============================ OUR LEG — 2b/3: reader ConvNeXt-Tiny 2.5D publik (goodpjw2008) =================
+import glob as _r_glob, subprocess as _r_sp, sys as _r_sys, time as _r_t, json as _r_json, os as _r_os
+_OV_OURS2 = _pl.Path('/kaggle/working/ours_core/submission.csv')
+try:
+    _r_left = 9.0 - _proc_age_h() - 0.30
+    if _r_left < 1.0:
+        raise RuntimeError(f"waktu tak cukup utk reader ({_r_left:.2f} h)")
+    def _r_find(name):
+        for pat in ["/kaggle/input/*/", "/kaggle/input/*/*/", "/kaggle/input/*/*/*/"]:
+            for d in sorted(_r_glob.glob(pat)):
+                if _r_os.path.exists(_r_os.path.join(d, name)): return d.rstrip("/")
+        raise FileNotFoundError(name)
+    _r_assets, _r_data = _r_find("cnxt_v0_fold0.pt"), _r_find("test_series.csv")
+    _r_ck = sorted(_r_glob.glob(_r_assets + "/cnxt_v0_fold*.pt"))
+    _r_env = dict(_r_os.environ); _r_target = "/kaggle/working/_own_env"
+    _r_sp.run([_r_sys.executable, "-m", "pip", "install", "-q", "--no-index", "--no-deps", "--target", _r_target,
+               "--find-links", _r_assets, "pylibjpeg", "pylibjpeg-libjpeg", "pylibjpeg-openjpeg"], check=False)
+    _r_timm = [w for pat in ["/kaggle/input/*/timm-*.whl", "/kaggle/input/*/*/timm-*.whl", "/kaggle/input/*/*/*/timm-*.whl"] for w in _r_glob.glob(pat)]
+    if _r_timm:
+        _r_sp.run([_r_sys.executable, "-m", "pip", "install", "-q", "--no-deps", "--target", _r_target, _r_timm[0]], check=False)
+    _r_env["PYTHONPATH"] = _r_target + _r_os.pathsep + _r_env.get("PYTHONPATH", "")
+    _r_free = [_tc.cuda.mem_get_info(i)[0] for i in range(_tc.cuda.device_count())]
+    _r_env["CUDA_VISIBLE_DEVICES"] = str(max(range(len(_r_free)), key=lambda i: _r_free[i]))
+    _r_t0 = _r_t.time()
+    _r_sp.run([_r_sys.executable, "/kaggle/working/own_src/infer.py", _r_data, "test", "/kaggle/working/_own.csv"] + _r_ck,
+              check=True, env=_r_env, timeout=max(600, int(_r_left * 3600) - 600))
+    _r_own = _pdx.read_csv("/kaggle/working/_own.csv", dtype={"StudyInstanceUID": str}).set_index("StudyInstanceUID")
+    _r_lab = [c for c in _r_own.columns]
+    _r_rank = _r_own[_r_lab].rank(method="average", pct=True)
+    _r_rank.insert(0, "StudyInstanceUID", _r_rank.index); _r_rank = _r_rank.reset_index(drop=True)
+    _OV_OURS2.parent.mkdir(parents=True, exist_ok=True); _r_rank.to_csv(_OV_OURS2, index=False)
+    _r_json.dump({"n_studies": len(_r_rank), "n_covered_any": len(_r_rank), "ckpts": _r_ck}, open(_OV_OURS2.parent / "receipt.json", "w"))
+    print(f"[ours 2b/3] reader selesai: {len(_r_ck)} ckpt, {len(_r_rank)} studi, {(_r_t.time()-_r_t0)/60:.1f} mnt", flush=True)
+except Exception as _r_e:
+    print(f"[ours 2b/3] reader SOFT FAIL: {type(_r_e).__name__}: {str(_r_e)[:200]} -> leg-2 kosong", flush=True)
+    try: _OV_OURS2.unlink()
+    except Exception: pass
+"""
 LEG = (LEG.replace("__KE_SRC__", repr(ke_src)).replace("__FILES__", repr(FILES)).replace("__WEIGHTS__", repr(WEIGHTS))
           .replace("__KEVAL__", str(K_EVAL)).replace("__NEEDH__", str(NEED_H)))
+if READER == "goodpjw":
+    LEG = LEG + READER_LEG
 compile(LEG, "<leg>", "exec")
 cells[31]["source"] = LEG.splitlines(keepends=True)
 cells[31]["outputs"] = []; cells[31]["execution_count"] = None
@@ -171,16 +214,22 @@ c32 = "".join(cells[32]["source"])
 OLDW = '_OV_W = float(_ov_os.environ.get("RSNA_OURS_W", "0.45"))'
 assert OLDW in c32
 c32 = c32.replace(OLDW, f'_OV_W = float(_ov_os.environ.get("RSNA_OURS_W", "{W}"))')
+OLDW2 = '_OV_W2 = float(_ov_os.environ.get("RSNA_EFF_W", "0.0"))'
+assert OLDW2 in c32
+c32 = c32.replace(OLDW2, f'_OV_W2 = float(_ov_os.environ.get("RSNA_EFF_W", "{W2}"))')
 compile(c32, "<c32>", "exec")
 cells[32]["source"] = c32.splitlines(keepends=True)
 
+if READER == "goodpjw":
+    rc = json.loads((REPO / "kaggle_base/goodpjw_reader_cells_20261004.json").read_text())
+    base["cells"] = cells[:31] + rc + cells[31:]
 OUT.mkdir(exist_ok=True)
 (OUT / f"{SLUG}.ipynb").write_text(json.dumps(base, indent=1))
 meta = dict(meta0)
 meta.update({"id": f"dimaspashaakrilian/{SLUG}", "title": f"RSNA Knee - D4 plus {NAME}", "code_file": f"{SLUG}.ipynb", "is_private": True})
-meta["dataset_sources"] = [d for d in meta0["dataset_sources"] if d]
+meta["dataset_sources"] = [d for d in meta0["dataset_sources"] if d] + (["goodpjw2008/rsna-knee-2-5d-convnext-reader"] if READER == "goodpjw" else [])
 meta["kernel_sources"] = list(meta0.get("kernel_sources", [])) + [f"dimaspashaakrilian/{s}" for s in dict.fromkeys(SLUGS)]
 meta.pop("id_no", None)
 (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
-print("built:", OUT.name, "| slug:", SLUG, "| model:", len(FILES), "| w =", W, "| span", (LO, HI), "| need_h", NEED_H)
+print("built:", OUT.name, "| slug:", SLUG, "| model:", len(FILES), "| w =", W, "| reader", READER, "w2 =", W2, "| span", (LO, HI), "| need_h", NEED_H)
 print("kernel_sources:", meta["kernel_sources"])
