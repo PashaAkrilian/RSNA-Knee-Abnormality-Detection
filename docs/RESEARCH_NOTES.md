@@ -1577,3 +1577,12 @@ Ketiganya -0,001. Model yg lebih lemah dari stack (solo 0,929-0,934) diblend 0,3
 Arah baru: perkuat cabang DOMINAN dari dalam: `build_submit_inarm2.py` mengganti berkas di ARMS cell 27 (c5 & c5-reverse -> r2c5, v8 ->
 r2v8; v10 stok), menambah akar ke ASSET_ROOTS (pencari aset tidak mem-pin hash arm Raptor), dan menetralkan sel 31 asli pj (crash
 `_EFF6 None` bila aset privat tak ada). Dev-run lolos; disubmit 6 Okt.
+
+### 36e. REPLIKA goodpjw = 0,944 (6 Okt 20:00 WIB) — zona perunggu tercapai
+- Notebook publik goodpjw2008 disalin UTUH (`kaggle_kernel_goodpjw_replica/`, stack 70% + reader ConvNeXt-Tiny 2.5D 30%) -> **LB 0,944** (klaim penulis terverifikasi).
+  Fleet2 kita (publik .60 + 4 murid CoAtNet .20 + reader .20) = 0,942: tambahan CoAtNet kita MENURUNKAN, reader mandiri MENAIKKAN. Pelajaran:
+  yang berguna = keluarga INDEPENDEN (arsitektur + resep + pra-latih berbeda) yg cukup kuat (~0,93 solo), bukan varian CoAtNet.
+- Peringkat: snapshot 6 Okt (5.278 tim): >=0,943: 1.483 tim; >=0,944: 484 (top 9,2%); >=0,945: 318; >=0,946: 254; >=0,947: 205; >=0,950: 121.
+  Batas perunggu (top 10%) = rank 527 (~0,944), perak (5%) = 263 (~0,946), emas = rank 20 (~0,957). Kita sebelumnya rank 750 @0,943.
+- Rencana: (1) kunci 0,944 (pilih sbg salah satu dari 2 submisi final); (2) variasi bobot reader (0,40) setelah kuota GPU pulih 10 Okt (commit-run butuh 2 GPU);
+  (3) latih reader sendiri bergaya KneeNet (ConvNeXt-Tiny IN22k, token per slot + transformer studi) di label fusi, di TPU, utk leg-2 independen.
