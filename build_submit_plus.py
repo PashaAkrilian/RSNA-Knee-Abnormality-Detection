@@ -60,6 +60,7 @@ _FK_SRC = __KE_SRC__
 _FK_FILES = __FILES__
 _FK_WEIGHTS = __WEIGHTS__
 _FK_K = __KEVAL__
+_KN_SRC = __KNEESRC__
 _FK_NEED_H = __NEEDH__
 _OV_OURS = _pl.Path('/kaggle/working/ours_fleet/submission.csv'); _OV_OURS2 = _pl.Path('/kaggle/working/ours_core/submission.csv')
 _LEFT = 9.0 - _proc_age_h() - 0.33
@@ -94,12 +95,20 @@ try:
         hits = _fk_glob(fname)
         assert len(hits) == 1, f'{fname}: {hits}'
         ck = _tc.load(hits[0], map_location='cpu', weights_only=False)
-        bb = _FK['build_backbone'](ck['arch'], pretrained=False)
-        m = _FK['RaptorClassifier'](bb, F_dim=bb.num_features); m.load_state_dict(ck['model'], strict=True)
         dev = _DEVS[i % len(_DEVS)]
-        _fk_models.append((m.eval().to(dev), dev, (int(ck['res']), ck.get('norm', 'imagenet')))); del ck
-        print(f"[ours 2/3] model {i}: {fname} -> {dev} res/norm={_fk_models[-1][2]}", flush=True)
-    _RESES = sorted({r for _, _, r in _fk_models})
+        if str(ck['arch']).startswith('kneenet'):
+            if '_KN' not in globals():
+                _KN = {'__name__': '_kn'}; exec(compile(_KN_SRC, '<kn>', 'exec'), _KN)
+            m = _KN['KneeNet']('convnext_tiny'); m.load_state_dict(ck['model'], strict=True)
+            _fk_models.append((m.eval().to(dev), dev, ('knee', int(ck['res']), int(ck.get('k', 12)))))
+        else:
+            bb = _FK['build_backbone'](ck['arch'], pretrained=False)
+            m = _FK['RaptorClassifier'](bb, F_dim=bb.num_features); m.load_state_dict(ck['model'], strict=True)
+            _fk_models.append((m.eval().to(dev), dev, (int(ck['res']), ck.get('norm', 'imagenet'))))
+        del ck
+        print(f"[ours 2/3] model {i}: {fname} -> {dev} spec={_fk_models[-1][2]}", flush=True)
+    _RESES = sorted({r for _, _, r in _fk_models if r[0] != 'knee'})
+    _KNEES = sorted({(r[1], r[2]) for _, _, r in _fk_models if r[0] == 'knee'})
     _ROOT = _FK['find_test_root']()
     _tsdir = _ROOT + '/test_series'
     if not _o.path.isdir(_tsdir): _tsdir = _ROOT + '/test_images'
@@ -111,16 +120,21 @@ try:
     _reader = _FK['_make_reader']()
     def _prep(sid):
         vol, mask = _FK['build_study'](sid, _SER, _tsdir, _reader)
-        return {r: _fk_windows(vol, mask, _FK_K, r[0], r[1]) for r in _RESES}
+        out = {r: _fk_windows(vol, mask, _FK_K, r[0], r[1]) for r in _RESES}
+        for (res_, k_) in _KNEES: out[('knee', res_, k_)] = _KN['slot_windows'](vol, mask, k_)
+        return out
     _P = _np.full((len(_fk_models), _N, _NT), _np.nan, _np.float32)
     _failed = []
     def _run_dev(dev, wins, j):
         with _tc.no_grad():
             for mi, (m, d, r) in enumerate(_fk_models):
                 if d != dev: continue
-                xw = wins[r].unsqueeze(0).to(d)
                 with _tc.autocast('cuda', dtype=_tc.float16, enabled=d.startswith('cuda')):
-                    _P[mi, j] = _tc.sigmoid(m(xw).float())[0].cpu().numpy()
+                    if r[0] == 'knee':
+                        xk, mk, pk = wins[r]
+                        _P[mi, j] = _tc.sigmoid(m(xk.unsqueeze(0).to(d), mk.unsqueeze(0).to(d), pk.unsqueeze(0).to(d), r[1]).float())[0].cpu().numpy()
+                    else:
+                        _P[mi, j] = _tc.sigmoid(m(wins[r].unsqueeze(0).to(d)).float())[0].cpu().numpy()
     with _TPE(max_workers=3) as _ex, _TPE(max_workers=len(_DEVS)) as _gx:
         _q = _col.deque(); _nx = 0
         for i in range(_N):
@@ -163,6 +177,57 @@ finally:
     try: _tc.cuda.empty_cache()
     except Exception: pass
 '''
+
+KNEE_SRC = r"""
+import math, numpy as np, torch, torch.nn as nn, torch.nn.functional as F
+BOUNDS = [(0, 18), (18, 32), (32, 44), (44, 52), (52, 64)]; NS = len(BOUNDS); N_T = 12
+MEAN_ = (0.485, 0.456, 0.406); STD_ = (0.229, 0.224, 0.225)
+def centres(valid, k):
+    a, b = valid[0], valid[-1]
+    return np.clip(np.round(np.linspace(a, b, k)).astype(int), a, b)
+def slot_windows(vol, m, k):
+    H = vol.shape[-1]; x = np.zeros((NS, k, 3, H, H), np.uint8); mk = np.zeros(NS, bool); pos = np.zeros((NS, k), np.float32)
+    for s, (lo, hi) in enumerate(BOUNDS):
+        valid = [j for j in range(lo + 1, hi - 1) if m[j] > 0 and m[j - 1] > 0 and m[j + 1] > 0]
+        if len(valid) < 1: continue
+        c = centres(valid, k); x[s] = np.stack([vol[[j - 1, j, j + 1]] for j in c]); mk[s] = True; pos[s] = (c - lo) / max(hi - lo - 1, 1)
+    return torch.from_numpy(x), torch.from_numpy(mk), torch.from_numpy(pos)
+def make_views(x, res, fov=0.92):
+    n = x.shape[0]; dev = x.device; x = x.float().div_(255.0)
+    ang = torch.zeros(n, device=dev); sc = torch.full((n,), fov, device=dev); tx = ty = torch.zeros(n, device=dev)
+    cos, sin = torch.cos(ang) * sc, torch.sin(ang) * sc
+    theta = torch.stack([torch.stack([cos, -sin, tx], 1), torch.stack([sin, cos, ty], 1)], 1)
+    grid = F.affine_grid(theta, (n, 3, res, res), align_corners=False)
+    x = F.grid_sample(x, grid, mode='bilinear', padding_mode='zeros', align_corners=False)
+    mean = torch.tensor(MEAN_, device=dev).view(1, 3, 1, 1); std = torch.tensor(STD_, device=dev).view(1, 3, 1, 1)
+    return (x - mean) / std
+class KneeNet(nn.Module):
+    def __init__(self, backbone, dim=384, depth=2, drop=0.2, drop_path=0.1):
+        super().__init__()
+        import timm
+        self.enc = timm.create_model(backbone, pretrained=False, num_classes=0, drop_path_rate=drop_path)
+        self.proj = nn.Sequential(nn.Dropout(drop), nn.Linear(self.enc.num_features, dim), nn.LayerNorm(dim))
+        self.slot_emb = nn.Embedding(NS, dim)
+        self.pos_emb = nn.Sequential(nn.Linear(1, dim), nn.GELU(), nn.Linear(dim, dim))
+        layer = nn.TransformerEncoderLayer(dim, 8, dim * 2, dropout=0.1, batch_first=True, norm_first=True)
+        self.tf = nn.TransformerEncoder(layer, depth, enable_nested_tensor=False)
+        self.att = nn.Sequential(nn.Linear(dim, 256), nn.Tanh(), nn.Dropout(drop), nn.Linear(256, N_T))
+        self.cls_w = nn.Parameter(torch.randn(N_T, dim) * 0.02); self.cls_b = nn.Parameter(torch.zeros(N_T))
+    def forward(self, x, mask, pos, res):
+        b, s, k = x.shape[:3]
+        f = self.enc(make_views(x.reshape(b * s * k, *x.shape[3:]), res))
+        feat = f.view(b, s, k, -1)
+        slot = torch.arange(s, device=feat.device).view(1, s, 1).expand(b, s, k)
+        h = self.proj(feat) + self.slot_emb(slot) + self.pos_emb(pos.unsqueeze(-1).to(feat.dtype))
+        h = h.view(b, s * k, -1)
+        pad = ~mask.unsqueeze(-1).expand(b, s, k).reshape(b, s * k)
+        pad = pad & ~pad.all(1, keepdim=True)
+        h = self.tf(h, src_key_padding_mask=pad)
+        a = self.att(h).float().masked_fill(pad.unsqueeze(-1), -1e4).softmax(1)
+        pooled = torch.einsum('btc,btd->bcd', a.to(h.dtype), h)
+        return (pooled * self.cls_w).sum(-1) + self.cls_b
+"""
+
 READER_LEG = r"""
 # ============================ OUR LEG — 2b/3: reader ConvNeXt-Tiny 2.5D publik (goodpjw2008) =================
 import glob as _r_glob, subprocess as _r_sp, sys as _r_sys, time as _r_t, json as _r_json, os as _r_os
@@ -203,7 +268,7 @@ except Exception as _r_e:
     except Exception: pass
 """
 LEG = (LEG.replace("__KE_SRC__", repr(ke_src)).replace("__FILES__", repr(FILES)).replace("__WEIGHTS__", repr(WEIGHTS))
-          .replace("__KEVAL__", str(K_EVAL)).replace("__NEEDH__", str(NEED_H)))
+          .replace("__KEVAL__", str(K_EVAL)).replace("__KNEESRC__", repr(KNEE_SRC)).replace("__NEEDH__", str(NEED_H)))
 if READER == "goodpjw":
     LEG = LEG + READER_LEG
 compile(LEG, "<leg>", "exec")
