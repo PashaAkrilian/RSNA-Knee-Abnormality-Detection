@@ -70,6 +70,7 @@
 - Pindai: `scan_public_updates.py`. Probe DICOM: `kaggle_kernel_dicom_tags_probe/`.
 
 ## 5. Gotcha penting
+- **Komputasi tambahan yg SAH**: Colab GPU akun Google user (via `colab` CLI), kuota rekan `nxtirfan` (seizin dia), TPU/CPU akun utama. **DILARANG utk RSNA**: akun Kaggle kedua `pashaakrilian` (Rules: tak boleh masuk/submit dari banyak akun; tak boleh berbagi kode/data kompetisi secara privat di luar tim → risiko diskualifikasi seluruh tim).
 - Submisi nyata: log tak terbaca → rancang notebook dengan fallback (Apex/builder sudah memulihkan keluaran bila arm gagal; tetap dev-run stub dulu).
 - Penegasan SHA ckpt induk dipertahankan; anak tanpa hash (diubah di builder keluarga).
 - `find_weight_file` mencari nama berkas di `/kaggle/input/*/**` (lewati folder kompetisi); kernel_sources hasil kernel mount di `/kaggle/input/notebooks/<owner>/<slug>/`.
