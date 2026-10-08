@@ -1,3 +1,8 @@
 .claude/
 __pycache__/
 *.pyc
+
+# kredensial Kaggle JANGAN pernah masuk repo
+/kaggle.json
+**/kaggle.json
+kaggle.json.bak*
