@@ -1624,3 +1624,10 @@ Sumber: forum (746792 nartaa, 745861 hengck23, 745214, 743416, 733965), notebook
   Proyeksi penutupan 22 Okt (perkiraan kasar): perak ~0,951-0,953, emas ~0,961-0,963. Diam di 0,950 bisa turun ke perunggu.
 - Skenario (perkiraan penilaian, bukan pengukuran): diam 0,950 (perak ~40-50%); induk+anak+reader 0,951-0,952 (perak ~70%); + bagging 6-8 model resep tanpa OAI 0,952-0,954 (perak ~80%, emas <1%);
   + model OAI buatan sendiri (butuh daftar NDA oleh user + pemetaan label OAI->12 temuan yg belum diketahui) 0,954-0,957 (perak ~90% bila selesai, emas ~3%). Emas butuh >= ~0,962.
+
+- **KOREKSI 8 Okt 21:10 (atas §37b)**: skenario "bagging 6-8 model tanpa OAI -> 0,952-0,954" TERLALU OPTIMIS. Bukti goodpjw: stack 0,943 (bagging puluhan model tanpa OAI) @40% di atas ckpt OAI 0,949
+  -> 0,949 (nol tambahan); reader sendiri 0,933/0,929 @30% -> 0,948. Keunggulan model OAI = PENGETAHUAN (data), bukan varians; rata-rata model tanpa OAI tak menutupnya.
+  Perkiraan baru tanpa data OAI tambahan: plafon kita ~0,950-0,951 (anak + r224 + reader per-label: +0,000-0,001). Jalur lain = ckpt OAI BARU yg dipublikasikan peserta lain
+  (pantau `kaggle datasets list -s "rsna knee" --sort-by updated` + notebook >=0,951 tiap hari) lalu pasang sbg arm di pipeline Apex. Model OAI buatan sendiri TIDAK layak:
+  butuh akun NDA (hanya bisa dibuat user), unduhan ratusan GB, pemetaan label OAI->12 temuan tak diketahui, infrastruktur kita (RAM 5 GB, Kaggle 20 GB keluaran) tak cukup.
+  Peluang medali yg dikoreksi (kasar): perunggu ~95%, perak ~35-50% (garis perak diproyeksikan 0,951-0,953), emas ~0-2%.
