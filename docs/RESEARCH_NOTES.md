@@ -1614,3 +1614,6 @@ Sumber: forum (746792 nartaa, 745861 hengck23, 745214, 743416, 733965), notebook
   `rsna-knee-volcache-z{0,1,2}`; (2) kernel TPU `rsna-knee-train-tpu-oai-child` (`build_train_tpu_oai_child.py`): induk = ckpt r384 nartaa; anak a (KD lambda 0,5) & b (tanpa KD)
   di label fusi r1, LR_BB 1e-5/head 1e-4, 3 epoch, BN dibekukan, SWA epoch 2-3; juga mengeluarkan prediksi in-sample induk (parent_soft_k16.csv).
   (3) Setelah GPU pulih (10 Okt 07:00 WIB): notebook ensembel induk+anak(+reader goodpjw) -> probe LB; terima hanya bila >=0,951.
+- **Probe tag DICOM (8 Okt, kernel CPU `rsna-knee-dicom-tags-probe`, 455 studi / 2.537 seri)**: tidak ada PatientAge/Weight/Size/Birthdate/Institution/StudyDate; ADA PatientSex (M 47%/F 44%/O 4%/kosong 5%),
+  Laterality (47% seri), Manufacturer (11 nilai)/ManufacturerModelName (34)/MagneticFieldStrength/koil/TR/TE/matriks. PatientID unik per-studi (0 pasien berulang) -> tak ada kebocoran lintas studi.
+  Kesimpulan: fitur meta (jenis kelamin, vendor/model) terlalu lemah utk menambah di atas model citra 0,95 -> DITUTUP.
