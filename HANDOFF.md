@@ -12,7 +12,7 @@
 |---|---|
 | Papan | tim rank 292/5.490, LB **0,950** (Apex v2, sub 56943646). Bersih: replika goodpjw 0,944; d4-blend 0,943 |
 | Garis ANAK-OAI | **DITUTUP** (gold-58: induk 0,9214; anak c ep1 0,9207; anak e ep1 0,9138; campuran ≤+0,0015 = noise). Colab dihentikan, kaggle.json dihapus dari VM |
-| Sibling r224 | nartaa r224 (LB 0,945) gold-58 0,9150; campuran rank dgn induk @.2–.35 = 0,9238–0,9239 (≈+0,0014). **Notebook probe siap**: `kaggle_kernel_oai_fam_r224/` (slug `rsna-knee-oai-fam-r224`; induk .75 + r224 .25 + reader goodpjw per-label) — BELUM pernah dijalankan (butuh GPU) |
+| Sibling r224 | nartaa r224 (LB 0,945) gold-58 0,9150; campuran rank dgn induk @.2–.35 = 0,9238–0,9239 (≈+0,0014). **Notebook probe siap**: `kaggle_kernel_oai_fam_r224/` (slug `rsna-knee-oai-fam-r224`; induk .75 + r224 .25 + reader goodpjw per-label) — jalur kode r224 LOLOS uji CPU (kernel `rsna-knee-smoke-r224-cpu`: jendela & probabilitas IDENTIK dgn implementasi mandiri yg tervalidasi gold, hash kedua ckpt lolos); cabang konsumen CUDA (`infer_probs`) baru teruji saat commit-run GPU |
 | TPU anak a/b | `dimaspashaakrilian/rsna-knee-train-tpu-oai-child` v1 masih QUEUED (sejak 8 Okt 21:00). Bernilai rendah; boleh dibiarkan/dibatalkan lewat UI |
 | Kuota | GPU 0,00 h (pulih 10 Okt 07:00 WIB) · TPU ±14,5 h · submisi hari ini sisa 4 (reset 07:00 WIB) |
 | Tugas latar | `scan_loop.sh` (log `~/.cache/rsna_scan_log.txt`, tiap 20 mnt), `wait_tpu_start.sh` |
