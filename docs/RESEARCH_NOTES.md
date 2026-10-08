@@ -1593,3 +1593,24 @@ r2v8; v10 stok), menambah akar ke ASSET_ROOTS (pencari aset tidak mem-pin hash a
 - goodpjw (blend ckpt nartaa + stack 0,943): 60/40 = 0,949; + reader sendiri 0,933/0,929 @30% = 0,948. "Sisa headroom ada di label & data eksternal, bukan arsitektur". Enam notebook publik berhenti di 0,950.
 - Konsekuensi: blend/leg tambahan dari model berbasis data kompetisi saja TIDAK menambah di atas 0,949; jalur kita (reader KneeNet, murid CoAtNet) tidak lagi bernilai. KneeNet fold 0 TPU: gold-58 EMA 0,736/0,814/0,863/0,896 (ep1-4) lalu divergen ep5 (loss 7,5e10 -> 0,49 sampai ep14); penyebab dugaan: LR puncak + bf16/XLA tanpa grad-clip. Tidak diperbaiki (prioritas turun).
 - Kepatuhan: thread 743416 belum dijawab host (OAI, MRNet, fastMRI, KneeMRI, KneeXNet = "unclear"; KneeCoT = dilarang). Panduan host 27 Agu: registrasi/click-through DUA umumnya OK, persetujuan institusional tidak. Bobot nartaa berlisensi 'other' (research/edu termasuk kompetisi ini). Mitigasi: 1 submisi final bersih + 1 agresif.
+
+## 37. Riset mendalam 8 Okt malam: apa yang membawa ke emas, dan apa yang bisa kita jalankan tanpa GPU
+Sumber: forum (746792 nartaa, 745861 hengck23, 745214, 743416, 733965), notebook publik (goodpjw 0,949 blend, Apex, bee's knees), dataset Kaggle.
+- **Tangga skor nartaa** (LB publik, satu CoAtNet): all-data 80 irisan/78 jendela 0,939 -> 96 irisan 384 px 0,940 -> label blend+JEV 0,942 ->
+  224 px 0,940 -> **+contoh OAI (label bermasker) 0,945 (+0,005)** -> resep 384 full-field + OAI 0,948 -> crop native 320 0,948 -> cermin anatomis 0,949.
+  Tanpa OAI resep ini mentok ~0,942. Gagal: flip lebar semua bidang (0,940->0,939), crop 304/288 (-0,001/-0,002), epoch 14 tanpa SWA (-0,001),
+  latih ulang BN "diperbaiki" (0,948->0,944), latih ulang crop 320 (0,949->0,946). Noise LB antar-latih ~0,002.
+- **Pola atas (Tucker Arrants, peringkat 14)**: "sebagian besar model saya di kisaran 0,95 rendah" dgn ekstraksi label Qwen sederhana; ia ragu perbaikan label
+  berarti. => 0,959-0,964 = ENSEMBEL banyak model ~0,951 (diduga data eksternal + banyak seed), bukan satu trik. Jarak emas = +0,009 dari plafon publik 0,950.
+- Label emas dibuat BUTA terhadap laporan (komentar Prateek Grover); label laporan bisa salah (mis. Efusi=1 padahal "no knee effusion").
+- Host MENGIZINKAN LLM hosted utk memproses Competition Data termasuk teks laporan (733965; Rules 2.6.b) selama layanan terjangkau & murah. Peserta (rank 65/81/594)
+  memakai LLM utk relabel; "Claude-labels" -> satu model visi 0,942.
+- **Data eksternal**: thread 743416 BELUM dijawab host (Okt 8). OAI = akses terkontrol NDA (login.gov + DUC click-through); peserta (hengck23) pakai ChatGPT utk
+  mengunduh. Di Kaggle ada mirror publik MRNet (6 GB), fastMRI knee (45-128 GB) + anotasi fastMRI+ (155 KB), OAI-3D-DESS (9,5 GB), OAI-ZIB (26 GB) tanpa label 12-temuan.
+  Label yg berguna (OA, efusi, sinovitis, Baker, kontusio) praktis hanya dari OAI/MOAKS (NDA) -> kita TIDAK memakai data eksternal mentah; hanya bobot publik.
+- Plafon publik: enam notebook di 0,950 (semua turunan ckpt nartaa 0,949/0,945 + reader goodpjw). Probe goodpjw: stack 0,943 @40% -> 0,949; reader sendiri @30% -> 0,948.
+  Soup fine-tune dgn init sama (c5) NEGATIF (§35a) -> "anak" harus punya info baru (label fusi + KD).
+- **Program yg dijalankan (TPU/CPU, tanpa GPU)**: (1) cache `z` = geometri persis korpus ckpt nartaa (96 irisan: 26/22/18/12/18, 384 px, rentang 2-98%) via 3 kernel CPU
+  `rsna-knee-volcache-z{0,1,2}`; (2) kernel TPU `rsna-knee-train-tpu-oai-child` (`build_train_tpu_oai_child.py`): induk = ckpt r384 nartaa; anak a (KD lambda 0,5) & b (tanpa KD)
+  di label fusi r1, LR_BB 1e-5/head 1e-4, 3 epoch, BN dibekukan, SWA epoch 2-3; juga mengeluarkan prediksi in-sample induk (parent_soft_k16.csv).
+  (3) Setelah GPU pulih (10 Okt 07:00 WIB): notebook ensembel induk+anak(+reader goodpjw) -> probe LB; terima hanya bila >=0,951.

@@ -11,7 +11,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent
 tag, img, slots_key, lo, hi = sys.argv[1], int(sys.argv[2]), sys.argv[3], float(sys.argv[4]), float(sys.argv[5])
 SL = {"SLOTS64": "[('Sagittal', 1, 18), ('Sagittal', 0, 14), ('Coronal', 1, 12), ('Coronal', 0, 8), ('Axial', -1, 12)]",
-      "SLOTS44": "[('Sagittal', 1, 12), ('Sagittal', 0, 10), ('Coronal', 1, 8), ('Coronal', 0, 6), ('Axial', -1, 8)]"}
+      "SLOTS44": "[('Sagittal', 1, 12), ('Sagittal', 0, 10), ('Coronal', 1, 8), ('Coronal', 0, 6), ('Axial', -1, 8)]",
+      "SLOTS96": "[('Sagittal', 1, 26), ('Sagittal', 0, 22), ('Coronal', 1, 18), ('Coronal', 0, 12), ('Axial', -1, 18)]"}   # geometri ckpt nartaa d96/r384
 ke = (REPO / "build_train_coatnet_ke_src.txt").read_text()
 def must(t, a, b):
     assert a in t, f"tak ketemu: {a[:60]!r}"; return t.replace(a, b, 1)
