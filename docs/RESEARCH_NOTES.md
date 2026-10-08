@@ -1586,3 +1586,10 @@ r2v8; v10 stok), menambah akar ke ASSET_ROOTS (pencari aset tidak mem-pin hash a
   Batas perunggu (top 10%) = rank 527 (~0,944), perak (5%) = 263 (~0,946), emas = rank 20 (~0,957). Kita sebelumnya rank 750 @0,943.
 - Rencana: (1) kunci 0,944 (pilih sbg salah satu dari 2 submisi final); (2) variasi bobot reader (0,40) setelah kuota GPU pulih 10 Okt (commit-run butuh 2 GPU);
   (3) latih reader sendiri bergaya KneeNet (ConvNeXt-Tiny IN22k, token per slot + transformer studi) di label fusi, di TPU, utk leg-2 independen.
+
+## 36f. Status 8 Okt 2026: tim 0,950 (rank 292), plafon publik, dan risiko OAI
+- Submisi 56943646 (notebook publik "Apex Grandmaster Stack" v2, ItsmeSujan) = 0,950 -> rank 292/5.490. Isi: ckpt nartaa r384 (Raptor CoAtNet, 96 irisan, 94 jendela, 2 tampilan plain+mirror anatomis; solo 0,949) + reader ConvNeXt goodpjw dgn bobot per-label (0,03-0,35). Ckpt dilatih dgn 2.399 lutut OAI (NDA, akses terkontrol) + label blend (JEV/LLM/report) di SEMUA data kompetisi (termasuk 58 gold -> gold-58 tak bisa dipakai utk evaluasi ckpt ini).
+- Ambang (snapshot 8 Okt, 5.490 tim): emas rank<=20 = 0,959; perak <=274 = 0,950; perunggu <=549 = 0,947; dataran 0,950 = rank 146-397 (252 tim); >=0,951:145; >=0,952:122; >=0,953:101; maks 0,964.
+- goodpjw (blend ckpt nartaa + stack 0,943): 60/40 = 0,949; + reader sendiri 0,933/0,929 @30% = 0,948. "Sisa headroom ada di label & data eksternal, bukan arsitektur". Enam notebook publik berhenti di 0,950.
+- Konsekuensi: blend/leg tambahan dari model berbasis data kompetisi saja TIDAK menambah di atas 0,949; jalur kita (reader KneeNet, murid CoAtNet) tidak lagi bernilai. KneeNet fold 0 TPU: gold-58 EMA 0,736/0,814/0,863/0,896 (ep1-4) lalu divergen ep5 (loss 7,5e10 -> 0,49 sampai ep14); penyebab dugaan: LR puncak + bf16/XLA tanpa grad-clip. Tidak diperbaiki (prioritas turun).
+- Kepatuhan: thread 743416 belum dijawab host (OAI, MRNet, fastMRI, KneeMRI, KneeXNet = "unclear"; KneeCoT = dilarang). Panduan host 27 Agu: registrasi/click-through DUA umumnya OK, persetujuan institusional tidak. Bobot nartaa berlisensi 'other' (research/edu termasuk kompetisi ini). Mitigasi: 1 submisi final bersih + 1 agresif.

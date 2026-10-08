@@ -159,7 +159,7 @@ class KneeNet(nn.Module):
 
 def make_model():
     m = KneeNet('convnext_tiny')
-    wf = sorted({os.path.realpath(p) for p in _bglob('hf_weights/models--timm--convnext_tiny.fb_in22k_ft_in1k/snapshots/*/model.safetensors')})
+    wf = sorted({os.path.realpath(p) for p in _bglob('model.safetensors') if 'convnext-tiny-in22k' in p})
     assert len(wf) == 1, wf
     from safetensors.torch import load_file
     r = m.enc.load_state_dict(load_file(wf[0]), strict=False)
@@ -304,7 +304,7 @@ accel = ({"enable_gpu": False, "enable_tpu": True} if DEVKIND == "tpu" else {"en
 (OUT / "kernel-metadata.json").write_text(json.dumps({
     "id": f"dimaspashaakrilian/{SLUG}", "title": "RSNA Knee " + TAG.replace("-", " "), "code_file": f"{SLUG}.ipynb",
     "language": "python", "kernel_type": "notebook", "is_private": True, "enable_internet": False, **accel,
-    "dataset_sources": ["dimaspashaakrilian/rsna-knee-fused-labels-r1", "inyalala/dl-vision-weights"],
+    "dataset_sources": ["dimaspashaakrilian/rsna-knee-fused-labels-r1", "dimaspashaakrilian/timm-convnext-tiny-in22k"],
     "kernel_sources": [f"dimaspashaakrilian/rsna-knee-volcache-w{i}" for i in range(3)],
     "competition_sources": ["rsna-knee-abnormality-detection"]}, indent=2))
 print("built:", OUT.name, "| slug:", SLUG, "| dev:", DEVKIND, "| folds:", fold_list, "| epochs", EPOCHS, "| res", RES, "| k", KWIN)

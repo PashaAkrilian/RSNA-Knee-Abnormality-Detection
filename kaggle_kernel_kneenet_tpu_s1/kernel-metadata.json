@@ -10,7 +10,7 @@
   "enable_tpu": true,
   "dataset_sources": [
     "dimaspashaakrilian/rsna-knee-fused-labels-r1",
-    "inyalala/dl-vision-weights"
+    "dimaspashaakrilian/timm-convnext-tiny-in22k"
   ],
   "kernel_sources": [
     "dimaspashaakrilian/rsna-knee-volcache-w0",
