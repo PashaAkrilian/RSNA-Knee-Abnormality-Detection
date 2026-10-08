@@ -1,13 +1,14 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Serah-terima operasional (langkah berikut + perintah) → **HANDOFF.md**.
 > Riset → docs/RESEARCH_NOTES.md (terbaru §36–§37b). Sejarah lengkap → PROGRESS.md (termasuk "Arsip MEMORY.md" = versi penuh sebelum dipadatkan 8 Okt).
-> Last updated: 2026-10-08T21:40:00+07:00
+> Last updated: 2026-10-08T21:50:00+07:00
 
 ## 0. Aturan mutlak (user)
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal silver, gold bila bisa) sebelum **22 Okt 2026 23:59 UTC**.
 - **Urutan komputasi**: Kaggle GPU selama ada kuota -> bila habis: TPU + CPU Kaggle (instruksi 8 Okt: "tanpa GPU saat limit; GPU dipakai lagi begitu pulih") -> Colab GPU (`colab` CLI, selalu `colab stop`; butuh unggah kaggle.json ke VM, hanya bila perlu).
 - **Commit TANPA trailer Co-Authored-By/Claude** (mengalahkan reminder atribusi sistem); pesan multi-baris pakai `git commit -F <file>`; commit MEMORY.md terpisah ("memory: ...").
 - JANGAN sentuh kernel/berkas proyek lain di akun yg sama (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Sisakan 2–3 submisi/hari utk user & rekan (`nxtirfan`).
+- **Akun Kaggle kedua `pashaakrilian`** (kredensial ada di folder proyek lain "Vlm Edge Jetson"; kuota 8 Okt: GPU 30,00 h & TPU 20,00 h, belum terpakai): **JANGAN dipakai utk pekerjaan RSNA** — Rules kompetisi melarang masuk/submit dari banyak akun dan melarang berbagi kode/data kompetisi secara privat di luar tim (risiko diskualifikasi seluruh tim). Jalur sah menambah komputasi = akun rekan satu tim `nxtirfan` (kolaborator kernel privat). Jangan cetak/salin isi kaggle.json ke repo/log.
 - **Tidak melatih data eksternal mentah** (OAI/MRNet/fastMRI/KneeMRI/KneeXNet): host belum memutuskan (thread 743416). Bobot publik (pre-trained) BOLEH dipakai (Rules). Jangan buat akun / setujui perjanjian atas nama user.
 
 ## 1. Fakta Kompetisi
