@@ -4,7 +4,7 @@
 Dasar: kaggle_base/apex_grandmaster_stack_20261008.ipynb (sel 4 = skrip inferensi nartaa dgn daftar ARMS berbobot -> rank-mean tertimbang;
 sel 9 = fusi per-label dgn reader goodpjw). Anak = ckpt hasil kernel TPU `rsna-knee-train-tpu-oai-child` (format sama dgn ckpt induk), jadi cukup
 (1) menambah entri ARMS, (2) melonggarkan penegasan SHA hanya utk ckpt induk, (3) menempelkan kernel TPU sbg kernel_sources.
-Argumen key=value:  name=<nama> children=<f1,f2,..> src=<kernel slug sumber anak> wp=<bobot induk> wc=<bobot tiap anak> reader=1|0
+Argumen key=value:  name=<nama> children=<f1,f2,..> src=<slug1[,slug2]> (kernel TPU dan/atau GPU penghasil anak) wp=<bobot induk> wc=<bobot tiap anak> reader=1|0
 Slug hasil: rsna-knee-oai-fam-<name>.
 """
 import json
@@ -15,7 +15,7 @@ REPO = Path(__file__).resolve().parent
 A = dict(kv.split("=", 1) for kv in sys.argv[1:])
 NAME = A.get("name", "fam1")
 CHILDREN = [c for c in A.get("children", "oai_child_a_swa.pt,oai_child_b_swa.pt").split(",") if c]
-SRC = A.get("src", "dimaspashaakrilian/rsna-knee-train-tpu-oai-child")
+SRCS = [x for x in A.get("src", "dimaspashaakrilian/rsna-knee-train-tpu-oai-child").split(",") if x]
 WP = float(A.get("wp", "0.4")); WC = float(A.get("wc", "0.3"))
 READER = A.get("reader", "1") == "1"
 SLUG = f"rsna-knee-oai-fam-{NAME}".replace("_", "-")
@@ -54,6 +54,6 @@ meta = dict(meta0)
 meta.update({"id": f"dimaspashaakrilian/{SLUG}", "title": "RSNA Knee oai fam " + NAME.replace("-", " ").replace("_", " "),
              "code_file": f"{SLUG}.ipynb", "is_private": True, "keywords": ["gpu"]})
 meta.pop("id_no", None)
-meta["kernel_sources"] = [SRC]
+meta["kernel_sources"] = SRCS
 (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2))
 print("built:", OUT.name, "| slug:", SLUG, "| arms:", 1 + len(CHILDREN), "| bobot induk/anak:", WP, WC, "| reader:", READER)
