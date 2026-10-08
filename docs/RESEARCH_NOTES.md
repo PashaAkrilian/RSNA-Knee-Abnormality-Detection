@@ -1634,3 +1634,7 @@ Sumber: forum (746792 nartaa, 745861 hengck23, 745214, 743416, 733965), notebook
 
 - **KOREKSI 8 Okt 22:25 (Colab T4, diagnostik induk)**: AUC gold-58 ckpt induk nartaa r384 pada cache z (94 window 384 px penuh, 1 tampilan, fp16) = **0,9214**. Itu BUKAN angka "dilatih pada gold" (akan ~0,98+): gold-58 hanya
   dipakai nartaa utk seleksi epoch (README: "reused for selection") -> mendekati out-of-sample. Maka gold-58 BISA jadi uji RELATIF anak vs induk (sinyal kasar, SE ~0,01; selisih <0,005 = noise). Anak c (Colab) dan a/b (TPU) mencetak gold per epoch.
+
+- **Hasil pertama anak (Colab T4, 8 Okt 23:44 WIB)**: anak `c` (induk r384 nartaa; label fusi r1; KD lambda 0,5; LR_BB 1e-5, LR_HEAD 1e-4; seed 3) setelah 1 epoch (4.349 studi, ±78 mnt, 1,05 dtk/studi): loss label 0,5845 (400 studi pertama) -> 0,5586 (rata2 epoch), KD 0,551 -> 0,573,
+  gold-58 0,9207 vs induk 0,9214 (selisih -0,0007 = noise). Anak hampir identik dgn induk -> sbg anggota ensembel nilainya ~0. Diganti anak `e` dgn resep r2 (LR_BB 2e-5, LR_HEAD 1e-3, WD 0,05, KD 0,25) utk menguji apakah label fusi bisa menggeser model berguna.
+  Catatan metodologis: pada r2c5 dulu gold-58 TIDAK naik (0,9200 vs 0,9213) padahal LB naik +0,006 -> gold-58 buruk utk mendeteksi perbaikan kecil; keputusan akhir tetap dari LB.

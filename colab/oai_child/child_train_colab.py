@@ -158,7 +158,7 @@ def eval_gold(m, tag):
 K_WIN = int(os.environ.get('K_WIN', '12'))
 EPOCHS = int(os.environ.get('EPOCHS', '3'))
 ACC_STUDIES = 8
-LR_BB, LR_HEAD, WD, WARMUP, LRQ = 1e-5, 1e-4, 0.01, 100, 30
+LR_BB, LR_HEAD, WD, WARMUP, LRQ = float(os.environ.get('LR_BB', '1e-5')), float(os.environ.get('LR_HEAD', '1e-4')), float(os.environ.get('WD', '0.01')), int(os.environ.get('WARMUP', '100')), 30
 VARIANTS = json.loads(os.environ['VARIANTS'])   # (tag, lambda_KD, seed)
 
 # --- basis: induk di gold-58 ---
