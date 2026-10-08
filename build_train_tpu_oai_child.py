@@ -52,7 +52,7 @@ tlog('setup OK')
 '''
 
 TRAIN = '''\
-import numpy as np, pandas as pd, os, glob as _glob, copy, math, random, contextlib, gc
+import numpy as np, pandas as pd, os, json, glob as _glob, copy, math, random, contextlib, gc
 import torch, torch.nn as nn, torch.nn.functional as F
 import torch_xla.core.xla_model as xm
 from concurrent.futures import ThreadPoolExecutor
@@ -134,17 +134,28 @@ def bn_eval(m):
     for mod in m.modules():
         if isinstance(mod, (nn.BatchNorm2d, nn.BatchNorm1d)): mod.eval()
 
+_CHUNK_OK = {}
 @torch.no_grad()
 def predict(m, xw, chunk):
-    """xw (K,3,H,W) -> probabilitas (12,). Backbone per potongan tetap (bentuk tetap utk XLA), kepala atas SEMUA window."""
-    fs = []
-    for c in xw.split(chunk):
-        with AC(): fs.append(m.backbone(c.to(DEV)).float())
-        xm.mark_step()
-    feats = torch.cat(fs, 0).unsqueeze(0)
-    with AC(): lg = m.head(feats).float()
-    xm.mark_step()
-    return torch.sigmoid(lg)[0].cpu().numpy()
+    """xw (K,3,H,W) -> probabilitas (12,). Backbone per potongan (bentuk tetap utk XLA), kepala atas SEMUA window.
+    Bila potongan besar gagal (mis. OOM HBM) -> turun ke potongan 16 (sisa 14 dst) dan ingat pilihan itu."""
+    chunk = _CHUNK_OK.get(chunk, chunk)
+    for attempt in (chunk, 16):
+        try:
+            fs = []
+            for c in xw.split(attempt):
+                with AC(): fs.append(m.backbone(c.to(DEV)).float())
+                xm.mark_step()
+            feats = torch.cat(fs, 0).unsqueeze(0)
+            with AC(): lg = m.head(feats).float()
+            xm.mark_step()
+            out = torch.sigmoid(lg)[0].cpu().numpy()
+            _CHUNK_OK[chunk] = attempt
+            return out
+        except Exception as e:
+            tlog(f'predict gagal (chunk={attempt}): {type(e).__name__}: {str(e)[:160]}')
+            if attempt == 16: raise
+    raise RuntimeError('predict gagal')
 
 def auc1(yy, ss):
     pos, neg = ss[yy == 1], ss[yy == 0]
@@ -203,8 +214,9 @@ def run_child(tag, lam, seed):
         ep_l, ep_kd, nacc = 0.0, 0.0, 0
         for ii in range(len(order)):
             try:
-                si, xw = futs[ii % 6].result()
-                if nxt < len(order): futs[ii % 6] = ex.submit(prep, int(order[nxt])); nxt += 1
+                f_ = futs[ii % 6]
+                if nxt < len(order): futs[ii % 6] = ex.submit(prep, int(order[nxt])); nxt += 1   # isi ulang SEBELUM result() agar pemetaan tak rusak bila gagal
+                si, xw = f_.result()
                 xb = xw.unsqueeze(0).to(DEV)
                 yb = torch.from_numpy(y_lab[si])[None].to(DEV); wb = torch.from_numpy(W_CONF[si])[None].to(DEV)
                 with AC(): lg = model(xb).float()
@@ -229,6 +241,11 @@ def run_child(tag, lam, seed):
                 tlog(f'{tag} ep{ep+1} {ii+1}/{len(order)} loss_y~{ep_l/(ii+1):.4f} kd~{ep_kd/(ii+1):.4f} lr_bb={LR_BB*lr_scale(step):.2e}')
         tlog(f'=== {tag} EPOCH {ep+1}/{EPOCHS} | loss_y={ep_l/max(1,len(order)):.4f} kd={ep_kd/max(1,len(order)):.4f}')
         sd = {k_: v_.detach().cpu().float() for k_, v_ in model.state_dict().items()}
+        try:
+            torch.save({'arch': ARCH, 'res': 384, 'model': {k_: v_.detach().cpu() for k_, v_ in model.state_dict().items()}},
+                       f'/kaggle/working/oai_child_{tag}_ep{ep+1}.pt')
+        except Exception as e:
+            tlog(f'simpan ep{ep+1} gagal: {type(e).__name__}: {e}')
         if ep >= 1:     # SWA atas akhir epoch 2..E
             swa = sd if swa is None else {k_: swa[k_] + sd[k_] for k_ in swa}; nswa += 1
         if ep < EPOCHS - 1:
@@ -238,7 +255,8 @@ def run_child(tag, lam, seed):
          f'{np.mean([np.corrcoef(P0[:, j], P1[:, j])[0, 1] for j in range(N_T)]):.4f}')
     torch.save({'arch': ARCH, 'res': 384, 'model': {k_: v_.detach().cpu() for k_, v_ in model.state_dict().items()}},
                f'/kaggle/working/oai_child_{tag}_final.pt')
-    if swa is not None and nswa > 0:
+    try:
+      if swa is not None and nswa > 0:
         sdm = {k_: (v_ / nswa) for k_, v_ in swa.items()}
         # buffer integer (num_batches_tracked) tidak boleh float
         ref = model.state_dict()
@@ -249,12 +267,18 @@ def run_child(tag, lam, seed):
         P2, A2 = eval_gold(model, f'{tag} SWA(ep2..{EPOCHS})')
         torch.save({'arch': ARCH, 'res': 384, 'model': {k_: v_.detach().cpu() for k_, v_ in model.state_dict().items()}},
                    f'/kaggle/working/oai_child_{tag}_swa.pt')
+    except Exception as e:
+        tlog(f'SWA {tag} gagal: {type(e).__name__}: {e}')
     tlog(f'anak {tag} disimpan | gold(induk)={A0:.4f} final={A1:.4f}')
     ex.shutdown(wait=False)
     del model, opt; gc.collect()
 
 for tag, lam, seed in VARIANTS:
-    run_child(tag, float(lam), int(seed))
+    try:
+        run_child(tag, float(lam), int(seed))
+    except Exception as e:
+        import traceback; tlog(f'ANAK {tag} GAGAL: {type(e).__name__}: {e}'); tlog(traceback.format_exc()[-1500:])
+        gc.collect()
 
 # --- prediksi induk in-sample (K=16 window merata, 1 tampilan) utk diagnosis memorisasi & fusi label r2 ---
 tlog('prediksi induk pada semua studi latih ...')
