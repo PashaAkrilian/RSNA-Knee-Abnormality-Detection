@@ -1638,3 +1638,11 @@ Sumber: forum (746792 nartaa, 745861 hengck23, 745214, 743416, 733965), notebook
 - **Hasil pertama anak (Colab T4, 8 Okt 23:44 WIB)**: anak `c` (induk r384 nartaa; label fusi r1; KD lambda 0,5; LR_BB 1e-5, LR_HEAD 1e-4; seed 3) setelah 1 epoch (4.349 studi, ±78 mnt, 1,05 dtk/studi): loss label 0,5845 (400 studi pertama) -> 0,5586 (rata2 epoch), KD 0,551 -> 0,573,
   gold-58 0,9207 vs induk 0,9214 (selisih -0,0007 = noise). Anak hampir identik dgn induk -> sbg anggota ensembel nilainya ~0. Diganti anak `e` dgn resep r2 (LR_BB 2e-5, LR_HEAD 1e-3, WD 0,05, KD 0,25) utk menguji apakah label fusi bisa menggeser model berguna.
   Catatan metodologis: pada r2c5 dulu gold-58 TIDAK naik (0,9200 vs 0,9213) padahal LB naik +0,006 -> gold-58 buruk utk mendeteksi perbaikan kecil; keputusan akhir tetap dari LB.
+
+## 37c. Evaluasi gold-58 induk/anak/r224 (Colab T4, 9 Okt 01:30) — garis anak-OAI ditutup
+Induk nartaa r384 (cache z, 94 window, fp16): plain 384 = 0,9214; cermin 0,9221; crop 320 plain/cermin = 0,9219/0,9225 (konsisten dgn temuan nartaa: crop 320 ≈ 384 penuh, cermin +0,0005-0,001).
+Sibling r224 (crop tengah 307 -> 224, 1 tampilan) = 0,9150. Anak c ep1 = 0,9207 (≈induk; KD kuat, LR kecil). Anak e ep1 (resep r2: LR_BB 2e-5, LR_HEAD 1e-3, WD .05, KD .25) = 0,9138 (turun).
+Campuran rank terhadap induk(320+cermin ≈0,9225): +r224 (bobot .2/.35/.5) = 0,9239/0,9238/0,9223; +c1 = 0,9233/0,9232/0,9225; +e1 = 0,9226/0,9231/0,9204; semua 4 = 0,9232. Semua selisih <=0,0015 << SE 0,01.
+Kesimpulan: (1) fine-tune ckpt OAI pada label fusi tidak menggeser model ke arah yg terukur-berguna: setelan lembut = salinan induk, setelan kuat = sedikit turun; (2) satu-satunya tambahan yg bernilai (kecil) = sibling r224 (diduga +0,001 di LB). (3) Fine-tune tanpa data OAI tidak bisa menambah pengetahuan OAI — konsisten dgn probe goodpjw.
+Dipertimbangkan, TIDAK dikerjakan: OrthoDiffusion (3 U-Net difusi 3D pra-latih MRI lutut, MIT, bobot 527 MB/bidang; input 16x256x256, fitur blok mid_2 pada t=100; dataset Kaggle `prvsiyan/orthodiffusion-official-knee-mri-foundation`) — fitur beku + kepala linear pd label lemah diperkirakan <0,93 solo (keluarga lemah tak menambah di atas 0,949) dan biaya rekayasa tinggi.
+Rencana 10 Okt: probe LB tunggal "Apex + r224 (bobot ~.25 di dalam campuran CoAtNet)"; terima bila >=0,951.

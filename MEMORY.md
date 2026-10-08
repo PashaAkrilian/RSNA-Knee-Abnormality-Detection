@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Serah-terima operasional (langkah berikut + perintah) → **HANDOFF.md**.
 > Riset → docs/RESEARCH_NOTES.md (terbaru §36–§37b). Sejarah lengkap → PROGRESS.md (termasuk "Arsip MEMORY.md" = versi penuh sebelum dipadatkan 8 Okt).
-> Last updated: 2026-10-08T23:55:00+07:00
+> Last updated: 2026-10-09T01:40:00+07:00
 
 ## 0. Aturan mutlak (user)
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal silver, gold bila bisa) sebelum **22 Okt 2026 23:59 UTC**.
@@ -31,7 +31,7 @@
 ## 3. Status (8 Okt 2026 ~21:40 WIB)
 - **Cache `rsna-knee-volcache-z{0,1,2}`** (CPU; geometri persis korpus nartaa: 96 irisan 26/22/18/12/18, 384 px, rentang 2–98%) = COMPLETE, 4.407/4.407 ok, sampel tervalidasi (96×384×384, 5 slot terisi).
 - **TPU `dimaspashaakrilian/rsna-knee-train-tpu-oai-child`** (v1) = **QUEUED** sejak ±21:00 WIB (batas sesi TPU = 1). Isi: induk = ckpt r384 nartaa; anak a (KD 0,5, seed 1) lalu b (tanpa KD, seed 2), 3 epoch, LR bb 1e-5/head 1e-4, BN dibekukan, SWA epoch 2–3; lalu prediksi induk in-sample (`parent_soft_k16.csv`). ≈6 jam; keluaran `oai_child_{a,b}_{ep1..3,final,swa}.pt`. Log awal HARUS dicek (belum pernah jalan; XLA).
-- **Colab GPU (T4)**: anak `c` (KD 0,5, LR 1e-5/1e-4, seed 3) selesai epoch 1: gold-58 **0,9207 vs induk 0,9214** (≈sama; loss label 0,5586, KD 0,573) -> setelan terlalu konservatif, anak≈induk, nilai ensembel ≈0. `c` DIJEDA di batas epoch 1 (status `resume_c.pt` + dataset cadangan; lanjut dgn `VARIANTS='[["c",0.5,3]]'`). Sejak 23:50 WIB berjalan anak `e` (KD 0,25, LR_BB 2e-5/LR_HEAD 1e-3/WD 0,05 = resep r2 yg dulu +0,006 pada c5, seed 5, 3 epoch, ±4 jam). Resumable + cadangan dataset `rsna-knee-oai-child-colab-ckpt`. Aturan user: GPU akun utama habis -> Colab. Smoke CPU & GPU (termasuk kill+resume) LOLOS.
+- **Colab GPU (T4) SELESAI/DIHENTIKAN 9 Okt 01:35** (sesi di-`colab stop`, kaggle.json dihapus dari VM): anak `c` (KD .5, LR 1e-5) ep1 gold-58 0,9207; anak `e` (resep r2, KD .25) ep1 0,9138; induk 0,9214. Evaluasi inferensi gold-58 (58 studi, SE ≈0,01): induk 384 plain 0,9214 | +cermin 0,9221 | crop 320 0,9219 (+cermin 0,9225) | sibling r224 0,9150 | campuran rank induk(320+cermin)+r224 @.2/.35/.5 = 0,9239/0,9238/0,9223 | +c1 @.2 0,9233 | +e1 @.35 0,9231. => anak TIDAK menambah (≈induk atau lebih rendah); r224 +0,001 (selisih ≈noise). Garis anak-OAI DIHENTIKAN (jangan buat penanda `rsna_gpu_launch_ok`; peluncur GPU anak c,d dibatalkan). Status latih terakhir di dataset `rsna-knee-oai-child-colab-ckpt` (resume c,e).
 - **Siap-pakai belum jalan**: `build_train_gpu_oai_child.py` (anak c,d paralel 2×T4); `build_submit_oai_family.py` (notebook Apex + arm anak → `kaggle_kernel_oai_fam_fam1`, slug `rsna-knee-oai-fam-fam1`, kernel_sources = kernel TPU di atas); `scan_public_updates.py`.
 - **Kuota**: GPU 0,00 jam (pulih **Sabtu 10 Okt 07:00 WIB** — bukan tanggal 9); TPU sisa 14,49 jam; submisi hari ini sisa 4 (reset 07:00 WIB, 9 Okt → 5 baru). CPU: 0 sesi berjalan.
 - **Submisi tim terbaik**: 0,950 (Apex v2) · 0,944 (replika goodpjw) · 0,943 (d4-blend, in-arm r2c5).
