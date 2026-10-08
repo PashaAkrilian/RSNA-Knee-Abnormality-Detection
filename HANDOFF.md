@@ -54,6 +54,15 @@
 - Cek ulang thread 743416. Pilih 2: **bersih** (replika 0,944 atau perbaikannya tanpa ckpt OAI) + **agresif** (terbaik LB: Apex/keluarga). Bila host melarang OAI sebelum penutupan → dua-duanya jalur bersih.
 - Tandai di UI Kaggle (Submissions → select 2) — jangan lupa; tanpa pilihan Kaggle ambil 2 terbaik publik.
 
+### F. Colab GPU (aturan user 8 Okt: GPU akun utama habis -> Colab) — RESUMABLE
+- Sesi: `colab new -s rsna --gpu T4` (T4 15 GB, 13 GB RAM, 2 vCPU, disk ~58 GB bebas). Unggah kaggle.json AKUN UTAMA: `colab upload ~/.kaggle/kaggle.json /root/.kaggle/kaggle.json -s rsna`; di VM `pip install -U kaggle` (CLI 2.2.4).
+- Bootstrap (≈30–40 mnt, 42 GB, ~19 MB/s): `colab upload colab/bootstrap_child.py /content/bootstrap_child.py -s rsna` lalu di VM `nohup python3 -u /content/bootstrap_child.py > /content/bootstrap.log &` (menurunkan CSV kompetisi, label fusi r1, ckpt induk nartaa, cache z0–z2 ke `/content/kin/...`; file mendarat di `.../volcache/volcache/` — pola glob skrip sudah menangani).
+- Skrip latih mandiri: `python3 build_train_gpu_oai_child.py - 0 x colab` -> `colab/oai_child/child_train_colab.py` (path `/kaggle/input`->`/content/kin`, `/kaggle/working`->`/content/kw`). Unggah bersama `colab/oai_child/run_child.sh` & `sync_ckpt.py` ke `/content/`.
+- Jalankan: `nohup bash /content/run_child.sh > /content/run_child.out 2>&1 &` (auto-restart sampai 8× bila proses mati; env `VARIANTS` default `[["c",0.5,3]]`, `RESUME_DIR=/content/kw`, `CKPT_EVERY=400`). Cadangan off-VM: `nohup python3 -u /content/sync_ckpt.py > /content/sync.log &` (tiap 40 mnt ke dataset privat `dimaspashaakrilian/rsna-knee-oai-child-colab-ckpt`).
+- **Terputus / VM hilang**: (1) hanya CLI putus -> `~/.local/share/uv/tools/google-colab-cli/bin/python colab/readopt.py rsna`; proses di VM tetap jalan. (2) proses mati -> `run_child.sh` otomatis lanjut dari `resume_<tag>.pt` (log `RESUME c: epoch E, studi N`). (3) VM dilepas server (±5 jam) -> `colab new`, ulangi bootstrap, lalu `kaggle datasets download dimaspashaakrilian/rsna-knee-oai-child-colab-ckpt --unzip -p /content/kw` dan jalankan ulang `run_child.sh` (melanjutkan; varian bertanda `done_<tag>.flag` dilewati).
+- Pantau lokal: `bash colab/watch_child.sh` (cetak EPOCH/RESUME/gold/GAGAL/SYNC/DONE; readopt otomatis). Kecepatan terukur: ≈1,3 dtk/studi (T4 fp16, K=12, KD) -> ±4,7 jam utk 3 epoch.
+- Selesai: hasil di dataset `rsna-knee-oai-child-colab-ckpt` (`oai_child_c_swa.pt` dll.) -> `python3 build_submit_oai_family.py name=famc children=oai_child_c_swa.pt ds=dimaspashaakrilian/rsna-knee-oai-child-colab-ckpt`. LALU: `colab stop -s rsna` dan hapus `/root/.kaggle/kaggle.json` di VM bila masih hidup.
+
 ## 3. Perintah referensi
 - Status/keluaran: `kaggle kernels status <slug>` · `kaggle kernels output <slug> -p <dir> [--file-pattern X]` · `kaggle quota` · `kaggle competitions submissions rsna-knee-abnormality-detection`.
 - Papan: `kaggle competitions leaderboard rsna-knee-abnormality-detection -d -p <dir>` (CSV; tim kita "Krazy KIller").

@@ -57,6 +57,7 @@ import torch, torch.nn as nn, torch.nn.functional as F
 import torch_xla.core.xla_model as xm
 from concurrent.futures import ThreadPoolExecutor
 KE = _KE_NS
+SCALER = None
 DEV = xm.xla_device()
 LAB = KE['LAB']; N_T = len(LAB)
 ROOT = KE['find_test_root']()
@@ -185,6 +186,24 @@ parent, ARCH = build_model(); parent.to(DEV).eval()
 for p_ in parent.parameters(): p_.requires_grad_(False)
 P0, A0 = eval_gold(parent, 'induk')
 
+from collections import deque
+RESUME_DIR = os.environ.get('RESUME_DIR')                 # mis. /content/kw (Colab); kosong = tanpa resume (perilaku TPU/Kaggle tak berubah)
+CKPT_EVERY = int(os.environ.get('CKPT_EVERY', '400'))     # simpan status lanjut tiap >=400 studi (di batas langkah optimizer)
+
+def _atomic_save(obj, path):
+    tmp = path + '.tmp'; torch.save(obj, tmp); os.replace(tmp, path)
+
+def _rng_state():
+    st = {'py': random.getstate(), 'np': np.random.get_state(), 'torch': torch.get_rng_state()}
+    if torch.cuda.is_available(): st['cuda'] = torch.cuda.get_rng_state_all()
+    return st
+
+def _rng_restore(st):
+    random.setstate(st['py']); np.random.set_state(st['np']); torch.set_rng_state(st['torch'])
+    if 'cuda' in st and torch.cuda.is_available():
+        try: torch.cuda.set_rng_state_all(st['cuda'])
+        except Exception: pass
+
 def run_child(tag, lam, seed):
     tlog(f'===== ANAK {tag}: lambda_KD={lam} seed={seed} epochs={EPOCHS} =====')
     random.seed(seed); np.random.seed(seed); torch.manual_seed(seed)
@@ -199,23 +218,42 @@ def run_child(tag, lam, seed):
         return max(1, round(sc * LRQ)) / LRQ
     def set_lr(s):
         sc = lr_scale(s); opt.param_groups[0]['lr'] = LR_BB * sc; opt.param_groups[1]['lr'] = LR_HEAD * sc
+    done_flag = f'{RESUME_DIR}/done_{tag}.flag' if RESUME_DIR else None
+    if done_flag and os.path.exists(done_flag):
+        tlog(f'anak {tag} sudah selesai (flag) -> dilewati'); return
+    rp = f'{RESUME_DIR}/resume_{tag}.pt' if RESUME_DIR else None
     swa, nswa = None, 0
+    start_ep, ii0, order0, step = 0, 0, None, 0
+    ep_l0, ep_kd0, nacc0 = 0.0, 0.0, 0
+    if rp and os.path.exists(rp):
+        R = torch.load(rp, map_location='cpu', weights_only=False)
+        model.load_state_dict(R['model']); opt.load_state_dict(R['opt'])
+        try:
+            if R.get('scaler') is not None: SCALER.load_state_dict(R['scaler'])
+        except Exception as e_:
+            tlog(f'scaler tak dimuat: {type(e_).__name__}')
+        start_ep, ii0, order0, step = int(R['ep']), int(R['ii']), R['order'], int(R['step'])
+        swa, nswa = R['swa'], int(R['nswa']); ep_l0, ep_kd0, nacc0 = float(R['ep_l']), float(R['ep_kd']), int(R['nacc'])
+        _rng_restore(R['rng']); del R; gc.collect()
+        tlog(f'RESUME {tag}: epoch {start_ep+1}, studi {ii0}, langkah optimizer {step}')
     ex = ThreadPoolExecutor(3)
     def prep(si):
         sid = train_ids[si]
         vol, mask = load_study(sid)
         return si, rand_windows(vol, mask, K_WIN)
-    step = 0
-    for ep in range(EPOCHS):
+    for ep in range(start_ep, EPOCHS):
         model.train(); bn_eval(model)
         opt.zero_grad(set_to_none=True)
-        order = np.random.permutation(len(train_ids))
-        futs = [ex.submit(prep, int(i)) for i in order[:6]]; nxt = 6
-        ep_l, ep_kd, nacc = 0.0, 0.0, 0
-        for ii in range(len(order)):
+        if ep == start_ep and order0 is not None:
+            order = np.asarray(order0); i0 = ii0; ep_l, ep_kd, nacc = ep_l0, ep_kd0, nacc0
+        else:
+            order = np.random.permutation(len(train_ids)); i0 = 0; ep_l, ep_kd, nacc = 0.0, 0.0, 0
+        pq = deque(ex.submit(prep, int(order[j])) for j in range(i0, min(i0 + 6, len(order)))); nxt = i0 + 6
+        last_ck = i0
+        for ii in range(i0, len(order)):
             try:
-                f_ = futs[ii % 6]
-                if nxt < len(order): futs[ii % 6] = ex.submit(prep, int(order[nxt])); nxt += 1   # isi ulang SEBELUM result() agar pemetaan tak rusak bila gagal
+                f_ = pq.popleft()
+                if nxt < len(order): pq.append(ex.submit(prep, int(order[nxt]))); nxt += 1   # isi ulang SEBELUM result() agar antrean tak rusak bila gagal
                 si, xw = f_.result()
                 xb = xw.unsqueeze(0).to(DEV)
                 yb = torch.from_numpy(y_lab[si])[None].to(DEV); wb = torch.from_numpy(W_CONF[si])[None].to(DEV)
@@ -237,6 +275,14 @@ def run_child(tag, lam, seed):
                 for p_ in (bb_params + head_params):
                     if p_.grad is not None: p_.grad.div_(ACC_STUDIES)
                 set_lr(step); opt.step(); xm.mark_step(); opt.zero_grad(set_to_none=True); step += 1
+            if RESUME_DIR and (nacc % ACC_STUDIES == 0) and (ii + 1 - last_ck) >= CKPT_EVERY and ii + 1 < len(order):
+                try:
+                    _atomic_save({'tag': tag, 'ep': ep, 'ii': ii + 1, 'order': order, 'step': step, 'nacc': nacc, 'ep_l': ep_l, 'ep_kd': ep_kd,
+                                  'model': {k_: v_.detach().cpu() for k_, v_ in model.state_dict().items()}, 'opt': opt.state_dict(),
+                                  'scaler': (SCALER.state_dict() if SCALER is not None else None), 'swa': swa, 'nswa': nswa, 'rng': _rng_state()}, rp)
+                    last_ck = ii + 1
+                except Exception as e_:
+                    tlog(f'simpan status lanjut gagal: {type(e_).__name__}: {str(e_)[:100]}')
             if (ii + 1) % 400 == 0:
                 tlog(f'{tag} ep{ep+1} {ii+1}/{len(order)} loss_y~{ep_l/(ii+1):.4f} kd~{ep_kd/(ii+1):.4f} lr_bb={LR_BB*lr_scale(step):.2e}')
         tlog(f'=== {tag} EPOCH {ep+1}/{EPOCHS} | loss_y={ep_l/max(1,len(order)):.4f} kd={ep_kd/max(1,len(order)):.4f}')
@@ -248,6 +294,13 @@ def run_child(tag, lam, seed):
             tlog(f'simpan ep{ep+1} gagal: {type(e).__name__}: {e}')
         if ep >= 1:     # SWA atas akhir epoch 2..E
             swa = sd if swa is None else {k_: swa[k_] + sd[k_] for k_ in swa}; nswa += 1
+        if RESUME_DIR:
+            try:
+                _atomic_save({'tag': tag, 'ep': ep + 1, 'ii': 0, 'order': None, 'step': step, 'nacc': 0, 'ep_l': 0.0, 'ep_kd': 0.0,
+                              'model': {k_: v_.detach().cpu() for k_, v_ in model.state_dict().items()}, 'opt': opt.state_dict(),
+                              'scaler': (SCALER.state_dict() if SCALER is not None else None), 'swa': swa, 'nswa': nswa, 'rng': _rng_state()}, rp)
+            except Exception as e_:
+                tlog(f'simpan status batas-epoch gagal: {type(e_).__name__}: {str(e_)[:100]}')
         if ep < EPOCHS - 1:
             _, a_ = eval_gold(model, f'{tag} ep{ep+1}')
     P1, A1 = eval_gold(model, f'{tag} final')
@@ -269,6 +322,10 @@ def run_child(tag, lam, seed):
                    f'/kaggle/working/oai_child_{tag}_swa.pt')
     except Exception as e:
         tlog(f'SWA {tag} gagal: {type(e).__name__}: {e}')
+    if done_flag:
+        open(done_flag, 'w').write('ok')
+        try: os.remove(rp)
+        except Exception: pass
     tlog(f'anak {tag} disimpan | gold(induk)={A0:.4f} final={A1:.4f}')
     ex.shutdown(wait=False)
     del model, opt; gc.collect()

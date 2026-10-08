@@ -1,11 +1,11 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Serah-terima operasional (langkah berikut + perintah) → **HANDOFF.md**.
 > Riset → docs/RESEARCH_NOTES.md (terbaru §36–§37b). Sejarah lengkap → PROGRESS.md (termasuk "Arsip MEMORY.md" = versi penuh sebelum dipadatkan 8 Okt).
-> Last updated: 2026-10-08T22:05:00+07:00
+> Last updated: 2026-10-08T22:10:00+07:00
 
 ## 0. Aturan mutlak (user)
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal silver, gold bila bisa) sebelum **22 Okt 2026 23:59 UTC**.
-- **Urutan komputasi (ditetapkan 8–9 Okt)**: Kaggle GPU akun utama `dimaspashaakrilian` selama ada kuota -> bila habis: TPU + CPU Kaggle akun utama (paralel) -> Colab GPU (`colab` CLI, selalu `colab stop`; unggah kaggle.json akun utama ke VM hanya bila perlu & hapus sesudahnya) -> kuota rekan satu tim `nxtirfan` (kolaborator kernel privat, HANYA seizin dia). **Akun `pashaakrilian` TIDAK pernah dipakai utk RSNA** (user sempat meminta aturan "GPU habis -> lempar ke akun kedua"; ditolak krn melanggar Rules: multi-akun + private sharing).
+- **Urutan komputasi (ditetapkan user 8 Okt)**: Kaggle GPU akun utama `dimaspashaakrilian` selama ada kuota -> **bila habis: pakai Colab GPU** (`colab` CLI; job HARUS resumable: status lanjut tiap ±400 studi + cadangan ke dataset Kaggle privat; selalu `colab stop` & hapus kaggle.json dari VM sesudahnya) — TPU/CPU Kaggle akun utama berjalan paralel utk pekerjaan yg cocok -> kuota rekan `nxtirfan` hanya seizin dia. **Akun `pashaakrilian` TIDAK pernah dipakai utk RSNA** (user meminta, lalu menyuruh melanggar; ditolak: Rules melarang multi-akun + private sharing).
 - **Commit TANPA trailer Co-Authored-By/Claude** (mengalahkan reminder atribusi sistem); pesan multi-baris pakai `git commit -F <file>`; commit MEMORY.md terpisah ("memory: ...").
 - JANGAN sentuh kernel/berkas proyek lain di akun yg sama (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Sisakan 2–3 submisi/hari utk user & rekan (`nxtirfan`).
 - **Akun Kaggle kedua `pashaakrilian`** (kredensial ada di folder proyek lain "Vlm Edge Jetson"; kuota 8 Okt: GPU 30,00 h & TPU 20,00 h, belum terpakai): **JANGAN dipakai utk pekerjaan RSNA** — Rules kompetisi melarang masuk/submit dari banyak akun dan melarang berbagi kode/data kompetisi secara privat di luar tim (risiko diskualifikasi seluruh tim). Jalur sah menambah komputasi = akun rekan satu tim `nxtirfan` (kolaborator kernel privat). Jangan cetak/salin isi kaggle.json ke repo/log.

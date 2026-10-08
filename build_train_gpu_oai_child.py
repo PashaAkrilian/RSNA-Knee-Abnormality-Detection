@@ -11,6 +11,7 @@ Pemakaian:
   python3 build_train_gpu_oai_child.py                       # anak c (KD .5) & d (KD .25), 2 GPU
   python3 build_train_gpu_oai_child.py '[[["c",0.5,3]],[["d",0.25,4]]]' 0
   python3 build_train_gpu_oai_child.py - 1 smoke              # uji alur di CPU (kernel rsna-knee-smoke-oai-child-cpu)
+  python3 build_train_gpu_oai_child.py - 0 x colab            # skrip mandiri utk VM Colab -> colab/oai_child/child_train_colab.py
 """
 import json
 import re
@@ -74,7 +75,13 @@ T = sub1(T, "xw = KE['eval_windows'](vol, mask, k=94, res=RES, norm=KE['NORM']) 
          "xw = KE['eval_windows'](vol, mask, k=EVAL_K, res=RES, norm=KE['NORM'])     # (94,3,384,384) fp32\n        P.append(predict(m, xw, EVAL_CH))")
 T = sub1(T, "allids = [s for s in ALL_IDS if s in MOUNTED]", "allids = [s for s in ALL_IDS if s in MOUNTED]\nif os.environ.get('SMOKE'): allids = allids[:8]")
 
+COLAB = len(sys.argv) > 4 and sys.argv[4] == "colab"
 script = SETUP + "\n_KE_SRC = " + repr(ke_src) + "\n_KE_NS = {'__name__': '_ke'}\nexec(compile(_KE_SRC, '<raptor>', 'exec'), _KE_NS)\nprint('_KE loaded', flush=True)\n" + T
+if COLAB:    # VM Colab: /kaggle read-only -> pohon tiruan di /content (lihat colab/bootstrap_child.py)
+    script = script.replace('/kaggle/input', '/content/kin').replace('/kaggle/working', '/content/kw').replace('/kaggle/tmp', '/content/kw')
+    (REPO / 'colab' / 'oai_child').mkdir(exist_ok=True)
+    (REPO / 'colab' / 'oai_child' / 'child_train_colab.py').write_text(script)
+    print('colab: ditulis colab/oai_child/child_train_colab.py', len(script), 'byte')
 compile(script, "<gpu-child>", "exec")
 
 EXTRA_ENV = "dict(SMOKE='6', SMOKE_GOLD='4', EPOCHS='2', K_WIN='4', EVAL_K='8')" if SMOKE else "{}"
