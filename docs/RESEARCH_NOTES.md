@@ -1631,3 +1631,6 @@ Sumber: forum (746792 nartaa, 745861 hengck23, 745214, 743416, 733965), notebook
   (pantau `kaggle datasets list -s "rsna knee" --sort-by updated` + notebook >=0,951 tiap hari) lalu pasang sbg arm di pipeline Apex. Model OAI buatan sendiri TIDAK layak:
   butuh akun NDA (hanya bisa dibuat user), unduhan ratusan GB, pemetaan label OAI->12 temuan tak diketahui, infrastruktur kita (RAM 5 GB, Kaggle 20 GB keluaran) tak cukup.
   Peluang medali yg dikoreksi (kasar): perunggu ~95%, perak ~35-50% (garis perak diproyeksikan 0,951-0,953), emas ~0-2%.
+
+- **KOREKSI 8 Okt 22:25 (Colab T4, diagnostik induk)**: AUC gold-58 ckpt induk nartaa r384 pada cache z (94 window 384 px penuh, 1 tampilan, fp16) = **0,9214**. Itu BUKAN angka "dilatih pada gold" (akan ~0,98+): gold-58 hanya
+  dipakai nartaa utk seleksi epoch (README: "reused for selection") -> mendekati out-of-sample. Maka gold-58 BISA jadi uji RELATIF anak vs induk (sinyal kasar, SE ~0,01; selisih <0,005 = noise). Anak c (Colab) dan a/b (TPU) mencetak gold per epoch.

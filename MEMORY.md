@@ -27,7 +27,7 @@
 - **Label**: gold-58 tak pernah ditimpa. Label fusi r1 (guru+OOF murid, w=0,5) selaras gold 0,9348 (vs LLM ~0,90): `dimaspashaakrilian/rsna-knee-fused-labels-r1`. Efek: fine-tune c5 0,927 → r2c5 0,933 (solo). Di dalam stack publik efeknya netral.
 - **Terukur (LB solo)**: c5 0,927; v3 0,932; r2c5 0,933; 4 murid fold 0,934 (CoAtNet jenuh ~0,934). Leg luar lemah (murid, RadImageNet, fleet) pada stack 0,943 → 0,942 (MENURUNKAN). Hanya keluarga independen kuat (~0,93, reader goodpjw 30%) yg menambah (+0,001) pada stack 0,943 → 0,944.
 - **DITUTUP (jangan ulangi)**: KneeNet reader sendiri (fold 0 TPU diverge ep5; plafon 0,93 tak menambah di atas 0,949); CoAtNet/ResNet init-ImageNet lambat; model soup (init sama); bagging tanpa OAI; metadata DICOM (tanpa usia, jenis kelamin lemah, PatientID unik); resolusi 288; bobot global v3.
-- Gold-58 TERKONTAMINASI utk ckpt publik (dilatih di semua data) dan SE ≈0,01 → keputusan besar HANYA dari submisi nyata; LB 3 desimal, noise antar-latih ≈0,002.
+- Gold-58: utk stack publik terkontaminasi; utk ckpt induk nartaa TIDAK jelas dilatih pada gold — AUC induk pada cache z (384 penuh, 94 window, 1 tampilan, fp16) = **0,9214** (terlihat out-of-sample, hanya dipakai utk seleksi epoch) → boleh jadi pembanding RELATIF anak vs induk (SE ≈0,01; sinyal kasar). Keputusan besar HANYA dari submisi nyata; LB 3 desimal, noise antar-latih ≈0,002.
 
 ## 3. Status (8 Okt 2026 ~21:40 WIB)
 - **Cache `rsna-knee-volcache-z{0,1,2}`** (CPU; geometri persis korpus nartaa: 96 irisan 26/22/18/12/18, 384 px, rentang 2–98%) = COMPLETE, 4.407/4.407 ok, sampel tervalidasi (96×384×384, 5 slot terisi).
