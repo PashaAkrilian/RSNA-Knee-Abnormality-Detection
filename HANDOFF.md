@@ -18,7 +18,8 @@
 | TPU anak | `dimaspashaakrilian/rsna-knee-train-tpu-oai-child` v1 **QUEUED** (belum pernah jalan; XLA belum teruji pada skrip ini) |
 | Kuota | GPU 0,00 h (pulih 10 Okt 07:00 WIB) · TPU 14,49 h · submisi hari ini sisa 4 |
 | Git | semua commit lokal; push ke origin (lihat §6) |
-| Tugas latar | `wait_tpu_start.sh` (notifikasi saat TPU keluar antrean) mungkin masih hidup; bila tidak ada kabar, cek manual |
+| Colab GPU | sesi `rsna` (T4) — anak `c` (KD 0,5, seed 3, 3 epoch) berjalan sejak 8 Okt 22:22 WIB via `run_child.sh` (resumable) + `sync_ckpt.py` (cadangan tiap 40 mnt ke dataset `rsna-knee-oai-child-colab-ckpt`); log VM `/content/child_c.log`; pantau: `bash colab/watch_child.sh` |
+| Tugas latar | `wait_tpu_start.sh` (notifikasi saat TPU keluar antrean), `scan_loop.sh` (log `~/.cache/rsna_scan_log.txt`); bila tidak ada kabar, cek manual |
 
 ## 2. Urutan kerja (persis)
 ### A. Begitu job TPU RUNNING (≤ beberapa jam dari 21:00 WIB 8 Okt)
