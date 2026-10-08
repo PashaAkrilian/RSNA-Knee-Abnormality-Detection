@@ -1617,3 +1617,10 @@ Sumber: forum (746792 nartaa, 745861 hengck23, 745214, 743416, 733965), notebook
 - **Probe tag DICOM (8 Okt, kernel CPU `rsna-knee-dicom-tags-probe`, 455 studi / 2.537 seri)**: tidak ada PatientAge/Weight/Size/Birthdate/Institution/StudyDate; ADA PatientSex (M 47%/F 44%/O 4%/kosong 5%),
   Laterality (47% seri), Manufacturer (11 nilai)/ManufacturerModelName (34)/MagneticFieldStrength/koil/TR/TE/matriks. PatientID unik per-studi (0 pasien berulang) -> tak ada kebocoran lintas studi.
   Kesimpulan: fitur meta (jenis kelamin, vendor/model) terlalu lemah utk menambah di atas model citra 0,95 -> DITUTUP.
+
+## 37b. Peta skor -> peringkat (papan 8 Okt, 5.490 tim) dan garis medali yang BERGERAK
+- Skor publik -> peringkat tengah: 0,950 ~271 (dataran 146-397) | 0,951 ~134 | 0,952 ~112 | 0,953 ~91 | 0,954 ~77 | 0,955 ~68 | 0,956 ~54 | 0,957 ~40 | 0,958 ~32 | 0,959 ~23 | 0,960 ~16 | 0,961 ~10 | 0,962 ~6 | 0,963 ~3.
+- Garis bergerak cepat: perak (5%) 0,945 (3 Okt) -> 0,946 (6 Okt) -> 0,950 (8 Okt); perunggu 0,943 -> 0,944 -> 0,947; emas (rank 20) 0,957 -> 0,959; #1 0,961 -> 0,964.
+  Proyeksi penutupan 22 Okt (perkiraan kasar): perak ~0,951-0,953, emas ~0,961-0,963. Diam di 0,950 bisa turun ke perunggu.
+- Skenario (perkiraan penilaian, bukan pengukuran): diam 0,950 (perak ~40-50%); induk+anak+reader 0,951-0,952 (perak ~70%); + bagging 6-8 model resep tanpa OAI 0,952-0,954 (perak ~80%, emas <1%);
+  + model OAI buatan sendiri (butuh daftar NDA oleh user + pemetaan label OAI->12 temuan yg belum diketahui) 0,954-0,957 (perak ~90% bila selesai, emas ~3%). Emas butuh >= ~0,962.
