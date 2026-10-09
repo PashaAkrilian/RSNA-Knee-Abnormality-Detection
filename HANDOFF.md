@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 10 Okt 2026 ~01:00 WIB. Baca MEMORY.md dulu (aturan mutlak + fakta), lalu file ini (apa yang harus dilakukan, urut waktu).
+> Diperbarui 10 Okt 2026 ~01:10 WIB. Baca MEMORY.md dulu (aturan mutlak + fakta), lalu file ini (apa yang harus dilakukan, urut waktu).
 > Setelah tiap unit kerja: perbarui "Status" di bawah + MEMORY.md §3 (commit terpisah "memory: ...").
 
 ## 0. Untuk USER (manusia)
@@ -14,10 +14,10 @@
 | Papan | tim ~rank 563/5.584, LB **0,950** (Apex v2, sub 56943646; dataran 455 tim, garis perak ~0,951+). Bersih: replika goodpjw 0,944; d4-blend 0,943 |
 | Garis ANAK-OAI | **DITUTUP** (gold-58: induk 0,9214; anak c ep1 0,9207; anak e ep1 0,9138; campuran ≤+0,0015 = noise). Colab dihentikan, kaggle.json dihapus dari VM |
 | Sibling r224 | **SELESAI & DITUTUP**: submisi 57012143 (9 Okt) = **0,950 → BUANG** (varian r224/tweak bobot = noise) |
-| Fork rabari (jalur silver) | **submisi 57015077 (9 Okt 23:37) PENDING** — `alverlfarfaraway/rsna-knee-dual-engine-tta-fork` (raptor r384+MIRROR_TTA ⊕ reader ⊕ r224@0,3; input publik); gate ≥0,951 = perak; monitor `progress_submisi.log` |
+| Fork rabari (jalur silver) | **SELESAI & DITUTUP**: 57015077 = **0,950 → BUANG** (10 Okt ~00:45; MIRROR_TTA+r224@0,3 tak mengangkat; keluarga r384+reader+r224 = plafon 0,950) |
 | Arm heliosli OF (0,951) | **BLOKIR**: compact-v1 retired 9 Okt + ofl-ssl-weights 403 — fork lain (versia-7, blend3) ikut mati |
 | TPU anak a/b | **MATI** 9 Okt (XLA batch_norm_backward) setelah antre 6 jam — garis anak-OAI ditutup |
-| Kuota | GPU utama 0,00 h (pulih **10 Okt 07:00 WIB**) · akun2 29,9h · akun3 27,7h · submisi 9 Okt terpakai 3/5 (**sisa 2**; reset 07:00 WIB) |
+| Kuota | GPU utama 0,00 h (pulih **10 Okt 07:00 WIB**) · akun2 29,9h · akun3 27,7h · submisi 9 Okt terpakai 3/5 (**sisa 2**, reset 07:00 WIB) |
 | Tugas latar | `scan_loop.sh` (log `~/.cache/rsna_scan_log.txt`, tiap 20 mnt), `wait_tpu_start.sh` |
 | Git | **sinkron dgn origin** (`7fa2137`, 9 Okt 23:5x); `git fetch` dulu sebelum push — rekan `nxtirfan` bisa push |
 

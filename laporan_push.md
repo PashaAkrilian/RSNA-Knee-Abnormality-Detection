@@ -25,7 +25,7 @@
 | 5 | 8 Okt | 56943646 | **Apex v2**: nartaa r384 solo + reader goodpjw | **0,950** | — | **BASELINE / terbaik** | stack cepat (±30 mnt) |
 | 6 | 9 Okt 20:34 | 57010586 | template akun kedua (smoke) | — | — | n/a | uji jalur submisi akun2 |
 | 7 | 9 Okt 21:39 | **57012143** | **probe r224**: Apex r384 .75 + nartaa r224 .25 + reader | **0,950** | 0,000 | **BUANG** (noise; varian r224/tweak bobot TUTUP) | commit-run OK; skor 23:16 WIB; monitor 30 mnt: `progress_submisi.log` |
-| 8 | 9 Okt 23:37 | **57015077** | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | **PENDING** | — | gate: **≥0,951 → perak** | commit-run COMPLETE 23:35 (output valid 12 kolom); monitor `progress_submisi.log` (PID 40710); sisa jatah 2 |
+| 8 | 9 Okt 23:37 | **57015077** | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | **0,950** | 0,000 | **BUANG** (klaim "0,951+" author TIDAK terbukti; keluarga r384+reader+r224 = plafon 0,950) | skor 10 Okt ~00:45; sisa jatah 2 (reset 07:00 WIB) |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -63,7 +63,7 @@
 ### Fase 0 — MALAM INI (9 Okt)
 - [x] Pantau skor **57012143** → **0,950 = BUANG** (23:16 WIB, monitor selesai).
 - [x] Fork rabari ter-push v1 (23:33) → commit-run RUNNING.
-- [ ] **Setelah commit-run COMPLETE → SUBMIT** (sisa jatah 3) → skor ±1–1,5 jam → gate **≥0,951 = PERAK**; restart monitor `progress_submisi.sh`.
+- [x] Fork rabari di-submit (57015077) → **0,950 = BUANG** (10 Okt ~00:45 WIB). Keluarga r384+reader+r224 (dgn/dgn tanpa MIRROR_TTA) = plafon 0,950 — TUTUP.
 - [ ] **User: tempel izin panitia ke `docs/IZIN_AKUN_KEDUA.md`** (Risiko #1, lihat §6).
 
 ### Fase 1 — 10–14 Okt (GPU utama pulih 10 Okt 07:00 WIB)
