@@ -44,12 +44,12 @@
 | **`heliosli/rsna-knee-blend-gold` (#3, 126 vote)** | klaim 0,951 ×2 notebook; **TAPI BLOKIR 9 Okt**: `heliosli/rsna-knee-compact-v1` RETIRED 13:50 UTC ("files not accessible", README) + `heliosli/rsna-knee-ofl-ssl-weights` **403** → manifest/bundle S5 tak tersedia; fold0 tetap publik (best.pt parts + code + anatomy.pt). Fork `evgendvorkin/rsna-versia-7`, `samanyu1808/blend3` ikut mati. | **BLOKIR** — jangan buang waktu; pantau bila heliosli buka lagi |
 | **`rabari9999/rsna-knee-sota-dual-engine-stack-lb-0-951` (9 Okt 22:55, klaim 0,951+)** | input publik PENUH (nartaa + goodpjw + comp); raptor r384 **+ MIRROR_TTA anatomis** ⊕ reader goodpjw per-finding ⊕ r224@0,3; **commit-run author sukses** (log bersih, dual-T4, spearman kaki 0,50–0,79); fork v1 kami ter-push 23:33 & RUNNING | **→ KANDIDAT AKTIF (slot 8)**; gate ≥0,951 |
 | `sameerk2004/rsna-knee-sil-d5f-ft7030`, `rainycloudss/...v6` | d5f = fine-tune dgn 5 dataset label LLM (resep placebo per riset); v6 = fork Apex kita (input sama) | pantau; jangan submisi dulu |
-| `lixin73/rsna-knee-mavit-336px-v51-weights` + `hengck23/mavit-288` | arsitektur independen (MaVIT), belum ada angka | opsi arm-2 bila fork rabari gagal |
+| `hengck23/mavit-288-baseline` (MaVIT) | **SUDAH DIEVALUASI 10 Okt 00:56** via commit-run `MODE=local` (GRATIS; `alverlfarfaraway/mavit-288-gold58-eval`): **gold-58 MEAN AUC 0,9202** (ACL .962 / Effusion .980, tapi Lateral OA .826 / Synovitis .823) — di bawah induk nartaa (.9214) & reader (.93) = di bawah ambang leg penambah | **DITOLAK** (tak buang submisi); `lixin73/...mavit-336px` = tanpa kernel publik → tak bisa disubmit |
 
 ### 3c. Aksi murah yg MASIH layak (urut bukti, REVISI 9 Okt 23:40)
 1. **Fork rabari dual-engine (AKTIF, slot 8)** — commit-run → submit → gate ≥0,951; kalau lolos, ini peraknya. Inti beda vs kita = **MIRROR_TTA anatomis** pada raptor r384 + geometri blend (r224@0,3 coat-side).
 2. **Kalau fork ≥0,951**: replikasi TTA-nya ke Apex kita (eval dulu di gold-58: induk+cermin sudah tercatat 0,9214→0,9221) → varian kedua; lalu blend rank-pct 3-leg (r384-TTA ⊕ reader ⊕ r224) utk slot agresif.
-3. **Kalau fork =0,950**: jalur berikutnya = MaVIT (`lixin73`/`hengck23`, arsitektur independen) sbg arm baru; cek dulu commit status + input publiknya.
+3. **Kalau fork =0,950** → terjadi: MaVIT **sudah dievaluasi & DITOLAK** (gold-58 0,9202, eval gratis via commit-run `MODE=local` — pola ini dipakai ulang utk arm lain). Sisa: TTA/variance-reduction (triangulasi dulu) + scan pagi 10 Okt.
 4. Rekonstruksi arm OF heliosli: **BLOKIR** (manifest/ckpt S5 retired) — hanya jika heliosli membuka lagi atau muncul salinan legal; jangan investasi waktu dulu.
 5. TTA/seed-avg/variance-reduction lain: nilai di OOF+gold-58 (gratir), submit hanya bila lulus 2/3 (bukti +0,001–0,003).
 6. Fast-follower scan harian: `python3 scan_public_updates.py` — syarat arm baru: bukti skor ≥0,951 **dan input publik runnable**.
@@ -68,7 +68,7 @@
 
 ### Fase 1 — 10–14 Okt (GPU utama pulih 10 Okt 07:00 WIB)
 - [ ] Bila fork ≥0,951: bawa MIRROR_TTA ke Apex kita (gold-58: cermin +0,0007) → varian kedua + blend 3-leg; kunci 2 kandidat final beda mekanisme.
-- [ ] Bila fork =0,950: uji arm MaVIT (cek input publik + commit status dulu), lalu TTA/variance-reduction (triangulasi dulu).
+- [x] Fork =0,950 → MaVIT dievaluasi: **gold-58 0,9202 = DITOLAK** (eval gratis commit-run `MODE=local`; replikable utk arm lain).
 - [ ] Rekonstruksi heliosli OF: **tunda** (blokir); pantau bila dataset dibuka lagi.
 - [ ] Anggaran: ≤2 submisi/hari utk agen, sisakan 2–3 utk user & `nxtirfan`; keputusan dari OOF/gold-58 + gate LB, BUKAN selisih 0,001.
 
