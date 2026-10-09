@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Serah-terima operasional (langkah berikut + perintah) → **HANDOFF.md**.
 > Riset → docs/RESEARCH_NOTES.md (terbaru §36–§37b). Sejarah lengkap → PROGRESS.md (termasuk "Arsip MEMORY.md" = versi penuh sebelum dipadatkan 8 Okt).
-> Last updated: 2026-10-09T21:25:00+07:00
+> Last updated: 2026-10-09T21:55:00+07:00
 
 ## 0. Aturan mutlak (user)
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal silver, gold bila bisa) sebelum **22 Okt 2026 23:59 UTC**.
@@ -58,6 +58,7 @@
 - Basis notebook di repo: `kaggle_base/apex_grandmaster_stack_20261008.ipynb` (+ `_metadata.json`), `kaggle_base/pj_rsna_knee_d4_blend_20260928.ipynb`.
 - Builder: `build_train_tpu_oai_child.py`, `build_train_gpu_oai_child.py`, `build_submit_oai_family.py`, `build_submit_plus.py`, `build_submit_multi.py`, `build_volcache_cpu2.py <tag> <img> <SLOTS64|SLOTS44|SLOTS96> <lo> <hi>`, `scan_public_updates.py`, `label_engineering/fuse_multi_student.py`.
 - Forum penting: 743416 (data eksternal, belum dijawab), 733965 (LLM boleh), 746792 (resep nartaa 0,949), 745861 (tips hengck23), 745214 (label), 744519 (bidang/modalitas test).
+- Riset ensembling/bobot (9 Okt, 4 Q: teknik top publik, post-mortem imaging, pilih bobot N kecil, sinyal vs noise) → `research_notes/Strategi meraih perak RSNA/teknik_ensembel_bobot.md`. Inti: rank-mean = standar; lift terbukti = arm baru/TTA (+0,001–0,003), per-label exclude (tanpa angka), optimisasi bobot halus +0,0002; ambang Δ<0,002 = noise.
 
 ## Protokol Update (WAJIB diikuti agent apa pun yang bekerja di repo ini)
 
