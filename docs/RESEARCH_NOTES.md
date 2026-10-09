@@ -1658,3 +1658,7 @@ Rencana 10 Okt: probe LB tunggal "Apex + r224 (bobot ~.25 di dalam campuran CoAt
 
 - **Job TPU anak-OAI (9 Okt)**: setelah ±6 jam antre, berjalan 5 menit lalu MATI ("Kernel died") di `native_batch_norm_backward` XLA saat anak `a` mulai dilatih (BN dibekukan `eval()` + backward di XLA = crash fatal). Sebelum itu: induk di TPU = gold-58 **0,9212** (≈ Colab GPU 0,9214 → lintas-perangkat konsisten). Garis anak sudah ditutup, tidak diperbaiki.
 - **Push kernel GPU 9 Okt 07:34**: `Kernel push error: Maximum weekly GPU quota of 30.00 hours reached` → commit-run notebook probe r224 TIDAK mungkin di akun utama sebelum reset 10 Okt 07:00 WIB (jalan keluar sah: kuota `nxtirfan`, lihat docs/PAKET_REKAN_TIM.md).
+
+## 37e. KOREKSI kepatuhan OAI (9 Okt malam)
+Host (thread 741819, 21 Sep): OAI sbg data eksternal TIDAK melanggar aturan bila dapat diakses semua peserta tanpa tinjauan/persetujuan institusional atau tim hukum, dan gratis (host tak mengontrol syarat data OAI). Peserta peringkat 185 (thread 743416): daftar NDA sbg individu, Login.gov+email, disetujui seketika, grup OAI "Institutional Approval Required: No".
+=> Koreksi §37b/penilaian sebelumnya ("akses butuh penandatangan institusi / abu-abu"): jalur OAI TERBUKA dan sah menurut syarat host (risiko tersisa: blokir negara, syarat data NDA tentang redistribusi -> jangan unggah data mentah ke Kaggle, hanya bobot). Ini mengubah rencana perak: model OAI buatan sendiri + ensembel dgn ckpt nartaa = pengungkit nyata (+0,003-0,006).

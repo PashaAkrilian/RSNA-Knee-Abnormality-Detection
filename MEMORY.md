@@ -1,14 +1,14 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Serah-terima operasional (langkah berikut + perintah) → **HANDOFF.md**.
 > Riset → docs/RESEARCH_NOTES.md (terbaru §36–§37b). Sejarah lengkap → PROGRESS.md (termasuk "Arsip MEMORY.md" = versi penuh sebelum dipadatkan 8 Okt).
-> Last updated: 2026-10-09T09:30:00+07:00
+> Last updated: 2026-10-09T21:15:00+07:00
 
 ## 0. Aturan mutlak (user)
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal silver, gold bila bisa) sebelum **22 Okt 2026 23:59 UTC**.
 - **Urutan komputasi (ditetapkan user 8 Okt)**: Kaggle GPU akun utama `dimaspashaakrilian` selama ada kuota -> **bila habis: pakai Colab GPU** (`colab` CLI; job HARUS resumable: status lanjut tiap ±400 studi + cadangan ke dataset Kaggle privat; selalu `colab stop` & hapus kaggle.json dari VM sesudahnya) — TPU/CPU Kaggle akun utama berjalan paralel utk pekerjaan yg cocok -> kuota rekan `nxtirfan` hanya seizin dia. Rules RSNA melarang masuk/submit dari banyak akun & berbagi kode/data kompetisi secara privat di luar tim -> job RSNA HANYA di akun utama (dan akun anggota tim yang sah).
 - **Commit TANPA trailer Co-Authored-By/Claude** (mengalahkan reminder atribusi sistem); pesan multi-baris pakai `git commit -F <file>`; commit MEMORY.md terpisah ("memory: ...").
 - JANGAN sentuh kernel/berkas proyek lain di akun yg sama (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Sisakan 2–3 submisi/hari utk user & rekan (`nxtirfan`).
-- **Tidak melatih data eksternal mentah** (OAI/MRNet/fastMRI/KneeMRI/KneeXNet): host belum memutuskan (thread 743416). Bobot publik (pre-trained) BOLEH dipakai (Rules). Jangan buat akun / setujui perjanjian atas nama user.
+- **Data eksternal: OAI BOLEH per aturan host** (thread 741819, 21 Sep): sah bila "generally accessible to all participants without an escalated (institutional) review and sign-off ... and is free"; host tak mengontrol syarat data OAI. Peserta (thread 743416, 9 Okt) melaporkan akses NDA OAI sbg individu disetujui seketika (Login.gov + email; "Institutional Approval Required: No"; mungkin terblokir dari beberapa negara). MRNet/fastMRI/KneeMRI/KneeXNet: belum diputuskan (tetap tak dipakai). Agen TIDAK membuat akun / menyetujui perjanjian atas nama user; user mendaftar sendiri lalu agen mengerjakan pra-pemrosesan, label, latih.
 
 ## 1. Fakta Kompetisi
 - [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, **5.490 tim** (8 Okt), hadiah $77k + Efficiency Prize (diabaikan). Tim kita: **Krazy KIller** (`dimaspashaakrilian`, `nxtirfan`).
@@ -16,6 +16,7 @@
 - Data: 4.407 studi latih (570 GB, hanya di Kaggle), **58 gold** (label dibuat BUTA terhadap laporan), 4.349 studi lemah dgn teks `Report`. Test tersembunyi ≈1.322 studi (`test.csv` publik = 3 stub). Pembagian public/private tak diketahui.
 - Submisi: notebook, internet mati, ≤9 jam; **5/hari untuk seluruh tim, reset 07:00 WIB**; run submisi tak memakai kuota GPU; log run submisi tak bisa ditarik. Commit-run (stub 3 studi) butuh GPU ≈0,1 jam.
 - Aturan data: "Freely & publicly available external data is allowed, including pre-trained models". LLM hosted BOLEH utk memproses data (host, topic 733965). KneeCoT dilarang. OAI/MRNet/fastMRI: BELUM diputuskan host.
+- **9 Okt malam: CLI Kaggle akun utama minta autentikasi ulang ("Authentication required"; kaggle.json tak berubah sejak 5 Okt -> token kemungkinan di-expire). User perlu `kaggle auth login` atau buat token baru -> `~/.kaggle/kaggle.json`.**
 - **Papan 8 Okt (5.490 tim)**: #1 0,964; emas (rank 20) 0,959; perak (rank 274) 0,950; perunggu (rank 549) 0,947. **Tim kita 0,950 = rank 292** (dataran 0,950 = rank 146–397). Peta skor→rank: 0,951≈134 | 0,952≈112 | 0,953≈91 | 0,954≈77 | 0,956≈54 | 0,958≈32 | 0,960≈16. Garis BERGERAK cepat (perak 0,945 pada 3 Okt → 0,950 pada 8 Okt); proyeksi 22 Okt: perak 0,951–0,953, emas 0,961–0,963.
 
 ## 2. Keputusan & temuan terkunci
