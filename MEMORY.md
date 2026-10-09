@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Serah-terima operasional (langkah berikut + perintah) → **HANDOFF.md**.
 > Riset → docs/RESEARCH_NOTES.md (terbaru §36–§37b). Sejarah lengkap → PROGRESS.md (termasuk "Arsip MEMORY.md" = versi penuh sebelum dipadatkan 8 Okt).
-> Last updated: 2026-10-09T07:40:00+07:00
+> Last updated: 2026-10-09T09:30:00+07:00
 
 ## 0. Aturan mutlak (user)
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal silver, gold bila bisa) sebelum **22 Okt 2026 23:59 UTC**.
@@ -35,7 +35,7 @@
 - **Siap-pakai belum jalan**: notebook probe `kaggle_kernel_oai_fam_r224/` (Apex: induk r384 .75 + sibling r224 .25 + reader goodpjw; `build_submit_oai_family.py name=r224 r224=1 children= w224=0.25 src=` + `oai_family_r224_patch.py`) — jalur kode r224 LOLOS uji CPU 9 Okt (selisih 0,00 vs implementasi mandiri; hash OK); paket utk rekan tim di `docs/PAKET_REKAN_TIM.md` (opsi jalankan dari kuota `nxtirfan` lebih awal); opsi penggabungan tim (batas 15 Okt) di `docs/KANDIDAT_MERGER.md`; dijalankan Sabtu 10 Okt 07:00 WIB saat GPU pulih (commit-run ≈0,1–0,2 h) lalu submit; terima bila LB ≥0,951. `scan_public_updates.py` + `scan_loop.sh` (fast-follower). Garis anak-OAI (builder TPU/GPU/Colab) = arsip, ditutup.
 - **Kuota**: GPU 0,00 jam (pulih **Sabtu 10 Okt 07:00 WIB** — bukan tanggal 9); TPU sisa 14,49 jam; submisi hari ini sisa 4 (reset 07:00 WIB, 9 Okt → 5 baru). CPU: 0 sesi berjalan.
 - **Submisi tim terbaik**: 0,950 (Apex v2) · 0,944 (replika goodpjw) · 0,943 (d4-blend, in-arm r2c5).
-- Git: semua commit lokal; push ke `origin/master` (lihat HANDOFF §Git).
+- 9 Okt: TPU anak MATI (XLA batch_norm_backward) setelah antre 6 jam (induk TPU gold 0,9212 = Colab 0,9214); push kernel GPU ditolak (kuota mingguan habis) -> probe r224 menunggu GPU pulih Sabtu 10 Okt 07:00 WIB (atau kuota `nxtirfan`, `docs/PAKET_REKAN_TIM.md`). Target user peringkat ~10 (≈0,961): dijelaskan tidak realistis (12/20 teratas solo GM/juara RSNA). Git: sinkron dgn origin (3280526).
 
 ## 4. Constraint & operasional
 - ML HANYA di Kaggle (lokal: tanpa torch/sklearn, RAM 5 GB, disk kecil). T4 wajib (`machine_shape: NvidiaTeslaT4`; P100 tak kompatibel). 1 sesi GPU = 2×T4 → jalankan 2 proses (`CUDA_VISIBLE_DEVICES`) utk 2× throughput.
@@ -49,6 +49,7 @@
 1. **Risiko kepatuhan OAI** (ckpt nartaa dilatih dgn data OAI/NDA; host belum menjawab thread 743416): pilih 2 submisi final = 1 bersih + 1 agresif; putuskan 21–22 Okt setelah cek ulang thread. Jika host melarang → kembali ke jalur bersih.
 2. **Koordinasi dgn nxtirfan**: siapa submit apa; tahan submisi tak penting; pastikan tak ada job GPU proyek lain mencuri kuota pada 10 Okt 07:00 WIB.
 3. (Opsional, tidak disarankan) model OAI buatan sendiri via NDA — hanya user yg bisa mendaftar; lihat RESEARCH_NOTES §37–§37b utk kelayakan.
+4. **Akun Kaggle kedua (permintaan berulang 9 Okt)**: user ingin memakainya utk GPU RSNA dan menargetkan peringkat ~10. Agen MENOLAK (Rules: tak boleh masuk/submit dari banyak akun; tak boleh berbagi kode/data kompetisi privat di luar tim). User mengklaim panitia membolehkan lewat email (isi tidak ditunjukkan; balasan satu baris "Oh, of course, that's allowed" atas teks tentang Colab/GPU/kuota rekan, bukan izin eksplisit multi-akun). Syarat membuka: izin TERTULIS spesifik dari Kaggle/panitia utk "satu orang, dua akun, data RSNA, checkpoint dikirim ke akun utama" yang bisa dirujuk. Jangan simpan/cetak kredensial akun itu di repo/log.
 
 ## 6. Referensi cepat
 - Kernel/dataset inti: `dimaspashaakrilian/rsna-knee-train-tpu-oai-child` (TPU), `rsna-knee-volcache-z{0,1,2}` (cache), `rsna-knee-fused-labels-r1` (label), `rsna-knee-goodpjw-replica` (0,944), publik `sujanmajhisuzan/rsna-knee-apex-grandmaster-stack` (0,950) + `nartaa/rsna-knee-publication-swa-weights-20261007` (ckpt r384 0,949 & r224 0,945) + `goodpjw2008/rsna-knee-2-5d-convnext-reader`.
