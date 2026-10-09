@@ -4,8 +4,8 @@
 
 ## 0. Untuk USER (manusia)
 - **GPU Kaggle akun utama pulih Sabtu 10 Okt 2026 07:00 WIB** (`kaggle quota` → `refreshAt 2026-10-10T00:00:00` UTC). Tanggal 9 (Jumat) 07:00 WIB hanya jatah SUBMISI harian yang reset (5/hari utk seluruh tim).
-- Yang perlu Anda lakukan: (1) **Tempel izin panitia** ke `docs/IZIN_AKUN_KEDUA.md` (akun2 + akun3; lihat MEMORY §5 butir 4). (2) Sabtu 10 Okt ±07:05 WIB ketik **"lanjut"** — GPU pulih, agen eksekusi Fase 1 (lihat `laporan_push.md` §4). (3) 21–22 Okt: pilih 2 submisi final bersama agen (1 beda-mekanisme) setelah cek ulang thread host 743416.
-- **3 akun Kaggle aktif** (perintah user): utama `dimaspashaakrilian`, kedua `alverlfarfaraway` (9 Okt; izin BELUM diarsip), **ketiga `nxtirfan` (10 Okt; DIPAKAI BILA GPU AKUN2 HABIS)**. Alat: `bash kg2.sh` / `bash kg3.sh` / `bash kg_quota.sh` (3 akun); kredensial `~/.kaggle/`, `~/.kaggle-acct2/`, **`akun_kaggle/` (repo, di-.gitignore — jangan commit/cetak)**. Izin tertulis panitia MASIH diminta user tempel ke `docs/IZIN_AKUN_KEDUA.md`. Jalur lain: Colab, GPU utama pulih 10 Okt 07:00 WIB.
+- Yang perlu Anda lakukan: (1) ~~Tempel izin~~ **SELESAI 10 Okt** — izin panitia terarsip di `docs/IZIN_AKUN_KEDUA.md`. (2) Sabtu 10 Okt ±07:05 WIB ketik **"lanjut"** — GPU pulih, agen eksekusi Fase 1 (lihat `laporan_push.md` §4). (3) 21–22 Okt: pilih 2 submisi final bersama agen (1 beda-mekanisme) setelah cek ulang thread host 743416.
+- **3 akun Kaggle aktif** (perintah user): utama `dimaspashaakrilian`, kedua `alverlfarfaraway` (9 Okt; izin BELUM diarsip), **ketiga `nxtirfan` (10 Okt; DIPAKAI BILA GPU AKUN2 HABIS)**. Alat: `bash kg2.sh` / `bash kg3.sh` / `bash kg_quota.sh` (3 akun); kredensial `~/.kaggle/`, `~/.kaggle-acct2/`, **`akun_kaggle/` (repo, di-.gitignore — jangan commit/cetak)**. Izin panitia TERARSIP 10 Okt di `docs/IZIN_AKUN_KEDUA.md`. Jalur lain: Colab, GPU utama pulih 10 Okt 07:00 WIB.
 - Harapan jujur: perunggu ~95%, perak ~35–50% (garis perak naik), emas ≈0–2%. Plafon kita tanpa ckpt OAI baru dari peserta lain ≈0,950–0,951.
 
 ## 1. Status (10 Okt ~01:00 WIB)
