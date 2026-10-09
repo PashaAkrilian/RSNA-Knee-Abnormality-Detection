@@ -8,6 +8,13 @@
 - **3 akun Kaggle aktif** (perintah user): utama `dimaspashaakrilian`, kedua `alverlfarfaraway` (9 Okt; izin TERARSIP), **ketiga `nxtirfan` (10 Okt; DIPAKAI BILA GPU AKUN2 HABIS)**. Alat: `bash kg2.sh` / `bash kg3.sh` / `bash kg_quota.sh` (3 akun); kredensial `~/.kaggle/`, `~/.kaggle-acct2/`, **`akun_kaggle/` (repo, di-.gitignore — jangan commit/cetak)**. Izin panitia TERARSIP 10 Okt di `docs/IZIN_AKUN_KEDUA.md`. Jalur lain: Colab, GPU utama pulih 10 Okt 07:00 WIB.
 - Harapan jujur: perunggu ~95%, perak ~40–55% (jalur pseudo-label = pemisah berbukti riset 10 Okt), emas ≈0–2%. **Target 0,952 (aman); 0,951 = lotre** (papan 10 Okt: 296 tim ≥0,951 vs garis 279).
 
+## 0b. Quickstart AGEN BARU (Claude Code / OpenCode / harness lain)
+1. `export PATH="$HOME/.local/bin:$PATH"` · `cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection`
+2. Baca `MEMORY.md` (aturan+fakta) → `CLAUDE.md`/`AGENTS.md` (misi & aturan keras) → file ini (langkah) → `laporan_push.md` §4 (rencana).
+3. `bash kg_quota.sh` · `python3 scan_public_updates.py` · `kaggle competitions submissions rsna-knee-abnormality-detection`
+4. Kerjakan **§2 Urutan kerja** (Fase A harvest mirror → Fase B pseudo-label). Riset lengkap: `reports/Cara menembus 0951 perak.md`.
+5. Setiap unit kerja selesai: update MEMORY (commit terpisah `memory: ...`), laporan_push, HANDOFF — lalu `git fetch && git push`.
+
 ## 1. Status (10 Okt ~01:00 WIB)
 | Hal | Keadaan |
 |---|---|

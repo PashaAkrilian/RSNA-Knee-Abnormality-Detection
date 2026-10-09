@@ -1,4 +1,4 @@
-# push.md — Arahan untuk agen/harness lain (OpenCode, dll.) melanjutkan misi SILVER RSNA Knee
+# push.md — Arahan untuk agen/harness lain (Claude Code, OpenCode, dll.) melanjutkan misi SILVER RSNA Knee
 > Berkas mandiri. Baca juga `MEMORY.md` (aturan+fakta, padat) dan `HANDOFF.md` (urutan kerja). Dibuat 9 Okt 2026 ~21:30 WIB. Bahasa kerja: **Indonesia**.
 
 ## 1. Misi

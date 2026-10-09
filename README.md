@@ -38,6 +38,20 @@ The competition objective is to predict the probability of 12 abnormalities for 
 
 ---
 
+# Agent Handoff (Claude Code / OpenCode / harness lain)
+
+Competition status and next steps live in Indonesian-language docs at repo root — **read them in this order**:
+
+1. `CLAUDE.md` / `AGENTS.md` — mission, hard rules (commit style, credentials, accounts)
+2. `MEMORY.md` — current facts & locked decisions (<2 min read)
+3. `HANDOFF.md` — live status + work order (quickstart in §0b)
+4. `laporan_push.md` — submission log & phased plan (§4)
+5. `reports/Cara menembus 0951 perak.md` — latest strategy research (10 Okt 2026)
+
+Multi-account permission archive: `docs/IZIN_AKUN_KEDUA.md`. Credentials: `akun_kaggle/` is gitignored — never print `kaggle.json`.
+
+---
+
 # Task
 
 The model predicts probabilities for the following 12 knee abnormalities:
