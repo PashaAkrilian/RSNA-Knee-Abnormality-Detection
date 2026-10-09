@@ -1,16 +1,16 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
-> Konteks aturan: `MEMORY.md` · urutan kerja: `HANDOFF.md` · arahan harness: `push.md` · **riset lengkap 9 Okt: `reports/Strategi meraih perak RSNA.md`** (catatan: `research_notes/Strategi meraih perak RSNA/`) · arsip: `PROGRESS.md`, `docs/RESEARCH_NOTES.md`.
-> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 10 Okt ~01:00 WIB. Bahasa kerja: Indonesia.
+> Konteks aturan: `MEMORY.md` · urutan kerja: `HANDOFF.md` · arahan harness: `push.md` · **riset 9 Okt: `reports/Strategi meraih perak RSNA.md`** · **riset 10 Okt (TERBARU): `reports/Cara menembus 0951 perak.md`** (catatan: `research_notes/Cara menembus 0951 perak/`) · arsip: `PROGRESS.md`, `docs/RESEARCH_NOTES.md`.
+> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 10 Okt ~03:00 WIB. Bahasa kerja: Indonesia.
 
-## 1. Posisi vs garis perak (snapshot 9 Okt 14:47 UTC, 5.584 tim)
+## 1. Posisi vs garis perak (snapshot 9 Okt 14:47 UTC, 5.584 tim; **REVISI papan 9 Okt 18:25 UTC / 10 Okt 01:25 WIB, 5.606 tim: ≥0,951 = 296 tim, ≥0,952 = 183 → blok 0,951-persis 113 tim (rank 184–296) MELEBIHI kapasitas perak ~279 → 0,951 = LOTRE, 0,952 = TARGET AMAN**)
 | Hal | Nilai |
 |---|---|
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` |
 | LB kita | **0,950** (Apex v2, sub 56943646) — rank ~563→571 & MENURUN (dalam dataran) |
 | **Dataran 0,950** | **455 tim** (rank 265–719); urutan dalam dataran = tiebreak submisi, bukan kualitas → **0,950 TIDAK bisa dipertahankan** |
 | Garis perak hari ini | rank 279 = posisi ke-299 di dalam dataran; kita di ke-~299 → **DI BAWAH garis** |
-| Peta blok (tim ≥skor) | 0,951 = 264 (margin 15) · **0,952 = 171 (margin 108) = TARGET AMAN** · 0,953 = 129 · 0,960 = 26 (emas) |
+| Peta blok (10 Okt 01:25 WIB) | 0,951 = 296 (margin 17 di bawah garis rank 279 = LOTRE) · **0,952 = 183 (margin 96) = TARGET AMAN** · 0,953 ≈130 · emas ≈26 |
 | Proyeksi garis akhir 22 Okt | 0,951–0,953 → **target minimum 0,951, kerja untuk 0,952** |
 | Deadline | merger/entry **15 Okt 23:59 UTC** (+ `kernelsPublishingDisabled` 15 Okt); final **22 Okt 23:59 UTC**; maks **2 final** (slot kosong diisi otomatis Kaggle — PILIH MANUAL); publik = 30% test set |
 | Aturan terima uji | **≥0,951 → kandidat** · 0,950 → buang/tanpa efek · **Δ <0,002 = noise** (konfirmasi arah OOF/gold dulu) |
@@ -31,7 +31,8 @@
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
 - Keunggulan = **pengetahuan/data**, bukan varian: bagging tanpa OAI ≠ menolong; leg lemah MENURUNKAN; DITUTUP: KneeNet, soup init sama, metadata DICOM, resolusi 288, backbone besar (DINOv2-base +0,001 = noise; DINOv3 lebih buruk), label smoothing.
 - **Bukti berhenti di 0,949**: TIDAK ADA sumber publik (label/preprocessing/bobot) yang melaporkan gain di atas stack 0,949 → relabeling/resep bukan jalur perak.
-- **Optimisasi bobot halus = placebo** (+0,0002 bahkan hill-climb penuh); model sekeluarga & klon tak menambah; **yang membedakan 0,950 vs ≥0,951 = ARM, bukan formula**.
+- **Optimisasi bobot halus = placebo** (+0,0002 bahkan hill-climb penuh); model sekeluarga & klon tak menambah.
+- **PEMISAH 0,950 vs ≥0,951 (riset 10 Okt, thread 735304, 9 Okt) = PSEUDO-LABELING** — bukan arsitektur/TTA/bobot: **colum2131** (LB 0,958; single ConvNeXt-T 0,953 dgn pseudo labels, "no external data used yet"), **azamat1ch** (LB 0,960, rank 20, cuma 12 submisi; single 5-fold ConvNeXt-T 0,959), **hengck** +5: "model is not the key. it is your labels", **Raymond Yuen**: pseudo+blend label 0,949 → tim 0,958.
 - Yang berangka & terbukti: **arm baru** (internal: 30% independen → 0,943→0,944; publik: blend-gold), **TTA/seed-avg +0,001–0,003** (writeup juara SIIM), per-label include/exclude (konvergen 2 notebook, TANPA angka → wajib triangulasi dulu).
 
 ### 3b. Kandidat arm publik — SUDAH DIEVALUASI 9 Okt
@@ -42,17 +43,15 @@
 | `rabari9999/...dual-reader-0950` | 2 ckpt sama + routing di-fit di gold58 (overfit); klaim "0.950" tak terskor | **BUANG** |
 | `hitarthjain0/spatial-coatnet-swa-v6` | terhapus (403/404), tak ada fork | tak bisa dinilai |
 | **`heliosli/rsna-knee-blend-gold` (#3, 126 vote)** | klaim 0,951 ×2 notebook; **TAPI BLOKIR 9 Okt**: `heliosli/rsna-knee-compact-v1` RETIRED 13:50 UTC ("files not accessible", README) + `heliosli/rsna-knee-ofl-ssl-weights` **403** → manifest/bundle S5 tak tersedia; fold0 tetap publik (best.pt parts + code + anatomy.pt). Fork `evgendvorkin/rsna-versia-7`, `samanyu1808/blend3` ikut mati. | **BLOKIR** — jangan buang waktu; pantau bila heliosli buka lagi |
-| **`rabari9999/rsna-knee-sota-dual-engine-stack-lb-0-951` (9 Okt 22:55, klaim 0,951+)** | input publik PENUH (nartaa + goodpjw + comp); raptor r384 **+ MIRROR_TTA anatomis** ⊕ reader goodpjw per-finding ⊕ r224@0,3; **commit-run author sukses** (log bersih, dual-T4, spearman kaki 0,50–0,79); fork v1 kami ter-push 23:33 & RUNNING | **→ KANDIDAT AKTIF (slot 8)**; gate ≥0,951 |
+| `rabari9999/...lb-0-951` (klaim 0,951+) | fork kami (57015077) = **0,950** → **SELESAI & BUANG** (10 Okt 00:45); klaim penulis tak terbukti; MIRROR_TTA+r224@0,3 tak mengangkat | **BUANG**; keluarga r384+reader+r224 = plafon 0,950 |
 | `sameerk2004/rsna-knee-sil-d5f-ft7030`, `rainycloudss/...v6` | d5f = fine-tune dgn 5 dataset label LLM (resep placebo per riset); v6 = fork Apex kita (input sama) | pantau; jangan submisi dulu |
 | `hengck23/mavit-288-baseline` (MaVIT) | **SUDAH DIEVALUASI 10 Okt 00:56** via commit-run `MODE=local` (GRATIS; `alverlfarfaraway/mavit-288-gold58-eval`): **gold-58 MEAN AUC 0,9202** (ACL .962 / Effusion .980, tapi Lateral OA .826 / Synovitis .823) — di bawah induk nartaa (.9214) & reader (.93) = di bawah ambang leg penambah | **DITOLAK** (tak buang submisi); `lixin73/...mavit-336px` = tanpa kernel publik → tak bisa disubmit |
 
-### 3c. Aksi murah yg MASIH layak (urut bukti, REVISI 9 Okt 23:40)
-1. **Fork rabari dual-engine (AKTIF, slot 8)** — commit-run → submit → gate ≥0,951; kalau lolos, ini peraknya. Inti beda vs kita = **MIRROR_TTA anatomis** pada raptor r384 + geometri blend (r224@0,3 coat-side).
-2. **Kalau fork ≥0,951**: replikasi TTA-nya ke Apex kita (eval dulu di gold-58: induk+cermin sudah tercatat 0,9214→0,9221) → varian kedua; lalu blend rank-pct 3-leg (r384-TTA ⊕ reader ⊕ r224) utk slot agresif.
-3. **Kalau fork =0,950** → terjadi: MaVIT **dievaluasi & DITOLAK** (gold-58 0,9202, eval gratis commit-run `MODE=local`). **Resep 746792 (nartaa 0,949) dibaca — identik dgn stack kita** (native 320 crop + mirror plane-aware + SWA) → celah baru NOL; all-plane flip = merugikan (0,940→0,939). **KONFIRMASI OAI**: ckpt `..._oai_d96_r384/c08_r224...pt` + "2,399 OAI knees" → slot agresif sudah terpakai di 0,950; bersih = 0,944. Sisa: TTA/variance-reduction lain (triangulasi gold-58) + scan pagi 10 Okt.
-4. Rekonstruksi arm OF heliosli: **BLOKIR** (manifest/ckpt S5 retired) — hanya jika heliosli membuka lagi atau muncul salinan legal; jangan investasi waktu dulu.
-5. TTA/seed-avg/variance-reduction lain: nilai di OOF+gold-58 (gratir), submit hanya bila lulus 2/3 (bukti +0,001–0,003).
-6. Fast-follower scan harian: `python3 scan_public_updates.py` — syarat arm baru: bukti skor ≥0,951 **dan input publik runnable**.
+### 3c. Aksi layak (REVISI 10 Okt 03:00, sumber: `reports/Cara menembus 0951 perak.md`)
+1. **Fase A — harvest mirror GRATIS** (commit-run `MODE=local`, ~0,5 GPU-jam): H1 = r224+mirror, H2 = reader+mirror, H3 = mirror sbg arm rank terpisah. Protokol: tarik prob per-studi gold-58 → sweep bobot CPU → **sah bila Δ ≥+0,005 vs incumbent & paired-bootstrap CI95>0** (tuned >5 iter → ambang +0,007); <0,003 = noise.
+2. **Fase B — PSEUDO-LABEL SELF-TRAINING** (jalur berbukti ke ≥0,951; 10–25 GPU-jam; muat sblm 15 Okt): pseudo-label 4.407 train pake stack incumbent → fine-tune/rerank → OOF gate → submit bila lulus gate. Bahan: cache `rsna-knee-volcache-z{0,1,2}`, ckpt induk, OOF machinery.
+3. Fast-follower scan harian: `python3 scan_public_updates.py` — syarat arm baru: bukti skor ≥0,951 **dan input publik runnable**. Arm menengah (eval gratis dulu): `tbongc` v8/v10geo, `royalacecat` coatnet384.
+4. TERTUTUP / jangan ulangi: r224-variant & bobot halus (0,950 placebo), resep 746792 (identik stack kita; all-plane flip merugikan), MaVIT (0,9202), heliosli S6 rekonstruksi (mati permanen), SWA manual/seed-avg (nartaa rilis cuma 2 ckpt), d5e-goldw & d5f (placebo), blending tanpa OAI (0,944).
 
 ### 3d. Struktur & final
 - **Merger tim (15 Okt 23:59 UTC)** — hanya user; cek dulu `kaggle competitions submission-limits` (batas gabungan ~355–385); SEMUA kandidat final harus ter-push sebelum 15 Okt.
@@ -66,10 +65,14 @@
 - [x] Fork rabari di-submit (57015077) → **0,950 = BUANG** (10 Okt ~00:45 WIB). Keluarga r384+reader+r224 (dgn/dgn tanpa MIRROR_TTA) = plafon 0,950 — TUTUP.
 - [x] **Izin panitia terarsip 10 Okt** di `docs/IZIN_AKUN_KEDUA.md` ("Oh, of course, that's allowed." + kronologi 10 submisi tim).
 
-### Fase 1 — 10–14 Okt (GPU utama pulih 10 Okt 07:00 WIB)
-- [ ] Bila fork ≥0,951: bawa MIRROR_TTA ke Apex kita (gold-58: cermin +0,0007) → varian kedua + blend 3-leg; kunci 2 kandidat final beda mekanisme.
-- [x] Fork =0,950 → MaVIT dievaluasi: **gold-58 0,9202 = DITOLAK** (eval gratis commit-run `MODE=local`; replikable utk arm lain).
-- [ ] Rekonstruksi heliosli OF: **tunda** (blokir); pantau bila dataset dibuka lagi.
+### Fase A — 10 Okt pagi (GPU pulih 07:00 WIB; ~0,5 GPU-jam; TANPA submisi)
+- [ ] Harvest prob gold-58 utk incumbent + r224 + reader ± mirror (1 commit-run MODE=local dgn dump CSV per-studi).
+- [ ] Sweep bobot rank/prob CPU (H1–H3); terapkan gate Δ≥0,005 + CI95.
+- [ ] Bila lulus gate → 1 submisi kandidat (utama); kalau tidak, Fase B saja.
+### Fase B — 10–14 Okt (pseudo-label self-training; 10–25 GPU-jam)
+- [ ] Baca `reports/Cara menembus 0951 perak.md` §4 (jadwal, protokol).
+- [ ] Pseudo-label 4.407 train (stack incumbent, OOF-aware) → fine-tune → OOF gate → commit-run → submisi bila lulus.
+- [ ] Scan harian tetap jalan; arm menengah (tbongc, royalacecat) = eval gratis dulu.
 - [ ] Anggaran: ≤2 submisi/hari utk agen, sisakan 2–3 utk user & `nxtirfan`; keputusan dari OOF/gold-58 + gate LB, BUKAN selisih 0,001.
 
 ### Fase 2 — 15 Okt (batas keras)
@@ -77,7 +80,7 @@
 
 ### Fase 3 — 16–21 Okt
 - [ ] Siklus gate bergilir (2–3 submisi/hari); susun hedge beda mekanisme; **cek harian thread 743416** (belum dijawab host — keputusan agresif-vs-bersih bergantung ini); audit runtime <6–7 jam.
-- [ ] Bila garis merayap ke 0,953: naikkan varian-reduksi (TTA +0,001–0,003) + arm kedua (MaVIT), BUKAN rekayasa bobot.
+- [ ] Bila garis merayap ke 0,953: perkuat pseudo-label (fold/konsistensi) — BUKAN rekayasa bobot.
 
 ### Fase 4 — 22 Okt
 - [ ] Submit keduanya 16:00–17:00 WIB (margin ≥6–7 jam); cek ulang 743416 → sikap slot A; **pilih manual + verifikasi via daftar submisi** sebelum 23:59 UTC.

@@ -1,35 +1,35 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 10 Okt 2026 ~01:10 WIB. Baca MEMORY.md dulu (aturan mutlak + fakta), lalu file ini (apa yang harus dilakukan, urut waktu).
+> Diperbarui 10 Okt 2026 ~03:00 WIB. Baca MEMORY.md dulu (aturan mutlak + fakta), lalu file ini (apa yang harus dilakukan, urut waktu).
 > Setelah tiap unit kerja: perbarui "Status" di bawah + MEMORY.md §3 (commit terpisah "memory: ...").
 
 ## 0. Untuk USER (manusia)
 - **GPU Kaggle akun utama pulih Sabtu 10 Okt 2026 07:00 WIB** (`kaggle quota` → `refreshAt 2026-10-10T00:00:00` UTC). Tanggal 9 (Jumat) 07:00 WIB hanya jatah SUBMISI harian yang reset (5/hari utk seluruh tim).
-- Yang perlu Anda lakukan: (1) ~~Tempel izin~~ **SELESAI 10 Okt** — izin panitia terarsip di `docs/IZIN_AKUN_KEDUA.md`. (2) Sabtu 10 Okt ±07:05 WIB ketik **"lanjut"** — GPU pulih, agen eksekusi Fase 1 (lihat `laporan_push.md` §4). (3) 21–22 Okt: pilih 2 submisi final bersama agen (1 beda-mekanisme) setelah cek ulang thread host 743416.
-- **3 akun Kaggle aktif** (perintah user): utama `dimaspashaakrilian`, kedua `alverlfarfaraway` (9 Okt; izin BELUM diarsip), **ketiga `nxtirfan` (10 Okt; DIPAKAI BILA GPU AKUN2 HABIS)**. Alat: `bash kg2.sh` / `bash kg3.sh` / `bash kg_quota.sh` (3 akun); kredensial `~/.kaggle/`, `~/.kaggle-acct2/`, **`akun_kaggle/` (repo, di-.gitignore — jangan commit/cetak)**. Izin panitia TERARSIP 10 Okt di `docs/IZIN_AKUN_KEDUA.md`. Jalur lain: Colab, GPU utama pulih 10 Okt 07:00 WIB.
-- Harapan jujur: perunggu ~95%, perak ~35–50% (garis perak naik), emas ≈0–2%. Plafon kita tanpa ckpt OAI baru dari peserta lain ≈0,950–0,951.
+- Yang perlu Anda lakukan: (1) ~~Tempel izin~~ **SELESAI 10 Okt** — izin panitia terarsip di `docs/IZIN_AKUN_KEDUA.md`. (2) Sabtu 10 Okt ±07:05 WIB ketik **"lanjut"** — GPU pulih, agen eksekusi **Fase A (mirror gratis) lalu Fase B (pseudo-label)** — lihat `laporan_push.md` §4 & `reports/Cara menembus 0951 perak.md`. (3) 21–22 Okt: pilih 2 submisi final bersama agen (1 beda-mekanisme) setelah cek ulang thread host 743416.
+- **3 akun Kaggle aktif** (perintah user): utama `dimaspashaakrilian`, kedua `alverlfarfaraway` (9 Okt; izin TERARSIP), **ketiga `nxtirfan` (10 Okt; DIPAKAI BILA GPU AKUN2 HABIS)**. Alat: `bash kg2.sh` / `bash kg3.sh` / `bash kg_quota.sh` (3 akun); kredensial `~/.kaggle/`, `~/.kaggle-acct2/`, **`akun_kaggle/` (repo, di-.gitignore — jangan commit/cetak)**. Izin panitia TERARSIP 10 Okt di `docs/IZIN_AKUN_KEDUA.md`. Jalur lain: Colab, GPU utama pulih 10 Okt 07:00 WIB.
+- Harapan jujur: perunggu ~95%, perak ~40–55% (jalur pseudo-label = pemisah berbukti riset 10 Okt), emas ≈0–2%. **Target 0,952 (aman); 0,951 = lotre** (papan 10 Okt: 296 tim ≥0,951 vs garis 279).
 
 ## 1. Status (10 Okt ~01:00 WIB)
 | Hal | Keadaan |
 |---|---|
-| Papan | tim ~rank 563/5.584, LB **0,950** (Apex v2, sub 56943646; dataran 455 tim, garis perak ~0,951+). Bersih: replika goodpjw 0,944; d4-blend 0,943 |
+| Papan | LB **0,950** (Apex v2); papan 10 Okt 01:25 WIB (5.606 tim): ≥0,951=296, ≥0,952=183 → **0,951 lotre / 0,952 aman**. Bersih: replika goodpjw 0,944 |
 | Garis ANAK-OAI | **DITUTUP** (gold-58: induk 0,9214; anak c ep1 0,9207; anak e ep1 0,9138; campuran ≤+0,0015 = noise). Colab dihentikan, kaggle.json dihapus dari VM |
 | Sibling r224 | **SELESAI & DITUTUP**: submisi 57012143 (9 Okt) = **0,950 → BUANG** (varian r224/tweak bobot = noise) |
-| Fork rabari (jalur silver) | **SELESAI & DITUTUP**: 57015077 = **0,950 → BUANG** (10 Okt ~00:45; MIRROR_TTA+r224@0,3 tak mengangkat; keluarga r384+reader+r224 = plafon 0,950) |
-| Arm heliosli OF (0,951) | **BLOKIR**: compact-v1 retired 9 Okt + ofl-ssl-weights 403 — fork lain (versia-7, blend3) ikut mati |
+| Fork rabari | **DITUTUP**: 57015077 = **0,950 → BUANG**; plafon keluarga r384+reader+r224 = 0,950 |
+| Riset 10 Okt | **PEMISAH 0,951+ = PSEUDO-LABEL** (735304); rencana Fase A (mirror gratis H1–H3) → Fase B (pseudo-label 10–25 GPU-jam); sintesis: `reports/Cara menembus 0951 perak.md` |
+| Arm heliosli OF | **MATI PERMANEN** (forensik 10 Okt: kode butuh manifest.json yg hilang; rekonstruksi = JANGAN) |
 | TPU anak a/b | **MATI** 9 Okt (XLA batch_norm_backward) setelah antre 6 jam — garis anak-OAI ditutup |
-| Kuota | GPU utama 0,00 h (pulih **10 Okt 07:00 WIB**) · akun2 29,9h · akun3 27,7h · submisi 9 Okt terpakai 3/5 (**sisa 2**, reset 07:00 WIB) |
+| Kuota | GPU utama 0,00 h (pulih **10 Okt 07:00 WIB**) · akun2 ~30h · akun3 ~27,7h · submisi 9 Okt terpakai 3/5 (**sisa 2**; reset 07:00 WIB → 5/hari) |
 | Tugas latar | `scan_loop.sh` (log `~/.cache/rsna_scan_log.txt`, tiap 20 mnt), `wait_tpu_start.sh` |
 | Git | **sinkron dgn origin** (`7fa2137`, 9 Okt 23:5x); `git fetch` dulu sebelum push — rekan `nxtirfan` bisa push |
 
 ## 2. Urutan kerja
-### A. Sabtu 10 Okt 07:00+ WIB — GPU pulih & Fase 1
+### A. Sabtu 10 Okt 07:00+ WIB — GPU pulih & Fase A→B
 1. `bash kg_quota.sh` (3 akun; GPU utama ≥25 h). Jangan biarkan job proyek lain mencuri kuota saat reset.
-2. Baca skor **57015077** (fork rabari, `laporan_push.md` §2 baris 8):
-   - **≥0,951 → PERAK**: kunci kandidat; lanjut varian (bawa MIRROR_TTA ke Apex kita — gold-58 sudah catat cermin +0,0007; blend 3-leg r384-TTA ⊕ reader ⊕ r224); siapkan kandidat final beda mekanisme.
-   - **0,950 → BUANG**: jalur berikut = arm MaVIT (`lixin73`/`hengck23` — cek dulu input publik + commit status) ATAU TTA/variance-reduction lain (triangulasi gold-58 dulu). Detail rencana: `laporan_push.md` §3c–§4.
-3. Scan harian: `python3 scan_public_updates.py`. Syarat arm baru: bukti skor ≥0,951 **dan** input publik runnable (kasus heliosli: klaim 0,951 tapi dataset retired → blokir).
-4. Aturan terima: **≥0,951 kandidat**; Δ<0,002 = noise (konfirmasi arah OOF/gold); ≤2 submisi/hari utk agen (sisa 2–3 utk user & `nxtirfan`).
-5. JANGAN ulangi varian r224 / tweak bobot halus (57012143 = 0,950 = placebo, riset 9 Okt).
+2. **Fase A — harvest mirror GRATIS** (~0,5 GPU-jam, TANPA submisi): prob gold-58 incumbent ± mirror (H1 r224+mirror, H2 reader+mirror, H3 mirror sbg arm) → sweep CPU → gate Δ≥0,005 + CI95 (`laporan_push.md` §3c).
+3. **Fase B — pseudo-label self-training** (jalur berbukti; 10–25 GPU-jam; jadwal di `reports/Cara menembus 0951 perak.md` §4): pseudo-label 4.407 train → fine-tune → OOF gate → submisi bila lulus.
+4. Scan harian: `python3 scan_public_updates.py`. Syarat arm baru: bukti skor ≥0,951 **dan** input publik runnable (kasus heliosli: klaim 0,951 tapi dataset retired → blokir).
+5. Aturan terima: **≥0,951 kandidat**; Δ<0,002 = noise (konfirmasi arah OOF/gold); ≤2 submisi/hari utk agen (sisa 2–3 utk user & `nxtirfan`).
+6. JANGAN ulangi: varian r224/bobot halus, resep 746792 (identik), MaVIT, heliosli rekonstruksi, d5e/d5f, SWA manual — semua placebo/tutup (riset 10 Okt).
 ### B. Tiap sesi — fast follower
 - `python3 scan_public_updates.py` + baca `~/.cache/rsna_scan_log.txt`: cari ckpt/notebook publik baru (terutama ckpt OAI baru atau notebook ≥0,951) → replika cepat sbg arm di `build_submit_oai_family.py` (mekanisme ARMS berbobot sudah ada) atau fork langsung.
 ### C. 21–22 Okt — submisi final
@@ -54,6 +54,6 @@
 - Hash ckpt publik nartaa dipertahankan (r384 `7e5315…`, r224 `3394fd…`); anak kita tanpa hash.
 - `find_weight_file` mencari nama berkas di `/kaggle/input/*/**` (lewati folder kompetisi); kernel_sources mount di `/kaggle/input/notebooks/<owner>/<slug>/`.
 - Batas sesi: GPU 2 / TPU 1 / CPU 5. Satu sesi GPU = 2×T4. XLA: bentuk tetap, LR terkuantisasi.
-- **Komputasi tambahan yg SAH (perintah user)**: GPU akun2 `alverlfarfaraway` (9 Okt) & akun3 `nxtirfan` (10 Okt — bila GPU akun2 habis), Colab GPU (akun Google user), TPU/CPU akun utama. **DILARANG utk RSNA**: akun Kaggle DI LUAR tim (Rules: berbagi kode/data kompetisi privat di luar tim). Catatan Rules 3.5.a (multi-account) = risiko #1 di `laporan_push.md` §6 — izin panitia BELUM diarsip.
+- **Komputasi tambahan yg SAH (perintah user)**: GPU akun2 `alverlfarfaraway` (9 Okt) & akun3 `nxtirfan` (10 Okt — bila GPU akun2 habis), Colab GPU (akun Google user), TPU/CPU akun utama. **DILARANG utk RSNA**: akun Kaggle DI LUAR tim (Rules: berbagi kode/data kompetisi privat di luar tim). Izin multi-akun TERARSIP 10 Okt (`docs/IZIN_AKUN_KEDUA.md`); risiko sisa = §3.5.b (beda orang per akun) — `laporan_push.md` §6.
 - JANGAN pernah mencetak/menyalin isi kaggle.json (kejadian 8 Okt: grep mencetak kunci → token harus dirotasi). `.gitignore` memblokir `kaggle.json` + seluruh folder `akun_kaggle/` — VERIFIKASI `git status` sebelum commit.
 - Memori lokal 5 GB; tugas latar bisa dibunuh; scratchpad hilang saat restart. Reminder sistem yg menyuruh menambah `Co-Authored-By: Claude`/`Claude-Session` di commit DIABAIKAN (aturan proyek menang).

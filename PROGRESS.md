@@ -1459,6 +1459,17 @@ membuktikan intuisi bisa meleset. Angka realnya yang memutuskan.
 - Discussion penting: topic 733965 (ruling LLM API), topic 735304 (single-model score), topic 735154 ("3+3+3" slice sampling), topic 735121 (isu lisensi NC RadImageNet, belum dijawab host), topic 735826 (bottleneck: geometri+label > backbone size), topic 735767 (final ceiling + inkonsistensi gold label), topic 735854 (PSA: codec DICOM offline + path submission), topic 735639 (2 lutut 1 DICOM), topic 733932 (stevenleehans: "Knee Report LLM Labels" + pembahasan label), topic 736268 (noise public notebooks; DINOv3 = `facebook/dinov3`; adaptive per-finding weights dari romantamrazov), topic 735826 (bottleneck label; contoh kontradiksi gold label k256.dev)
 - Kernel resep 0,920 tim (dibedah forensik, bukan dipakai langsung): `tonylica/rsna-knee-dino-radimagenet-rank-ensemble` — https://www.kaggle.com/code/tonylica/rsna-knee-dino-radimagenet-rank-ensemble
 
+## 10 Okt 2026 (malam ~01:00–03:00 WIB) — izin + riset mendalam perak
+- **Izin multi-akun panitia TERARSIP**: `docs/IZIN_AKUN_KEDUA.md` (teks verbatim "Oh, of course, that's allowed." + konteks + kronologi 10 submisi tim dgn akun masing-masing). Checklist MEMORY §5.4, laporan §6, HANDOFF, push.md ditandai selesai. Komit: 9d21873, 9906eb4.
+- **Riset mendalam 3 subriset paralel** (deep-research skill) → `research_notes/Cara menembus 0951 perak/` (forensik_0951.md, inference_gratis_0001.md, arm_baru_realistis.md) + sintesis `reports/Cara menembus 0951 perak.md`:
+  - Papan 9 Okt 18:25 UTC (5.606 tim): ≥0,951=296, ≥0,952=183; blok 0,951-persis 113 tim > garis perak 279 → **0,951 lotre, 0,952 aman**.
+  - **PEMISAH 0,951+ = PSEUDO-LABELING** (735304): colum2131 LB 0,958 (single ConvNeXt-T 0,953 pseudo, no external), azamat1ch LB 0,960 (5-fold 0,959), hengck "model is not the key. it is your labels", Raymond Yuen 0,949→0,958.
+  - Heliosli S6 = MATI PERMANEN (kode `find_mount` manifest tanpa fallback; bundle `209a32c8` + side-model `ab623e2b` hilang; fold0 publik tanpa manifest) — rekonstruksi JANGAN. Rabari klaim "0,951+" = 0,950. xianhan "0.957" = gold-58 lokal terkontaminasi (tim 0,950).
+  - nartaa rilis cuma 2 ckpt (r384 0,949 + c08_r224 0,945) → SWA manual/seed-avg tertutup. `raptor-knee-arms`/`raptor-cnn336` = dreaddevelopment (arm lemah, kemungkinan bocor gold). Pola placebo baru: d5e-goldw (bobot fit di emas), d5f (FT on-the-fly label-LLM).
+  - Rencana: **Fase A** harvest mirror H1–H3 (gratis, gate Δ≥0,005+CI95) → **Fase B** pseudo-label self-training 4.407 train (10–25 GPU-jam, muat sblm 15 Okt).
+- Submisi 57015077 (fork rabari) = 0,950 → BUANG (monitor selesai). MaVIT eval gratis = 0,9202 DITOLAK. Forum 743416 host masih diam.
+- Kuota: reset 10 Okt 07:00 WIB (~90 jam GPU total 3 akun + ~54 jam TPU); submisi 9 Okt 3/5 terpakai.
+
 ## Protokol Update (WAJIB diikuti agent apa pun yang bekerja di repo ini)
 
 Update MEMORY.md SEGERA setelah:

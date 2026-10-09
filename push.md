@@ -14,21 +14,18 @@
 5. Sisakan 2–3 submisi/hari (batas 5/hari utk SELURUH tim, reset 07:00 WIB) untuk user & rekan.
 6. Jujur melaporkan hasil; keputusan akhir hanya dari skor LB nyata (gold-58 SE ≈0,01, tak bisa membedakan ±0,005).
 
-## 3. Status (9 Okt 21:00 WIB)
-- Papan (5.584 tim): batas emas ≤rank 21 (0,960), perak ≤279 (0,950 bawah), perunggu ≤558. ≥0,951: 257 tim; ≥0,952: 169; ≥0,953: 128. **Kita rank 563 @0,950** (submisi 56943646 = notebook publik Apex v2 oleh rekan; dataran 0,950 ≈456 tim).
+## 3. Status (10 Okt 03:00 WIB)
+- Papan (10 Okt 01:25 WIB, 5.606 tim): perak ≤279. ≥0,951: **296 tim**; ≥0,952: 183. Blok 0,951-persis (113 tim) > kapasitas perak → **0,951 = lotre, 0,952 = target aman**. **Kita 0,950** di dataran (Apex v2 = 56943646).
 - Terbaik bersih (tanpa bobot OAI): replika goodpjw 0,944 (56872456), d4-blend 0,943. Stack 7 jam; Apex ±30 menit.
-- Kuota (10 Okt 00:50): **GPU akun utama 0,00 h sampai Sabtu 10 Okt 07:00 WIB** lalu 30 h/minggu; **akun2 29,9h; akun3 27,7h** (reset juga 07:00 WIB); TPU utama ±14 h (tak berguna; skrip kita crash di XLA); CPU sesi 5. Push kernel GPU sebelum reset bisa ditolak ("Maximum weekly GPU quota"). Cek: `bash kg_quota.sh`.
-- Garis yg SUDAH DITUTUP (jangan ulangi): anak fine-tune ckpt OAI pada label fusi (gold-58 ≈ induk/lebih rendah), bagging model tanpa OAI, KneeNet reader, soup bobot, metadata DICOM, OrthoDiffusion fitur beku, **varian r224 & tweak bobot halus** (57012143 = 0,950 = placebo), **replika arm heliosli OF** (dataset compact-v1 retired 9 Okt + ofl-ssl-weights 403 = blokir).
-- Aset siap: `kaggle_kernel_oai_fam_r224/` (notebook Apex + sibling r224 nartaa; lolos uji CPU, belum dijalankan di GPU). Alat: `scan_public_updates.py`, `scan_loop.sh`, `build_submit_oai_family.py`, `docs/PAKET_REKAN_TIM.md`, `docs/KANDIDAT_MERGER.md`.
+- Kuota (10 Okt 03:00): **GPU utama 0,00 h sampai 10 Okt 07:00 WIB** lalu 30 h/minggu; **akun2 ~30h; akun3 ~27,7h** (reset juga 07:00 WIB → total ~90 jam); TPU ~54h total (XLA kita crash — hindari); submisi 9 Okt terpakai 3/5 → reset 5/hari. Push kernel GPU sebelum reset bisa ditolak ("Maximum weekly GPU quota"). Cek: `bash kg_quota.sh`.
+- **Izin multi-akun TERARSIP** 10 Okt (`docs/IZIN_AKUN_KEDUA.md`). Riset mendalam 10 Okt → `reports/Cara menembus 0951 perak.md`: **PEMISAH 0,951+ = PSEUDO-LABELING** (735304: colum2131 LB 0,958, azamat1ch 0,960, hengck "it is your labels").
+- Garis TUTUP (jangan ulangi): varian r224 & bobot halus (0,950 placebo), resep 746792 (identik stack kita; all-plane flip minus), MaVIT (gold-58 0,9202), heliosli S6 rekonstruksi (mati permanen), SWA manual/seed-avg (nartaa rilis cuma 2 ckpt), d5e-goldw & d5f (placebo), bagging tanpa OAI (0,944), KneeNet, soup, metadata DICOM, anak fine-tune ep1 (≈induk).
+- Aset siap: cache `rsna-knee-volcache-z{0,1,2}` (4.407 studi), ckpt induk, OOF machinery, pola eval gratis `alverlfarfaraway/mavit-288-gold58-eval` (MODE=local). Alat: `scan_public_updates.py`, `kg2.sh`/`kg3.sh`/`kg_quota.sh`, `bash kg2.sh forums topics show <id>`.
 
-## 4. Strategi perak TANPA data OAI mentah (urut prioritas)
-**A. Probe sibling r224 (hari pertama GPU)** — Sabtu 10 Okt ≥07:05 WIB.
-1. `kaggle quota` (GPU remaining ≥25). Bangun ulang bila perlu: `python3 build_submit_oai_family.py name=r224 r224=1 children= w224=0.25 src=`.
-2. `kaggle kernels push -p kaggle_kernel_oai_fam_r224` (commit-run di 3 studi stub, ≈10–20 mnt GPU). Pantau: `kaggle kernels status dimaspashaakrilian/rsna-knee-oai-fam-r224`; bila ERROR, log ada di `kaggle kernels output <slug> -p <dir>` (berkas `.log`), perbaiki `oai_family_r224_patch.py` (uji logika dulu di kernel CPU `build_smoke_r224_cpu.py`).
-3. COMPLETE → `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/rsna-knee-oai-fam-r224 -v <versi> -f submission.csv -m "Apex: r384 .75 + r224 .25 + reader goodpjw"`. Skor ±1–1,5 jam. **Terima bila ≥0,951.**
-4. Alternatif sama persis hari ini: minta rekan `nxtirfan` menjalankan dari kuotanya (ikuti `docs/PAKET_REKAN_TIM.md`).
+## 4. Strategi perak (urut prioritas, REVISI 10 Okt)
+**A. Fase A — harvest mirror GRATIS** (10 Okt pagi; ~0,5 GPU-jam; TANPA submisi): dump prob gold-58 utk incumbent ± mirror (H1 r224+mirror, H2 reader+mirror, H3 mirror sbg arm terpisah) via commit-run `MODE=local` (pola `alverlfarfaraway/mavit-288-gold58-eval`) → sweep bobot rank/prob CPU → **gate: Δ ≥+0,005 & bootstrap CI95>0** (tuned>5 iter → +0,007; <0,003=noise). Lulus → 1 submisi kandidat.
 
-**B. Variasi murah di atas Apex (1 submisi per uji, maks 2/hari):** bobot r224 0,35; skala bobot reader per-label ×0,7 / ×1,3 (edit `TARGET_WEIGHTS` di sel 9 notebook Apex); crop 304; tambah/ganti reader. Tiap varian = commit-run GPU ±0,2 jam. Hentikan bila tak ada yg ≥0,951 setelah 4 uji (noise LB ±0,002).
+**B. Fase B — PSEUDO-LABEL SELF-TRAINING** (10–14 Okt; 10–25 GPU-jam; jalur berbukti — 735304): pseudo-label 4.407 train pake stack incumbent (OOF-aware, jangan bocor gold) → fine-tune ckpt induk → OOF gate → commit-run → submisi bila lulus. Jadwal & protokol lengkap: `reports/Cara menembus 0951 perak.md` §4.
 
 **C. Fast-follower (tiap sesi):** `python3 scan_public_updates.py` lalu baca `~/.cache/rsna_scan_log.txt` (loop `scan_loop.sh` mengisinya tiap 20 mnt bila hidup: `nohup bash scan_loop.sh &`). Cari: (i) ckpt/dataset bobot baru dari peserta lain, (ii) notebook publik ≥0,951. Pasang sbg arm di `build_submit_oai_family.py` (daftar ARMS berbobot, rank-mean) atau fork lalu uji. Kandidat yg muncul 8–9 Okt (belum dievaluasi): `sameerk2004/rsna-knee-sil-d5b-dual0950`, `...d5c-triple224`, `hitarthjain0/rsna-knee-spatial-coatnet-swa-v6`, `rabari9999/rsna-knee-sota-2-5d-convnext-dual-reader-0950`. Tarik dgn `kaggle kernels pull <ref> -p <dir> -m`, baca sumber dataset di `kernel-metadata.json`. Replika murni boleh (kita pernah replika goodpjw = 0,944 persis); jangan klaim sbg karya sendiri.
 

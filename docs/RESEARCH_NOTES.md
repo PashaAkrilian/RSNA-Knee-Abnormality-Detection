@@ -1662,3 +1662,13 @@ Rencana 10 Okt: probe LB tunggal "Apex + r224 (bobot ~.25 di dalam campuran CoAt
 ## 37e. KOREKSI kepatuhan OAI (9 Okt malam)
 Host (thread 741819, 21 Sep): OAI sbg data eksternal TIDAK melanggar aturan bila dapat diakses semua peserta tanpa tinjauan/persetujuan institusional atau tim hukum, dan gratis (host tak mengontrol syarat data OAI). Peserta peringkat 185 (thread 743416): daftar NDA sbg individu, Login.gov+email, disetujui seketika, grup OAI "Institutional Approval Required: No".
 => Koreksi §37b/penilaian sebelumnya ("akses butuh penandatangan institusi / abu-abu"): jalur OAI TERBUKA dan sah menurut syarat host (risiko tersisa: blokir negara, syarat data NDA tentang redistribusi -> jangan unggah data mentah ke Kaggle, hanya bobot). Ini mengubah rencana perak: model OAI buatan sendiri + ensembel dgn ckpt nartaa = pengungkit nyata (+0,003-0,006).
+
+## 38. Riset mendalam menuju 0,951+ (10 Okt 02:00–03:00)
+- Catatan penuh: `research_notes/Cara menembus 0951 perak/` (forensik_0951.md, inference_gratis_0001.md, arm_baru_realistis.md); sintesis: `reports/Cara menembus 0951 perak.md`.
+- **Pemisah 0,950 vs ≥0,951 = PSEUDO-LABELING** (thread 735304, 9 Okt): colum2131 (LB 0,958; single ConvNeXt-T 0,953 pseudo; "no external data used yet"), azamat1ch (LB 0,960, rank 20, 12 submisi; single 5-fold 0,959), hengck +5 ("model is not the key. it is your labels"), Raymond Yuen (pseudo+blend 0,949→0,958).
+- Papan 10 Okt 01:25 WIB (5.606 tim): ≥0,951=296, ≥0,952=183 → blok 0,951-persis (113 tim, rank 184–296) melebihi kapasitas perak (~279) → 0,951 = lotre, **0,952 = target aman**.
+- Tertutup/ditolak (bukti 10 Okt): heliosli S6 mati permanen (manifest hilang), MaVIT hengck gold-58 0,9202, d5e-goldw (bobot fit di emas = overfit), d5f (FT on-the-fly label-LLM = placebo), SWA manual/seed-avg (nartaa rilis cuma 2 ckpt), `raptor-knee-arms`/`cnn336` (arm lemah + kemungkinan bocor gold), resep 746792 (identik stack kita).
+- Hipotesis gratis (inference): H1 r224+mirror, H2 reader+mirror, H3 mirror sbg arm terpisah; gate sah gold-58: Δ≥+0,005 & paired-bootstrap CI95>0; tuned>5 iter → +0,007; <0,003 = noise.
+- Jalur utama: **pseudo-label self-training** di 4.407 train (bahan: cache volcache-z, ckpt induk, OOF machinery; ≈10–25 GPU-jam).
+- Alat baru: **baca forum via CLI** `kaggle forums topics show <topicId> --page-size 200` (743416 masih BELUM dijawab host per 10 Okt).
+
