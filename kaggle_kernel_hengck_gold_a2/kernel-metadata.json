@@ -1,0 +1,23 @@
+{
+  "id": "alverlfarfaraway/mavit-288-gold58-eval",
+  "title": "Mavit 288 Gold58 Eval",
+  "code_file": "mavit-288-gold58-eval.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "gpu"
+  ],
+  "dataset_sources": [
+    "hengck23/hengck23-rnsa-knee"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ],
+  "model_sources": [],
+  "machine_shape": "NvidiaTeslaT4"
+}
