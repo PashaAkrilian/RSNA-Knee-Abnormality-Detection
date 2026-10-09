@@ -5,7 +5,7 @@
 ## 0. Untuk USER (manusia)
 - **GPU Kaggle akun utama pulih Sabtu 10 Okt 2026 07:00 WIB** (`kaggle quota` → `refreshAt 2026-10-10T00:00:00` UTC). Tanggal 9 (Jumat) 07:00 WIB hanya jatah SUBMISI harian yang reset (5/hari utk seluruh tim).
 - Yang perlu Anda lakukan: (1) Jumat 9 Okt — tidak ada yang wajib; jangan jalankan job GPU/TPU proyek lain di akun yg sama menjelang pemulihan GPU (kuota bersama). Beri tahu `nxtirfan` agar tak menghabiskan jatah submisi tanpa koordinasi. (2) Sabtu 10 Okt ±07:05 WIB ketik **"lanjut"**: agen akan commit notebook probe "Apex + sibling r224" lalu submit. (3) 21–22 Okt: pilih 2 submisi final bersama agen (1 bersih tanpa OAI + 1 agresif) setelah cek ulang thread host 743416.
-- Akun Kaggle kedua: TIDAK dipakai utk RSNA (lihat MEMORY §5 butir 4); user menyebut ada izin panitia via email tapi belum ada izin tertulis spesifik multi-akun. Jalur sah GPU tambahan: Colab, kuota `nxtirfan`, tunggu 10 Okt.
+- Akun Kaggle kedua (`alverlfarfaraway`): **user perintahkan dipakai utk RSNA 9 Okt ~21:15** dan menyatakan punya izin tertulis panitia — teksnya BELUM diarsip (minta user tempel ke `docs/IZIN_AKUN_KEDUA.md`; lihat MEMORY §5 butir 4). Alat: `bash kg2.sh <arg>` (CLI akun2), `bash kg_quota.sh` (kuota 2 akun); kredensial `~/.kaggle-acct2/` (jangan dicetak/di-repo). Kernel probe r224 sudah ter-PUSH v1 dari akun2 → `alverlfarfaraway/rsna-knee-oai-fam-r224` (9 Okt 21:17); sisanya commit-run + submit. Jalur lain: Colab, kuota `nxtirfan`, GPU utama pulih 10 Okt 07:00 WIB.
 - Harapan jujur: perunggu ~95%, perak ~35–50% (garis perak naik), emas ≈0–2%. Plafon kita tanpa ckpt OAI baru dari peserta lain ≈0,950–0,951.
 
 ## 1. Status (9 Okt ~02:00 WIB)
@@ -22,7 +22,7 @@
 ## 2. Urutan kerja
 ### A. Sabtu 10 Okt 07:00+ WIB — GPU pulih
 1. `kaggle quota` (GPU remaining ≥25 h).
-2. Probe r224: `python3 build_submit_oai_family.py name=r224 r224=1 children= w224=0.25 src=` (sudah terbangun) → `kaggle kernels push -p kaggle_kernel_oai_fam_r224` (commit-run di stub 3 studi, GPU ≈0,1–0,2 jam; jalur kode baru: arm `single/crop/img`, hash r224, `infer_probs`). Bila ERROR: baca log (Chrome, tab Logs), perbaiki `oai_family_r224_patch.py`.
+2. Probe r224: **PUSH SUDAH SELESAI dari akun kedua 9 Okt 21:17** (`alverlfarfaraway/rsna-knee-oai-fam-r224`, dir `kaggle_kernel_oai_fam_r224_a2/`; GPU akun2 30 h — bisa langsung di-commit-run dengan `bash kg2.sh kernels run ...` bila user izinkan; jalur alternatif: push dari akun utama `kaggle kernels push -p kaggle_kernel_oai_fam_r224` setelah GPU pulih 10 Okt).
 3. Setelah COMPLETE: `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/rsna-knee-oai-fam-r224 -v <versi> -f submission.csv -m "Apex: induk r384 .75 + sibling r224 .25 + reader goodpjw"`. Skor ≈1–1,5 jam.
 4. Aturan terima: skor publik **≥0,951** → kandidat final agresif. 0,950 → netral (simpan). ≤0,949 → buang. LB 3 desimal & noise ±0,002.
 5. Variasi murah berikutnya (1 submisi tiap uji, maks 2/hari): bobot r224 .35; bobot reader per-label ×0,7/×1,3 (edit `TARGET_WEIGHTS` sel 9 Apex); crop 304.
