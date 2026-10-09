@@ -11,7 +11,7 @@
 - **Data eksternal: OAI BOLEH per aturan host** (thread 741819, 21 Sep): sah bila "generally accessible to all participants without an escalated (institutional) review and sign-off ... and is free"; host tak mengontrol syarat data OAI. Peserta (thread 743416, 9 Okt) melaporkan akses NDA OAI sbg individu disetujui seketika (Login.gov + email; "Institutional Approval Required: No"; mungkin terblokir dari beberapa negara). MRNet/fastMRI/KneeMRI/KneeXNet: belum diputuskan (tetap tak dipakai). Agen TIDAK membuat akun / menyetujui perjanjian atas nama user; user mendaftar sendiri lalu agen mengerjakan pra-pemrosesan, label, latih.
 
 ## 1. Fakta Kompetisi
-- [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, **5.490 tim** (8 Okt), hadiah $77k + Efficiency Prize (diabaikan). Tim kita: **Krazy KIller** (`dimaspashaakrilian`, `nxtirfan`).
+- [RSNA Knee Abnormality Detection](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection) — code competition, **5.606 tim** (10 Okt), hadiah $77k + Efficiency Prize (diabaikan). Tim kita: **Krazy KIller** (`dimaspashaakrilian`, `nxtirfan`).
 - Metrik: macro ROC-AUC atas 12 label. Deadline: entry/merger 15 Okt; **final 22 Okt 23:59 UTC**; skor akhir = maks 2 submisi terpilih (privat LB).
 - Data: 4.407 studi latih (570 GB, hanya di Kaggle), **58 gold** (label dibuat BUTA terhadap laporan), 4.349 studi lemah dgn teks `Report`. Test tersembunyi ≈1.322 studi (`test.csv` publik = 3 stub). Pembagian public/private tak diketahui.
 - Submisi: notebook, internet mati, ≤9 jam; **5/hari untuk seluruh tim, reset 07:00 WIB**; run submisi tak memakai kuota GPU; log run submisi tak bisa ditarik. Commit-run (stub 3 studi) butuh GPU ≈0,1 jam.
