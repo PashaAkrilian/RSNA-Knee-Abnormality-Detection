@@ -1,10 +1,11 @@
 #!/bin/bash
-# Laporan progres submisi Kaggle tiap 30 menit (submisi 57012143 — probe r224).
-# Jalankan: nohup bash progress_submisi.sh >> progress_submisi.log 2>&1 &
+# Laporan progres submisi Kaggle tiap 30 menit. Pakai: bash progress_submisi.sh [ID]
+# Jalankan: setsid nohup bash progress_submisi.sh >> progress_submisi.log 2>&1 < /dev/null &
 # Henti:    kill $(cat progress_submisi.pid)
 export PATH="$HOME/.local/bin:$PATH"
 cd "$(dirname "$0")" || exit 1
-ID=57012143
+ID=${1:-57015077}
+TODAY=$(date +%F)
 notify() {
   command -v notify-send >/dev/null 2>&1 || return 0
   notify-send -u normal "Kaggle 30 menit" "$1" 2>/dev/null && return 0
@@ -14,7 +15,7 @@ report() { echo "[$(date '+%d %b %H:%M:%S')] $1"; notify "$1"; }
 for i in $(seq 1 13); do
   out=$(bash kg2.sh competitions submissions -c rsna-knee-abnormality-detection 2>/dev/null)
   row=$(printf '%s\n' "$out" | grep "^$ID" || true)
-  used=$(printf '%s\n' "$out" | awk 'NR>2 && $3 ~ /^2026-10-09/' | wc -l)
+  used=$(printf '%s\n' "$out" | awk -v t="$TODAY" 'NR>2 && $3 ~ "^"t' | wc -l)
   if [ -z "$row" ]; then
     report "cek #$i: baris $ID tak terbaca (auth/rate-limit); jatah hari ini terpakai $used/5"
   else

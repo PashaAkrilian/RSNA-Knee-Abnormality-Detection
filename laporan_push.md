@@ -25,7 +25,7 @@
 | 5 | 8 Okt | 56943646 | **Apex v2**: nartaa r384 solo + reader goodpjw | **0,950** | — | **BASELINE / terbaik** | stack cepat (±30 mnt) |
 | 6 | 9 Okt 20:34 | 57010586 | template akun kedua (smoke) | — | — | n/a | uji jalur submisi akun2 |
 | 7 | 9 Okt 21:39 | **57012143** | **probe r224**: Apex r384 .75 + nartaa r224 .25 + reader | **0,950** | 0,000 | **BUANG** (noise; varian r224/tweak bobot TUTUP) | commit-run OK; skor 23:16 WIB; monitor 30 mnt: `progress_submisi.log` |
-| 8 | 9 Okt 23:33 | (belum) | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | commit-run **RUNNING** | — | gate: **≥0,951 → perak** | dir `kaggle_kernel_rabari_dual_a2/` → `alverlfarfaraway/rsna-knee-dual-engine-tta-fork` v1; sisa jatah 3 |
+| 8 | 9 Okt 23:37 | **57015077** | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | **PENDING** | — | gate: **≥0,951 → perak** | commit-run COMPLETE 23:35 (output valid 12 kolom); monitor `progress_submisi.log` (PID 40710); sisa jatah 2 |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
