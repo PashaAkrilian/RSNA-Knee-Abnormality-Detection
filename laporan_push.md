@@ -24,7 +24,8 @@
 | 4 | 7 Okt | 56872456 | replika goodpjw (reader ConvNeXt) | 0,944 | −0,006 | cadangan bersih TERBAIK | 100% tanpa ckpt OAI |
 | 5 | 8 Okt | 56943646 | **Apex v2**: nartaa r384 solo + reader goodpjw | **0,950** | — | **BASELINE / terbaik** | stack cepat (±30 mnt) |
 | 6 | 9 Okt 20:34 | 57010586 | template akun kedua (smoke) | — | — | n/a | uji jalur submisi akun2 |
-| 7 | 9 Okt 21:39 | **57012143** | **probe r224**: Apex r384 .75 + nartaa r224 .25 + reader | **PENDING** (cek 22:16 masih antre) | — | gate: **≥0,951 → kandidat; =0,950 → buang** | commit-run OK: hash 7e5315/3394fd, dual-GPU, blend 0,75/0,25; skor ±22:45–23:00 WIB; monitor 30 mnt: `progress_submisi.log` |
+| 7 | 9 Okt 21:39 | **57012143** | **probe r224**: Apex r384 .75 + nartaa r224 .25 + reader | **0,950** | 0,000 | **BUANG** (noise; varian r224/tweak bobot TUTUP) | commit-run OK; skor 23:16 WIB; monitor 30 mnt: `progress_submisi.log` |
+| 8 | 9 Okt 23:33 | (belum) | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | commit-run **RUNNING** | — | gate: **≥0,951 → perak** | dir `kaggle_kernel_rabari_dual_a2/` → `alverlfarfaraway/rsna-knee-dual-engine-tta-fork` v1; sisa jatah 3 |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -40,17 +41,18 @@
 | `sameerk2004/sil-d5c-triple224` | salinan `kozykappa/gold-gated-triple-reader` = Apex + r224 (sudah kita ukur +0,001 ≈ noise); guard 8,6 jam | **BUANG** |
 | `rabari9999/...dual-reader-0950` | 2 ckpt sama + routing di-fit di gold58 (overfit); klaim "0.950" tak terskor | **BUANG** |
 | `hitarthjain0/spatial-coatnet-swa-v6` | terhapus (403/404), tak ada fork | tak bisa dinilai |
-| **`heliosli/rsna-knee-blend-gold` (#3, 126 vote)** | nartaa 0,70 ⊕ **`convnext_small` OF 4-fold 0,30** (preprocessing beda total: irisan 6–94%, 336 px, 42 jendela; bobot dataset publik 1,34 GB); rank-pct **tanpa fitting**; **klaim 0,951 direproduksi 2 notebook independen** (`sil-d5d-compact0951`, `evgendvorkin/rsna-versia-7`) | **→ ARM UTAMA; est +0,001 → 0,951–0,952** |
-| `lixin73/rsna-knee-mavit-336px-v51-weights` + `hengck23/mavit-288` | arsitektur benar-benar independen (MaVIT), baru 9 Okt, belum ada angka | pantau (opsi arm-2 bila butuh) |
-- **GAP: angka primer blend-gold harus diverifikasi manual di browser** (API per-kernel 403) sebelum/bareng replika.
+| **`heliosli/rsna-knee-blend-gold` (#3, 126 vote)** | klaim 0,951 ×2 notebook; **TAPI BLOKIR 9 Okt**: `heliosli/rsna-knee-compact-v1` RETIRED 13:50 UTC ("files not accessible", README) + `heliosli/rsna-knee-ofl-ssl-weights` **403** → manifest/bundle S5 tak tersedia; fold0 tetap publik (best.pt parts + code + anatomy.pt). Fork `evgendvorkin/rsna-versia-7`, `samanyu1808/blend3` ikut mati. | **BLOKIR** — jangan buang waktu; pantau bila heliosli buka lagi |
+| **`rabari9999/rsna-knee-sota-dual-engine-stack-lb-0-951` (9 Okt 22:55, klaim 0,951+)** | input publik PENUH (nartaa + goodpjw + comp); raptor r384 **+ MIRROR_TTA anatomis** ⊕ reader goodpjw per-finding ⊕ r224@0,3; **commit-run author sukses** (log bersih, dual-T4, spearman kaki 0,50–0,79); fork v1 kami ter-push 23:33 & RUNNING | **→ KANDIDAT AKTIF (slot 8)**; gate ≥0,951 |
+| `sameerk2004/rsna-knee-sil-d5f-ft7030`, `rainycloudss/...v6` | d5f = fine-tune dgn 5 dataset label LLM (resep placebo per riset); v6 = fork Apex kita (input sama) | pantau; jangan submisi dulu |
+| `lixin73/rsna-knee-mavit-336px-v51-weights` + `hengck23/mavit-288` | arsitektur independen (MaVIT), belum ada angka | opsi arm-2 bila fork rabari gagal |
 
-### 3c. Aksi murah yg MASIH layak (urut bukti)
-1. **Replika blend-gold → solo gate LB ≥0,951** (perintah: `kaggle kernels pull heliosli/rsna-knee-blend-gold -p /tmp/opencode/blend-gold` → ganti namespace, **hapus `id_no` sebelum push**, cek input di `kernel-metadata.json`) → commit-run 2×T4.
-2. **Blend rank-pct Apex ⊕ heliosli** (bobot kasar 50/50 atau 60/40): gate **Δ≥+0,002 terima; +0,001 hanya bila arah OOF/gold sama**.
-3. **TTA / seed-avg / variance-reduction**: nilai dulu di OOF+gold-58 (gratir), submit hanya bila lulus 2/3.
-4. Per-label exclude (RadImageNet dr Baker's/Fracture): konvergen tanpa angka → uji offline dulu, jangan buang submisi.
-5. Varian r224 (w .35, reader ×0,7/×1,3, crop 304): **ekspektasi rendah** (placebo teridentifikasi) — hanya bila probe #7 skornya menjanjikan; ≤2 submisi.
-6. Fast-follower scan: `python3 scan_public_updates.py` + `scan_loop.sh` — syarat arm baru: bukti skor ≥0,951.
+### 3c. Aksi murah yg MASIH layak (urut bukti, REVISI 9 Okt 23:40)
+1. **Fork rabari dual-engine (AKTIF, slot 8)** — commit-run → submit → gate ≥0,951; kalau lolos, ini peraknya. Inti beda vs kita = **MIRROR_TTA anatomis** pada raptor r384 + geometri blend (r224@0,3 coat-side).
+2. **Kalau fork ≥0,951**: replikasi TTA-nya ke Apex kita (eval dulu di gold-58: induk+cermin sudah tercatat 0,9214→0,9221) → varian kedua; lalu blend rank-pct 3-leg (r384-TTA ⊕ reader ⊕ r224) utk slot agresif.
+3. **Kalau fork =0,950**: jalur berikutnya = MaVIT (`lixin73`/`hengck23`, arsitektur independen) sbg arm baru; cek dulu commit status + input publiknya.
+4. Rekonstruksi arm OF heliosli: **BLOKIR** (manifest/ckpt S5 retired) — hanya jika heliosli membuka lagi atau muncul salinan legal; jangan investasi waktu dulu.
+5. TTA/seed-avg/variance-reduction lain: nilai di OOF+gold-58 (gratir), submit hanya bila lulus 2/3 (bukti +0,001–0,003).
+6. Fast-follower scan harian: `python3 scan_public_updates.py` — syarat arm baru: bukti skor ≥0,951 **dan input publik runnable**.
 
 ### 3d. Struktur & final
 - **Merger tim (15 Okt 23:59 UTC)** — hanya user; cek dulu `kaggle competitions submission-limits` (batas gabungan ~355–385); SEMUA kandidat final harus ter-push sebelum 15 Okt.
@@ -59,14 +61,16 @@
 
 ## 4. Rencana peningkatan (urut waktu, tiap aksi punya gate)
 ### Fase 0 — MALAM INI (9 Okt)
-- [ ] Pantau skor **57012143** (monitor 30 mnt → `progress_submisi.log` / notifikasi desktop; manual: `bash kg2.sh competitions submissions -c rsna-knee-abnormality-detection`).
-  - **≥0,951** → kandidat A segera; **0,950** → buang, kuota pindah ke heliosli; ≤0,949 → buang total.
+- [x] Pantau skor **57012143** → **0,950 = BUANG** (23:16 WIB, monitor selesai).
+- [x] Fork rabari ter-push v1 (23:33) → commit-run RUNNING.
+- [ ] **Setelah commit-run COMPLETE → SUBMIT** (sisa jatah 3) → skor ±1–1,5 jam → gate **≥0,951 = PERAK**; restart monitor `progress_submisi.sh`.
 - [ ] **User: tempel izin panitia ke `docs/IZIN_AKUN_KEDUA.md`** (Risiko #1, lihat §6).
 
 ### Fase 1 — 10–14 Okt (GPU utama pulih 10 Okt 07:00 WIB)
-- [ ] Urutan: (1) baca hasil r224 (gratis) → (2) **replika blend-gold** (pull, ganti namespace, hapus `id_no`, commit-run; solo gate ≥0,951) → (3) **blend Apex ⊕ heliosli** (gate di §3c-2) → (4) TTA/varian murah lulus triangulasi → (5) scan harian.
-- [ ] Anggaran: ≤2 submisi/hari utk agen, sisakan 2–3 utk user & `nxtirfan`; keputusan dari OOF/gold-58, BUKAN dari selisih 0,001 LB.
-- [ ] Verifikasi manual browser: skor primer blend-gold + runtime 2×T4 (bila >7 jam → strategi leg OF sahaja).
+- [ ] Bila fork ≥0,951: bawa MIRROR_TTA ke Apex kita (gold-58: cermin +0,0007) → varian kedua + blend 3-leg; kunci 2 kandidat final beda mekanisme.
+- [ ] Bila fork =0,950: uji arm MaVIT (cek input publik + commit status dulu), lalu TTA/variance-reduction (triangulasi dulu).
+- [ ] Rekonstruksi heliosli OF: **tunda** (blokir); pantau bila dataset dibuka lagi.
+- [ ] Anggaran: ≤2 submisi/hari utk agen, sisakan 2–3 utk user & `nxtirfan`; keputusan dari OOF/gold-58 + gate LB, BUKAN selisih 0,001.
 
 ### Fase 2 — 15 Okt (batas keras)
 - [ ] `kaggle competitions submission-limits` sebelum merge; semua kandidat final ter-push; tulis kriteria pemilihan 2 final di repo.
