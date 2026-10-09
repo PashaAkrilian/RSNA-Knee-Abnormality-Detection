@@ -49,7 +49,7 @@
 ### 3c. Aksi murah yg MASIH layak (urut bukti, REVISI 9 Okt 23:40)
 1. **Fork rabari dual-engine (AKTIF, slot 8)** — commit-run → submit → gate ≥0,951; kalau lolos, ini peraknya. Inti beda vs kita = **MIRROR_TTA anatomis** pada raptor r384 + geometri blend (r224@0,3 coat-side).
 2. **Kalau fork ≥0,951**: replikasi TTA-nya ke Apex kita (eval dulu di gold-58: induk+cermin sudah tercatat 0,9214→0,9221) → varian kedua; lalu blend rank-pct 3-leg (r384-TTA ⊕ reader ⊕ r224) utk slot agresif.
-3. **Kalau fork =0,950** → terjadi: MaVIT **sudah dievaluasi & DITOLAK** (gold-58 0,9202, eval gratis via commit-run `MODE=local` — pola ini dipakai ulang utk arm lain). Sisa: TTA/variance-reduction (triangulasi dulu) + scan pagi 10 Okt.
+3. **Kalau fork =0,950** → terjadi: MaVIT **dievaluasi & DITOLAK** (gold-58 0,9202, eval gratis commit-run `MODE=local`). **Resep 746792 (nartaa 0,949) dibaca — identik dgn stack kita** (native 320 crop + mirror plane-aware + SWA) → celah baru NOL; all-plane flip = merugikan (0,940→0,939). **KONFIRMASI OAI**: ckpt `..._oai_d96_r384/c08_r224...pt` + "2,399 OAI knees" → slot agresif sudah terpakai di 0,950; bersih = 0,944. Sisa: TTA/variance-reduction lain (triangulasi gold-58) + scan pagi 10 Okt.
 4. Rekonstruksi arm OF heliosli: **BLOKIR** (manifest/ckpt S5 retired) — hanya jika heliosli membuka lagi atau muncul salinan legal; jangan investasi waktu dulu.
 5. TTA/seed-avg/variance-reduction lain: nilai di OOF+gold-58 (gratir), submit hanya bila lulus 2/3 (bukti +0,001–0,003).
 6. Fast-follower scan harian: `python3 scan_public_updates.py` — syarat arm baru: bukti skor ≥0,951 **dan input publik runnable**.
