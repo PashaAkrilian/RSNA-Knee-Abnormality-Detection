@@ -1655,3 +1655,6 @@ Rencana 10 Okt: probe LB tunggal "Apex + r224 (bobot ~.25 di dalam campuran CoAt
 - **Tim**: batas penggabungan 15 Okt (syarat: total submisi gabungan <= batas harian*hari ≈385; kita 102). Jalur sah menambah keluasan model; mitra setara (tim <=2 anggota, 0,950-0,957) ada banyak, tetapi insentif mereka kecil; sekadar opsi bila user mau menghubungi.
 - **Submisi Apex 0,950 dibuat rekan tim `nxtirfan`** (halaman Submissions), bukan oleh user/agen.
 - Hub Models Kaggle: tidak ada ckpt kuat baru (hanya baseline 2.5D, ConvNeXt-L, 'Pillar-0 BreastMRI fine-tune'). OrthoDiffusion dipertimbangkan, tidak dikerjakan (lihat 37c).
+
+- **Job TPU anak-OAI (9 Okt)**: setelah ±6 jam antre, berjalan 5 menit lalu MATI ("Kernel died") di `native_batch_norm_backward` XLA saat anak `a` mulai dilatih (BN dibekukan `eval()` + backward di XLA = crash fatal). Sebelum itu: induk di TPU = gold-58 **0,9212** (≈ Colab GPU 0,9214 → lintas-perangkat konsisten). Garis anak sudah ditutup, tidak diperbaiki.
+- **Push kernel GPU 9 Okt 07:34**: `Kernel push error: Maximum weekly GPU quota of 30.00 hours reached` → commit-run notebook probe r224 TIDAK mungkin di akun utama sebelum reset 10 Okt 07:00 WIB (jalan keluar sah: kuota `nxtirfan`, lihat docs/PAKET_REKAN_TIM.md).
