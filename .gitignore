@@ -6,3 +6,7 @@ __pycache__/
 /kaggle.json
 **/kaggle.json
 kaggle.json.bak*
+
+# monitor submisi (hidup, jangan commit)
+progress_submisi.pid
+progress_submisi.log
