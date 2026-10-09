@@ -1,10 +1,11 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 9 Okt 2026 ~02:00 WIB. Baca MEMORY.md dulu (aturan mutlak + fakta), lalu file ini (apa yang harus dilakukan, urut waktu).
+> Diperbarui 9 Okt 2026 ~09:30 WIB. Baca MEMORY.md dulu (aturan mutlak + fakta), lalu file ini (apa yang harus dilakukan, urut waktu).
 > Setelah tiap unit kerja: perbarui "Status" di bawah + MEMORY.md §3 (commit terpisah "memory: ...").
 
 ## 0. Untuk USER (manusia)
 - **GPU Kaggle akun utama pulih Sabtu 10 Okt 2026 07:00 WIB** (`kaggle quota` → `refreshAt 2026-10-10T00:00:00` UTC). Tanggal 9 (Jumat) 07:00 WIB hanya jatah SUBMISI harian yang reset (5/hari utk seluruh tim).
 - Yang perlu Anda lakukan: (1) Jumat 9 Okt — tidak ada yang wajib; jangan jalankan job GPU/TPU proyek lain di akun yg sama menjelang pemulihan GPU (kuota bersama). Beri tahu `nxtirfan` agar tak menghabiskan jatah submisi tanpa koordinasi. (2) Sabtu 10 Okt ±07:05 WIB ketik **"lanjut"**: agen akan commit notebook probe "Apex + sibling r224" lalu submit. (3) 21–22 Okt: pilih 2 submisi final bersama agen (1 bersih tanpa OAI + 1 agresif) setelah cek ulang thread host 743416.
+- Akun Kaggle kedua: TIDAK dipakai utk RSNA (lihat MEMORY §5 butir 4); user menyebut ada izin panitia via email tapi belum ada izin tertulis spesifik multi-akun. Jalur sah GPU tambahan: Colab, kuota `nxtirfan`, tunggu 10 Okt.
 - Harapan jujur: perunggu ~95%, perak ~35–50% (garis perak naik), emas ≈0–2%. Plafon kita tanpa ckpt OAI baru dari peserta lain ≈0,950–0,951.
 
 ## 1. Status (9 Okt ~02:00 WIB)
