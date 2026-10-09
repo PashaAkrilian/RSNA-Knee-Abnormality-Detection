@@ -1,5 +1,5 @@
 #!/bin/bash
-# Cek sisa kuota GPU/TPU (kolom 'remaining') untuk KEDUA akun Kaggle. Jangan pernah cetak isi kaggle.json.
+# Cek sisa kuota GPU/TPU (kolom 'remaining') untuk 3 akun Kaggle. Jangan pernah cetak isi kaggle.json.
 export PATH="$HOME/.local/bin:$PATH"
 q() {
   local label="$1" dir="$2" out
@@ -18,3 +18,4 @@ q() {
 }
 q "akun utama: dimaspashaakrilian (~/.kaggle)" ""
 q "akun kedua: alverlfarfaraway (~/.kaggle-acct2)" "$HOME/.kaggle-acct2"
+q "akun ketiga: nxtirfan (akun_kaggle/)" "$HOME/Documents/RSNA-Knee-Abnormality-Detection/akun_kaggle"

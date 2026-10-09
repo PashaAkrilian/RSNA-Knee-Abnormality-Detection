@@ -1,4 +1,5 @@
-# Paket utk rekan satu tim (nxtirfan) — jalankan probe "Apex + sibling r224" dari AKUN-nya (kuota GPU-nya sendiri)
+# Paket utk rekan satu tim (nxtirfan) — jalankan probe dari AKUN-nya (kuota GPU-nya sendiri)
+> **UPDATE 10 Okt**: kredensial `nxtirfan` sudah ada di `akun_kaggle/kaggle.json` (perintah user; wrapper `bash kg3.sh`) — gunakan BILA GPU akun2 habis. Probe r224 sudah selesai (0,950 = buang); kandidat aktif = fork rabari (`alverlfarfaraway/rsna-knee-dual-engine-tta-fork`, submisi 57015077).
 > Sah menurut Rules: berbagi kode di dalam tim diperbolehkan; notebook ini HANYA memakai dataset publik (nartaa, goodpjw) + data kompetisi. Memakai 1 dari 5 submisi/hari tim → koordinasikan dgn user.
 > Berkas: `kaggle_kernel_oai_fam_r224/rsna-knee-oai-fam-r224.ipynb` (di repo). Kirim berkas .ipynb itu ke rekan (chat/Drive tim).
 

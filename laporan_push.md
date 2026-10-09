@@ -1,7 +1,7 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
 > Konteks aturan: `MEMORY.md` · urutan kerja: `HANDOFF.md` · arahan harness: `push.md` · **riset lengkap 9 Okt: `reports/Strategi meraih perak RSNA.md`** (catatan: `research_notes/Strategi meraih perak RSNA/`) · arsip: `PROGRESS.md`, `docs/RESEARCH_NOTES.md`.
-> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui ~22:20 WIB. Bahasa kerja: Indonesia.
+> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 10 Okt ~01:00 WIB. Bahasa kerja: Indonesia.
 
 ## 1. Posisi vs garis perak (snapshot 9 Okt 14:47 UTC, 5.584 tim)
 | Hal | Nilai |
@@ -86,15 +86,16 @@
 | Sumber | Sisa | Reset |
 |---|---|---|
 | GPU akun utama | 0,00 h | **10 Okt 07:00 WIB** (30 h/minggu) |
-| GPU akun kedua | ~29,96 h | 10 Okt 07:00 WIB |
+| GPU akun kedua | ~29,92 h | 10 Okt 07:00 WIB |
+| **GPU akun ketiga `nxtirfan`** | **27,68 h** (pakai BILA akun2 habis; `bash kg3.sh`) | 10 Okt 07:00 WIB |
 | TPU akun utama | 14,41 h (XLA kita crash — hindari) | 10 Okt 07:00 WIB |
-| Submisi tim hari ini | **sisa 3** (terpakai: template + probe r224) | 10 Okt 07:00 WIB, kuota **5/hari** |
+| Submisi tim hari ini (9 Okt) | **sisa 2** (terpakai: template, probe r224, fork rabari 57015077) | 10 Okt 07:00 WIB, kuota **5/hari** |
 | Deadline | entry/merger 15 Okt · final 22 Okt 23:59 UTC | — |
-- Cek: `bash kg_quota.sh`. Monitor submisi: `progress_submisi.log` (PID di `progress_submisi.pid`; ulang: `setsid nohup bash progress_submisi.sh >> progress_submisi.log 2>&1 < /dev/null &`).
+- Cek: `bash kg_quota.sh` (3 akun). Wrapper: `kg2.sh` (akun2), `kg3.sh` (akun3, isi `akun_kaggle/` — di-.gitignore). Monitor submisi: `progress_submisi.log` (PID di `progress_submisi.pid`; ulang: `setsid nohup bash progress_submisi.sh [ID] >> progress_submisi.log 2>&1 < /dev/null &`).
 - ML hanya di Kaggle (lokal tanpa torch).
 
 ## 6. Risiko & jalur mundur
-- **RISIKO #1 — Rules multi-akun**: Rules 3.5.a eksplisit: *"You will be disqualified if you make Submissions through more than one Kaggle account…"* — hari ini **2 submisi dari `alverlfarfaraway`** (anggota tim resmi) atas klaim izin tertulis panitia **yang belum diarsipkan**. Mitigasi urut murah: (1) **arsipkan izin ke `docs/IZIN_AKUN_KEDUA.md`**; (2) catat kronologi (akun, waktu, ID submisi); (3) §3.5.b mengizinkan tiap anggota tim punya akun sendiri — risiko muncul bila SATU orang mengoperasikan kedua; (4) konservatif: hentikan submisi dari akun2 (run GPU di akun2 masih oke — "Submissions" = ke leaderboard), arahkan semua submisi ke akun utama; (5) bila butuh kepastian: klarifikasi resmi panitia dengan lampiran izin.
+- **RISIKO #1 — Rules multi-akun**: Rules 3.5.a eksplisit: *"You will be disqualified if you make Submissions through more than one Kaggle account…"* — 9–10 Okt ada **submisi dari `alverlfarfaraway`** (anggota tim) atas klaim izin tertulis panitia **yang belum diarsipkan**; akun ketiga `nxtirfan` (juga anggota tim) kini aktif utk run GPU bila akun2 habis. Mitigasi urut murah: (1) **arsipkan izin ke `docs/IZIN_AKUN_KEDUA.md`**; (2) catat kronologi (akun, waktu, ID submisi); (3) §3.5.b mengizinkan tiap anggota tim punya akun sendiri — risiko muncul bila SATU orang mengoperasikan kedua; (4) konservatif: hentikan submisi dari akun2 (run GPU di akun2 masih oke — "Submissions" = ke leaderboard), arahkan semua submisi ke akun utama; (5) bila butuh kepastian: klarifikasi resmi panitia dengan lampiran izin.
 - **OAI / 743416**: host jawab 741819 (OAI sah bila generally accessible & gratis) tapi **743416 (ckpt bekas-OAI & daftar data) 30 pesan, 0 jawaban host, 81 vote** — jalur bersih kita mentok 0,944 (di luar perak) → keputusan 2 final = user pada 21–22 Okt (1 bersih + 1 agresif). Cek harian.
 - **Noise & overfit publik**: Δ<0,002 = noise; tiap probe = overfit adaptif √(k/n); publik hanya 30% test set → steering final dari OOF, bukan papan harian.
 - **Timeout**: limit 9 jam, stack ±7 jam → 1 final wajib cepat (Apex ±30 mnt) atau pastikan runtime final <6–7 jam.

@@ -10,3 +10,7 @@ kaggle.json.bak*
 # monitor submisi (hidup, jangan commit)
 progress_submisi.pid
 progress_submisi.log
+
+# folder kredensial 3 akun Kaggle — JANGAN PERNAH commit/push
+/akun_kaggle/
+/akun kaggle/

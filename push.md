@@ -7,7 +7,7 @@
 - Syarat user untuk fase ini: **JANGAN memakai data OAI mentah.** (Bobot publik pra-latih, termasuk ckpt nartaa yg dilatih dgn OAI, adalah "pre-trained model" yg diizinkan Rules; tanpa itu kita mentok 0,944 = tak dapat medali. Pertahankan satu submisi final yg sepenuhnya bersih sbg cadangan.)
 
 ## 2. Aturan keras (jangan dilanggar)
-1. **Hanya akun Kaggle utama** `dimaspashaakrilian` (dan akun rekan satu tim dgn izin dia). **DILARANG** akun Kaggle lain milik user: Rules melarang masuk/submit dari banyak akun dan berbagi kode/data kompetisi secara privat di luar tim (risiko diskualifikasi tim). Jangan baca/cetak/salin isi `kaggle.json` (ada di `~/.kaggle/`, di-`.gitignore`).
+1. **3 akun Kaggle tim yg SAH dipakai** (perintah user): utama `dimaspashaakrilian` (`~/.kaggle/`), kedua `alverlfarfaraway` (`~/.kaggle-acct2/`, mulai 9 Okt), ketiga `nxtirfan` (`akun_kaggle/`, mulai 10 Okt — DIPAKAI BILA GPU AKUN2 HABIS). **DILARANG** akun Kaggle di luar tim (Rules: berbagi kode/data kompetisi privat di luar tim). Risiko Rules 3.5.a (multi-account) = `laporan_push.md` §6, izin panitia BELUM diarsip di `docs/IZIN_AKUN_KEDUA.md`. Jangan baca/cetak/salin isi `kaggle.json`; folder `akun_kaggle/` di-`.gitignore`.
 2. Jangan membuat akun/menyetujui perjanjian atas nama user. Jangan mengirim pesan ke pihak ketiga tanpa persetujuan user.
 3. Komitmen git: **tanpa trailer `Co-Authored-By`/`Claude-Session`**; pesan multi-baris via `git commit -F <berkas>`; commit `MEMORY.md` terpisah ("memory: …"). Jangan commit kredensial/berkas besar.
 4. Jangan sentuh kernel/berkas proyek lain di akun yg sama (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`).
@@ -17,8 +17,8 @@
 ## 3. Status (9 Okt 21:00 WIB)
 - Papan (5.584 tim): batas emas ≤rank 21 (0,960), perak ≤279 (0,950 bawah), perunggu ≤558. ≥0,951: 257 tim; ≥0,952: 169; ≥0,953: 128. **Kita rank 563 @0,950** (submisi 56943646 = notebook publik Apex v2 oleh rekan; dataran 0,950 ≈456 tim).
 - Terbaik bersih (tanpa bobot OAI): replika goodpjw 0,944 (56872456), d4-blend 0,943. Stack 7 jam; Apex ±30 menit.
-- Kuota: **GPU akun utama 0,00 h sampai Sabtu 10 Okt 07:00 WIB**, lalu 30 h/minggu (reset tiap Sabtu 07:00 WIB); TPU ±14 h (tak berguna; skrip kita crash di XLA); CPU sesi 5. Push kernel GPU sebelum reset ditolak ("Maximum weekly GPU quota").
-- Garis yg SUDAH DITUTUP (jangan ulangi): anak fine-tune ckpt OAI pada label fusi (gold-58 ≈ induk/lebih rendah), bagging model tanpa OAI, KneeNet reader, soup bobot, metadata DICOM, OrthoDiffusion fitur beku, akun kedua.
+- Kuota (10 Okt 00:50): **GPU akun utama 0,00 h sampai Sabtu 10 Okt 07:00 WIB** lalu 30 h/minggu; **akun2 29,9h; akun3 27,7h** (reset juga 07:00 WIB); TPU utama ±14 h (tak berguna; skrip kita crash di XLA); CPU sesi 5. Push kernel GPU sebelum reset bisa ditolak ("Maximum weekly GPU quota"). Cek: `bash kg_quota.sh`.
+- Garis yg SUDAH DITUTUP (jangan ulangi): anak fine-tune ckpt OAI pada label fusi (gold-58 ≈ induk/lebih rendah), bagging model tanpa OAI, KneeNet reader, soup bobot, metadata DICOM, OrthoDiffusion fitur beku, **varian r224 & tweak bobot halus** (57012143 = 0,950 = placebo), **replika arm heliosli OF** (dataset compact-v1 retired 9 Okt + ofl-ssl-weights 403 = blokir).
 - Aset siap: `kaggle_kernel_oai_fam_r224/` (notebook Apex + sibling r224 nartaa; lolos uji CPU, belum dijalankan di GPU). Alat: `scan_public_updates.py`, `scan_loop.sh`, `build_submit_oai_family.py`, `docs/PAKET_REKAN_TIM.md`, `docs/KANDIDAT_MERGER.md`.
 
 ## 4. Strategi perak TANPA data OAI mentah (urut prioritas)
@@ -37,7 +37,7 @@
 **E. Ketahanan privat LB (penting utk perak):** public & private test terpisah; dataran 0,950 akan teracak. Untuk 2 pilihan final: (1) satu notebook CEPAT & kuat (keluarga Apex ≈30–60 mnt), (2) satu cadangan bersih (replika 0,944 atau perbaikannya; stack 7 jam berisiko timeout bila set privat diganti). Tandai manual di UI Kaggle (Submissions → select 2); bila tidak, Kaggle memilih 2 terbaik publik.
 
 ## 5. Cara kerja teknis ringkas
-- Persiapan: `export PATH="$HOME/.local/bin:$PATH"`; `cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection`; CLI Kaggle sudah terautentikasi akun utama. Cek: `kaggle quota`, `kaggle competitions submissions rsna-knee-abnormality-detection`.
+- Persiapan: `export PATH="$HOME/.local/bin:$PATH"`; `cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection`; CLI terautentikasi akun utama (`kaggle ...`), akun2 (`bash kg2.sh ...`), akun3 (`bash kg3.sh ...`). Cek: `bash kg_quota.sh`, `kaggle competitions submissions rsna-knee-abnormality-detection`.
 - Papan: `kaggle competitions leaderboard rsna-knee-abnormality-detection -d -p <dir>` (CSV; kolom `TeamMemberUserNames` memuat `dimaspashaakrilian`).
 - Kernel submisi harus punya versi COMPLETE; `-f submission.csv` WAJIB di `kaggle competitions submit`. Log run submisi nyata tak bisa ditarik; dev-run stub dulu. Slug = turunan judul; hapus `id_no` dari metadata bila menyalin kernel orang lain.
 - Batas sesi: GPU 2 / TPU 1 / CPU 5. Satu sesi GPU = 2×T4. Jangan `pkill -f` dgn pola yg ada di perintah sendiri. Tanpa torch lokal; semua eksekusi ML di Kaggle/Colab.

@@ -1278,6 +1278,14 @@ membuktikan intuisi bisa meleset. Angka realnya yang memutuskan.
 
 ---
 
+## 51. Siklus probe r224 selesai (0,950 = buang), jalur heliosli blokir, fork rabari disubmit, akun ketiga (9–10 Okt malam)
+- **57012143** (probe r224, push dari akun2) = **0,950** → BUANG; varian r224/tweak bobot ditutup (noise).
+- Riset 4 subagent + sintesis → `reports/Strategi meraih perak RSNA.md` + `research_notes/Strategi meraih perak RSNA/` + `laporan_push.md` (wadah evaluasi silver §1–§6); ter-commit & ter-push.
+- **Arm heliosli blend-gold BLOKIR**: `heliosli/rsna-knee-compact-v1` RETIRED 9 Okt 13:50 UTC + `ofl-ssl-weights` 403 → fork `evgendvorkin/rsna-versia-7` & `samanyu1808/blend3` ikut mati. fold0 tetap publik tapi manifest/bundle S5 hilang.
+- Scan 9 Okt temukan `rabari9999/...dual-engine-stack-lb-0-951` (klaim 0,951+, input publik: raptor r384+MIRROR_TTA ⊕ reader ⊕ r224@0,3; commit-run penulis OK) → fork ke akun2 `alverlfarfaraway/rsna-knee-dual-engine-tta-fork` v1 (23:33) → commit-run COMPLETE (23:35, output 12 kolom) → **submisi 57015077 (23:37) PENDING**; sisa jatah 2.
+- Monitor `progress_submisi.sh` (ID via argumen, jatah fix 3/5) berjalan; 6 commit ter-push (…`7fa2137`).
+- **10 Okt 00:42 — akun KETIGA `nxtirfan`** (perintah user): kredensial di `akun_kaggle/` (3 file, chmod 600, `.gitignore` folder utuh), wrapper `kg3.sh`, `kg_quota.sh` 3 akun (GPU akun3 27,68h). Urutan komputasi: utama → akun2 → **akun3** → Colab. MD diperbarui: MEMORY, HANDOFF, push, laporan_push, PAKET_REKAN.
+
 ## Arsip MEMORY.md (versi penuh sebelum dipadatkan, 8 Okt 2026 21:30 WIB)
 > Disalin apa adanya dari MEMORY.md agar tidak ada informasi hilang. MEMORY.md aktif kini padat (lihat HANDOFF.md untuk langkah operasional).
 
