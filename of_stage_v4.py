@@ -10,7 +10,7 @@ Perbaikan v4:
 - Keluaran per potongan ditulis atomik (tmp + os.replace) ke _of_res/<k>.csv; agregasi di akhir; liputan minimum MINCOV.
 - Pemutus waktu: berhenti lunak STOP_H, bunuh grup proses KILL_H (killpg: termasuk anak DataLoader).
 Placeholder: __WD__ (/kaggle/working), __NPROC__, __CHUNK__, __STOP_H__, __KILL_H__, __MINCOV__, __MAXCHUNKS__, __RSSMAX__, __INJECT__ (uji: bunuh pekerja 0 pd +__INJECT_AFTER__ dtk; 360 di rehearsal), __POLL__ (jeda supervisor dtk; 10), __PRINTEVERY__ (dtk entre linhas de progresso; 300), __MEMPERW__ (5.5 GB/pekerja), __MEMFREE__ (6.5 GB minimum utk spawn), __DISKPER__ (0.42 GB/studi) & __DISKBASE__ (1.5 GB) = penjaga disk, __FORCEW__ (0 = otomatis; >0 = paksa jumlah pekerja, uji), __MMAP__ (1 = torch.load mmap=True), __NOPIN__ (1 = DataLoader sem pin_memory), __EXTRAENV__ (dict literal: env tambahan pekerja, mis. MALLOC_*),
-__DATA_PRESET__ (kode penentu akar data; pseudo-root utk rehearsal), __SETUP__ (1 = pasang aset OF; 0 = uji lokal).
+__DATA_PRESET__ (kode penentu akar data; pseudo-root utk rehearsal), __T0EXPR__ (ekspresi waktu-nol utk batas STOP/KILL; '_time.time()' ou 'NB_T0' no S6+), __SETUP__ (1 = pasang aset OF; 0 = uji lokal).
 """
 
 OF4_CELL = r'''
@@ -20,7 +20,7 @@ import traceback as _tb
 import pandas as _pd
 
 _WD = "__WD__"
-_OF_T0 = _time.time()
+_OF_T0 = __T0EXPR__
 _OF_LEG = _WD + "/_leg_of.csv"          # keluaran sukses (dibaca sel BLEND)
 _OF_STATE = {"cov": 0.0, "ok": False, "why": "not started"}
 

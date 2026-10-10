@@ -76,7 +76,7 @@ def fill_of(src):
     rep = {"__WD__": "/kaggle/working", "__NPROC__": NPROC, "__CHUNK__": CHUNK, "__STOP_H__": STOP_H, "__KILL_H__": KILL_H, "__MINCOV__": MINCOV,
            "__MAXCHUNKS__": MAXCHUNKS, "__RSSMAX__": RSSMAX, "__INJECT__": INJECT, "__INJECT_AFTER__": "360", "__POLL__": POLL, "__PRINTEVERY__": PRINTEVERY,
            "__MEMPERW__": MEMPERW, "__MEMFREE__": MEMFREE, "__MMAP__": MMAP, "__NOPIN__": NOPIN, "__EXTRAENV__": EXTRAENV, "__DISKPER__": "0.42", "__DISKBASE__": "1.5", "__FORCEW__": "0", "__SETUP__": "1",
-           "__DATA_PRESET__": DATA_PRESET_PSEUDO if PSEUDO else DATA_PRESET_PROD}
+           "__T0EXPR__": "_time.time()", "__DATA_PRESET__": DATA_PRESET_PSEUDO if PSEUDO else DATA_PRESET_PROD}
     for k, v in rep.items():
         src = src.replace(k, v)
     assert "__" not in re.sub(r"__[a-z]+__|__name__|__main__", "", src.replace("__init__", "")), "placeholder nao substituido"
