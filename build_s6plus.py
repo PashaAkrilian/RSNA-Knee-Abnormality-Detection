@@ -6,6 +6,7 @@
   of=1     : perna OrthoFoundation-L fold0 (heliosof) com o supervisor v4.1 (of_stage_v4.py) como ULTIMO estagio, com STOP/KILL absolutos desde NB_T0
              (so usa o tempo que sobra; se nao sobrar, a perna e ignorada e o resultado = S6[+reader]).
   Blend final por finding = media ponderada de ranks (percentis) das pernas disponiveis (pesos renormalizados por estudo): S6 original = Raptor .7 / compact .3.
+  noraptor=1: variante LIMPA (sem Raptor/OAI): so compact + reader (+OF opcional); pesos wc (compact, padrao .65) e wd (reader, padrao .35).
   lenient=1: o controlador do compact NAO derruba o notebook quando >3 % de fallbacks (cai para o rank Raptor), em vez de ERROR sem pontuacao.
 
 Pemakaian:
@@ -28,8 +29,14 @@ NAME = args.get("name", "s6plus")
 READER = args.get("reader", "0") == "1"
 OF = args.get("of", "0") == "1"
 PSEUDO = int(args.get("pseudo", "0"))
-WR = float(args.get("wr", "0.70"))
-WC = float(args.get("wc", "0.30"))
+NORAPTOR = args.get("noraptor", "0") == "1"
+if NORAPTOR:
+    READER = True
+    WR = float(args.get("wd", "0.35"))                      # peso do reader (na variante limpa 'wr' nao se usa)
+    WC = float(args.get("wc", "0.65"))
+else:
+    WR = float(args.get("wr", "0.70"))
+    WC = float(args.get("wc", "0.30"))
 WO = float(args.get("wo", "0.15" if OF else "0.0"))
 if not OF:
     WO = 0.0
@@ -212,6 +219,79 @@ display(sub.head())
 '''
 
 
+NORAPTOR_CELL = r'''
+# variante LIMPA: sem estagio Raptor/OAI (so compact + reader). Define NB_T0 e RAPTOR_SECONDS para o resto do notebook S6.
+import os, sys, time, subprocess
+NB_T0 = time.time()
+RAPTOR_SECONDS = 0.0
+'''
+
+BLEND_CLEAN = r'''
+# Stage 3 (S6 limpo): per-finding rank blend de compact (ours) + reader (+OF opcional), SEM Raptor/OAI. Pesos fixos: compact __WC__, reader __WR__, OF __WO__.
+import csv, os
+import numpy as np
+import pandas as pd
+W_OURS, W_RD, W_OF = __WC__, __WR__, __WO__
+test_ids = pd.read_csv(DATA / 'test.csv')['StudyInstanceUID'].astype(str).tolist()
+ss = DATA / 'sample_submission.csv'
+ours = pd.read_csv(WORK / 'ours_sub.csv', dtype={'StudyInstanceUID': str})
+cols = list(pd.read_csv(ss, nrows=1).columns) if ss.is_file() else list(ours.columns)
+labels = cols[1:]
+assert sorted(ours['StudyInstanceUID']) == sorted(test_ids) and set(labels) <= set(ours.columns), 'ours: ids/colunas'
+ours = ours.set_index('StudyInstanceUID').loc[test_ids, labels]
+n = len(test_ids)
+scored = set()
+for f in pred.glob('worker*/predictions.csv'):
+    with open(f, encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            try:
+                v = [float(r[L]) for L in labels]
+            except (KeyError, ValueError, TypeError):
+                continue
+            if all(0. <= x <= 1. for x in v):
+                scored.add(r['StudyInstanceUID'])
+our_fail = np.array([u not in scored for u in test_ids])
+reader = None
+if os.path.isfile('/kaggle/working/_own.csv'):
+    _rd = pd.read_csv('/kaggle/working/_own.csv', dtype={'StudyInstanceUID': str}).set_index('StudyInstanceUID').reindex(test_ids)[labels]
+    reader = _rd if _rd.notna().all().all() else None
+assert reader is not None, 'perna reader indisponivel: a variante limpa precisa de compact + reader'
+ofl = None
+if W_OF > 0 and os.path.isfile('/kaggle/working/_leg_of.csv'):
+    ofl = pd.read_csv('/kaggle/working/_leg_of.csv', dtype={'StudyInstanceUID': str}).set_index('StudyInstanceUID').reindex(test_ids)[labels]
+
+
+def pct(v):
+    return pd.Series(np.asarray(v, dtype=np.float64)).rank(method='average', pct=True).values
+
+
+out = np.zeros((n, len(labels)))
+for j, c in enumerate(labels):
+    ro, rd = pct(ours[c].values), pct(reader[c].values)
+    num = np.where(our_fail, 0.0, W_OURS * ro) + W_RD * rd
+    den = np.where(our_fail, 0.0, W_OURS) + W_RD
+    if ofl is not None:
+        ov = ofl[c].values
+        ok = ~np.isnan(ov)
+        po = np.zeros(n)
+        po[ok] = pct(ov[ok])
+        num = num + np.where(ok, W_OF * po, 0.0)
+        den = den + np.where(ok, W_OF, 0.0)
+    out[:, j] = num / np.maximum(den, 1e-12)
+sub = pd.DataFrame(out.astype(np.float32), columns=labels)
+sub.insert(0, 'StudyInstanceUID', test_ids)
+sub = sub[cols]
+assert sub['StudyInstanceUID'].tolist() == test_ids and np.isfinite(sub[labels].values).all()
+assert ((sub[labels].values >= 0) & (sub[labels].values <= 1)).all()
+sub.to_csv(WORK / 'submission.csv', index=False)
+blend = {'variant': 'clean_no_raptor', 'weights': {'compact': W_OURS, 'reader': W_RD, 'of': W_OF}, 'of_leg': ofl is not None, 'rows': n,
+         'ours_failed': int(our_fail.sum()), 'total_seconds': round(time.time() - NB_T0, 1)}
+(WORK / 'blend_receipt.json').write_text(json.dumps(blend, indent=1))
+print('NOTEBOOK_COMPLETE', json.dumps(blend), flush=True)
+display(sub.head())
+'''
+
+
 def fill_of(src):
     t0 = "NB_T0" if T0MODE == "nb" else "_time.time()"
     rep = {"__WD__": "/kaggle/working", "__NPROC__": "4", "__CHUNK__": "8", "__STOP_H__": STOP_H, "__KILL_H__": KILL_H, "__MINCOV__": "0.10",
@@ -227,7 +307,7 @@ def fill_of(src):
 nb = json.loads(NB.read_text(encoding="utf-8"))
 cells = copy.deepcopy(nb["cells"])
 assert len(cells) == 7
-if PSEUDO:
+if PSEUDO and not NORAPTOR:
     s2 = "".join(cells[2]["source"])
     old2 = 'cands = ["/kaggle/input/competitions/rsna-knee-abnormality-detection",'
     assert s2.count(old2) == 1
@@ -260,7 +340,11 @@ if PSEUDO:
     new_cells.append(code(p))
 compile(MEMMON_CELL, "memmon", "exec")
 new_cells.append(code(MEMMON_CELL))
-new_cells += cells[2:4]                                  # Raptor script + stage 1
+if NORAPTOR:
+    compile(NORAPTOR_CELL, "noraptor", "exec")
+    new_cells.append(code(NORAPTOR_CELL))
+else:
+    new_cells += cells[2:4]                                  # Raptor script + stage 1
 if READER:
     apex = json.loads(BASE_APEX.read_text(encoding="utf-8"))["cells"]
     for i in (5, 6, 7, 8):                              # own_src: makedirs + writefile preprocess/knee/infer (codigo do reader, identico ao Apex)
@@ -274,7 +358,7 @@ if OF:
     inner = re.search(r'_OF_WORKER_SRC = r"""(.*?)"""\n', of_cell, re.S).group(1)
     compile(inner, "of-worker", "exec")
     new_cells.append(code(of_cell))
-blend = BLEND_CELL.replace("__WR__", repr(WR)).replace("__WC__", repr(WC)).replace("__WO__", repr(WO))
+blend = (BLEND_CLEAN if NORAPTOR else BLEND_CELL).replace("__WR__", repr(WR)).replace("__WC__", repr(WC)).replace("__WO__", repr(WO))
 compile(blend, "blend", "exec")
 new_cells.append(code(blend))
 nb["cells"] = new_cells
@@ -282,7 +366,7 @@ slug = "rsna-knee-" + NAME
 out = ROOT / f"kaggle_kernel_{NAME}"
 out.mkdir(exist_ok=True)
 (out / f"{slug}.ipynb").write_text(json.dumps(nb, indent=1), encoding="utf-8")
-ds = ["heliosli/rsna-knee-compact-v1", "nartaa/rsna-knee-publication-swa-weights-20261007", "heliosli/rsna-orthofoundation-fold0-epoch7-20261004"]
+ds = ["heliosli/rsna-knee-compact-v1", "heliosli/rsna-orthofoundation-fold0-epoch7-20261004"] + ([] if NORAPTOR else ["nartaa/rsna-knee-publication-swa-weights-20261007"])
 if READER:
     ds.append("goodpjw2008/rsna-knee-2-5d-convnext-reader")
 if OF:
