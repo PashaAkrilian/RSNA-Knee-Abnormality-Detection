@@ -1,18 +1,18 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
 > Konteks aturan: `MEMORY.md` · rencana & gerbang: **`STRATEGI_PERAK.md`** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset terbaru: **`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`** · arsip OpenCode: `reports/Cara menembus 0951 perak.md`, `reports/Strategi meraih perak RSNA.md`, `research_notes/`.
-> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 10 Okt ~22:30 WIB. Bahasa kerja: Indonesia. **Cadangan bila 57044355 ≤0,951: `docs/PLAN_B.md`.**
+> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 11 Okt ~03:45 WIB. Bahasa kerja: Indonesia. **Cadangan/arah terbaru: `docs/PLAN_B.md` §00 (S6 hidup lagi).**
 
-## 1. Posisi vs garis perak (papan 10 Okt 21:43 WIB, 5.673 tim; angka 19:37 WIB di MEMORY §1)
+## 1. Posisi vs garis perak (papan 11 Okt 02:59 WIB, 5.699 tim; angka lama di MEMORY/arsip)
 | Hal | Nilai |
 |---|---|
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
-| LB kita | **0,950** (Apex v2, 56943646) — **rank 551**; 582 tim sama-sama 0,950 (dataran rank 353–934) |
-| Peta blok | ≥0,951 = **352** · ≥0,952 = **221** · ≥0,953 = 165 · ≥0,954 = 135 · ≥0,956 = 79 · ≥0,960 = 30 · garis perak (5 %) ≈ rank 284 (skor 0,951), perunggu (10 %) ≈ rank 567 (skor 0,950 — kita 16 peringkat di atasnya) |
-| Dinamika | tim ≥0,951 +39 dan ≥0,952 +20 dalam ±12 jam → 0,951 sudah di tengah blok yg hanya separuh dapat perak; **target kandidat final ≥0,952–0,954** |
-| Peluang (simulasi) | Apex 0,950: perak 13–20 %, **perunggu 25–41 %** (bukan aman); +0,002 sejati: perak 25–39 % / perunggu 40–66 %; +0,004: 40–67 % / 58–85 %; tim publik 0,956–0,958 (merger): perak 23–82 %; dua final terdekorelasi +4–12 poin perak; **100 % mustahil** (`silver_prob_sim.py`, `docs/PLAN_B.md` §1) |
+| LB kita | **0,950** (Apex v2, 56943646) — **rank 599**; 618 tim sama-sama 0,950 → **di bawah garis perunggu publik (rank 570)** |
+| Peta blok | ≥0,951 = **367** · ≥0,952 = **229** · ≥0,953 = 171 · ≥0,954 = 141 · ≥0,956 = 82 · ≥0,960 = 31 · garis perak (5 %) ≈ rank 285 (0,951), perunggu (10 %) ≈ rank 570 (0,950) |
+| Dinamika | dataran 0,950 +36 tim dalam ±5 j; **S6 publik lagi (02:50 WIB) → dataran 0,954 akan membengkak**; trik "kirim 1−p" membuat tim kuat tersembunyi |
+| Peluang (simulasi) | Apex 0,950: perak 13–20 %, perunggu 25–41 %; klon S6 (0,954) di klaster ratusan tim: perak ±25–45 %, perunggu ±45–70 %; varian dgn informasi baru/merger lebih tinggi; **100 % mustahil** (`silver_prob_sim.py`) |
 | Deadline | merger/entry **15 Okt 23:59 UTC**; final **22 Okt 23:59 UTC**; maks 2 final (PILIH MANUAL); publik 30 % / privat 70 % |
-| Aturan terima uji | **≥0,952 → kandidat** · 0,951 → cadangan · ≤0,950 → buang · Δ<0,002 = noise |
+| Aturan terima uji | varian dibandingkan dgn klon S6 (≈0,954); LB resolusi 0,001 → hanya selisih ≥0,002 yg jelas; Δ<0,002 = noise |
 
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
@@ -28,6 +28,7 @@
 | 9 | 10 Okt 07:27 | **57025414** | **Apex + MaVIT (hengck23 288px) @0,20** rank-blend (`build_submit_mavit.py`; kernel `rsna-knee-apexmavit` v1) | **0,949** | −0,001 | **BUANG** | pembaca ketiga arsitektur independen (solo LB 0,935; gold-58 0,9202) pada bobot 0,20 TIDAK menambah (galat berkorelasi dgn label laporan yg sama); akun UTAMA; skor 08:30 WIB |
 | 10 | 10 Okt 09:10 | **57028008** | **Apex 0,70 + OrthoFoundation-L fold0 (heliosli) 0,30** (`build_submit_legs.py legs=of wo=0.30`; kernel `rsna-knee-apexof` v1; inferensi per 30 studi, 2 proses) | **Notebook Timeout (9 j)** | — | GAGAL teknis (tanpa skor) | estimasi 5–6 j meleset. Uji skala 10 Okt: disk 330 MB/studi (potongan 30 studi ≈10 GB → penuh), CPU 4 vCPU hambatan (GPU sering 0 %), 2 proses 45–95 dtk/studi, 4 proses ±60 dtk/studi/proses; pemetaan seluruh test_series 84 dtk/panggilan |
 | 11 | 10 Okt 21:10 | **57044355** | **Apex 0,70 + OF v2** (`kaggle_kernel_apexof2`: potongan 8, 4 proses, penjaga disk, thread=1, prioritas, pemutus proses, reuso anatomi) | **0,950** (COMPLETE 22:45 WIB, ±1 j 35 mnt) | 0,000 | **TANPA VONIS OF** (kaki OF tak jalan di run penilaian) — v4 dibangun/diuji; G1 ditahan | uji skala: 194 studi/jam (6,8 j; reuso anatomi tak membantu); stub v3 lulus (GPU kosong 15 GB); terima bila ≥0,952 (0,951 = cadangan) |
+| 12 | 11 Okt 02:56 | **57051680** | **Salinan S6 heliosli oleh USER** (`Blend mine in—private LB luck...`; Raptor 0,7 + compact 0,3; dataset `rsna-knee-compact-v1` dipulihkan 02:50 WIB) | PENDING | — | menunggu (±07:00–08:30 WIB) | klaim publik 0,954; tahap compact ±3,5 j (sonda: 160 studi = 1.530 dtk dgn 2 pekerja, 0 fallback); risiko: kontroler ERROR bila >3 % fallback |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -70,19 +71,28 @@
 - **Ledger publik `prvsiyan/rsna-knee-2026-experiment-ledger`** (90 submisi, terbaik 0,949): mirror-reader 0,949; + reader ConvNeXt 0,70/0,30 = 0,948; + BK-A 0,947; MaVIT 0,935; overlay OF Lateral-OA / OrthoDiffusion 0,935 vs kontrol 0,936 → semua kembali menguatkan teori 'pengetahuan, bukan varians'.
 - **Papan**: garis perunggu naik 0,944 (6 Okt) → 0,947 (8 Okt) → 0,950 (10 Okt) krn notebook Apex viral; jalur bersih 0,944 kini rank ≈1.387 (bukan perunggu).
 
-## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_PERAK.md`)
-- [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) → ditutup; riset notebook publik & bedah kode heliosli; uji kelayakan OF (probe) lulus; 57028008 timeout → uji skala + perbaikan v2.
-- [x] **G0** LULUS 10 Okt 20:15 → **57044355 disubmit 21:10 WIB → 0,950 dgn durasi 1 j 35 mnt = OF tak jalan** (`docs/PLAN_B.md` §0). [ ] **v4**: uji `apexof4r`/`apexof4d` (commit-run) → percobaan `apexof4t` loud 11 Okt >07:00 WIB → G1 hanya bila OF terbukti jalan (≥5 j atau loud).
-- [ ] **J1 Merger** (USER; ≤15 Okt 23:59 UTC): `docs/KANDIDAT_MERGER.md` §3b (Kelompok A pemegang bundel; Kelompok B 35 tim ≥0,953 ≤30 submisi); gelombang 1 = 11 Okt, gelombang 2 = 13 Okt; sebelum itu kepastian akun ke Kaggle (`docs/DRAF_PESAN_KAGGLE_SUPPORT.md`).
-- [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); scan harian; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
-- [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (beda mekanisme) dari submisi terskor; verifikasi via daftar submisi.
+### 3f. Temuan 11 Okt (dini hari; detail `docs/RESEARCH_NOTES.md` §44, `docs/PLAN_B.md` §00)
+- **S6 hidup lagi**: heliosli memulihkan `rsna-knee-compact-v1` (V1–V13 publik; V10=V13 `209a32c8` cnx_s6) + notebook publik (satu klik 0,954); thread 748141. Resep heliosli = Raptor + **compact** (BUKAN OF): KOREKSI atas dokumen saya sebelumnya; bobot OF tak pernah dipakai di notebook heliosli; prior OF ≤20 %.
+- **Zoologi bundel (publik)**: V4 `ofl_ft8` (OrthoFoundation-L fine-tune), V7 cnx_s5 (0,951), V8 `dino_s1` (DINOv3-ViT-B), V9 dual (convnext+dino), V10 cnx_s6 (0,954); bagging berbiaya ±3,5–4,5 j GPU per bundel.
+- **Penyebab 57044355 terkonfirmasi** (induk Apex 18 GB RSS + pekerja OF 8–10 GB → OOM) dan perbaikan v4.1 (nopin + mmap + supervisor) — `docs/PLAN_B.md` §0, `PROGRESS.md` §54.
+- **Forum best-score**: model tunggal ConvNeXt-T 5-fold 0,953–0,959 dgn pseudo-label (MURAD rank 10, colum2131); "model is not the key. it is your labels"; validasi: AUC OOF label LLM r=0,87 vs LB (emas-58 r=0,66); trik 1−p; host diam soal OAI/eksternal (743416/744056/747455).
+- **Notebook publik baru**: klaim "Tri-Reader 0,954" (rabari/jcgweb/sameerk) = Apex+r224 (0,950, jangan); tri-hybrid jenillangaliya 0,952 (Raptor+compact+r224 < S6).
 
-## 5. Daya & batas (10 Okt 21:30 WIB)
+## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_PERAK.md`)
+- [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) ditutup; 57028008 Timeout; 57044355 = 0,950 (OF tak jalan → OOM terkonfirmasi); v4.1 dibangun/diuji.
+- [x] 11 Okt dini hari: S6 publik lagi → user men-submit 57051680; sonda `s6probe` (compact ±3,5 j); `build_s6plus.py` (reader/OF opsional); riset forum & zoologi bundel; dokumen diperbarui.
+- [ ] 11 Okt 03:35–04:45: rehearsal `s6plusr` (reader+compact+OF+blend 3 perna) dan `apexof4r3` (OF 4 pekerja) → push `s6reader`/`s6plus`.
+- [ ] 11 Okt 07:00+: baca 57051680; submit varian S6+ terpilih (agen ≤2); USER: merger gelombang 1 (§3b `docs/KANDIDAT_MERGER.md`).
+- [ ] 13–15 Okt: merger gelombang 2; semua kandidat ter-push sebelum 15 Okt 23:59 UTC.
+- [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); pantau heliosli (S7?) dan notebook publik; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
+- [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (A = S6/varian terbaik, B = beda mekanisme/bersih); verifikasi via daftar submisi.
+
+## 5. Daya & batas (11 Okt 03:45 WIB)
 | Sumber | Sisa | Reset |
 |---|---|---|
-| GPU akun utama | 27,1 h (uji skala berjalan) | 17 Okt 07:00 WIB (30 h/minggu) |
+| GPU akun utama | ±19–20 h (rehearsal berjalan) | 17 Okt 07:00 WIB (30 h/minggu) |
 | TPU akun utama | 20 h (tak berguna: XLA crash) | 17 Okt |
-| Submisi tim hari ini | sisa 3 (agen ≤2/hari) | 11 Okt 07:00 WIB (5/hari) |
+| Submisi tim (jendela 10 Okt) | 4/5 terpakai (3 agen + 1 user S6); jatah baru 11 Okt 07:00 WIB (5/hari; agen ≤2) | 11 Okt 07:00 WIB |
 | Disk /kaggle/working | ±19 GB efektif; OF ±330 MB/studi | — |
 - Akun 2/3: TIDAK dipakai sesi Claude Code (Rules 5.a/5.b); `nxtirfan` menjalankan job dari akunnya sendiri bila mau.
 

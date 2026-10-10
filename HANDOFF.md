@@ -6,7 +6,7 @@
 1. **MERGER (batas 15 Okt 23:59 UTC)** — tuas terbesar. Daftar + draf pesan: `docs/KANDIDAT_MERGER.md` (**§3b = prioritas terbaru, papan 11 Okt 02:59**: Kelompok B 15 tim ≥0,955 dgn ≤30 submisi — MURAD, NMarkS, "吃白饭的大肥鱼" (1 submisi, 0,960), UEHA, DoyMed, jjakimoto, madmax0404, LP, …; Kelompok C yg mencari rekan — Tanuki_boosting, Prateek Grover, Nikita Ageev, heliosli solo). Gelombang 1 (±12 permintaan) disarankan **11 Okt**; gelombang 2 13 Okt. Jangan berbagi kode/data sebelum merger resmi (Rules 5.d/6.a).
 2. **Pesan ke Kaggle support** soal akun kedua (draf: `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`). Sampai dijawab: semua submisi dari akun utama; sesi Claude Code tidak memakai akun 2/3.
 3. Bicarakan dgn `nxtirfan`: setuju/tidak tokennya disimpan di `akun_kaggle/`; ia menjalankan job dari akunnya sendiri bila mau (`docs/PAKET_REKAN_TIM.md`).
-4. **Salinan S6 Anda (57051680, PENDING)**: jangan dihentikan; hasil ±07:00–08:30 WIB (kabari agen skornya bila agen belum melihat). Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master` (±35 commit lokal; tak ada kredensial di diff).
+4. **Salinan S6 Anda (57051680, PENDING)**: jangan dihentikan; hasil ±07:00–08:30 WIB (kabari agen skornya bila agen belum melihat). Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master` (±45 commit lokal; tak ada kredensial di diff).
 5. 21–22 Okt: pilih 2 final bersama agen (beda mekanisme; manual di UI Submissions → select 2).
 - Harapan jujur (simulasi): klon S6 di ±0,954 dgn ratusan tim lain → perak ±25–45 %, perunggu ±45–70 %; +varian dgn informasi baru atau merger kuat → lebih tinggi; emas ≈0–2 %. **100 % tidak mungkin.**
 
