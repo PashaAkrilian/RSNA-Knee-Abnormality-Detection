@@ -63,7 +63,8 @@ _pcols = [c for c in _ppd.read_csv(_COMP + "/test_series.csv", nrows=2).columns 
 _ptrs[_ptrs["StudyInstanceUID"].isin(set(_pids))][_pcols].to_csv(_PS + "/test_series.csv", index=False)
 _ocols = list(_ppd.read_csv(_COMP + "/test.csv", nrows=1).columns)
 _ppd.DataFrame({c: (_pids if c == "StudyInstanceUID" else None) for c in _ocols}).to_csv(_PS + "/test.csv", index=False)
-_psh.copy(_COMP + "/sample_submission.csv", _PS + "/sample_submission.csv")
+_ssn = _ppd.read_csv(_COMP + "/sample_submission.csv", nrows=1)
+_ppd.DataFrame({c: (_pids if c == "StudyInstanceUID" else 0.5) for c in _ssn.columns}).to_csv(_PS + "/sample_submission.csv", index=False)   # mesmas colunas, ids do pseudo-teste
 print("[PSEUDO] studies", len(_pids), flush=True)
 '''
 
