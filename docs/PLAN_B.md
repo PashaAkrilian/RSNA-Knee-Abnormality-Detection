@@ -2,6 +2,21 @@
 > Disusun 10 Okt 2026 ~22:05 WIB (sesi Claude Code; hanya akun utama). Pelengkap `STRATEGI_PERAK.md`. Skor 57044355 keluar ±04:00 WIB 11 Okt; dokumen ini sudah memuat tindakan utk tiap kemungkinan hasil.
 > Papan acuan: 10 Okt 21:43 WIB (5.673 tim; ≥0,951 = 352; ≥0,952 = 221; =0,950 = 582; kita rank 551; 5 % ≈ rank 284; 10 % ≈ rank 567).
 
+## 00. UPDATE 11 Okt 03:30 WIB — S6 HIDUP LAGI: strategi kini BERPUSAT S6 (mengganti prioritas §0–§3 di bawah)
+- **Fakta**: 02:50 WIB heliosli memulihkan dataset `heliosli/rsna-knee-compact-v1` (publik; V10 = V13; semua versi V1–V13 publik) dan menerbitkan ulang notebook S6 publik (**Raptor 0,7 + compact 0,3 = 0,954 satu klik**; thread 748141 "feel free to blend my model with yours"). **User sudah men-submit salinan S6: 57051680 (02:56 WIB, PENDING)**; tahap compact GPU-bound ±25 dtk/studi/pekerja (2 pekerja) → ±4–5 j total → hasil ±07:30–08:30 WIB.
+- **Papan 02:59 WIB**: 5.699 tim; kita rank 599 (0,950) = DI BAWAH garis perunggu publik (rank 570); perak rank 285 (0,951); ≥0,954 = 141. Dataran 0,950 = 618 tim; dataran 0,954 akan membengkak.
+- **KOREKSI PREMIS OF**: "Raptor 0,7 + OF 0,3 = 0,951–0,954" SALAH — itu Raptor + COMPACT (S5 0,951; S6 0,954); notebook heliosli hanya memakai KODE dataset OF, bukan bobot `best.pt`. Nilai LB OF fold0 tidak pernah diukur; prior kontribusi ≥+0,001 di atas S6 ≤20 % (OF validasi lemah 0,9318, epoch 7/16). Tuas OF turun peringkat (infrastruktur v4.1 tetap siap bila perlu).
+- **Pohon keputusan baru (menggantikan §2 untuk submisi berikut)**:
+  | Hasil klon S6 (57051680) | Tindakan |
+  |---|---|
+  | ≈0,954 | final A = S6; buat final B = S6+reader (`s6reader`) atau S6+OF (`s6plus`); lanjutkan merger |
+  | ≤0,952 (S6 gagal/tidak reproduksi) | selidiki log (OOM/fallback >3 % → ERROR?), pakai `lenient`; kembali ke Apex-keluarga + merger |
+  | ERROR/Timeout | diagnosis lewat sonda `rsna-knee-s6probe`/rehearsal; perbaiki (RAM/waktu) |
+- **Bahan siap (build_s6plus.py; semua lulus kompilasi)**: `s6reader` (reader goodpjw difusikan ke perna Raptor dgn bobot per-temuan Apex; tahap compact "lenient" tidak menjatuhkan notebook), `s6plus` (+ perna OF dgn supervisor v4.1 sebagai tahap TERAKHIR, STOP/KILL absolut 7,9/8,25 j sejak NB_T0 — hanya memakai waktu sisa; bobot 0,55/0,30/0,15), `s6plusr` (rehearsal pseudo-uji 160 studi dgn log terbaca + monitor RAM).
+- **Zoologi bundel heliosli (semua publik)**: V4 `ofl_ft8` (OrthoFoundation-L fine-tune), V7 cnx_s5 (0,951), V8 `dino_s1` (DINOv3-ViT-B), V9 dual (convnext+dino), V10 cnx_s6 (0,954) — kandidat bagging; kendala: tiap bundel ≈3,5–4,5 j GPU di stride 1 (S6 sudah memakai ±4 j dari 9 j).
+- **Final bersih (asuransi OAI)**: compact S6 + reader (tanpa Raptor/OAI) bila host memutuskan OAI terlarang; kualitas belum terukur (kemungkinan ±0,950–0,952).
+- **Merger** tetap tuas terbesar; S6 membuat "pemegang bundel" (Kelompok A) tak istimewa lagi. Target baru: tim independen ≥0,956 ≤30 submisi (Kelompok B) + tim yg mencari rekan (Tanuki_boosting rank 37 0,955; Prateek Grover 0,950; Nikita Ageev 0,949 label LLM) + heliosli sendiri (solo 0,954; 29 submisi).
+
 ## 0. UPDATE 10 Okt 23:10 WIB — HASIL 57044355 = 0,950 TETAPI TIDAK ADA VONIS UNTUK OF
 - 57044355 (Apex 0,70 + OF fold0 0,30, apexof2 v3) **COMPLETE 22:45 WIB, publik 0,950** — hanya **±1 j 35 mnt** setelah submit (21:10). Run Apex-only/varian lain butuh 1,0–1,6 j (57012143 1j37m, 57015077 1j08m, 57025414 1j03m), sedangkan OF utk 1.322 studi butuh ±6–7 j (uji skala: 194 studi/jam). ⇒ **kaki OF hampir pasti TIDAK jalan di run penilaian** (liputan <15 % → blend jatuh ke Apex murni; skor identik 0,950). Log run penilaian tak terbaca, jadi penyebab pasti belum diketahui.
 - Dugaan utama: **RAM** — pada v3 OF dijalankan SESUDAH Apex; proses induk (notebook) masih memegang memori Apex + 4 pekerja OF (±5–6 GB tiap pekerja) di mesin 29 GB; catatan nartaa di kode Raptor: "On the full hidden test it drove a system-RAM OOM". Uji stub (3 studi) dan uji skala (OF saja) tak bisa menunjukkan masalah ini. Dugaan lain: perbedaan lingkungan run penilaian (jumlah GPU/CPU), pekerja gagal cepat.
