@@ -186,7 +186,7 @@ rho_rr, rho_ro = {}, {}
 for j, c in enumerate(labels):
     rr = pct(raw[c].values)
     if reader is not None:                              # Raptor leg = Apex fusion (percentile ranks, per-finding reader weight)
-        w = READER_W.get(c, 0.15) * RSCALE
+        w = READER_W.get(c, 0.15) * __RSCALE__
         rr = pct((1.0 - w) * rr + w * pct(reader[c].values))
     ro = pct(ours[c].values)
     num = np.where(rap_fail, 0.0, W_RAPTOR * rr) + np.where(our_fail, 0.0, W_OURS * ro)
