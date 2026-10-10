@@ -9,7 +9,7 @@ Perbaikan v4:
 - Pekerja didaur ulang tiap MAXCHUNKS potongan atau RSS > RSSMAX (cegah kebocoran memori/GPU selama 6 jam); oom_score_adj=500 (pekerja dikorbankan dulu, bukan notebook).
 - Keluaran per potongan ditulis atomik (tmp + os.replace) ke _of_res/<k>.csv; agregasi di akhir; liputan minimum MINCOV.
 - Pemutus waktu: berhenti lunak STOP_H, bunuh grup proses KILL_H (killpg: termasuk anak DataLoader).
-Placeholder: __WD__ (/kaggle/working), __NPROC__, __CHUNK__, __STOP_H__, __KILL_H__, __MINCOV__, __MAXCHUNKS__, __RSSMAX__, __INJECT__ (uji: bunuh pekerja 0 pd +__INJECT_AFTER__ dtk; 360 di rehearsal), __POLL__ (jeda supervisor dtk; 10), __PRINTEVERY__ (dtk entre linhas de progresso; 300), __MEMPERW__ (5.5 GB/pekerja), __MEMFREE__ (6.5 GB minimum utk spawn), __DISKPER__ (0.42 GB/studi) & __DISKBASE__ (1.5 GB) = penjaga disk, __FORCEW__ (0 = otomatis; >0 = paksa jumlah pekerja, uji), __MMAP__ (1 = torch.load mmap=True), __EXTRAENV__ (dict literal: env tambahan pekerja, mis. MALLOC_*),
+Placeholder: __WD__ (/kaggle/working), __NPROC__, __CHUNK__, __STOP_H__, __KILL_H__, __MINCOV__, __MAXCHUNKS__, __RSSMAX__, __INJECT__ (uji: bunuh pekerja 0 pd +__INJECT_AFTER__ dtk; 360 di rehearsal), __POLL__ (jeda supervisor dtk; 10), __PRINTEVERY__ (dtk entre linhas de progresso; 300), __MEMPERW__ (5.5 GB/pekerja), __MEMFREE__ (6.5 GB minimum utk spawn), __DISKPER__ (0.42 GB/studi) & __DISKBASE__ (1.5 GB) = penjaga disk, __FORCEW__ (0 = otomatis; >0 = paksa jumlah pekerja, uji), __MMAP__ (1 = torch.load mmap=True), __NOPIN__ (1 = DataLoader sem pin_memory), __EXTRAENV__ (dict literal: env tambahan pekerja, mis. MALLOC_*),
 __DATA_PRESET__ (kode penentu akar data; pseudo-root utk rehearsal), __SETUP__ (1 = pasang aset OF; 0 = uji lokal).
 """
 
@@ -130,6 +130,17 @@ def rss_anon_gb():
     sys.argv[10], int(sys.argv[11]), float(sys.argv[12]))
 chunks = json.load(open(chunks_json))
 from training.infer import run_inference
+if __NOPIN__:       # DataLoader do predict sem pin_memory: o host allocator CUDA retem ~2,5 GB (shmem) por pekerja (medido em ofmem1)
+    try:
+        import training.engine as _E
+        _lo = _E.loader
+        def _nl(*a, **k):
+            dl = _lo(*a, **k)
+            dl.pin_memory = False
+            return dl
+        _E.loader = _nl
+    except Exception as _e:
+        print("nopin patch failed", repr(_e)[:120], flush=True)
 ser = pd.read_csv(series_csv)
 test_cols = list(pd.read_csv(test_csv, nrows=1).columns)
 ser_cols = list(pd.read_csv(series_csv, nrows=1).columns)

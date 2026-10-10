@@ -50,7 +50,7 @@ def run(name, n, chunk, nproc, stop_h, kill_h, maxchunks, inject, sleep, pre="",
     cell = (m.OF4_CELL.replace("__WD__", wd).replace("__NPROC__", str(nproc)).replace("__CHUNK__", str(chunk))
             .replace("__STOP_H__", str(stop_h)).replace("__KILL_H__", str(kill_h)).replace("__MINCOV__", "0.15")
             .replace("__MAXCHUNKS__", str(maxchunks)).replace("__RSSMAX__", "9.0").replace("__INJECT__", str(inject))
-            .replace("__INJECT_AFTER__", "3").replace("__POLL__", "0.5").replace("__PRINTEVERY__", "5").replace("__MEMPERW__", "0.5").replace("__MEMFREE__", "0.0").replace("__DISKPER__", "0.0").replace("__DISKBASE__", "0.0").replace("__FORCEW__", str(force)).replace("__MMAP__", "0").replace("__EXTRAENV__", "{}")
+            .replace("__INJECT_AFTER__", "3").replace("__POLL__", "0.5").replace("__PRINTEVERY__", "5").replace("__MEMPERW__", "0.5").replace("__MEMFREE__", "0.0").replace("__DISKPER__", "0.0").replace("__DISKBASE__", "0.0").replace("__FORCEW__", str(force)).replace("__MMAP__", "0").replace("__NOPIN__", "0").replace("__EXTRAENV__", "{}")
             .replace("__SETUP__", "0").replace("__DATA_PRESET__", f'_of_data = "{root}"'))
     ns = {"__name__": "__of4test__"}
     t0 = time.time()
