@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md**; **cadangan bila 57044355 ≤0,951 → `docs/PLAN_B.md`**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`, `docs/RESEARCH_NOTES.md` (§36–§43). Sejarah/arsip penuh (termasuk MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b.
-> Last updated: 2026-10-10T22:40:00+07:00
+> Last updated: 2026-10-10T23:00:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -36,7 +36,7 @@
 |---|---|
 | Submisi terbaik | **0,950** (Apex 56943646); 0,944 bersih (replika goodpjw); 57025414 Apex+MaVIT 0,949; 57028008 Apex+OF = Timeout; **57044355 Apex+OF v2 = PENDING** |
 | Uji skala (SELESAI) | `ofscale3` (4 proses, potongan 8): 104 studi/31 mnt, 0 gagal, disk ≥14,8 GB → **194 studi/jam → 6,8 j utk 1.322** (akhir lebih cepat ±224/jam ≈5,9 j); `ofscale4` (+reuso anatomi) 88 studi → 8,8 j (TIDAK lebih cepat → reuso dimatikan). GPU kosong 15 GB sebelum tahap OF. `rsna-knee-apexof2` **v3** lulus stub (liputan, blend OK) |
-| **Submisi aktif** | **57044355 = Apex 0,70 + OF fold0 0,30 (apexof2 v3)** disubmit 10 Okt 21:10 WIB atas "lanjut" user (jatah hari ini sisa 2); PENDING 22:00 WIB; scoring ±7 jam → ±04:00 WIB 11 Okt; pemantau tiap 5 mnt. Gerbang G1: ≥0,952 kandidat · 0,951 cadangan · ≤0,950 tutup OF (tindakan per skor: `docs/PLAN_B.md` §2) |
+| **Submisi aktif** | **57044355 (Apex 0,70 + OF fold0 0,30, apexof2 v3) = 0,950, COMPLETE 22:45 WIB (±1 j 35 mnt setelah submit 21:10)** — runtime sama dgn run Apex biasa (1,0–1,6 j) padahal tahap OF butuh ±6,8 j utk 1.322 studi ⇒ **kaki OF hampir pasti TIDAK jalan di run penilaian (liputan <15 % → jatuh ke Apex-only). 0,950 BUKAN vonis OF; JANGAN menutup OF berdasar skor ini.** Penyebab belum diketahui (log run penilaian tak terbaca); dugaan utama: RAM (proses induk Apex masih memegang memori + 4 pekerja OF; catatan nartaa: "full hidden test drove a system-RAM OOM"). Rencana: bangun v4 (OF DIJALANKAN LEBIH DULU sebelum Apex, antrean potongan dengan klaim + restart pekerja + pemantau RAM) dan uji di commit-run pseudo-hidden yang lognya terbaca, baru submit (jatah hari ini habis; reset 11 Okt 07:00 WIB) |
 | Kuota | GPU utama 27,1 h (reset 17 Okt 07:00 WIB); TPU 20 h (tak berguna: XLA crash); submisi hari ini sisa 3 |
 | Git | commit lokal di depan origin (push hanya atas perintah user; `git fetch` dulu) |
 | Menunggu user | merger gelombang 1 (11 Okt; batas 15 Okt) — Kelompok A/B di `docs/KANDIDAT_MERGER.md` §3b, pesan ke Kaggle support, persetujuan `nxtirfan` soal token |
