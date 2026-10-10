@@ -207,7 +207,7 @@ def launch(name, gpu, off):
     lg = open(f"{WD}/_mem_{name}.log", "w")
     return sp.Popen([sys.executable, "-u", WD + "/_mem_worker.py", name, str(chunk), str(wdl), str(nch), MD, PS, str(off)], env=e, stdout=lg, stderr=sp.STDOUT, start_new_session=True), lg
 
-order = [tuple(n for n in g.split(",") if n in CFG) for g in GROUPS.split(";")]
+order = [tuple(n for n in g.split(",") if n in CFG) for g in "__GROUPS__".split(";")]
 order = [g for g in order if g]
 for grp in order:
     ps_ = [launch(n, i % 2, 0) for i, n in enumerate(grp)]
@@ -245,7 +245,7 @@ for d in (WD + "/of", WD + "/cloud_code", WD + "/_of_env", WD + "/fr", WD + "/of
 print("[MEM] ALL DONE %.0fs" % (time.time() - T0), flush=True)
 '''
 
-cell = CELL.replace("__N__", str(N))
+cell = CELL.replace("__N__", str(N)).replace("__GROUPS__", GROUPS)
 compile(cell, "ofmem", "exec")
 inner = cell.split('WSRC = r"""', 1)[1].split('"""', 1)[0]
 compile(inner, "ofmem-worker", "exec")
