@@ -7,7 +7,7 @@
 | Hal | Nilai |
 |---|---|
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
-| LB kita | **0,950** (Apex v2, 56943646) — **rank 599**; 618 tim sama-sama 0,950 → **di bawah garis perunggu publik (rank 570)** |
+| LB kita | **0,954** (klon S6 user, 57051680) — **rank 144** (papan 06:40 WIB, 5.709 tim; 49 tim tepat di 0,954); Apex 0,950 sebelumnya rank 599 |
 | Peta blok | ≥0,951 = **367** · ≥0,952 = **229** · ≥0,953 = 171 · ≥0,954 = 141 · ≥0,956 = 82 · ≥0,960 = 31 · garis perak (5 %) ≈ rank 285 (0,951), perunggu (10 %) ≈ rank 570 (0,950) |
 | Dinamika | dataran 0,950 +36 tim dalam ±5 j; **S6 publik lagi (02:50 WIB) → dataran 0,954 akan membengkak**; trik "kirim 1−p" membuat tim kuat tersembunyi |
 | Peluang (simulasi) | Apex 0,950: perak 13–20 %, perunggu 25–41 %; klon S6 (0,954) di klaster ratusan tim: perak ±25–45 %, perunggu ±45–70 %; varian dgn informasi baru/merger lebih tinggi; **100 % mustahil** (`silver_prob_sim.py`) |
@@ -28,7 +28,7 @@
 | 9 | 10 Okt 07:27 | **57025414** | **Apex + MaVIT (hengck23 288px) @0,20** rank-blend (`build_submit_mavit.py`; kernel `rsna-knee-apexmavit` v1) | **0,949** | −0,001 | **BUANG** | pembaca ketiga arsitektur independen (solo LB 0,935; gold-58 0,9202) pada bobot 0,20 TIDAK menambah (galat berkorelasi dgn label laporan yg sama); akun UTAMA; skor 08:30 WIB |
 | 10 | 10 Okt 09:10 | **57028008** | **Apex 0,70 + OrthoFoundation-L fold0 (heliosli) 0,30** (`build_submit_legs.py legs=of wo=0.30`; kernel `rsna-knee-apexof` v1; inferensi per 30 studi, 2 proses) | **Notebook Timeout (9 j)** | — | GAGAL teknis (tanpa skor) | estimasi 5–6 j meleset. Uji skala 10 Okt: disk 330 MB/studi (potongan 30 studi ≈10 GB → penuh), CPU 4 vCPU hambatan (GPU sering 0 %), 2 proses 45–95 dtk/studi, 4 proses ±60 dtk/studi/proses; pemetaan seluruh test_series 84 dtk/panggilan |
 | 11 | 10 Okt 21:10 | **57044355** | **Apex 0,70 + OF v2** (`kaggle_kernel_apexof2`: potongan 8, 4 proses, penjaga disk, thread=1, prioritas, pemutus proses, reuso anatomi) | **0,950** (COMPLETE 22:45 WIB, ±1 j 35 mnt) | 0,000 | **TANPA VONIS OF** (kaki OF tak jalan di run penilaian) — v4 dibangun/diuji; G1 ditahan | uji skala: 194 studi/jam (6,8 j; reuso anatomi tak membantu); stub v3 lulus (GPU kosong 15 GB); terima bila ≥0,952 (0,951 = cadangan) |
-| 12 | 11 Okt 02:56 | **57051680** | **Salinan S6 heliosli oleh USER** (`Blend mine in—private LB luck...`; Raptor 0,7 + compact 0,3; dataset `rsna-knee-compact-v1` dipulihkan 02:50 WIB) | PENDING | — | menunggu (±07:00–08:30 WIB) | klaim publik 0,954; tahap compact ±3,5 j (sonda: 160 studi = 1.530 dtk dgn 2 pekerja, 0 fallback); risiko: kontroler ERROR bila >3 % fallback |
+| 12 | 11 Okt 02:56 | **57051680** | **Salinan S6 heliosli oleh USER** (Raptor 0,7 + compact 0,3; bundel `209a32c8` dipulihkan 02:50 WIB) | **0,954** | +0,004 | **TERBAIK; kandidat final A; rank 144** | COMPLETE ±06:40 WIB (±3 j 45 mnt); papan 06:40: 5.709 tim, ≥0,954 = 150 (49 tepat 0,954) |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)

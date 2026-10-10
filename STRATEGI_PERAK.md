@@ -3,7 +3,7 @@
 > Dokumen ini = RENCANA + ATURAN KEPUTUSAN; status harian ada di `HANDOFF.md` §0c dan `laporan_push.md`. Cadangan/pohon keputusan rinci: `docs/PLAN_B.md` (§00 = yang terbaru).
 
 ## 0. Perubahan besar 11 Okt (baca ini dulu)
-- **S6 heliosli hidup lagi** (02:50 WIB): dataset `heliosli/rsna-knee-compact-v1` publik (V1–V13) + notebook publik "Dataset restored(...)" = **Raptor 0,7 + compact 0,3 = 0,954 satu klik** (thread 748141: "blend my model with yours"). **User sudah men-submit salinannya (57051680, 02:56 WIB)**; hasil ±07:00–08:30 WIB.
+- **S6 heliosli hidup lagi** (02:50 WIB): dataset `heliosli/rsna-knee-compact-v1` publik (V1–V13) + notebook publik "Dataset restored(...)" = **Raptor 0,7 + compact 0,3 = 0,954 satu klik** (thread 748141: "blend my model with yours"). **User men-submit salinannya (57051680, 02:56 WIB) → 0,954 COMPLETE ±06:40 WIB (rank 144 dari 5.709; run penuh ±3 j 45 mnt).**
 - **Koreksi premis**: resep heliosli = Raptor + **compact** (bukan OF). OF fold0 belum pernah diukur di LB; prior ≥+0,001 di atas S6 ≤20 %.
 - **Penyebab 57044355 = 0,950 (OF tidak jalan)** = OOM (induk Apex 18 GB + pekerja OF 8–10 GB); perbaikan v4.1 (OF dulu/terakhir, supervisor, `pin_memory=False`, `torch.load(mmap=True)`) lulus rehearsal; infrastrukturnya dipakai ulang di `build_s6plus.py`.
 - **Papan**: kita rank 599 (0,950) — di bawah garis perunggu publik (rank 570, 0,950); perak rank 285 (0,951); dataran 0,954 akan membengkak (klon S6).
@@ -26,7 +26,7 @@
 
 ## 3. Jalur (paralel; EV menurun)
 ### J0 — DASAR S6 (user sudah menjalankan; agen memantau)
-- 57051680 = salinan S6 (Raptor ±0,5 j + compact ±3,5 j [GPU-bound, 2 pekerja ±18–20 dtk/studi/pekerja, terukur pada pseudo-uji 160 studi: 80/80 per pekerja, 0 fallback] → total ±4–4,5 j). Risiko: kontroler compact menolak (ERROR) bila >3 % fallback (OOM/pekerja mati/DEADLINE 8,3 j). Aturan: bila ≈0,954 → final A; bila ≤0,952/ERROR → diagnosis (sonda `rsna-knee-s6probe` + rehearsal), gunakan mode `lenient`.
+- **HASIL: 57051680 = 0,954 (S6 terbukti jalan di run penilaian; kita rank 144; 49 tim tepat di 0,954 → dataran 0,954 mulai rank 102).** Rincian: salinan S6 (Raptor ±0,5 j + compact ±3,5 j [GPU-bound, 2 pekerja ±18–20 dtk/studi/pekerja, terukur pada pseudo-uji 160 studi: 80/80 per pekerja, 0 fallback] → total ±4–4,5 j). Risiko: kontroler compact menolak (ERROR) bila >3 % fallback (OOM/pekerja mati/DEADLINE 8,3 j). Aturan: bila ≈0,954 → final A; bila ≤0,952/ERROR → diagnosis (sonda `rsna-knee-s6probe` + rehearsal), gunakan mode `lenient`.
 ### J1 — MERGER (EV terbesar; AKSI USER; batas 15 Okt 23:59 UTC)
 - Rules 5.c: sah bila (i) gabungan ≤5 anggota, (ii) submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤ ±225), (iii) sebelum batas merger. Rules 5.d/6.a: dilarang berbagi privat sebelum merger.
 - Target baru (`docs/KANDIDAT_MERGER.md` §3b): Kelompok B (15 tim ≥0,955 ≤30 submisi, mis. MURAD 0,962/19, NMarkS 0,961/30, "吃白饭的大肥鱼" 0,960/**1 submisi**, UEHA, DoyMed, jjakimoto, madmax0404, LP …), Kelompok C (mencari rekan: Tanuki_boosting, Prateek Grover, Nikita Ageev, heliosli solo 0,954). Pemegang bundel (Kelompok A lama) tak istimewa lagi karena S6 publik.

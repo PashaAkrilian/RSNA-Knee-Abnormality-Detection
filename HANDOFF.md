@@ -1,12 +1,12 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 11 Okt 2026 ~04:40 WIB (sesi Claude Code). Baca urut: `MEMORY.md` (aturan+fakta) → `STRATEGI_PERAK.md` (rencana+gerbang; §0 = perubahan 11 Okt) → `docs/PLAN_B.md` (§00 terbaru) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 11 Okt 2026 ~06:50 WIB (sesi Claude Code). Baca urut: `MEMORY.md` (aturan+fakta) → `STRATEGI_PERAK.md` (rencana+gerbang; §0 = perubahan 11 Okt) → `docs/PLAN_B.md` (§00 terbaru) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
 1. **MERGER (batas 15 Okt 23:59 UTC)** — tuas terbesar. Daftar + draf pesan: `docs/KANDIDAT_MERGER.md` (**§3b = prioritas terbaru, papan 11 Okt 02:59**: Kelompok B 15 tim ≥0,955 dgn ≤30 submisi — MURAD, NMarkS, "吃白饭的大肥鱼" (1 submisi, 0,960), UEHA, DoyMed, jjakimoto, madmax0404, LP, …; Kelompok C yg mencari rekan — Tanuki_boosting, Prateek Grover, Nikita Ageev, heliosli solo). Gelombang 1 (±12 permintaan) disarankan **11 Okt**; gelombang 2 13 Okt. Jangan berbagi kode/data sebelum merger resmi (Rules 5.d/6.a).
 2. **Pesan ke Kaggle support** soal akun kedua (draf: `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`). Sampai dijawab: semua submisi dari akun utama; sesi Claude Code tidak memakai akun 2/3.
 3. Bicarakan dgn `nxtirfan`: setuju/tidak tokennya disimpan di `akun_kaggle/`; ia menjalankan job dari akunnya sendiri bila mau (`docs/PAKET_REKAN_TIM.md`).
-4. **Salinan S6 Anda (57051680, PENDING)**: jangan dihentikan; hasil ±07:00–08:30 WIB (kabari agen skornya bila agen belum melihat). Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master` (±45 commit lokal; tak ada kredensial di diff).
+4. **Salinan S6 Anda (57051680) = 0,954 COMPLETE (±06:40 WIB; rank 144 dari 5.709)** — final A kandidat; jangan dihapus. Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master` (±62 commit lokal; tak ada kredensial di diff).
 5. 21–22 Okt: pilih 2 final bersama agen (beda mekanisme; manual di UI Submissions → select 2).
 - Harapan jujur (simulasi): klon S6 di ±0,954 dgn ratusan tim lain → perak ±25–45 %, perunggu ±45–70 %; +varian dgn informasi baru atau merger kuat → lebih tinggi; emas ≈0–2 %. **100 % tidak mungkin.**
 
@@ -16,12 +16,12 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (11 Okt ~04:40 WIB)
+## 0c. Status (11 Okt ~06:50 WIB)
 | Hal | Keadaan |
 |---|---|
-| Papan (02:59 WIB) | 5.699 tim; kita **0,950 rank 599** (dataran 618 tim; DI BAWAH garis perunggu publik rank 570); ≥0,951 = 367, ≥0,952 = 229, ≥0,954 = 141, ≥0,960 = 31; perak ≈ rank 285 (0,951) |
-| **S6 (heliosli) HIDUP LAGI** | 02:50 WIB dataset `rsna-knee-compact-v1` publik (V1–V13) + notebook S6 publik (Raptor 0,7 + compact 0,3 = **0,954**). **Salinan user = 57051680 (02:56 WIB, PENDING; ±4–4,5 j → ±07:00–08:30 WIB)**. Compact: ConvNeXt-S 4 fold, tahap GPU-bound ±18–20 dtk/studi/pekerja (2 pekerja) → 1.322 studi ±3,5 j (sonda `s6probe`: 80/80 per pekerja, 0 fallback; ERROR sonda = artefak pseudo-uji, sudah diperbaiki) |
-| Submisi | terbaik 0,950 (Apex 56943646). 57025414 Apex+MaVIT 0,949 (BUANG). 57028008 Apex+OF Timeout. **57044355 Apex+OF v3 = 0,950 (OF TIDAK jalan: OOM; bukan vonis OF)**. 57051680 = S6 user PENDING. Jatah hari-ini habis (4/5 terpakai); reset 07:00 WIB |
+| Papan (06:40 WIB) | 5.709 tim; kita **0,954 rank 144** (klon S6 user; 49 tim tepat di 0,954; ≥0,954 = 150, ≥0,955 = 101, ≥0,960 = 32); perak ≈ rank 285 (0,951), perunggu ≈ 571 (0,950); dataran 0,954 mulai rank 102 dan akan membengkak |
+| **S6 (heliosli) HIDUP LAGI** | 02:50 WIB dataset `rsna-knee-compact-v1` publik (V1–V13) + notebook S6 publik (Raptor 0,7 + compact 0,3 = **0,954**). **Salinan user = 57051680: COMPLETE 0,954 (±06:40 WIB; ±3 j 45 mnt total) → S6 terbukti jalan di run penilaian**. Compact: ConvNeXt-S 4 fold, tahap GPU-bound ±18–20 dtk/studi/pekerja (2 pekerja) → 1.322 studi ±3,5 j (sonda `s6probe`: 80/80 per pekerja, 0 fallback; ERROR sonda = artefak pseudo-uji, sudah diperbaiki) |
+| Submisi | **terbaik 0,954 = 57051680 (klon S6 user)**. Apex 56943646 0,950; 57025414 Apex+MaVIT 0,949 (BUANG); 57028008 Apex+OF Timeout; **57044355 Apex+OF v3 = 0,950 (OF TIDAK jalan: OOM; bukan vonis OF)**. Jatah hari-ini habis (4/5 terpakai); reset 07:00 WIB |
 | OF | premis dikoreksi: heliosli TIDAK memakai bobot OF (hanya kode); prior ≥+0,001 di atas S6 ≤20 %. Infrastruktur v4.1 siap (`of_stage_v4.py`, `build_apexof4.py`); rehearsal `apexof4r2` LULUS (194 studi/jam dgn 3 pekerja, MemAvail min 19 GB); `apexof4r3` (4 pekerja tanpa injeksi) berjalan |
 | **Tindakan aktif** | `s6reader` v1 (reader ×0,5) dan `s6plus` v1 (reader ×1,0 + OF 0,15 terakhir): commit-run stub LULUS; **pewaktu `scripts/submit_two.sh` (nohup) akan men-submit keduanya 11 Okt 07:03 WIB** (agen 2/5; batalkan: `pkill -f submit_two.sh`); `s6plusr` (rehearsal OF-terakhir pada pseudo-uji) berjalan ±04:50; `s6clean` (asuransi) siap, submit ≥12 Okt; pemantau harness: klon S6 (57051680) dan cek 07:12 |
 | Kuota | GPU ±19–20 h (reset 17 Okt 07:00 WIB); TPU tak berguna; submisi: reset 07:00 WIB (5/hari tim; agen ≤2) |
