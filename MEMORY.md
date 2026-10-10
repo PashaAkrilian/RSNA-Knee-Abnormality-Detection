@@ -28,7 +28,7 @@
 | Hal | Keadaan |
 |---|---|
 | Submisi | terbaik 0,950 (Apex 56943646); 57025414 Apex+MaVIT 0,949; 57028008 Timeout; 57044355 = 0,950 (OF OOM; bukan vonis OF); **57051680 = S6 user PENDING**. Jendela 10 Okt: 4/5 terpakai; reset 07:00 WIB |
-| Rehearsal | `apexof4r3` LULUS (4 pekerja 228 studi/jam, MemAvail min 13,8 GB); `s6cleanr` LULUS (compact 160 studi = 1.812 dtk, 0 fallback); `s6plusr` (S6+reader+OF terakhir pseudo-uji 160) berjalan ±04:50; sonda `s6probe` (1.530 dtk; ERROR akhir = artefak pseudo, diperbaiki). RAM compact stabil ±16–17 GB bebas (tak ada kebocoran) |
+| Rehearsal | `apexof4r3` LULUS (4 pekerja 228 studi/jam, MemAvail min 13,8 GB); `s6cleanr` LULUS (compact 160 studi = 1.812 dtk, 0 fallback); `s6plusr` (S6+reader+OF terakhir pseudo-uji 160) LULUS (OF coverage 0,65 dlm 24 mnt; blend 3 perna OK; MemAvail min 16 GB); sonda `s6probe` (1.530 dtk; ERROR akhir = artefak pseudo, diperbaiki). RAM compact stabil ±16–17 GB bebas (tak ada kebocoran) |
 | Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu aktif `scripts/submit_two.sh` (nohup; log scratchpad `submit_two.log`) akan men-submit `s6reader` v1 dan `s6plus` v1 pada 11 Okt 07:03 WIB (agen 2/5; syarat kernel COMPLETE + sisa jatah ≥4/≥3)** — batalkan dgn `pkill -f submit_two.sh` bila user menolak. Pemantau harness: skor klon 57051680; cek 07:12 |
 | Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
 | Git | ±60 commit lokal di depan origin (push hanya atas perintah user; `git fetch` dulu; diff diperiksa: tak ada kredensial) |
