@@ -340,6 +340,10 @@ try:
                 _k = open(f"{_WD}/_cur_w{_s}").read().strip()
             except Exception:
                 _k = ""
+            try:
+                open(f"{_WD}/_cur_w{_s}", "w").write("")      # evita reler id de potongan obsoleto se o proximo pekerja do slot morrer antes de reivindicar
+            except Exception:
+                pass
             if _rc != 0:
                 print("[OF4] worker slot %d DIED rc=%s chunk=%s | %s" % (_s, _rc, _k or "-", _tail), flush=True)
                 _restarts -= 1
