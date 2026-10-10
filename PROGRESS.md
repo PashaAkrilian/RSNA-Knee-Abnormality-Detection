@@ -1592,3 +1592,10 @@ ATURAN PENULISAN:
 - Commit lokal (belum di-push): lihat `git log`. Tugas latar: pemantau `ofscale3/4`.
 - 20:15–20:30 hasil uji skala: `ofscale3` 194 studi/jam (6,8 j, 0 gagal), `ofscale4` (reuso anatomi) 150/jam → reuso dimatikan; `apexof2` v3 lulus stub (GPU kosong 15 GB). Pewaktu submit `apexof2 -v 3` diset 11 Okt 07:03 WIB (jatah agen ≤2/hari; skrip `submit_at.sh`).
 - 21:10 atas "lanjut" user: **57044355** (apexof2 v3) disubmit, pewaktu 07:03 dibatalkan (jatah hari ini sisa 2); paket merger lengkap (`docs/KANDIDAT_MERGER.md`: aturan 5.c/5.d, cara kirim, kandidat dgn tautan profil, templat pesan, pelacak); thread 745861 dibaca (resep label hengck23 = fusi emas ±0,938, tak baru).
+
+## 53. 10 Okt 2026 malam (sesi Claude Code; HANYA akun utama) — dataset privat papan atas + Plan B
+- Menjawab "isi dataset privat tim perak": salinan privat bundel heliosli `rsna-knee-compact-v1` (4 ckpt fold ConvNeXt-S 2.5D + state_spec + model-sisi + manifest) dan `rsna-knee-ofl-ssl-weights` (OF-L SSL), bundel logika/Takakura; isi dataset tim 0,955–0,964 tak diketahui (rincian & sumber: `docs/RESEARCH_NOTES.md` §43).
+- Dibuat `docs/PLAN_B.md` (pohon keputusan skor 57044355, merger Kelompok A/B, dua final terdekorelasi, tuas teknis, jadwal/pemicu); `docs/KANDIDAT_MERGER.md` §3b; STRATEGI_PERAK §2 (kolom perunggu + koreksi), HANDOFF, laporan_push, MEMORY diselaraskan.
+- KOREKSI: perunggu bukan 85–95 % (Apex 0,950 → 25–41 %); jalur bersih 0,944 bukan lagi zona perunggu (rank ≈1.387 vs garis 0,950 rank 567).
+- Ledger publik prvsiyan (90 submisi; terbaik 0,949) menguatkan teori pengetahuan>varians. Scan 22:05: gold-apex-v7 (kerabat Apex) ditutup.
+- 57044355 masih PENDING (22:00 WIB); hasil ±04:00 WIB 11 Okt.
