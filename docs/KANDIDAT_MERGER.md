@@ -97,9 +97,11 @@ Kriteria tolak: >2 anggota, submisi >225, atau klon S6/Apex murni (tanpa pengeta
 3. Terima SATU mitra saja (skor publik tertinggi, submisi tersedikit, ≤2 anggota). Satu tim tidak boleh bergabung dua kali.
 4. Pantau halaman Team harian (permintaan masuk dari tim lain juga mungkin; periksa Rules 5.c sebelum menyetujui).
 
-## 4. Templat pesan (Inggris; pendek, jujur, tanpa berbagi kode)
+## 4. Templat pesan (Inggris; pendek, jujur, tanpa berbagi kode) — diperbarui 11 Okt
 **Pendek (kotak pesan merger):**
-"Hi! We're Krazy KIller (public LB 0.950, ~30 GPU-h/week available). We're looking for a strong team with independently trained models (own labels/pseudo-labels) before the Oct 15 merge deadline: our stack includes the public nartaa checkpoint, which carries different (OAI) label knowledge than report-only models, plus a fast (<1h) inference pipeline and an OrthoFoundation-based branch we're testing, so an ensemble could help us both. Open to a short chat; no code/data sharing before an official merge, per the rules."
+"Hi! We're Krazy KIller (public LB 0.950 today; we're running the public S6 blend — Raptor + compact, 0.954 — plus our own extensions). We have ~30 GPU-h/week, a memory-safe supervised inference pipeline that fits the 9 h limit (OOM-proof worker pool, deadline-bounded legs), and a rank-blend harness (OAI-trained Raptor, report-state compact, 2.5D ConvNeXt reader, OrthoFoundation fold0). We're looking for a teammate with an INDEPENDENT label/pipeline strength (≥0.955) so that an ensemble adds new information rather than another clone. Open to a short chat first; no code/data sharing before an official merge, per the rules."
+
+**Untuk tim yg mencari rekan (Kelompok C):** sebutkan secara spesifik apa yg mereka cari (mis. "single model 0.950+": kami TIDAK punya model tunggal sendiri — jangan mengklaim; tawarkan infrastruktur, GPU-jam, dan ensembel).
 
 **Bila ditanya soal komposisi tim:** "Our team page lists three accounts; two are mine (I'm confirming this with Kaggle support) and one is a teammate. If that's a concern we can resolve it with Kaggle first."
 
