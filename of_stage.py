@@ -129,7 +129,7 @@ try:
         _l_json.dump(_parts[_i], open(_ij, "w"))
         _e = dict(_l_env)
         _e.update(CUDA_VISIBLE_DEVICES=str(_gpu), OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1",
-                  MALLOC_ARENA_MAX="2", PYTHONDONTWRITEBYTECODE="1",
+                  MALLOC_ARENA_MAX="2", PYTHONDONTWRITEBYTECODE="1", PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True",
                   PYTHONPATH=_TG + _l_os.pathsep + _CC + _l_os.pathsep + _l_env.get("PYTHONPATH", ""))
         _lg = open(f"/kaggle/working/_leg_of_w{_i}.log", "w")
         _procs.append((_l_sp.Popen([_l_sys.executable, "-u", "/kaggle/working/_leg_of_worker.py", str(_i), _ij, str(_stop_at), str(_CHUNK),

@@ -1590,3 +1590,4 @@ ATURAN PENULISAN:
 - 19:37 papan 5.666 tim: kita 0,950 rank 530; ≥0,951 = 348, ≥0,952 = 217. Scan publik: tak ada notebook ≥0,951 runnable; klaim "0,954" = kode Apex. Rules resmi diambil (5.a–5.d, 6.a/b, merger 5.c). Simulasi peluang (`silver_prob_sim.py`).
 - 19:50–21:30 dokumen: `STRATEGI_PERAK.md` (baru), MEMORY.md dipadatkan (arsip penuh di §52b), HANDOFF.md, push.md, laporan_push.md, README.md, CLAUDE.md/AGENTS.md, docs (KANDIDAT_MERGER, DRAF_PESAN_KAGGLE_SUPPORT, IZIN_AKUN_KEDUA catatan, PAKET_REKAN_TIM), RESEARCH_NOTES §39–§41, banner arsip pada laporan/riset lama.
 - Commit lokal (belum di-push): lihat `git log`. Tugas latar: pemantau `ofscale3/4`.
+- 20:15–20:30 hasil uji skala: `ofscale3` 194 studi/jam (6,8 j, 0 gagal), `ofscale4` (reuso anatomi) 150/jam → reuso dimatikan; `apexof2` v3 lulus stub (GPU kosong 15 GB). Pewaktu submit `apexof2 -v 3` diset 11 Okt 07:03 WIB (jatah agen ≤2/hari; skrip `submit_at.sh`).

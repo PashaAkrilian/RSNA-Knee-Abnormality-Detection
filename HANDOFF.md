@@ -21,8 +21,8 @@
 |---|---|
 | Papan | 5.666 tim; kita **0,950 rank 530**; ≥0,951 = 348, ≥0,952 = 217; garis perak ≈ rank 283 → target publik ≥0,952 |
 | Submisi | terbaik 0,950 (Apex 56943646). 57025414 Apex+MaVIT = 0,949 (BUANG). **57028008 Apex+OF = Notebook Timeout (9 j)**. Hari ini terpakai 2/5 (agen) → sisa 3 |
-| Uji berjalan | `rsna-knee-ofscale3` (4 proses, potongan 8) dan `ofscale4` (+reuso runtime anatomi): ukur studi/jam agregat. `rsna-knee-apexof2` (Apex 0,70 + OF 0,30, tahap v2) lulus stub (liputan 3/3, blend OK) |
-| Gerbang G0 | proyeksi ≤6,5 j utk 1.322 studi → `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/rsna-knee-apexof2 -v 1 -f submission.csv -m "..."` (hasil ±7 jam). Lebih lambat → tetap submit (liputan parsial berprioritas) hanya bila ≥60 % |
+| Uji skala (SELESAI) | `ofscale3` (4 proses, potongan 8): 194 studi/jam → 6,8 j utk 1.322 (akhir ±224/jam ≈5,9 j), 0 gagal; `ofscale4` (+reuso anatomi) 150/jam → TIDAK lebih cepat (reuso dimatikan). `rsna-knee-apexof2` **v3** lulus stub; GPU kosong 15 GB sebelum tahap OF |
+| Gerbang G0 (LULUS) | proyeksi 6,8 j + pemutus proses (+6,6 j lunak / +7,0 j keras) → liputan ≈97–100 %. **Submisi dijadwalkan 11 Okt 07:03 WIB** (jatah agen hari ini sudah 2/2): `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/rsna-knee-apexof2 -v 3 -f submission.csv -m "..."`; pewaktu = skrip `submit_at.sh` (tugas latar; batal: bunuh PID-nya) |
 | Kuota | GPU 27,1 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
 | Notebook publik | tak ada jalan pintas ≥0,951 yg runnable (MEMORY §2); scan 10 Okt: klaim "0,954" (rabari/emresariduman/sameerk) = kode Apex (0,950) |
 

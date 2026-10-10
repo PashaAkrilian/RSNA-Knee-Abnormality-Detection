@@ -28,9 +28,22 @@ import os as _l_os, sys as _l_sys, glob as _l_glob, json as _l_json, time as _l_
 import shutil as _l_shutil, subprocess as _l_sp, textwrap as _l_tw, hashlib as _l_hl, traceback as _l_tb
 import numpy as _l_np, pandas as _l_pd, torch as _l_torch
 import gc as _l_gc
+def _l_gpu_free():
+    try:
+        return [round(_l_torch.cuda.mem_get_info(i)[0] / 1e9, 1) for i in range(_l_torch.cuda.device_count())]
+    except Exception:
+        return []
+print("[LEGS] GPU free GB before cleanup:", _l_gpu_free(), flush=True)
+for _k, _v in list(globals().items()):          # libera modelos/tensores CUDA do Apex ainda referenciados no notebook
+    try:
+        if isinstance(_v, _l_torch.nn.Module) or (isinstance(_v, _l_torch.Tensor) and _v.is_cuda):
+            del globals()[_k]
+    except Exception:
+        pass
 _l_gc.collect()
 if _l_torch.cuda.is_available():
     _l_torch.cuda.empty_cache()
+print("[LEGS] GPU free GB after cleanup:", _l_gpu_free(), flush=True)
 _l_pub = "/kaggle/working/submission.csv"
 _l_bak = "/kaggle/working/_apex_before_legs.csv"
 if not _l_os.path.exists(_l_bak):
@@ -183,7 +196,7 @@ if "mavit" in LEGS:
     cells_src.append(MAVIT.replace("__WM__", repr(WM)))
 if "of" in LEGS:
     cells_src.append(OF.replace("__WO__", repr(WO)).replace("__NPROC__", "4").replace("__CHUNK__", "8")
-                     .replace("__STOP_H__", "6.6").replace("__KILL_H__", "7.0").replace("__MINCOV__", "0.15").replace("__REUSE__", "1"))
+                     .replace("__STOP_H__", "6.6").replace("__KILL_H__", "7.0").replace("__MINCOV__", "0.15").replace("__REUSE__", "0"))
 cells_src.append(BLEND)
 for i, c in enumerate(cells_src):
     compile(c, f"cell{i}", "exec")
