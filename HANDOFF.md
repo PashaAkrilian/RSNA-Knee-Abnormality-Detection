@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 11 Okt 2026 ~04:10 WIB (sesi Claude Code). Baca urut: `MEMORY.md` (aturan+fakta) → `STRATEGI_PERAK.md` (rencana+gerbang; §0 = perubahan 11 Okt) → `docs/PLAN_B.md` (§00 terbaru) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 11 Okt 2026 ~04:40 WIB (sesi Claude Code). Baca urut: `MEMORY.md` (aturan+fakta) → `STRATEGI_PERAK.md` (rencana+gerbang; §0 = perubahan 11 Okt) → `docs/PLAN_B.md` (§00 terbaru) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
@@ -16,14 +16,14 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (11 Okt ~04:10 WIB)
+## 0c. Status (11 Okt ~04:40 WIB)
 | Hal | Keadaan |
 |---|---|
 | Papan (02:59 WIB) | 5.699 tim; kita **0,950 rank 599** (dataran 618 tim; DI BAWAH garis perunggu publik rank 570); ≥0,951 = 367, ≥0,952 = 229, ≥0,954 = 141, ≥0,960 = 31; perak ≈ rank 285 (0,951) |
 | **S6 (heliosli) HIDUP LAGI** | 02:50 WIB dataset `rsna-knee-compact-v1` publik (V1–V13) + notebook S6 publik (Raptor 0,7 + compact 0,3 = **0,954**). **Salinan user = 57051680 (02:56 WIB, PENDING; ±4–4,5 j → ±07:00–08:30 WIB)**. Compact: ConvNeXt-S 4 fold, tahap GPU-bound ±18–20 dtk/studi/pekerja (2 pekerja) → 1.322 studi ±3,5 j (sonda `s6probe`: 80/80 per pekerja, 0 fallback; ERROR sonda = artefak pseudo-uji, sudah diperbaiki) |
 | Submisi | terbaik 0,950 (Apex 56943646). 57025414 Apex+MaVIT 0,949 (BUANG). 57028008 Apex+OF Timeout. **57044355 Apex+OF v3 = 0,950 (OF TIDAK jalan: OOM; bukan vonis OF)**. 57051680 = S6 user PENDING. Jatah hari-ini habis (4/5 terpakai); reset 07:00 WIB |
 | OF | premis dikoreksi: heliosli TIDAK memakai bobot OF (hanya kode); prior ≥+0,001 di atas S6 ≤20 %. Infrastruktur v4.1 siap (`of_stage_v4.py`, `build_apexof4.py`); rehearsal `apexof4r2` LULUS (194 studi/jam dgn 3 pekerja, MemAvail min 19 GB); `apexof4r3` (4 pekerja tanpa injeksi) berjalan |
-| **Tindakan aktif** | `rsna-knee-s6plusr` (rehearsal pseudo-uji 160 studi: reader + compact + OF terakhir + blend 3 perna, monitor RAM) berjalan ±03:35→±04:45; bahan siap: `s6reader`, `s6plus` (`build_s6plus.py`); pewaktu submit 07:03 (`submit_trial.sh <slug> <versi> "<pesan>"` di scratchpad) |
+| **Tindakan aktif** | `s6reader` v1 (reader ×0,5) dan `s6plus` v1 (reader ×1,0 + OF 0,15 terakhir): commit-run stub LULUS; **pewaktu `scripts/submit_two.sh` (nohup) akan men-submit keduanya 11 Okt 07:03 WIB** (agen 2/5; batalkan: `pkill -f submit_two.sh`); `s6plusr` (rehearsal OF-terakhir pada pseudo-uji) berjalan ±04:50; `s6clean` (asuransi) siap, submit ≥12 Okt; pemantau harness: klon S6 (57051680) dan cek 07:12 |
 | Kuota | GPU ±19–20 h (reset 17 Okt 07:00 WIB); TPU tak berguna; submisi: reset 07:00 WIB (5/hari tim; agen ≤2) |
 | Forum (11 Okt) | 748141 heliosli memulihkan dataset ("blend my model with yours"); 735304 "best single-model": ConvNeXt-T 5-fold single 0,953–0,959 dgn pseudo-label (MURAD, colum2131) → pemisah = label; 744056 kelayakan hadiah dgn bobot publik (host diam); 748011 validasi OOF-label r=0,87 vs LB. Detail `docs/RESEARCH_NOTES.md` §44 |
 
