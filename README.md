@@ -44,12 +44,12 @@ Competition status and next steps live in Indonesian-language docs at repo root 
 
 1. `CLAUDE.md` / `AGENTS.md` — mission, hard rules (commit style, credentials, accounts + compliance note)
 2. `MEMORY.md` — current facts & locked decisions (<2 min read)
-3. `STRATEGI_PERAK.md` — **silver strategy**: probability model, four tracks (merger, Apex+OrthoFoundation, robust finals, compliance), timeline and decision gates
+3. `STRATEGI_PERAK.md` (+ `docs/PLAN_B.md` §00) — **silver strategy**: probability model, tracks (S6 baseline, merger, technical levers, robust finals, compliance), timeline and decision gates
 4. `HANDOFF.md` — live status + work order (quickstart in §0b)
 5. `laporan_push.md` — submission log (§2) & findings
-6. `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` — latest deep research (10 Okt 2026); older reports in `reports/` and `research_notes/` are archives
+6. `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt) and `docs/RESEARCH_NOTES.md` §36–§44 — latest deep research; older reports in `reports/` and `research_notes/` are archives
 
-Status (10 Okt 2026 21:30 WIB): public LB 0.950 (rank 530 of 5,666); silver line ≈ rank 283 (needs ≥0.952 public now). Apex + OrthoFoundation fold0 attempt timed out; v2 pipeline under scale test. Silver cannot be guaranteed (simulated odds: ~15–20 % as-is, higher with a real gain or a merger).
+Status (11 Okt 2026 04:00 WIB): public LB 0.950 (rank 599 of 5,699; below the public bronze line, rank 570). heliosli restored his compact bundle → the public S6 notebook (Raptor 0.7 + compact 0.3 = **0.954**) is runnable again; our owner submitted a copy (57051680, pending). Apex + OrthoFoundation (57044355) scored 0.950 because the OF leg was OOM-killed (not an OF verdict; heliosli's recipe uses the *compact* model, not OF weights). v4.1 OF supervisor + `build_s6plus.py` (optional reader/OF legs) are being rehearsed. Silver cannot be guaranteed (S6 clones tie in a large cluster; merger remains the biggest lever).
 
 Multi-account note: `docs/IZIN_AKUN_KEDUA.md` archives a one-sentence organizer reply; Rules 5.a/5.b make multi-account use risky — see `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`. Credentials: `akun_kaggle/` is gitignored — never print `kaggle.json`.
 
