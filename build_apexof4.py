@@ -26,12 +26,16 @@ args = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
 NAME = args.get("name", "apexof4")
 WO = float(args.get("wo", "0.30"))
 PSEUDO = int(args.get("pseudo", "0"))
-STOP_H = args.get("stop_h", "6.0")
-KILL_H = args.get("kill_h", "6.4")
-NPROC = args.get("nproc", "4")
+STOP_H = args.get("stop_h", "6.2")
+KILL_H = args.get("kill_h", "6.6")
+NPROC = args.get("nproc", "3")
 CHUNK = args.get("chunk", "8")
-MAXCHUNKS = args.get("maxchunks", "12")
-RSSMAX = args.get("rssmax", "9.0")
+MAXCHUNKS = args.get("maxchunks", "1")
+RSSMAX = args.get("rssmax", "8.0")
+MMAP = args.get("mmap", "0")
+EXTRAENV = args.get("extraenv", "{}")        # dict literal Python, ex.: {\"MALLOC_MMAP_THRESHOLD_\": \"1048576\"}
+MEMPERW = args.get("memperw", "8.5")
+MEMFREE = args.get("memfree", "9.5")
 INJECT = args.get("inject", "0")
 LOUD = args.get("loud", "0") not in ("0", "", "false", "False")
 MINCOV = args.get("mincov", "0.15")
@@ -70,7 +74,7 @@ print("[PSEUDO] studies", len(_pids), "| series cols", _pcols, "| test cols", _o
 def fill_of(src):
     rep = {"__WD__": "/kaggle/working", "__NPROC__": NPROC, "__CHUNK__": CHUNK, "__STOP_H__": STOP_H, "__KILL_H__": KILL_H, "__MINCOV__": MINCOV,
            "__MAXCHUNKS__": MAXCHUNKS, "__RSSMAX__": RSSMAX, "__INJECT__": INJECT, "__INJECT_AFTER__": "360", "__POLL__": POLL, "__PRINTEVERY__": PRINTEVERY,
-           "__MEMPERW__": "5.5", "__MEMFREE__": "6.5", "__DISKPER__": "0.42", "__DISKBASE__": "1.5", "__FORCEW__": "0", "__SETUP__": "1",
+           "__MEMPERW__": MEMPERW, "__MEMFREE__": MEMFREE, "__MMAP__": MMAP, "__EXTRAENV__": EXTRAENV, "__DISKPER__": "0.42", "__DISKBASE__": "1.5", "__FORCEW__": "0", "__SETUP__": "1",
            "__DATA_PRESET__": DATA_PRESET_PSEUDO if PSEUDO else DATA_PRESET_PROD}
     for k, v in rep.items():
         src = src.replace(k, v)

@@ -21,6 +21,7 @@ ROOT = Path(__file__).parent
 args = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
 NAME = args.get("name", "ofmem1")
 N = int(args.get("n", "16"))
+GROUPS = args.get("groups", "base,mallocthr;chunk4,w0;tcmalloc")   # grupos separados por ; (paralelos dentro do grupo, separados por ,)
 
 CELL = r'''
 import os, sys, glob, json, time, shutil, subprocess as sp, hashlib, random, textwrap, threading
@@ -100,6 +101,13 @@ class TS:
             self.s.write("%7.1f %s\n" % (time.time() - self.t0, l[:180])); self.s.flush()
     def flush(self): self.s.flush()
 sys.stdout = TS(sys.__stdout__)
+if os.environ.get("OFMEM_MMAP") == "1":
+    _ol = torch.load
+    def _ml(f, *a, **k):
+        k.setdefault("mmap", True)
+        return _ol(f, *a, **k)
+    torch.load = _ml
+    print("torch.load patched with mmap=True", flush=True)
 def rss():
     d = {}
     for l in open("/proc/self/status"):
@@ -158,15 +166,21 @@ BASEENV = dict(os.environ)
 BASEENV.update(OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MALLOC_ARENA_MAX="2", PYTHONDONTWRITEBYTECODE="1",
                PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True", PYTHONUNBUFFERED="1",
                PYTHONPATH=os.pathsep.join([TG, CC, WD + "/_own_env", os.environ.get("PYTHONPATH", "")]))
+MT = {"MALLOC_MMAP_THRESHOLD_": "1048576", "MALLOC_TRIM_THRESHOLD_": "1048576"}
 CFG = {
     "base": ({}, 8, 1, 2),
-    "mallocthr": ({"MALLOC_MMAP_THRESHOLD_": "1048576", "MALLOC_TRIM_THRESHOLD_": "1048576"}, 8, 1, 2),
+    "mallocthr": (MT, 8, 1, 2),
     "chunk4": ({}, 4, 1, 4),
     "w0": ({}, 8, 0, 2),
+    "mmap": ({"OFMEM_MMAP": "1"}, 8, 1, 2),
+    "mmapw0": ({"OFMEM_MMAP": "1"}, 8, 0, 2),
+    "mmapchunk4": ({"OFMEM_MMAP": "1"}, 4, 1, 4),
+    "mmapmalloc": (dict(MT, OFMEM_MMAP="1"), 8, 1, 2),
 }
 tc = sp.run("ls /usr/lib/x86_64-linux-gnu/libtcmalloc*.so* /usr/lib/x86_64-linux-gnu/libjemalloc*.so* 2>/dev/null | head -1", shell=True, capture_output=True, text=True).stdout.strip()
 if tc:
     CFG["tcmalloc"] = ({"LD_PRELOAD": tc}, 8, 1, 2)
+    CFG["mmaptcmalloc"] = ({"LD_PRELOAD": tc, "OFMEM_MMAP": "1"}, 8, 1, 2)
 print("[MEM] configs:", list(CFG), "| tcmalloc/jemalloc:", tc or "none", flush=True)
 
 def launch(name, gpu, off):
@@ -175,7 +189,8 @@ def launch(name, gpu, off):
     lg = open(f"{WD}/_mem_{name}.log", "w")
     return sp.Popen([sys.executable, "-u", WD + "/_mem_worker.py", name, str(chunk), str(wdl), str(nch), MD, PS, str(off)], env=e, stdout=lg, stderr=sp.STDOUT, start_new_session=True), lg
 
-order = [("base", "mallocthr"), ("chunk4", "w0")] + ([("tcmalloc",)] if tc else [])
+order = [tuple(n for n in g.split(",") if n in CFG) for g in GROUPS.split(";")]
+order = [g for g in order if g]
 for grp in order:
     ps_ = [launch(n, i % 2, 0) for i, n in enumerate(grp)]
     t1 = time.time()
@@ -200,7 +215,7 @@ for grp in order:
         print(f"[MEM] {n}: rc={p.returncode} max sampled vmrss={mx:.2f} GB", flush=True)
         for l in ce:
             print("[MEM]   " + l.strip(), flush=True)
-for n in CFG:
+for n in [x for g in order for x in g]:
     try:
         txt = open(f"{WD}/_mem_{n}.log").read().splitlines()
         rs = [l for l in txt if "RSS anon" in l]

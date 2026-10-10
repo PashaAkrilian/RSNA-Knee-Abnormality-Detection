@@ -9,7 +9,7 @@ Perbaikan v4:
 - Pekerja didaur ulang tiap MAXCHUNKS potongan atau RSS > RSSMAX (cegah kebocoran memori/GPU selama 6 jam); oom_score_adj=500 (pekerja dikorbankan dulu, bukan notebook).
 - Keluaran per potongan ditulis atomik (tmp + os.replace) ke _of_res/<k>.csv; agregasi di akhir; liputan minimum MINCOV.
 - Pemutus waktu: berhenti lunak STOP_H, bunuh grup proses KILL_H (killpg: termasuk anak DataLoader).
-Placeholder: __WD__ (/kaggle/working), __NPROC__, __CHUNK__, __STOP_H__, __KILL_H__, __MINCOV__, __MAXCHUNKS__, __RSSMAX__, __INJECT__ (uji: bunuh pekerja 0 pd +__INJECT_AFTER__ dtk; 360 di rehearsal), __POLL__ (jeda supervisor dtk; 10), __PRINTEVERY__ (dtk entre linhas de progresso; 300), __MEMPERW__ (5.5 GB/pekerja), __MEMFREE__ (6.5 GB minimum utk spawn), __DISKPER__ (0.42 GB/studi) & __DISKBASE__ (1.5 GB) = penjaga disk, __FORCEW__ (0 = otomatis; >0 = paksa jumlah pekerja, uji),
+Placeholder: __WD__ (/kaggle/working), __NPROC__, __CHUNK__, __STOP_H__, __KILL_H__, __MINCOV__, __MAXCHUNKS__, __RSSMAX__, __INJECT__ (uji: bunuh pekerja 0 pd +__INJECT_AFTER__ dtk; 360 di rehearsal), __POLL__ (jeda supervisor dtk; 10), __PRINTEVERY__ (dtk entre linhas de progresso; 300), __MEMPERW__ (5.5 GB/pekerja), __MEMFREE__ (6.5 GB minimum utk spawn), __DISKPER__ (0.42 GB/studi) & __DISKBASE__ (1.5 GB) = penjaga disk, __FORCEW__ (0 = otomatis; >0 = paksa jumlah pekerja, uji), __MMAP__ (1 = torch.load mmap=True), __EXTRAENV__ (dict literal: env tambahan pekerja, mis. MALLOC_*),
 __DATA_PRESET__ (kode penentu akar data; pseudo-root utk rehearsal), __SETUP__ (1 = pasang aset OF; 0 = uji lokal).
 """
 
@@ -32,7 +32,7 @@ def _of_find(name):
     raise FileNotFoundError(f"{name} not found in /kaggle/input")
 
 def _of_mem():
-    """(MemAvailable GB, headroom cgroup GB | None)"""
+    """(MemAvailable GB, headroom EFETIVO do cgroup GB | None). O headroom desconta o page-cache (recuperavel): sem isso ele parece baixo demais."""
     a = None
     try:
         for l in open("/proc/meminfo"):
@@ -42,12 +42,22 @@ def _of_mem():
     except Exception:
         pass
     h = None
-    for cur, mx in (("/sys/fs/cgroup/memory.current", "/sys/fs/cgroup/memory.max"),
-                    ("/sys/fs/cgroup/memory/memory.usage_in_bytes", "/sys/fs/cgroup/memory/memory.limit_in_bytes")):
+    for base, cur, mx, key in (("/sys/fs/cgroup", "memory.current", "memory.max", "file"),
+                               ("/sys/fs/cgroup/memory", "memory.usage_in_bytes", "memory.limit_in_bytes", "cache")):
         try:
-            m = open(mx).read().strip()
+            m = open(f"{base}/{mx}").read().strip()
             if m != "max" and int(m) < (1 << 50):
-                h = (int(m) - int(open(cur).read())) / 1e9
+                used = int(open(f"{base}/{cur}").read())
+                fc = 0
+                try:
+                    for l in open(f"{base}/memory.stat"):
+                        k, v = l.split()
+                        if k == key:
+                            fc = int(v)
+                            break
+                except Exception:
+                    pass
+                h = (int(m) - used + fc) / 1e9
                 break
         except Exception:
             pass
@@ -90,10 +100,26 @@ try:
 except Exception:
     pass
 
+if __MMAP__ and torch is not None:      # checkpoints (ViT-L 1,2 GB x2 + anatomia) mapeados em memoria: page-cache compartilhado entre pekerja
+    _ol = torch.load
+    def _ml(f, *a, **k):
+        k.setdefault("mmap", True)
+        return _ol(f, *a, **k)
+    torch.load = _ml
+
 def rss_gb():
     try:
         for l in open("/proc/self/status"):
             if l.startswith("VmRSS:"):
+                return int(l.split()[1]) / 1048576.0
+    except Exception:
+        pass
+    return 0.0
+
+def rss_anon_gb():
+    try:
+        for l in open("/proc/self/status"):
+            if l.startswith("RssAnon:"):
                 return int(l.split()[1]) / 1048576.0
     except Exception:
         pass
@@ -157,8 +183,8 @@ while not stop:
             open(cd + "/done", "w").write(str(len(fr)))
             done_n += len(fr)
             ok = True
-            print("CHUNK w%d k=%d n=%d ok=%d sec=%.0f (%.1f s/study) free_GB=%.1f rss=%.1fGB cumul=%d in %.0fs" % (
-                slot, k, len(ch), len(fr), time.time() - tc, (time.time() - tc) / len(ch), free, rss_gb(), done_n, time.time() - t0), flush=True)
+            print("CHUNK w%d k=%d n=%d ok=%d sec=%.0f (%.1f s/study) free_GB=%.1f rss=%.1fGB anon=%.1fGB cumul=%d in %.0fs" % (
+                slot, k, len(ch), len(fr), time.time() - tc, (time.time() - tc) / len(ch), free, rss_gb(), rss_anon_gb(), done_n, time.time() - t0), flush=True)
         except Exception as e:
             fc = f"{claims}_fail/{k}"
             try:
@@ -255,6 +281,7 @@ try:
         env.update(CUDA_VISIBLE_DEVICES=str(slot % _ng), OMP_NUM_THREADS="1", MKL_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1",
                    MALLOC_ARENA_MAX="2", PYTHONDONTWRITEBYTECODE="1", PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True",
                    PYTHONUNBUFFERED="1", PYTHONPATH=_os.pathsep.join(x for x in pp if x))
+        env.update(__EXTRAENV__)
         lg = open(f"{_WD}/_leg_of_w{slot}.log", "a")
         p = _sp.Popen([_sys.executable, "-u", _wsrc, str(slot), _cj, str(_OF_STOP), _OF_SERDIR, _OF_SERCSV, _OF_TESTCSV,
                        _MD, _claims, _res, _WD, str(__MAXCHUNKS__), str(__RSSMAX__)], env=env, stdout=lg, stderr=_sp.STDOUT, start_new_session=True)
