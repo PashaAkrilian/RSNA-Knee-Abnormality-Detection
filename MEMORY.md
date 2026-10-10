@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`, `docs/RESEARCH_NOTES.md` (§36–§41). Sejarah/arsip penuh (termasuk MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b.
-> Last updated: 2026-10-10T20:30:00+07:00
+> Last updated: 2026-10-10T21:15:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -33,9 +33,9 @@
 ## 3. Status (10 Okt 21:15 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi terbaik | **0,950** (Apex 56943646); 0,944 bersih (replika goodpjw); 57025414 Apex+MaVIT 0,949; 57028008 Apex+OF = Timeout |
+| Submisi terbaik | **0,950** (Apex 56943646); 0,944 bersih (replika goodpjw); 57025414 Apex+MaVIT 0,949; 57028008 Apex+OF = Timeout; **57044355 Apex+OF v2 = PENDING** |
 | Uji skala (SELESAI) | `ofscale3` (4 proses, potongan 8): 104 studi/31 mnt, 0 gagal, disk ≥14,8 GB → **194 studi/jam → 6,8 j utk 1.322** (akhir lebih cepat ±224/jam ≈5,9 j); `ofscale4` (+reuso anatomi) 88 studi → 8,8 j (TIDAK lebih cepat → reuso dimatikan). GPU kosong 15 GB sebelum tahap OF. `rsna-knee-apexof2` **v3** lulus stub (liputan, blend OK) |
-| Submisi terjadwal | pewaktu: **11 Okt 07:03 WIB** (setelah reset jatah; aturan agen ≤2/hari) submit `apexof2 -v 3` lalu pantau skor tiap 5 mnt (hasil ±7 jam) — skrip `submit_at.sh` (scratchpad) |
+| **Submisi aktif** | **57044355 = Apex 0,70 + OF fold0 0,30 (apexof2 v3)** disubmit 10 Okt 21:10 WIB atas "lanjut" user (jatah hari ini sisa 2); scoring ±7 jam → ±04:00 WIB 11 Okt; pemantau tiap 5 mnt. Gerbang G1: ≥0,952 kandidat · 0,951 cadangan · ≤0,950 tutup OF |
 | Kuota | GPU utama 27,1 h (reset 17 Okt 07:00 WIB); TPU 20 h (tak berguna: XLA crash); submisi hari ini sisa 3 |
 | Git | commit lokal di depan origin (push hanya atas perintah user; `git fetch` dulu) |
 | Menunggu user | merger (batas 15 Okt), pesan ke Kaggle support, persetujuan `nxtirfan` soal token |
