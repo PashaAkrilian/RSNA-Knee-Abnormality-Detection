@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Serah-terima operasional (langkah berikut + perintah) → **HANDOFF.md**.
 > Riset → docs/RESEARCH_NOTES.md (terbaru §36–§37b). Sejarah lengkap → PROGRESS.md (termasuk "Arsip MEMORY.md" = versi penuh sebelum dipadatkan 8 Okt).
-> Last updated: 2026-10-10T03:00:00+07:00
+> Last updated: 2026-10-10T07:40:00+07:00
 
 ## 0. Aturan mutlak (user)
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal silver, gold bila bisa) sebelum **22 Okt 2026 23:59 UTC**.
@@ -28,7 +28,10 @@
 - **DITUTUP (jangan ulangi)**: KneeNet reader sendiri (fold 0 TPU diverge ep5; plafon 0,93 tak menambah di atas 0,949); CoAtNet/ResNet init-ImageNet lambat; model soup (init sama); bagging tanpa OAI; metadata DICOM (tanpa usia, jenis kelamin lemah, PatientID unik); resolusi 288; bobot global v3.
 - Gold-58: utk stack publik terkontaminasi; utk ckpt induk nartaa TIDAK jelas dilatih pada gold — AUC induk pada cache z (384 penuh, 94 window, 1 tampilan, fp16) = **0,9214** (terlihat out-of-sample, hanya dipakai utk seleksi epoch) → boleh jadi pembanding RELATIF anak vs induk (SE ≈0,01; sinyal kasar). Keputusan besar HANYA dari submisi nyata; LB 3 desimal, noise antar-latih ≈0,002.
 
-## 3. Status (9 Okt 2026 ~23:40 WIB)
+## 3. Status (10 Okt 2026 ~07:40 WIB)
+- **10 Okt 07:00–07:40 (sesi Claude Code; HANYA akun utama)**: GPU utama pulih 30 h. Skor per-notebook publik (dibaca via browser): heliosli S6 0,954 / versia-7, blend-gold, blend3 0,951 = semua MATI; **`kiyoshiohno/rsna-knee-template` 0,951 = launcher yg menjalankan logika dari dataset PRIVAT (tak bisa direplikasi)**; DINOsaur V5, V2-Velciraptor (klon heliosli, bundle compact-v1 sudah ditarik), Apex dan sisanya = 0,950. OF fold0 = ViT-L fine-tune + pipeline berat (SKM-TEA, KneeXNet; kode fastMRI/OpenKnee/KneeMRI) → probe kelayakan `rsna-knee-of-probe` (`build_probe_of.py`). **MaVIT hengck23**: gold 0,9202 direproduksi, LB solo 0,935, 1,5 dtk/studi; lixin73 336px TIDAK kompatibel (slot_emb 3 view vs 6; tanpa kode). `rsna-knee-apexmavit` (Apex + MaVIT@0,20 rank-blend; `build_submit_mavit.py`) lulus commit-run → submisi **57025414 PENDING** (jatah hari ini sisa 4). Teori: model beda-arsitektur dgn label sama berkorelasi galat tinggi (reader hanya +0,001) → gain nyata butuh PENGETAHUAN label baru; garis perak/merger = opsi terbesar (126 tim ≥0,953 dgn ≤2 anggota & ≤250 submisi).
+
+## 3-lama. Status (9 Okt 2026 ~23:40 WIB)
 - **9 Okt malam**: probe r224 selesai siklus (push v1 → commit-run OK → submisi **57012143 = 0,950 → BUANG**). Riset 4 subagent selesai → `reports/Strategi meraih perak RSNA.md` + `research_notes/Strategi meraih perak RSNA/` (ter-commit & ter-push); `laporan_push.md` = wadah evaluasi silver (§1–§6, terintegrasi riset). Monitor `progress_submisi.sh` selesai (PID mati; log `progress_submisi.log`).
 - **Jalur heliosli OF (0,951) MATI PERMANEN** (forensik kode 10 Okt, `research_notes/Cara menembus 0951 perak/arm_baru_realistis.md` Q1–Q2): S6 Stage-2 = `find_mount('rsna-knee-compact-v1','manifest.json')` + `find_mount('rsna-knee-ofl-ssl-weights','weight_parts.json')` **tanpa fallback** → kini RuntimeError (compact-v1 = README 183B per 9 Okt 13:50; ofl-ssl 403); OF fold0 publik (837 file) **TIDAK punya manifest.json**; receipt S6 8 Okt: bundle `209a32c8b50a6b1c` (4-fold E_lrprior) + side-model `ab623e2b` = HILANG semua; fork nursrijan jatuh ke raptor049 (0,949). Rekonstruksi fold0 = JANGAN (1 fold training-ckpt, engineering tinggi, EV rendah). Keluarga fork (d5d, h01–h05, versia-7, blend3) ikut tutup.
 - **57015077 (fork rabari) = 0,950 → BUANG** (10 Okt ~00:45 WIB) — MIRROR_TTA/r224@0,3 tak mengangkat; plafon keluarga r384+reader+r224 = 0,950.
@@ -57,7 +60,7 @@
 1. **Risiko kepatuhan OAI** (ckpt nartaa dilatih dgn data OAI/NDA; host belum menjawab thread 743416): pilih 2 submisi final = 1 bersih + 1 agresif; putuskan 21–22 Okt setelah cek ulang thread. Jika host melarang → kembali ke jalur bersih.
 2. **Koordinasi dgn nxtirfan**: siapa submit apa; tahan submisi tak penting; pastikan tak ada job GPU proyek lain mencuri kuota pada 10 Okt 07:00 WIB.
 3. (Opsional, tidak disarankan) model OAI buatan sendiri via NDA — hanya user yg bisa mendaftar; lihat RESEARCH_NOTES §37–§37b utk kelayakan.
-4. **Akun kedua & ketiga — IZIN TERARSIP (10 Okt)**: teks panitia **"Oh, of course, that's allowed."** (konteks: permintaan tim memakai akun ganda, per user) + kronologi submisi kini di **`docs/IZIN_AKUN_KEDUA.md`**. Sisa mitigasi: (a) simpan email asli di inbox sbg bukti utama, (b) pastikan beda orang per akun (Rules 3.5.b), (c) submisi final 21–22 Okt diusahakan dari akun utama. Jangan simpan/cetak kredensial di repo/log.
+4. **Akun kedua & ketiga — IZIN TERARSIP (10 Okt)**: teks panitia **"Oh, of course, that's allowed."** (konteks: permintaan tim memakai akun ganda, per user) + kronologi submisi kini di **`docs/IZIN_AKUN_KEDUA.md`**. Sisa mitigasi: (a) simpan email asli di inbox sbg bukti utama, (b) pastikan beda orang per akun (Rules 3.5.b), (c) submisi final 21–22 Okt diusahakan dari akun utama. Jangan simpan/cetak kredensial di repo/log. **Catatan sesi Claude Code 10 Okt**: tidak memakai akun 2/3 untuk RSNA (Rules 3.5.a/3.5.b; izin tertulis hanya satu kalimat tanpa pertanyaan/pengirim; GPU utama 30 h cukup utk rencana). Saran: tanya Kaggle support secara tertulis (draf: `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`) dan jalankan komputasi rekan oleh rekan sendiri dari akunnya (`docs/PAKET_REKAN_TIM.md`).
 
 ## 6. Referensi cepat
 - Kernel/dataset inti: `dimaspashaakrilian/rsna-knee-train-tpu-oai-child` (TPU), `rsna-knee-volcache-z{0,1,2}` (cache), `rsna-knee-fused-labels-r1` (label), `rsna-knee-goodpjw-replica` (0,944), publik `sujanmajhisuzan/rsna-knee-apex-grandmaster-stack` (0,950) + `nartaa/rsna-knee-publication-swa-weights-20261007` (ckpt r384 0,949 & r224 0,945) + `goodpjw2008/rsna-knee-2-5d-convnext-reader`.
