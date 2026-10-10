@@ -10,7 +10,7 @@
   lenient=1: o controlador do compact NAO derruba o notebook quando >3 % de fallbacks (cai para o rank Raptor), em vez de ERROR sem pontuacao.
 
 Pemakaian:
-  python3 build_s6plus.py name=s6reader reader=1 wr=0.70 wc=0.30
+  python3 build_s6plus.py name=s6reader reader=1 wr=0.70 wc=0.30 rscale=0.5      # reader conservador (pesos Apex x 0,5)
   python3 build_s6plus.py name=s6plus reader=1 of=1 wr=0.55 wc=0.30 wo=0.15 stop_h=7.9 kill_h=8.25
   python3 build_s6plus.py name=s6plusr pseudo=160 reader=1 of=1 wr=0.55 wc=0.30 wo=0.15 t0=now stop_h=0.4 kill_h=0.6 deadline=1.3   # rehearsal (log legivel)
 """
@@ -46,6 +46,7 @@ KILL_H = args.get("kill_h", "8.25")
 T0MODE = args.get("t0", "nb")              # nb = NB_T0 do S6 (producao) | now = relogio local da celula OF (rehearsal)
 DEADLINE = args.get("deadline", "")        # troca DEADLINE_HOURS do compact (S6 original 8.3)
 LENIENT = args.get("lenient", "1") == "1"
+RSCALE = float(args.get("rscale", "1.0"))        # escala dos pesos por-finding do reader (Apex TARGET_WEIGHTS); 0.5 = reader conservador
 NB = Path(args.get("nb", ROOT / "kaggle_base" / "s6_heliosli_public_20261011.ipynb"))
 BASE_APEX = ROOT / "kaggle_base" / "apex_grandmaster_stack_20261008.ipynb"
 
@@ -123,7 +124,7 @@ except Exception as _e:
 
 BLEND_CELL = r'''
 # Stage 3 (S6+): per-finding rank blend; pernas: Raptor (+reader fundido, pesos Apex), compact (ours), OrthoFoundation (opcional).
-# Pesos fixos ANTES de qualquer execucao (nada ajustado em rotulos): Raptor __WR__, compact __WC__, OF __WO__; estudo sem uma perna usa as demais (pesos renormalizados).
+# Pesos fixos ANTES de qualquer execucao (nada ajustado em rotulos): Raptor __WR__, compact __WC__, OF __WO__ (reader: pesos Apex x __RSCALE__); estudo sem uma perna usa as demais (pesos renormalizados).
 import csv, os
 import numpy as np
 import pandas as pd
@@ -185,7 +186,7 @@ rho_rr, rho_ro = {}, {}
 for j, c in enumerate(labels):
     rr = pct(raw[c].values)
     if reader is not None:                              # Raptor leg = Apex fusion (percentile ranks, per-finding reader weight)
-        w = READER_W.get(c, 0.15)
+        w = READER_W.get(c, 0.15) * RSCALE
         rr = pct((1.0 - w) * rr + w * pct(reader[c].values))
     ro = pct(ours[c].values)
     num = np.where(rap_fail, 0.0, W_RAPTOR * rr) + np.where(our_fail, 0.0, W_OURS * ro)
@@ -358,7 +359,7 @@ if OF:
     inner = re.search(r'_OF_WORKER_SRC = r"""(.*?)"""\n', of_cell, re.S).group(1)
     compile(inner, "of-worker", "exec")
     new_cells.append(code(of_cell))
-blend = (BLEND_CLEAN if NORAPTOR else BLEND_CELL).replace("__WR__", repr(WR)).replace("__WC__", repr(WC)).replace("__WO__", repr(WO))
+blend = (BLEND_CLEAN if NORAPTOR else BLEND_CELL).replace("__WR__", repr(WR)).replace("__WC__", repr(WC)).replace("__WO__", repr(WO)).replace("__RSCALE__", repr(RSCALE))
 compile(blend, "blend", "exec")
 new_cells.append(code(blend))
 nb["cells"] = new_cells
