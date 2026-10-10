@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`, `docs/RESEARCH_NOTES.md` (§36–§41). Sejarah/arsip penuh (termasuk MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b.
-> Last updated: 2026-10-10T21:15:00+07:00
+> Last updated: 2026-10-10T20:30:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia**, bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -26,7 +26,7 @@
 - **DITUTUP (jangan ulangi)**: varian r224/bobot/mirror (0,950); fork rabari & klaim "0,954" (kode sama dgn Apex; skor sebenarnya 0,950); Apex+MaVIT (**0,949**, 57025414); lixin73 336px (slot 3 vs 6, tanpa kode); CoAtNet resgated (emas 0,909); anak-OAI/pseudo-label/soup/bagging tanpa OAI/KneeNet/metadata/resolusi 288 (≤ induk); arm heliosli (bundel ditarik 9 Okt); kompilator aturan heliosli (`criteria.py`: AUC 0,784 vs emas-58 — bukan jalan pintas label); Fase A mirror (EV≈0).
 - **Notebook publik (skor dari halaman Code)**: heliosli S6 0,954 (mati); versia-7/blend-gold/blend3 0,951 (mati); `kiyoshiohno/template` 0,951 (logika di dataset PRIVAT); `jenillangaliya/dual-stage-sota-ensemble` 0,951 (bahan di dataset privat); sisanya 0,950 (keluarga Apex/klon heliosli). **Tak ada jalan pintas publik ≥0,951 yang runnable.**
 - **Bedah kode heliosli (0,954)**: 7 sumber tertanam di notebook V2 (`SOURCES` → ekstrak via `ast`): compact_train/infer, probe_dual, px_cache, anchor bank. Target = report-state + prior; blend Raptor 0,7 + compact 0,3 TETAP; pengendali dual-GPU (urut biaya, thread=1, keluaran bertahap, fallback).
-- **OrthoFoundation-L fold0 (heliosof)**: ViT-L DINOv3 384px + anatomi (SKM-TEA/KneeXNet), epoch 7/16; **48/58 emas ikut latih → emas-58 0,9535 TERKONTAMINASI**. 27 dtk/studi (1 proses). **57028008 = Notebook Timeout (9 j)**. Uji skala: disk 330 MB/studi, CPU hambatan, 4 proses ≈15 dtk/studi agregat → `of_stage.py` v2 (potongan kecil, akar per-potongan, penjaga disk, prioritas, pemutus proses, reuso runtime anatomi).
+- **OrthoFoundation-L fold0 (heliosof)**: ViT-L DINOv3 384px + anatomi (SKM-TEA/KneeXNet), epoch 7/16; **48/58 emas ikut latih → emas-58 0,9535 TERKONTAMINASI**. 27 dtk/studi (1 proses). **57028008 = Notebook Timeout (9 j)**. Uji skala: disk 330 MB/studi, CPU hambatan; v2 (`of_stage.py`: potongan 8, 4 proses, akar per-potongan, penjaga disk, prioritas, pemutus proses; reuso anatomi DIMATIKAN) = 194–224 studi/jam → 5,9–6,8 j.
 - **Peluang perak (simulasi `silver_prob_sim.py`)**: Apex 14–20 %; +0,002 → 26–39 %; +0,004 → 40–67 %; tim publik 0,956–0,958 → 23–82 %. **100 % mustahil.** Merger dgn tim ≥0,955 = lompatan terbesar.
 - Label: fusi r1 (guru+OOF, w .5) selaras emas 0,9348; solo CoAtNet 0,933 (jenuh). Resep forum 735304 = soft-bootstrapping 50/50 + multi-sumber → sudah dilakukan. Emas ≈0–2 %.
 
@@ -34,7 +34,8 @@
 | Hal | Keadaan |
 |---|---|
 | Submisi terbaik | **0,950** (Apex 56943646); 0,944 bersih (replika goodpjw); 57025414 Apex+MaVIT 0,949; 57028008 Apex+OF = Timeout |
-| Uji berjalan | `rsna-knee-ofscale3` (4 proses, potongan 8) & `ofscale4` (+reuso anatomi) → throughput → gerbang G0 → submit `rsna-knee-apexof2` (stub lulus: liputan 3/3, blend OK) |
+| Uji skala (SELESAI) | `ofscale3` (4 proses, potongan 8): 104 studi/31 mnt, 0 gagal, disk ≥14,8 GB → **194 studi/jam → 6,8 j utk 1.322** (akhir lebih cepat ±224/jam ≈5,9 j); `ofscale4` (+reuso anatomi) 88 studi → 8,8 j (TIDAK lebih cepat → reuso dimatikan). GPU kosong 15 GB sebelum tahap OF. `rsna-knee-apexof2` **v3** lulus stub (liputan, blend OK) |
+| Submisi terjadwal | pewaktu: **11 Okt 07:03 WIB** (setelah reset jatah; aturan agen ≤2/hari) submit `apexof2 -v 3` lalu pantau skor tiap 5 mnt (hasil ±7 jam) — skrip `submit_at.sh` (scratchpad) |
 | Kuota | GPU utama 27,1 h (reset 17 Okt 07:00 WIB); TPU 20 h (tak berguna: XLA crash); submisi hari ini sisa 3 |
 | Git | commit lokal di depan origin (push hanya atas perintah user; `git fetch` dulu) |
 | Menunggu user | merger (batas 15 Okt), pesan ke Kaggle support, persetujuan `nxtirfan` soal token |
