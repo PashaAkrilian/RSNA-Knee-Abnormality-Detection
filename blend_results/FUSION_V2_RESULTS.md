@@ -1,5 +1,8 @@
 # Hasil Fusion v2 (25 Agustus 2026 malam)
 
+> **ARSIP (status 10 Okt 21:30 WIB)**: dokumen lama; tidak mewakili rencana sekarang. Lihat `STRATEGI_PERAK.md` dan `MEMORY.md`.
+
+
 Tabel OOF gabungan gold-57 (inner-join semua arm), rank-space, evaluasi grouped-CV
 kolom `fold` milik e9. Skrip: `fusion_nested_cv_v2.py`.
 

@@ -2,6 +2,12 @@
 
 Status: **TERARSIP** — 10 Okt 2026, atas perintah user (tim Krazy KIller).
 
+> **CATATAN SESI CLAUDE CODE (10 Okt 2026) — tidak mengubah arsip di bawah.** Teks izin yang tersimpan hanya satu kalimat; pertanyaan yang dijawab, pengirim, dan tanggalnya tidak tercatat ("konteks" di bawah = pernyataan user).
+> Rules resmi (diambil dari halaman Rules): **5.a** *"You may make Submissions only under one, unique Kaggle.com account. You will be disqualified if you make Submissions through more than one Kaggle account..."*;
+> **5.b** *"Each Team member must be a single individual with a separate Kaggle account."* Pernyataan di bawah bahwa 5.b "mengizinkan tiap anggota punya akun sendiri" benar hanya bila tiap akun = orang BERBEDA; Rules tidak mengizinkan satu orang mengisi dua slot.
+> Akibatnya sesi Claude Code tidak memakai akun 2/3 untuk komputasi/submisi RSNA dan menyarankan kepastian tertulis dari Kaggle (draf: `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`). Dua submisi dari akun 2 (57012143, 57015077) sudah tercatat. Keputusan akhir ada pada user.
+
+
 ## Teks izin (verbatim)
 
 > **"Oh, of course, that's allowed."**

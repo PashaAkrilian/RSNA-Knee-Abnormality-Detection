@@ -1,5 +1,8 @@
 # Riset: Label Engineering & Preprocessing (RSNA Knee 2026) — di luar ensembling
 
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+
+
 Konteks: 9 Okt 2026. Kita 0,950 (stack publik), target perak ≥0,951. Semua klaim di bawah bersumber publik (URL). Label kunci: `Report` hanya ada saat training (test.csv tanpa `Report`) → teks HANYA bisa jadi target, bukan fitur inferensi.
 
 ---

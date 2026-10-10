@@ -1,5 +1,8 @@
 # Inference/Variance-Reduction GRATIS: Hipotesis +0,001 menuju LB 0,951 (RSNA Knee 2026)
 
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+
+
 > Riset 10 Okt 2026 (READ-ONLY di Kaggle; tidak ada push/submit/ubah kernel). Posisi: stack Apex 0,950 (r384 SWA nartaa ⊕ reader ConvNeXt goodpjw [fold0–2] ⊕ r224 sibling, rank-blend, mirror plane-aware, native crop 320, K94). Perak = ≥0,951 (rank ≤257 dari 5.584 tim per papan 9 Okt) — [MEMORY.md](../../MEMORY.md) §1.
 > Sumber utama: MEMORY.md/laporan_push.md/reports (internal), forum 746792 (Danial Zakaria/nartaa, via `kaggle forums topics show`), daftar file dataset via `kaggle datasets files` (akun2, read-only), notebook `/tmp/opencode/nartaa0949/rsna-knee-0949-anatomical-mirror.ipynb`, `kaggle_base/apex_grandmaster_stack_20261008.ipynb`, `kaggle_kernel_hengck_gold_a2/mavit-288-gold58-eval.ipynb`.
 

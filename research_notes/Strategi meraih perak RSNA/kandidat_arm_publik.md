@@ -1,5 +1,8 @@
 # Kandidat Arm Publik untuk Ensemble (riset 9 Okt 2026)
 
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+
+
 Sumber metode: `kaggle kernels list/pull` (baca saja, jeda 3 s, tanpa VERBOSE), dump LB resmi
 `kaggle competitions leaderboard -d` (snapshot **2026-10-09 14:47:05 UTC**), `scan_public_updates.py`
 + `~/.cache/rsna_scan_log.txt`, dan kode notebook yang ditarik ke `/tmp/opencode/kernels_scan/` (bukan repo).

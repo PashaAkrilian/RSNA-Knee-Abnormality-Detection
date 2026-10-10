@@ -1,5 +1,8 @@
 # Forensik 0,951+ — Siapa/Yang Apa yang membedakan tim perak (per 10 Okt 2026, 01:40 WIB)
 
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+
+
 > Sumber utama: Kaggle CLI (akun utama, read-only). Snapshot papan: unduhan leaderboard `kaggle competitions leaderboard --download` **2026-10-09 18:25:41 UTC** (5.606 tim) — file CSV di `/tmp/opencode/lb/`. Riset forums/kernels via `kaggle forums topics show/list`, `kaggle kernels list/pull`, `kaggle datasets list/metadata/files`. Semua klaim skor disertai tanggal. **READ-ONLY**: tidak ada submit/push/edit kernel; satu file sengaja terbentuk lalu dihapus (`dataset-metadata.json` di root repo akibat `kaggle datasets metadata` tanpa `-p`; sudah dihapus, `git status` bersih).
 
 ## Q1 — Papan: siapa di band 0,9505–0,954 dan siapa yang punya artefak publik?

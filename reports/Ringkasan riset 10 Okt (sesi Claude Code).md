@@ -67,3 +67,11 @@ Notebook V2 (klon S5) menanamkan 7 berkas sumber heliosli (`SOURCES` dict, dapat
 - Rencana teknis: (1) selesaikan uji skala OF → konfigurasi terbukti (akar per-potongan, batas thread, pengurutan biaya, pembunuhan proses, keluaran bertahap, fallback rank Apex);
   (2) submit ulang Apex+OF dengan batas total ≤7,5 jam; (3) bila ≥0,951 → kandidat final; bila ≤0,950 → tutup OF dan fokus finals + merger.
 - Tugas pengguna: merger sebelum 15 Okt 23:59 UTC; pesan ke Kaggle support; pastikan `nxtirfan` setuju soal token.
+
+## 9. Pembaruan malam 10 Okt (19:30–21:30 WIB)
+- **Papan 19:37 WIB (5.666 tim)**: ≥0,951 = 348, ≥0,952 = 217, ≥0,953 = 162, ≥0,954 = 132, ≥0,960 = 30; =0,950 = 564 (kita rank 530). Garis perak ≈ rank 283 → kandidat final publik ≥0,952–0,954.
+- **Scan publik** (`scan_public_updates.py`): klaim "0,954" (rabari9999, emresariduman, sameerk d5h) = kode Apex (dataset goodpjw+nartaa; skor 0,950); `jenillangaliya/dual-stage-sota-ensemble` 0,951 memakai dataset privat (bundel heliosli yg ditarik). Dataset baru (`shishyan/finetuned-weights`, `sergiomc12/unifiis-modelo`, `kunalinfinite/qwen3-8b-...`) tanpa deskripsi/klaim skor; tak dievaluasi (EV rendah). **Tak ada jalan pintas publik ≥0,951.**
+- **Rules resmi** (`kaggle competitions pages rsna-knee-abnormality-detection list --page-name rules --content`): 5.a akun tunggal (diskualifikasi bila >1 akun), 5.b anggota tim = individu terpisah, 5.c merger (gabungan ≤5; submisi gabungan ≤ jatah satu tim saat permintaan; sebelum batas), 5.d/6.a dilarang berbagi kode/data privat antar-tim (publik boleh).
+- **Simulasi peluang perak** (`silver_prob_sim.py`; `docs/RESEARCH_NOTES.md` §40): Apex 14–20 %; +0,002 → 26–39 %; +0,004 → 40–67 %; tim publik 0,956–0,958 → 23–82 %. 100 % mustahil.
+- **Uji skala OF** (v1): disk 330 MB/studi + CPU hambatan + 2 proses lambat → penyebab timeout; v2 (`of_stage.py`) diuji (`ofscale3/4`); `apexof2` lulus stub.
+- **Rencana lengkap & gerbang keputusan: `STRATEGI_PERAK.md`.**

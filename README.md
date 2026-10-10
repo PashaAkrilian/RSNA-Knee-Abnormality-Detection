@@ -42,13 +42,16 @@ The competition objective is to predict the probability of 12 abnormalities for 
 
 Competition status and next steps live in Indonesian-language docs at repo root — **read them in this order**:
 
-1. `CLAUDE.md` / `AGENTS.md` — mission, hard rules (commit style, credentials, accounts)
+1. `CLAUDE.md` / `AGENTS.md` — mission, hard rules (commit style, credentials, accounts + compliance note)
 2. `MEMORY.md` — current facts & locked decisions (<2 min read)
-3. `HANDOFF.md` — live status + work order (quickstart in §0b)
-4. `laporan_push.md` — submission log & phased plan (§4)
-5. `reports/Cara menembus 0951 perak.md` — latest strategy research (10 Okt 2026)
+3. `STRATEGI_PERAK.md` — **silver strategy**: probability model, four tracks (merger, Apex+OrthoFoundation, robust finals, compliance), timeline and decision gates
+4. `HANDOFF.md` — live status + work order (quickstart in §0b)
+5. `laporan_push.md` — submission log (§2) & findings
+6. `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` — latest deep research (10 Okt 2026); older reports in `reports/` and `research_notes/` are archives
 
-Multi-account permission archive: `docs/IZIN_AKUN_KEDUA.md`. Credentials: `akun_kaggle/` is gitignored — never print `kaggle.json`.
+Status (10 Okt 2026 21:30 WIB): public LB 0.950 (rank 530 of 5,666); silver line ≈ rank 283 (needs ≥0.952 public now). Apex + OrthoFoundation fold0 attempt timed out; v2 pipeline under scale test. Silver cannot be guaranteed (simulated odds: ~15–20 % as-is, higher with a real gain or a merger).
+
+Multi-account note: `docs/IZIN_AKUN_KEDUA.md` archives a one-sentence organizer reply; Rules 5.a/5.b make multi-account use risky — see `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`. Credentials: `akun_kaggle/` is gitignored — never print `kaggle.json`.
 
 ---
 

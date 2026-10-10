@@ -1,5 +1,8 @@
 # Teknik Ensembling/Fusion untuk Naik dari 0,950 ke ≥0,951 (RSNA Knee 2026)
 
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+
+
 > Riset publik per 9 Okt 2026. Posisi: stack "Apex" (ckpt nartaa r384 + reader ConvNeXt goodpjw, rank-mean) = LB publik 0,950; perak butuh ≥0,951 (257 tim sudah ≥0,951 per papan 9 Okt — [MEMORY.md](../../MEMORY.md) §1, internal; sumber data = leaderboard publik Kaggle).
 > Klaim berlabel "(internal)" berasal dari pengukuran tim di repo ini (MEMORY.md/PROGRESS.md), bukan sumber luar.
 

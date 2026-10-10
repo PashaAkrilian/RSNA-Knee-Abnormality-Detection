@@ -1,5 +1,8 @@
 # RENCANA EKSEKUSI 2×GPU + 1×TPU — REVISI 2 (status: MENUNGGU PERSETUJUAN)
 
+> **ARSIP (status 10 Okt 21:30 WIB)**: dokumen lama; tidak mewakili rencana sekarang. Lihat `STRATEGI_PERAK.md` dan `MEMORY.md`.
+
+
 > Revisi 25 Agustus 2026 malam, setelah konfirmasi submission history tim:
 > 0.936 = fork DINOsaur V4/V10 (best notebook publik), naik bertahap dari
 > 0.920→0.922→0.924→0.935→0.936 semuanya fork publik.

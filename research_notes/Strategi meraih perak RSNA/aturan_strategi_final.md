@@ -1,5 +1,8 @@
 # Strategi Meraih Perak RSNA Knee Abnormality Detection — Status Aturan & Pemilihan 2 Submisi Final
 
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+
+
 Konteks: 9 Okt 2026. Tim posisi 0,950 (rank 563/5.584). Deadline final 22 Okt 2026 23:59 UTC.
 Semua sumber publik; data papan & thread diakses langsung 9 Okt 2026 (Kaggle CLI + API internal Kaggle).
 

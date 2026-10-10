@@ -1,7 +1,11 @@
 # Opsi: penggabungan tim sebelum 15 Okt 2026 23:59 UTC (Team Merger Deadline)
 > Diperbarui 10 Okt 2026 07:40 WIB (papan 5.625 tim). Hanya opsi; TIDAK ada pesan yg dikirim agen. Penggabungan dilakukan ketua
-> tim lewat halaman Team kompetisi. Syarat (Rules 2.1.b/3.5.c): total submisi gabungan <= batas harian×hari (≈355–385; kita 106),
+> tim lewat halaman Team kompetisi. Syarat (Rules 2.1.b/3.5.c): total submisi gabungan <= batas harian×hari (≈355–385; kita 107),
 > ukuran tim gabungan <= 5. PERINGATAN Rules 3.5.d: SEBELUM bergabung dilarang berbagi kode/data kompetisi secara privat antar tim.
+
+## Syarat resmi (Rules 5.c) — ringkas
+- **Rules 5.c (resmi)**: merger sah bila (i) gabungan ≤5 anggota; (ii) jumlah submisi tim yg bergabung ≤ jatah satu tim pada tanggal permintaan (5/hari × hari berjalan; `kaggle competitions submission-limits` tak menampilkan angka maksimum — hitung sendiri); (iii) selesai sebelum batas merger (15 Okt 23:59 UTC); (iv) memenuhi Rules lain.
+- Dilarang berbagi kode/data secara privat antar-tim SEBELUM merger (5.d/6.a); berbagi publik di forum boleh. Ketua tim yang mengajukan; mitra harus menyetujui. Dalam tim, tiap anggota harus individu terpisah (5.b).
 
 ## Mengapa ini opsi dengan EV terbesar
 - Dataran 0,950 (482 tim) = model yang sama (Apex-keluarga). Model berbeda-arsitektur dgn label yg sama hanya menambah ±0,001

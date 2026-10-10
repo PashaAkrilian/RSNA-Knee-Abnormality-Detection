@@ -1,19 +1,18 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
-> Konteks aturan: `MEMORY.md` · urutan kerja: `HANDOFF.md` · arahan harness: `push.md` · **riset 9 Okt: `reports/Strategi meraih perak RSNA.md`** · **riset 10 Okt (TERBARU): `reports/Cara menembus 0951 perak.md`** (catatan: `research_notes/Cara menembus 0951 perak/`) · arsip: `PROGRESS.md`, `docs/RESEARCH_NOTES.md`.
-> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 10 Okt ~03:00 WIB. Bahasa kerja: Indonesia.
+> Konteks aturan: `MEMORY.md` · rencana & gerbang: **`STRATEGI_PERAK.md`** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset terbaru: **`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`** · arsip OpenCode: `reports/Cara menembus 0951 perak.md`, `reports/Strategi meraih perak RSNA.md`, `research_notes/`.
+> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 10 Okt ~21:30 WIB. Bahasa kerja: Indonesia.
 
-## 1. Posisi vs garis perak (snapshot 9 Okt 14:47 UTC, 5.584 tim; **REVISI papan 9 Okt 18:25 UTC / 10 Okt 01:25 WIB, 5.606 tim: ≥0,951 = 296 tim, ≥0,952 = 183 → blok 0,951-persis 113 tim (rank 184–296) MELEBIHI kapasitas perak ~279 → 0,951 = LOTRE, 0,952 = TARGET AMAN**)
+## 1. Posisi vs garis perak (papan 10 Okt 19:37 WIB, 5.666 tim)
 | Hal | Nilai |
 |---|---|
-| Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` |
-| LB kita | **0,950** (Apex v2, sub 56943646) — rank ~563→571 & MENURUN (dalam dataran) |
-| **Dataran 0,950** | **455 tim** (rank 265–719); urutan dalam dataran = tiebreak submisi, bukan kualitas → **0,950 TIDAK bisa dipertahankan** |
-| Garis perak hari ini | rank 279 = posisi ke-299 di dalam dataran; kita di ke-~299 → **DI BAWAH garis** |
-| Peta blok (10 Okt 01:25 WIB) | 0,951 = 296 (margin 17 di bawah garis rank 279 = LOTRE) · **0,952 = 183 (margin 96) = TARGET AMAN** · 0,953 ≈130 · emas ≈26 |
-| Proyeksi garis akhir 22 Okt | 0,951–0,953 → **target minimum 0,951, kerja untuk 0,952** |
-| Deadline | merger/entry **15 Okt 23:59 UTC** (+ `kernelsPublishingDisabled` 15 Okt); final **22 Okt 23:59 UTC**; maks **2 final** (slot kosong diisi otomatis Kaggle — PILIH MANUAL); publik = 30% test set |
-| Aturan terima uji | **≥0,951 → kandidat** · 0,950 → buang/tanpa efek · **Δ <0,002 = noise** (konfirmasi arah OOF/gold dulu) |
+| Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
+| LB kita | **0,950** (Apex v2, 56943646) — **rank 530**; 564 tim sama-sama 0,950 |
+| Peta blok | ≥0,951 = **348** · ≥0,952 = **217** · ≥0,953 = 162 · ≥0,954 = 132 · ≥0,960 = 30 · garis perak (5 %) ≈ rank 283, perunggu ≈ 567 |
+| Dinamika | tim ≥0,951 +39 dan ≥0,952 +20 dalam ±12 jam → 0,951 sudah di tengah blok yg hanya separuh dapat perak; **target kandidat final ≥0,952–0,954** |
+| Peluang perak (simulasi) | Apex 0,950: 14–20 %; +0,002 sejati: 26–39 %; +0,004: 40–67 %; tim publik 0,956–0,958 (merger): 23–82 %; **100 % mustahil** (`silver_prob_sim.py`) |
+| Deadline | merger/entry **15 Okt 23:59 UTC**; final **22 Okt 23:59 UTC**; maks 2 final (PILIH MANUAL); publik 30 % / privat 70 % |
+| Aturan terima uji | **≥0,952 → kandidat** · 0,951 → cadangan · ≤0,950 → buang · Δ<0,002 = noise |
 
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
@@ -27,7 +26,8 @@
 | 7 | 9 Okt 21:39 | **57012143** | **probe r224**: Apex r384 .75 + nartaa r224 .25 + reader | **0,950** | 0,000 | **BUANG** (noise; varian r224/tweak bobot TUTUP) | commit-run OK; skor 23:16 WIB; monitor 30 mnt: `progress_submisi.log` |
 | 8 | 9 Okt 23:37 | **57015077** | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | **0,950** | 0,000 | **BUANG** (klaim "0,951+" author TIDAK terbukti; keluarga r384+reader+r224 = plafon 0,950) | skor 10 Okt ~00:45; sisa jatah 2 (reset 07:00 WIB) |
 | 9 | 10 Okt 07:27 | **57025414** | **Apex + MaVIT (hengck23 288px) @0,20** rank-blend (`build_submit_mavit.py`; kernel `rsna-knee-apexmavit` v1) | **0,949** | −0,001 | **BUANG** | pembaca ketiga arsitektur independen (solo LB 0,935; gold-58 0,9202) pada bobot 0,20 TIDAK menambah (galat berkorelasi dgn label laporan yg sama); akun UTAMA; skor 08:30 WIB |
-| 10 | 10 Okt 09:10 | **57028008** | **Apex 0,70 + OrthoFoundation-L fold0 (heliosli) 0,30** rank-blend (`build_submit_legs.py legs=of wo=0.30`; kernel `rsna-knee-apexof` v1; inferensi OF per 30 studi, ≈27 dtk/studi, ≈5–6 jam total) | PENDING | — | menunggu (±15:30 WIB) | satu-satunya kaki publik dgn pengetahuan eksternal (OrthoFoundation-L + anatomi SKM-TEA/KneeXNet); resep heliosli (Raptor 0,7 + OF 0,3 = 0,951–0,954); terima bila ≥0,951 |
+| 10 | 10 Okt 09:10 | **57028008** | **Apex 0,70 + OrthoFoundation-L fold0 (heliosli) 0,30** (`build_submit_legs.py legs=of wo=0.30`; kernel `rsna-knee-apexof` v1; inferensi per 30 studi, 2 proses) | **Notebook Timeout (9 j)** | — | GAGAL teknis (tanpa skor) | estimasi 5–6 j meleset. Uji skala 10 Okt: disk 330 MB/studi (potongan 30 studi ≈10 GB → penuh), CPU 4 vCPU hambatan (GPU sering 0 %), 2 proses 45–95 dtk/studi, 4 proses ±60 dtk/studi/proses; pemetaan seluruh test_series 84 dtk/panggilan |
+| 11 | 10 Okt (rencana) | (belum) | **Apex 0,70 + OF v2** (`kaggle_kernel_apexof2`: potongan 8, 4 proses, penjaga disk, thread=1, prioritas, pemutus proses, reuso anatomi) | — | — | menunggu gerbang G0 (uji skala `ofscale3/4`) | stub lulus: liputan 3/3, blend OK; terima bila ≥0,952 (0,951 = cadangan) |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -60,48 +60,33 @@
 - **2 final = beda MEKANISME** (bukan 2 titik bobot): slot A = Apex+heliosli (agresif/OAI), slot B = hedge (jalur bersih 0,944 / leg OF / varian lolos gate). Pilih **manual** lalu **verifikasi via API** (auto-fill §3.18.c).
 - Stack ±7 jam: aman utk skor private (file sama), tapi mepet limit 9 jam → submit 22 Okt dgn margin ≥6–7 jam.
 
-## 4. Rencana peningkatan (urut waktu, tiap aksi punya gate)
-### Fase 0 — MALAM INI (9 Okt)
-- [x] Pantau skor **57012143** → **0,950 = BUANG** (23:16 WIB, monitor selesai).
-- [x] Fork rabari ter-push v1 (23:33) → commit-run RUNNING.
-- [x] Fork rabari di-submit (57015077) → **0,950 = BUANG** (10 Okt ~00:45 WIB). Keluarga r384+reader+r224 (dgn/dgn tanpa MIRROR_TTA) = plafon 0,950 — TUTUP.
-- [x] **Izin panitia terarsip 10 Okt** di `docs/IZIN_AKUN_KEDUA.md` ("Oh, of course, that's allowed." + kronologi 10 submisi tim).
+### 3e. Temuan 10 Okt (siang–malam, sesi Claude Code) — detail: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`
+- **Notebook publik (skor halaman Code)**: heliosli S6 0,954 (mati); versia-7/blend-gold/blend3 0,951 (mati); `kiyoshiohno/template` 0,951 (logika di dataset privat); `jenillangaliya/dual-stage-sota-ensemble` 0,951 (dataset privat); klaim "0,954" (rabari9999, emresariduman, sameerk d5h) = kode Apex (skor 0,950). Tak ada jalan pintas publik ≥0,951 yg runnable.
+- **Bedah kode heliosli**: 7 sumber tertanam di notebook V2 (compact_train/infer, probe_dual, px_cache, anchor bank); target report-state + prior; blend tetap 0,7/0,3; pengendali dual-GPU (urut biaya, thread=1, keluaran bertahap, fallback). Kompilator aturan `criteria.py` jalan lokal (36 dtk) tetapi AUC vs emas-58 hanya 0,784.
+- **OrthoFoundation-L fold0**: ViT-L DINOv3 384px + anatomi (SKM-TEA, KneeXNet), epoch 7/16; 48/58 emas ikut latih (emas-58 0,9535 terkontaminasi). Bukan model compact heliosli.
+- **MaVIT**: 0,949 di Apex@0,20; lixin73 336px tak kompatibel. **Teori**: galat berkorelasi tinggi bila label laporan sama → hanya pengetahuan label baru berarti.
+- **Rules (resmi)**: 5.a/5.b (akun tunggal; anggota tim = individu terpisah), 5.c (syarat merger), 5.d/6.a (tak ada berbagi privat antar-tim; publik boleh). Host tetap diam di 743416.
 
-### Fase A — 10 Okt pagi (GPU pulih 07:00 WIB; ~0,5 GPU-jam; TANPA submisi)
-- [ ] Harvest prob gold-58 utk incumbent + r224 + reader ± mirror (1 commit-run MODE=local dgn dump CSV per-studi).
-- [ ] Sweep bobot rank/prob CPU (H1–H3); terapkan gate Δ≥0,005 + CI95.
-- [ ] Bila lulus gate → 1 submisi kandidat (utama); kalau tidak, Fase B saja.
-### Fase B — 10–14 Okt (pseudo-label self-training; 10–25 GPU-jam)
-- [ ] Baca `reports/Cara menembus 0951 perak.md` §4 (jadwal, protokol).
-- [ ] Pseudo-label 4.407 train (stack incumbent, OOF-aware) → fine-tune → OOF gate → commit-run → submisi bila lulus.
-- [ ] Scan harian tetap jalan; arm menengah (tbongc, royalacecat) = eval gratis dulu.
-- [ ] Anggaran: ≤2 submisi/hari utk agen, sisakan 2–3 utk user & `nxtirfan`; keputusan dari OOF/gold-58 + gate LB, BUKAN selisih 0,001.
+## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_PERAK.md`)
+- [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) → ditutup; riset notebook publik & bedah kode heliosli; uji kelayakan OF (probe) lulus; 57028008 timeout → uji skala + perbaikan v2.
+- [ ] **G0** (malam 10 Okt): hasil `ofscale3/4` → submit `rsna-knee-apexof2` (hasil ±7 jam). **G1** (11–13 Okt): ≥0,952 kandidat utama · 0,951 cadangan · ≤0,950 tutup OF.
+- [ ] **J1 Merger** (USER; ≤15 Okt 23:59 UTC): `docs/KANDIDAT_MERGER.md`; sebelum itu kepastian akun ke Kaggle (`docs/DRAF_PESAN_KAGGLE_SUPPORT.md`).
+- [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); scan harian; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
+- [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (beda mekanisme) dari submisi terskor; verifikasi via daftar submisi.
 
-### Fase 2 — 15 Okt (batas keras)
-- [ ] `kaggle competitions submission-limits` sebelum merge; semua kandidat final ter-push; tulis kriteria pemilihan 2 final di repo.
-
-### Fase 3 — 16–21 Okt
-- [ ] Siklus gate bergilir (2–3 submisi/hari); susun hedge beda mekanisme; **cek harian thread 743416** (belum dijawab host — keputusan agresif-vs-bersih bergantung ini); audit runtime <6–7 jam.
-- [ ] Bila garis merayap ke 0,953: perkuat pseudo-label (fold/konsistensi) — BUKAN rekayasa bobot.
-
-### Fase 4 — 22 Okt
-- [ ] Submit keduanya 16:00–17:00 WIB (margin ≥6–7 jam); cek ulang 743416 → sikap slot A; **pilih manual + verifikasi via daftar submisi** sebelum 23:59 UTC.
-
-## 5. Daya & batas (perbarui tiap sesi)
+## 5. Daya & batas (10 Okt 21:30 WIB)
 | Sumber | Sisa | Reset |
 |---|---|---|
-| GPU akun utama | 0,00 h | **10 Okt 07:00 WIB** (30 h/minggu) |
-| GPU akun kedua | ~29,92 h | 10 Okt 07:00 WIB |
-| **GPU akun ketiga `nxtirfan`** | **27,68 h** (pakai BILA akun2 habis; `bash kg3.sh`) | 10 Okt 07:00 WIB |
-| TPU akun utama | 14,41 h (XLA kita crash — hindari) | 10 Okt 07:00 WIB |
-| Submisi tim hari ini (9 Okt) | **sisa 2** (terpakai: template, probe r224, fork rabari 57015077) | 10 Okt 07:00 WIB, kuota **5/hari** |
-| Deadline | entry/merger 15 Okt · final 22 Okt 23:59 UTC | — |
-- Cek: `bash kg_quota.sh` (3 akun). Wrapper: `kg2.sh` (akun2), `kg3.sh` (akun3, isi `akun_kaggle/` — di-.gitignore). Monitor submisi: `progress_submisi.log` (PID di `progress_submisi.pid`; ulang: `setsid nohup bash progress_submisi.sh [ID] >> progress_submisi.log 2>&1 < /dev/null &`).
-- ML hanya di Kaggle (lokal tanpa torch).
+| GPU akun utama | 27,1 h (uji skala berjalan) | 17 Okt 07:00 WIB (30 h/minggu) |
+| TPU akun utama | 20 h (tak berguna: XLA crash) | 17 Okt |
+| Submisi tim hari ini | sisa 3 (agen ≤2/hari) | 11 Okt 07:00 WIB (5/hari) |
+| Disk /kaggle/working | ±19 GB efektif; OF ±330 MB/studi | — |
+- Akun 2/3: TIDAK dipakai sesi Claude Code (Rules 5.a/5.b); `nxtirfan` menjalankan job dari akunnya sendiri bila mau.
 
 ## 6. Risiko & jalur mundur
-- **RISIKO #1 — Rules multi-akun**: Rules 3.5.a eksplisit: *"You will be disqualified if you make Submissions through more than one Kaggle account…"* — 9–10 Okt ada **submisi dari `alverlfarfaraway`** (anggota tim) atas **izin panitia yang kini terarsip** (`docs/IZIN_AKUN_KEDUA.md`, 10 Okt); akun ketiga `nxtirfan` (juga anggota tim) kini aktif utk run GPU bila akun2 habis. Mitigasi: (1) ~~arsipkan~~ **izin sudah terarsip** 10 Okt (`docs/IZIN_AKUN_KEDUA.md`, teks + kronologi); (2) jaga kronologi tetap akurat; (3) §3.5.b mengizinkan tiap anggota tim punya akun sendiri — risiko muncul bila SATU orang mengoperasikan kedua; (4) konservatif: hentikan submisi dari akun2 (run GPU di akun2 masih oke — "Submissions" = ke leaderboard), arahkan semua submisi ke akun utama; (5) bila butuh kepastian: klarifikasi resmi panitia dengan lampiran izin.
-- **OAI / 743416**: host jawab 741819 (OAI sah bila generally accessible & gratis) tapi **743416 (ckpt bekas-OAI & daftar data) 30 pesan, 0 jawaban host, 81 vote** — jalur bersih kita mentok 0,944 (di luar perak) → keputusan 2 final = user pada 21–22 Okt (1 bersih + 1 agresif). Cek harian.
-- **Noise & overfit publik**: Δ<0,002 = noise; tiap probe = overfit adaptif √(k/n); publik hanya 30% test set → steering final dari OOF, bukan papan harian.
-- **Timeout**: limit 9 jam, stack ±7 jam → 1 final wajib cepat (Apex ±30 mnt) atau pastikan runtime final <6–7 jam.
-- **Jangan**: cetak kredensial / `VERBOSE=true`, `git add -A`, sentuh kernel proyek lain, `pkill -f` pola sendiri, submit varian identik utk "mengukur noise".
+- **Notebook Timeout / disk / CPU (OF)**: uji skala dulu; pemutus proses + liputan parsial berprioritas + fallback Apex; estimasi dari skala (bukan 58 studi).
+- **Diskualifikasi akun ganda**: Rules 5.a/5.b; satu kalimat izin ≠ cukup → pesan ke Kaggle; semua submisi dari akun utama.
+- **OAI/eksternal**: host diam; satu final dgn risiko berbeda (jalur bersih 0,944 = hasil bronze).
+- **Noise & papan privat**: Δ<0,002 = noise; jangan menyetel ke papan publik; 2 final beda mekanisme.
+- **Garis perak naik**: target publik ≥0,952; merger = satu-satunya lompatan besar.
+- **Jangan**: cetak kredensial / `VERBOSE=true`, `git add -A`, sentuh kernel proyek lain, `pkill -f` pola sendiri, submit varian identik utk "mengukur noise", `kernels output` OF tanpa `--file-pattern`.

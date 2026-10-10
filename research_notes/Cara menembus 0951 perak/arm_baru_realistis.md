@@ -1,5 +1,8 @@
 # Arm BARU realistis menuju ≥0,951: opsi publik runnable vs training sendiri (per 10 Okt 2026, ~02:30 WIB)
 
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+
+
 > Riset 9–10 Okt 2026 (READ-ONLY di Kaggle; tidak push/submit/ubah kernel). Posisi: stack Apex **0,950** (r384 SWA nartaa ⊕ reader goodpjw ⊕ r224, rank-blend, mirror plane-aware, K94). Perak ≈rank 279; **0,951-persis = lotre (113 tim di 0,951 vs ~17 slot), 0,952 = aman** — [forensik_0951.md](forensik_0951.md) Q1/Q5.
 > Catatan ini MENAMBAHI dua saudara: `forensik_0951.md` (papan/threads/kernel publik = siapa & mengapa) dan `inference_gratis_0001.md` (hipotesis TTA/blend gratis H1–H7 + protokol emas-58). Fokus di sini: **(A) status forensik final tiap kandidat arm publik 8–10 Okt + opsi rekonstruksi heliosli, (B) biaya GPU NYATA training sendiri (bukti timing internal), (C) peringkat EV/biaya + urutan eksekusi 10–15 Okt dgn ~90h GPU**.
 > Sumber: `kaggle kernels pull/list/datasets files/metadata` (akun utama & akun2, 9–10 Okt), artefak di `/tmp/opencode/arm_scan/` (S6 notebook+output run 8-Okt, d5e/d5f/nursrijan/josef notebooks, listing OF fold0 5 halaman), `bash kg_quota.sh`, forum via `kaggle forums topics show`, PROGRESS.md/MEMORY.md (timing internal).
