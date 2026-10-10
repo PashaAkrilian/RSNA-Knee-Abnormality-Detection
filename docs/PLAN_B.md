@@ -6,6 +6,7 @@
 - **Fakta**: 02:50 WIB heliosli memulihkan dataset `heliosli/rsna-knee-compact-v1` (publik; V10 = V13; semua versi V1–V13 publik) dan menerbitkan ulang notebook S6 publik (**Raptor 0,7 + compact 0,3 = 0,954 satu klik**; thread 748141 "feel free to blend my model with yours"). **User sudah men-submit salinan S6: 57051680 (02:56 WIB, PENDING)**; tahap compact GPU-bound ±25 dtk/studi/pekerja (2 pekerja) → ±4–5 j total → hasil ±07:30–08:30 WIB.
 - **Papan 02:59 WIB**: 5.699 tim; kita rank 599 (0,950) = DI BAWAH garis perunggu publik (rank 570); perak rank 285 (0,951); ≥0,954 = 141. Dataran 0,950 = 618 tim; dataran 0,954 akan membengkak.
 - **KOREKSI PREMIS OF**: "Raptor 0,7 + OF 0,3 = 0,951–0,954" SALAH — itu Raptor + COMPACT (S5 0,951; S6 0,954); notebook heliosli hanya memakai KODE dataset OF, bukan bobot `best.pt`. Nilai LB OF fold0 tidak pernah diukur; prior kontribusi ≥+0,001 di atas S6 ≤20 % (OF validasi lemah 0,9318, epoch 7/16). Tuas OF turun peringkat (infrastruktur v4.1 tetap siap bila perlu).
+- **Model blok klon**: klon S6 berimpit (skor privat bersama, urutan dalam blok ≈ acak/waktu); varian berbeda dgn δ>0 melompati seluruh blok, δ<0 jatuh di bawahnya → pilih perna dgn prior δ>0 tertinggi (reader > OF > r224/dino-sejenis); lihat `STRATEGI_PERAK.md` §2.
 - **Pohon keputusan baru (menggantikan §2 untuk submisi berikut)**:
   | Hasil klon S6 (57051680) | Tindakan |
   |---|---|
