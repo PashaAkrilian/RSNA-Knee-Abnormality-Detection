@@ -101,6 +101,15 @@ class TS:
             self.s.write("%7.1f %s\n" % (time.time() - self.t0, l[:180])); self.s.flush()
     def flush(self): self.s.flush()
 sys.stdout = TS(sys.__stdout__)
+if os.environ.get("OFMEM_NOPIN") == "1":      # DataLoader sem pin_memory: o host allocator CUDA retem ~2,5 GB (shmem) por pekerja durante predict
+    import training.engine as _E
+    _lo = _E.loader
+    def _nl(*a, **k):
+        dl = _lo(*a, **k)
+        dl.pin_memory = False
+        return dl
+    _E.loader = _nl
+    print("training.engine.loader patched: pin_memory=False", flush=True)
 if os.environ.get("OFMEM_MMAP") == "1":
     _ol = torch.load
     def _ml(f, *a, **k):
@@ -180,6 +189,11 @@ CFG = {
     "mmapw0": ({"OFMEM_MMAP": "1"}, 8, 0, 2),
     "mmapchunk4": ({"OFMEM_MMAP": "1"}, 4, 1, 4),
     "mmapmalloc": (dict(MT, OFMEM_MMAP="1"), 8, 1, 2),
+    "nopin": ({"OFMEM_NOPIN": "1"}, 8, 1, 2),
+    "nopinw0": ({"OFMEM_NOPIN": "1"}, 8, 0, 2),
+    "nopinmmap": ({"OFMEM_NOPIN": "1", "OFMEM_MMAP": "1"}, 8, 1, 2),
+    "nopinchunk4": ({"OFMEM_NOPIN": "1"}, 4, 1, 4),
+    "nopinmmapchunk4": ({"OFMEM_NOPIN": "1", "OFMEM_MMAP": "1"}, 4, 1, 4),
 }
 tc = sp.run("ls /usr/lib/x86_64-linux-gnu/libtcmalloc*.so* /usr/lib/x86_64-linux-gnu/libjemalloc*.so* 2>/dev/null | head -1", shell=True, capture_output=True, text=True).stdout.strip()
 if tc:
