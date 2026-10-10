@@ -12,7 +12,8 @@
     "gpu"
   ],
   "dataset_sources": [
-    "heliosli/rsna-orthofoundation-fold0-epoch7-20261004"
+    "heliosli/rsna-orthofoundation-fold0-epoch7-20261004",
+    "dimaspashaakrilian/rsna-knee-ultralytics-cfg"
   ],
   "kernel_sources": [],
   "competition_sources": [

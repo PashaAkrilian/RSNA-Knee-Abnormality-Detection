@@ -66,6 +66,16 @@ show(state.get("train_config", {}), "train_config", 3500)
 for k in ("anatomy_sha256", "anatomy_asset_sha256", "ligament_atlas_sha256", "precision_policy", "epoch", "views", "labels", "provenance", "optimizer_steps"):
     if k in state:
         print(k, str(state[k])[:1500], flush=True)
+try:
+    _tr = pd.read_csv(f"{COMP}/train.csv")
+    _L = ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA',
+          'Effusion', 'Synovitis', "Baker's", 'Contusion', 'Fracture']
+    _gold_ids = set(_tr[_tr[_L].notna().all(axis=1)]["StudyInstanceUID"])
+    _tid = set(state.get("provenance", {}).get("train_ids", []))
+    print("PROVENANCE fold0 train_ids:", len(_tid), "| gold studies:", len(_gold_ids), "| gold IN fold0 train:", len(_gold_ids & _tid),
+          "| label_source_policy:", state.get("provenance", {}).get("label_source_policy"), flush=True)
+except Exception as _e:
+    print("provenance check fail", repr(_e)[:200], flush=True)
 del state
 
 # --- pip wheels offline (timm/pydicom versi yg dikirim bersama ckpt)
@@ -73,7 +83,16 @@ for w in sorted(glob.glob(f"{OF}/dependencies/wheels/*.whl")):
     r = subprocess.run([sys.executable, "-m", "pip", "install", "-q", "--no-index", "--no-deps", w], capture_output=True, text=True)
     print("pip", os.path.basename(w), "rc", r.returncode, (r.stderr or "")[-200:], flush=True)
 
-sys.path.insert(0, f"{OF}/cloud_code")
+CC = "/kaggle/working/cloud_code"
+if not os.path.exists(CC):
+    shutil.copytree(f"{OF}/cloud_code", CC)
+sys.path.insert(0, CC)
+print("cloud_code copied to", CC, flush=True)
+UL = find("assets/bus.jpg")
+print("UL dir:", UL, sorted(os.listdir(UL))[:10], flush=True)
+shutil.copytree(UL, f"{CC}/training/vendor_runtime/kneexnet/ultralytics", dirs_exist_ok=True)
+assert os.path.exists(f"{CC}/training/vendor_runtime/kneexnet/ultralytics/cfg/default.yaml")
+print("ultralytics yaml resources copied from", UL, flush=True)
 import importlib
 infer = importlib.import_module("training.infer")
 print("imported training.infer OK", flush=True)
@@ -117,8 +136,11 @@ if stub is not None:
     for c in LABEL:
         ss[c] = 0.5
     ss.to_csv(f"{FR}/sample_submission.csv", index=False)
-    if not os.path.exists(f"{FR}/test_series"):
-        os.symlink(f"{COMP}/train_series", f"{FR}/test_series")
+    os.makedirs(f"{FR}/test_series", exist_ok=True)
+    for sid in gold["StudyInstanceUID"]:
+        dst = f"{FR}/test_series/{sid}"
+        if not os.path.exists(dst):
+            os.symlink(f"{COMP}/train_series/{sid}", dst)
     gold[["StudyInstanceUID"] + LABEL].to_csv("/kaggle/working/gold_truth.csv", index=False)
     print("fake root:", os.listdir(FR), "| test_series.csv rows", len(trs), "cols", ts_cols, flush=True)
     sec = None
@@ -154,7 +176,7 @@ meta = {
     "code_file": "rsna-knee-of-probe.ipynb",
     "language": "python", "kernel_type": "notebook", "is_private": True,
     "enable_gpu": True, "enable_tpu": False, "enable_internet": False, "keywords": ["gpu"],
-    "dataset_sources": ["heliosli/rsna-orthofoundation-fold0-epoch7-20261004"],
+    "dataset_sources": ["heliosli/rsna-orthofoundation-fold0-epoch7-20261004", "dimaspashaakrilian/rsna-knee-ultralytics-cfg"],
     "kernel_sources": [], "competition_sources": ["rsna-knee-abnormality-detection"], "model_sources": [],
     "docker_image": "gcr.io/kaggle-private-byod/python@sha256:2757e0c7d1e0a9cb43da657b97e223c321a98f5014bdf64f44f2f6b083ad2b2f",
     "machine_shape": "NvidiaTeslaT4",

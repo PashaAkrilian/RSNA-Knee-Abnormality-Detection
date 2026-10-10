@@ -15,6 +15,12 @@
 4. Kerjakan **§2 Urutan kerja** (Fase A harvest mirror → Fase B pseudo-label). Riset lengkap: `reports/Cara menembus 0951 perak.md`.
 5. Setiap unit kerja selesai: update MEMORY (commit terpisah `memory: ...`), laporan_push, HANDOFF — lalu `git fetch && git push`.
 
+## 0c. Status terbaru (10 Okt ~09:15 WIB, sesi Claude Code — HANYA akun utama)
+- Submisi hari ini: 57025414 Apex+MaVIT = **0,949 BUANG**; **57028008 Apex 0,70 + OrthoFoundation fold0 0,30 = PENDING** (hasil ±15:30 WIB; run scoring ±6 jam; sisa jatah hari ini 3). Terima bila ≥0,951.
+- Kaki publik lain TUTUP: MaVIT (0,949), lixin73 336px (slot_emb 3 view, tanpa kode), mattiaangeli CoAtNet resgated (gold 0,909, keluarga sama), DINOsaur V5/V2 (klon Apex/heliosli), kiyoshiohno Template (logika di dataset PRIVAT). Teori: model beda-arsitektur dgn label laporan yg sama → galat berkorelasi tinggi → tak menambah; hanya model dgn PENGETAHUAN label baru (OAI nartaa, OrthoFoundation) yg berpeluang.
+- Alat baru: `build_submit_legs.py` (Apex + kaki MaVIT/OF, fallback aman), `build_probe_of.py` (probe OF), `build_probe_mavit.py`, dataset privat `dimaspashaakrilian/rsna-knee-ultralytics-cfg` (yaml ultralytics 8.4.166, wajib utk OF). `kaggle kernels output` pada kernel OF membawa best.pt 1,2 GB → pakai `--file-pattern` kecil / baca log lewat Chrome (hindari tmpfs /tmp 2,7 GB penuh).
+- Rencana: tunggu 57028008; bila ≥0,951 → kandidat final (bandingkan dgn Apex; runtime ±6 jam → submit final paling lambat 22 Okt pagi WIB); bila ≤0,950 → TUTUP jalur OF, fokus finals + merger (`docs/KANDIDAT_MERGER.md`) + kepastian Kaggle (`docs/DRAF_PESAN_KAGGLE_SUPPORT.md`).
+
 ## 1. Status (10 Okt ~01:00 WIB)
 | Hal | Keadaan |
 |---|---|
