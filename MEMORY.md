@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt); arah/cadangan → **`docs/PLAN_B.md` §00**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-11T04:00:00+07:00
+> Last updated: 2026-10-11T04:40:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -24,14 +24,14 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (11 Okt 04:00 WIB)
+## 3. Status (11 Okt 04:40 WIB)
 | Hal | Keadaan |
 |---|---|
 | Submisi | terbaik 0,950 (Apex 56943646); 57025414 Apex+MaVIT 0,949; 57028008 Timeout; 57044355 = 0,950 (OF OOM; bukan vonis OF); **57051680 = S6 user PENDING**. Jendela 10 Okt: 4/5 terpakai; reset 07:00 WIB |
-| Rehearsal berjalan | `s6plusr` (S6 + reader + OF terakhir, pseudo-uji 160; ±03:35→04:45), `apexof4r3` (OF 4 pekerja; ±03:50). Sonda `s6probe`: compact 160 studi = 1.530 dtk (80/80 per pekerja, 0 fallback); ERROR akhir = artefak sample_submission pseudo (diperbaiki) |
-| Bahan siap | `build_s6plus.py`: `s6reader`, `s6plus`, **`s6clean`** (compact + reader, tanpa Raptor/OAI; asuransi); `submit_trial.sh` (pewaktu 07:03; scratchpad). Rencana 07:03: agen submit `s6reader` dan `s6plus` (2/5), bandingkan dgn klon S6; `s6clean` 12 Okt |
+| Rehearsal | `apexof4r3` LULUS (4 pekerja 228 studi/jam, MemAvail min 13,8 GB); `s6cleanr` LULUS (compact 160 studi = 1.812 dtk, 0 fallback); `s6plusr` (S6+reader+OF terakhir pseudo-uji 160) berjalan ±04:50; sonda `s6probe` (1.530 dtk; ERROR akhir = artefak pseudo, diperbaiki). RAM compact stabil ±16–17 GB bebas (tak ada kebocoran) |
+| Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu aktif `scripts/submit_two.sh` (nohup; log scratchpad `submit_two.log`) akan men-submit `s6reader` v1 dan `s6plus` v1 pada 11 Okt 07:03 WIB (agen 2/5; syarat kernel COMPLETE + sisa jatah ≥4/≥3)** — batalkan dgn `pkill -f submit_two.sh` bila user menolak. Pemantau harness: skor klon 57051680; cek 07:12 |
 | Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
-| Git | ±47 commit lokal di depan origin (push hanya atas perintah user; `git fetch` dulu) |
+| Git | ±60 commit lokal di depan origin (push hanya atas perintah user; `git fetch` dulu; diff diperiksa: tak ada kredensial) |
 | Menunggu user | **merger gelombang 1 (11 Okt)** — `docs/KANDIDAT_MERGER.md` §3b (Kelompok B 15 tim ≥0,955 ≤30 submisi; Kelompok C mencari rekan; heliosli); pesan ke Kaggle support; persetujuan `nxtirfan` |
 | Vigia | `watch.sh` (scratchpad) memantau heliosli/nartaa/goodpjw + notebook baru tiap 30 mnt → `watch.log` (cari S7) |
 
