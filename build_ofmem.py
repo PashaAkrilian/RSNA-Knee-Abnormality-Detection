@@ -151,11 +151,15 @@ for k in range(0, len(ids), chunk):
     pd.DataFrame({c: (ch if c == "StudyInstanceUID" else None) for c in test_cols}).to_csv(root + "/test.csv", index=False)
     ser[ser["StudyInstanceUID"].isin(ch)].to_csv(root + "/test_series.csv", index=False)
     for sid in ch: os.symlink(ps + "/test_series/" + sid, root + "/test_series/" + sid)
-    tc = time.time()
+    tc = time.time(); cpu0 = time.process_time(); ot0 = os.times()
     print("CHUNKSTART k=%d n=%d" % (k, len(ch)), flush=True)
     fr = run_inference(root, md + "/best.pt", out, anatomy_weights=md + "/anatomy.pt", workers=wdl)
     d = rss()
-    print("CHUNKEND %s k=%d n=%d ok=%d sec=%.0f (%.1f s/study) anon=%.2f file=%.2f hwm=%.2f children=%.2f GB" % (name, k, len(ch), len(fr), time.time() - tc, (time.time() - tc) / len(ch), d.get("RssAnon", 0), d.get("RssFile", 0), d.get("VmHWM", 0), d["children"]), flush=True)
+    ot1 = os.times()
+    print("CHUNKEND %s k=%d n=%d ok=%d sec=%.0f (%.1f s/study) cpu_self=%.0fs cpu_children=%.0fs load1=%.1f anon=%.2f file=%.2f hwm=%.2f children=%.2f GB" % (
+        name, k, len(ch), len(fr), time.time() - tc, (time.time() - tc) / len(ch), time.process_time() - cpu0,
+        (ot1.children_user + ot1.children_system) - (ot0.children_user + ot0.children_system), os.getloadavg()[0],
+        d.get("RssAnon", 0), d.get("RssFile", 0), d.get("VmHWM", 0), d["children"]), flush=True)
     shutil.rmtree(out, ignore_errors=True); shutil.rmtree(root, ignore_errors=True)
 stop = True
 print("DONE %s elapsed=%.0f peak_hwm=%.2f" % (name, time.time() - t0, rss().get("VmHWM", 0)), flush=True)
