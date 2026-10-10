@@ -26,6 +26,7 @@
 | 6 | 9 Okt 20:34 | 57010586 | template akun kedua (smoke) | — | — | n/a | uji jalur submisi akun2 |
 | 7 | 9 Okt 21:39 | **57012143** | **probe r224**: Apex r384 .75 + nartaa r224 .25 + reader | **0,950** | 0,000 | **BUANG** (noise; varian r224/tweak bobot TUTUP) | commit-run OK; skor 23:16 WIB; monitor 30 mnt: `progress_submisi.log` |
 | 8 | 9 Okt 23:37 | **57015077** | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | **0,950** | 0,000 | **BUANG** (klaim "0,951+" author TIDAK terbukti; keluarga r384+reader+r224 = plafon 0,950) | skor 10 Okt ~00:45; sisa jatah 2 (reset 07:00 WIB) |
+| 9 | 10 Okt 07:27 | **57025414** | **Apex + MaVIT (hengck23 288px) @0,20** rank-blend (`build_submit_mavit.py`; kernel `rsna-knee-apexmavit` v1) | PENDING | — | menunggu | pembaca ketiga arsitektur independen (solo LB 0,935; gold-58 0,9202); akun UTAMA; terima bila ≥0,951 |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
