@@ -27,7 +27,7 @@
 | 8 | 9 Okt 23:37 | **57015077** | **fork rabari dual-engine**: raptor r384 + MIRROR_TTA ⊕ reader goodpjw ⊕ r224@0,3 (input publik) | **0,950** | 0,000 | **BUANG** (klaim "0,951+" author TIDAK terbukti; keluarga r384+reader+r224 = plafon 0,950) | skor 10 Okt ~00:45; sisa jatah 2 (reset 07:00 WIB) |
 | 9 | 10 Okt 07:27 | **57025414** | **Apex + MaVIT (hengck23 288px) @0,20** rank-blend (`build_submit_mavit.py`; kernel `rsna-knee-apexmavit` v1) | **0,949** | −0,001 | **BUANG** | pembaca ketiga arsitektur independen (solo LB 0,935; gold-58 0,9202) pada bobot 0,20 TIDAK menambah (galat berkorelasi dgn label laporan yg sama); akun UTAMA; skor 08:30 WIB |
 | 10 | 10 Okt 09:10 | **57028008** | **Apex 0,70 + OrthoFoundation-L fold0 (heliosli) 0,30** (`build_submit_legs.py legs=of wo=0.30`; kernel `rsna-knee-apexof` v1; inferensi per 30 studi, 2 proses) | **Notebook Timeout (9 j)** | — | GAGAL teknis (tanpa skor) | estimasi 5–6 j meleset. Uji skala 10 Okt: disk 330 MB/studi (potongan 30 studi ≈10 GB → penuh), CPU 4 vCPU hambatan (GPU sering 0 %), 2 proses 45–95 dtk/studi, 4 proses ±60 dtk/studi/proses; pemetaan seluruh test_series 84 dtk/panggilan |
-| 11 | 10 Okt 21:10 | **57044355** | **Apex 0,70 + OF v2** (`kaggle_kernel_apexof2`: potongan 8, 4 proses, penjaga disk, thread=1, prioritas, pemutus proses, reuso anatomi) | PENDING (disubmit 10 Okt 21:10 WIB) | — | G0 LULUS; **ID 57044355**; hasil ±04:00 WIB 11 Okt | uji skala: 194 studi/jam (6,8 j; reuso anatomi tak membantu); stub v3 lulus (GPU kosong 15 GB); terima bila ≥0,952 (0,951 = cadangan) |
+| 11 | 10 Okt 21:10 | **57044355** | **Apex 0,70 + OF v2** (`kaggle_kernel_apexof2`: potongan 8, 4 proses, penjaga disk, thread=1, prioritas, pemutus proses, reuso anatomi) | **0,950** (COMPLETE 22:45 WIB, ±1 j 35 mnt) | 0,000 | **TANPA VONIS OF** (kaki OF tak jalan di run penilaian) — v4 dibangun/diuji; G1 ditahan | uji skala: 194 studi/jam (6,8 j; reuso anatomi tak membantu); stub v3 lulus (GPU kosong 15 GB); terima bila ≥0,952 (0,951 = cadangan) |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -72,7 +72,7 @@
 
 ## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_PERAK.md`)
 - [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) → ditutup; riset notebook publik & bedah kode heliosli; uji kelayakan OF (probe) lulus; 57028008 timeout → uji skala + perbaikan v2.
-- [x] **G0** LULUS 10 Okt 20:15 → **57044355 disubmit 21:10 WIB**. [ ] **G1** (±04:00 WIB 11 Okt): ≥0,952 kandidat utama · 0,951 cadangan · ≤0,950 tutup OF — tindakan rinci per skor: `docs/PLAN_B.md` §2.
+- [x] **G0** LULUS 10 Okt 20:15 → **57044355 disubmit 21:10 WIB → 0,950 dgn durasi 1 j 35 mnt = OF tak jalan** (`docs/PLAN_B.md` §0). [ ] **v4**: uji `apexof4r`/`apexof4d` (commit-run) → percobaan `apexof4t` loud 11 Okt >07:00 WIB → G1 hanya bila OF terbukti jalan (≥5 j atau loud).
 - [ ] **J1 Merger** (USER; ≤15 Okt 23:59 UTC): `docs/KANDIDAT_MERGER.md` §3b (Kelompok A pemegang bundel; Kelompok B 35 tim ≥0,953 ≤30 submisi); gelombang 1 = 11 Okt, gelombang 2 = 13 Okt; sebelum itu kepastian akun ke Kaggle (`docs/DRAF_PESAN_KAGGLE_SUPPORT.md`).
 - [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); scan harian; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
 - [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (beda mekanisme) dari submisi terskor; verifikasi via daftar submisi.
