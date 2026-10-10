@@ -1,72 +1,67 @@
-# STRATEGI PERAK — RSNA Knee 2026 (disusun 10 Okt 2026 ~21:00 WIB; diperbarui 22:20 WIB; sesi Claude Code; HANYA akun utama)
-> Baca setelah `MEMORY.md`. Dasar: riset 10 Okt (`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`), uji skala OrthoFoundation, Rules resmi,
-> papan 10 Okt 21:43 WIB. Dokumen ini = RENCANA + ATURAN KEPUTUSAN; status harian ada di `HANDOFF.md` §0c dan `laporan_push.md`.
-> **Rencana cadangan bila 57044355 tidak optimal (pohon keputusan per skor, merger Kelompok A/B, final terdekorelasi): `docs/PLAN_B.md`.**
+# STRATEGI PERAK — RSNA Knee 2026 (disusun 10 Okt 2026; DIPERBARUI 11 Okt 04:00 WIB; sesi Claude Code; HANYA akun utama)
+> Baca setelah `MEMORY.md`. Dasar: riset 10–11 Okt (`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`, `docs/RESEARCH_NOTES.md` §36–§44), Rules resmi, papan 11 Okt 02:59 WIB.
+> Dokumen ini = RENCANA + ATURAN KEPUTUSAN; status harian ada di `HANDOFF.md` §0c dan `laporan_push.md`. Cadangan/pohon keputusan rinci: `docs/PLAN_B.md` (§00 = yang terbaru).
+
+## 0. Perubahan besar 11 Okt (baca ini dulu)
+- **S6 heliosli hidup lagi** (02:50 WIB): dataset `heliosli/rsna-knee-compact-v1` publik (V1–V13) + notebook publik "Dataset restored(...)" = **Raptor 0,7 + compact 0,3 = 0,954 satu klik** (thread 748141: "blend my model with yours"). **User sudah men-submit salinannya (57051680, 02:56 WIB)**; hasil ±07:00–08:30 WIB.
+- **Koreksi premis**: resep heliosli = Raptor + **compact** (bukan OF). OF fold0 belum pernah diukur di LB; prior ≥+0,001 di atas S6 ≤20 %.
+- **Penyebab 57044355 = 0,950 (OF tidak jalan)** = OOM (induk Apex 18 GB + pekerja OF 8–10 GB); perbaikan v4.1 (OF dulu/terakhir, supervisor, `pin_memory=False`, `torch.load(mmap=True)`) lulus rehearsal; infrastrukturnya dipakai ulang di `build_s6plus.py`.
+- **Papan**: kita rank 599 (0,950) — di bawah garis perunggu publik (rank 570, 0,950); perak rank 285 (0,951); dataran 0,954 akan membengkak (klon S6).
 
 ## 1. Sasaran dan ukuran
-- Perak = 5 % teratas di papan **privat** (70 % data uji) ≈ rank 284 dari 5.673 tim; perunggu (10 %) ≈ rank 567. Papan publik (30 %) hanya penunjuk (10 Okt 21:43 WIB): ≥0,952 = 221 tim, ≥0,951 = 352, =0,950 = 582 (kita rank 551).
-  Garis naik ≈ +20 tim ≥0,952 per 12 jam → proyeksi 22 Okt: kandidat final harus ≥**0,952–0,954** publik.
-- **100 % tidak bisa dijamin** (papan privat acak di dataran 0,950). Tujuan realistis: menaikkan peluang dari ±15–20 % ke ±40–80 %.
+- Perak = 5 % teratas di papan **privat** (70 % data uji) ≈ rank 285 dari 5.699 tim. Papan publik (30 %) hanya penunjuk (11 Okt 02:59 WIB): ≥0,960 = 31; ≥0,956 = 82; ≥0,954 = 141; ≥0,952 = 229; ≥0,951 = 367; =0,950 = 618 (kita rank 599).
+- **100 % tidak bisa dijamin.** Klon S6 berimpit di ±0,954; urutan privat di antara klon ≈ undian + selisih kecil (ketidakdeterminan GPU), jadi perbaikan nyata ≥+0,001 atau anggota tim kuat yang mengubah peluang.
 
-## 2. Dasar kuantitatif (simulasi `silver_prob_sim.py`, model sederhana; rentang = s regresi 0,3–0,7 × σ privat 0,003–0,005)
+## 2. Dasar kuantitatif (simulasi `silver_prob_sim.py`; rentang = s regresi 0,3–0,7 × σ privat 0,003–0,005)
 | Kondisi (skill sejati) | P(perak) | P(perunggu) |
 |---|---|---|
-| Apex 0,950 (sekarang) | 13–20 % | **25–41 %** |
+| Apex 0,950 | 13–20 % | 25–41 % |
 | + naik 0,002 | 25–39 % | 40–66 % |
-| + naik 0,004 | 40–67 % | 58–85 % |
-| + naik 0,006 | 55–85 % | — |
-| tim publik 0,954 (mis. merger) | 21–51 % | — |
-| tim publik 0,956–0,958 | 23–82 % | — |
-| tim publik 0,960 | 30–92 % | — |
-Pelajaran: (a) perbaikan kecil (+0,001) hampir tak mengubah apa pun; (b) hanya lompatan ≥ +0,004 atau masuk tim ≥0,956 yang berarti; (c) ketidakpastian
-besar → jangan menyetel ke papan publik; (d) **KOREKSI 10 Okt 22:00: perunggu BUKAN ±85–95 %** — garis perunggu (rank ≈567) berada di dalam dataran 0,950 (582 tim), jadi tanpa perbaikan perunggu ≈ 25–41 %;
-(e) dua final yg galat privatnya tak berkorelasi menambah ±4–12 poin perak / ±7–17 poin perunggu (`docs/PLAN_B.md` §1, §4). Kode simulasi: `silver_prob_sim.py`; catatan metode: `docs/RESEARCH_NOTES.md` §40 (regresi ke rata-rata + noise; Tweedie tak valid krn lonjakan salinan di 0,950).
+| + naik 0,004 (≈ S6 0,954) | 40–67 % (tanpa pembengkakan klaster) | 58–85 % |
+| tim publik 0,956–0,958 (merger) | 23–82 % | — |
+- **Koreksi untuk S6**: bila ratusan klon berimpit di 0,954, P(perak | klon) ≈ (irisan klaster dgn 5 %) / ukuran klaster ≈ 25–45 % (klaster 400–800 tim), BUKAN 40–67 %. Perunggu ≈ 45–70 %.
+- Dua final dgn galat privat tak berkorelasi menambah ±4–12 poin perak (`docs/PLAN_B.md` §1, §4); S6 + variannya berkorelasi tinggi (ρ≈0,95) → tambahan ≈ +3–6 poin.
+- Catatan: trik "kirim 1−p" membuat tim kuat bisa bersembunyi di papan (forum 748011) → garis perak privat bisa lebih tinggi dari yg tampak.
 
-## 3. Empat jalur (paralel; EV menurun)
-### J1 — MERGER dengan tim ≥0,955 (EV terbesar; AKSI USER; batas 15 Okt 23:59 UTC)
-- Rules 5.c: sah bila (i) gabungan ≤5 anggota, (ii) jumlah submisi gabungan ≤ jatah satu tim pada tanggal permintaan (kita 107; mitra ≤ ±250), (iii) sebelum batas merger, (iv) memenuhi Rules lain.
-  Rules 5.d/6.a: dilarang berbagi kode/data secara privat antar-tim SEBELUM merger (berbagi PUBLIK di forum boleh).
-- Kandidat: `docs/KANDIDAT_MERGER.md` (§3 daftar 126 tim; **§3b prioritas: Kelompok A = pemegang bundel heliosli compact/OF-SSL, Kelompok B = 35 tim ≥0,953 ≤30 submisi**). Hubungi ±15 sekaligus (gelombang 1 = 11 Okt); sebagian besar akan menolak.
-- Syarat praktis: halaman tim kita menampilkan 3 akun → jelaskan jujur & selesaikan kepastian akun kedua (J4). Tawaran kita: ckpt OAI (pengetahuan label berbeda dari model berbasis laporan),
-  pipeline inferensi cepat (<1 jam) + uji OrthoFoundation, kuota GPU akun utama.
-- Setelah merger: ensembel model mereka + stack kita (rank-blend; gate bobot di OOF/LB), pilih 2 final bersama.
-### J2 — TUAS TEKNIS: Apex 0,70 + OrthoFoundation-L fold0 0,30 (resep heliosli: Raptor 0,7 + OF 0,3 = 0,951–0,954; bobot tetap)
-- Percobaan 1 (57028008) = **Notebook Timeout**. Uji skala: disk 330 MB/studi (potongan 30 studi menulis ±10 GB → disk penuh), CPU (4 vCPU) hambatan (GPU sering 0 %), 2 proses 45–95 dtk/studi,
-  4 proses ±60 dtk/studi/proses (≈15 dtk/studi agregat). Perbaikan (`of_stage.py`): potongan 8 studi + akar-data kecil per potongan, 4 proses (2/GPU), penjaga ruang disk, thread=1 (+cv2),
-  prioritas studi (disagreement nartaa vs reader), keluaran bertahap, berhenti lunak +6,6 j & bunuh +7,0 j, reuso runtime anatomi (−45 dtk/potongan), fallback rank Apex bila OF kurang.
-- Gerbang G0 (**LULUS 10 Okt 20:15**): `ofscale3` (konfigurasi produksi) = 104 studi/31 mnt, 0 gagal, disk ≥14,8 GB → 194 studi/jam (6,8 j; akhir ≈224/jam = 5,9 j) dgn pemutus proses (+6,6/+7,0 j) → liputan ≈97–100 %. `ofscale4` (reuso anatomi) 150/jam → tak lebih cepat (dimatikan). **57044355 (apexof2 v3) disubmit 10 Okt 21:10 WIB**; hasil ±04:00 WIB 11 Okt.
-- Gerbang G1 (hasil LB): **≥0,952 → kandidat utama; 0,951 → cadangan/hedge; ≤0,950 → TUTUP OF** — HANYA bila OF benar-benar jalan di run penilaian (durasi submisi ≥ 5 j atau mode `loud`).
-  **STATUS 10 Okt 23:10: 57044355 = 0,950 dgn durasi 1 j 35 mnt ⇒ OF TIDAK jalan ⇒ G1 DITAHAN (tak ada vonis).** Perbaikan v4 (OF dulu, supervisor, antrean klaim) sedang diuji (`rsna-knee-apexof4r/4d`); percobaan `apexof4t` (loud) 11 Okt. Peluang kaki ini menambah ≥ +0,001: ±30–40 % (belum teruji). Detail: `docs/PLAN_B.md` §0.
-- Ditutup (jangan ulangi): varian r224/bobot (0,950), MaVIT (0,949), CoAtNet resgated (emas 0,909), pseudo-label/anak-OAI (≈ induk), kompilator aturan heliosli (0,784 vs emas), Fase A mirror (EV≈0).
-### J3 — FINAL TAHAN GUNCANGAN (21–22 Okt; pilih MANUAL & verifikasi via API; auto-fill §3.18.c) — pohon keputusan per skor: `docs/PLAN_B.md` §2
-- 2 final = beda MEKANISME: (A) kandidat LB terbaik (Apex atau Apex+OF), (B) hedge: Apex-keluarga lain / OF-blend / (hanya bila host melarang OAI) jalur bersih 0,944 — catatan: 0,944 kini rank ≈1.387 (bukan perunggu lagi; garis perunggu = 0,950), jadi jalur bersih HANYA perlindungan kepatuhan, bukan sumber medali.
-- Variasi baru terakhir disubmit ≤20 Okt (run OF ±7 jam). Pilih dari submisi yang SUDAH terskor; tandai di UI Submissions → select 2. Jangan "mengukur noise" dgn submisi identik.
+## 3. Jalur (paralel; EV menurun)
+### J0 — DASAR S6 (user sudah menjalankan; agen memantau)
+- 57051680 = salinan S6 (Raptor ±0,5 j + compact ±3,5 j [GPU-bound, 2 pekerja ±18–20 dtk/studi/pekerja, terukur pada pseudo-uji 160 studi: 80/80 per pekerja, 0 fallback] → total ±4–4,5 j). Risiko: kontroler compact menolak (ERROR) bila >3 % fallback (OOM/pekerja mati/DEADLINE 8,3 j). Aturan: bila ≈0,954 → final A; bila ≤0,952/ERROR → diagnosis (sonda `rsna-knee-s6probe` + rehearsal), gunakan mode `lenient`.
+### J1 — MERGER (EV terbesar; AKSI USER; batas 15 Okt 23:59 UTC)
+- Rules 5.c: sah bila (i) gabungan ≤5 anggota, (ii) submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤ ±225), (iii) sebelum batas merger. Rules 5.d/6.a: dilarang berbagi privat sebelum merger.
+- Target baru (`docs/KANDIDAT_MERGER.md` §3b): Kelompok B (15 tim ≥0,955 ≤30 submisi, mis. MURAD 0,962/19, NMarkS 0,961/30, "吃白饭的大肥鱼" 0,960/**1 submisi**, UEHA, DoyMed, jjakimoto, madmax0404, LP …), Kelompok C (mencari rekan: Tanuki_boosting, Prateek Grover, Nikita Ageev, heliosli solo 0,954). Pemegang bundel (Kelompok A lama) tak istimewa lagi karena S6 publik.
+### J2 — TUAS TEKNIS di atas S6 (semuanya EV kecil: +0,000–0,001; LB resolusi 0,001)
+1. **S6 + reader** (`python3 build_s6plus.py name=s6reader reader=1`): perna Raptor = fusi Apex (reader goodpjw, bobot per-temuan); +0,5 j; risiko rendah; prior +0,0005.
+2. **S6 + OF terakhir** (`name=s6plus reader=1 of=1 wr=0.55 wc=0.30 wo=0.15`): OF dgn supervisor v4.1 hanya memakai waktu sisa (STOP 7,9 j/KILL 8,25 j sejak NB_T0; coverage ±60–70 %); prior ≥+0,001 ≤20 %; rehearsal `s6plusr` memverifikasi rantai penuh.
+3. **Bagging bundel heliosli lain** (V4 ofl_ft8, V7 cnx_s5 0,951, V8 dino_s1, V9 dual): biaya ±3,5–4,5 j GPU/bundel (S6 sudah ±4 j) → hanya bila stride dikurangi; prior +0,0005–0,001.
+4. **Final bersih** (tanpa Raptor/OAI): compact + reader; kualitas belum terukur (±0,950–0,952) — asuransi bila host melarang OAI; nilai medali nyata hanya dlm skenario itu.
+5. DITUTUP (jangan ulangi): varian r224/bobot/mirror (0,950), MaVIT (0,949), CoAtNet resgated, pseudo-label/anak-OAI (≈ induk), kompilator aturan heliosli, "Tri-Reader 0,954" (rabari/jcgweb/sameerk; keluarga Apex+r224 0,950), klon DINOsaur.
+### J3 — FINAL TAHAN GUNCANGAN (21–22 Okt; pilih MANUAL & verifikasi via API; auto-fill §3.18.c)
+- Final A = S6 (klon user atau varian terbaik); Final B = varian paling berbeda yg masih kuat (S6+reader/OF, atau bersih). Pilih dari submisi yg SUDAH terskor; variasi baru terakhir ≤20 Okt.
 ### J4 — KEPATUHAN (melindungi medali)
-- Akun kedua/ketiga: Rules 5.a ("disqualified if ... more than one Kaggle account") & 5.b ("each Team member must be a single individual"). Izin tertulis yg ada = satu kalimat tanpa pertanyaan/pengirim/tanggal.
-  Tindakan: kirim pesan ke Kaggle support (draf `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`); tidak ada submisi/komputasi RSNA dari akun 2/3; rekan `nxtirfan` menjalankan job dari akunnya sendiri bila mau.
-- OAI/data eksternal: ckpt nartaa & OrthoFoundation membawa pengetahuan eksternal; host diam (743416, 35 komentar, 0 jawaban host) → pertahankan satu final dgn risiko berbeda.
+- Akun kedua/ketiga: Rules 5.a/5.b — semua submisi dari akun utama; pesan ke Kaggle support (`docs/DRAF_PESAN_KAGGLE_SUPPORT.md`) = tindakan user.
+- OAI/eksternal: risiko KOLEKTIF seluruh klaster Raptor/S6 (host diam di 743416/747455/744056); Rules 2.6.b: model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a hanya menyangkut kelayakan hadiah. Pertahankan satu final dgn risiko berbeda bila murah.
 
 ## 4. Garis waktu dan gerbang (WIB)
 | Waktu | Aksi | Gerbang / keputusan |
 |---|---|---|
-| 10 Okt malam | selesaikan uji skala; bila G0 lulus submit `rsna-knee-apexof2` (hasil ±7 jam) | agen maks 2 submisi/hari; sisa jatah utk user/rekan |
-| 10–12 Okt | USER: hubungi tim kandidat merger + kirim pesan ke Kaggle support | merger butuh persetujuan mitra |
-| 11–13 Okt | baca skor Apex+OF → G1; `scan_public_updates.py` harian | ≥0,952/0,951/≤0,950 |
-| 13–15 Okt | bila ada mitra: protokol merger; semua kandidat ter-push sebelum 15 Okt (`kernelsPublishingDisabledDeadline`) | 15 Okt 23:59 UTC = 16 Okt 06:59 WIB |
-| 16–20 Okt | iterasi bergerbang (maks 2/hari); GPU baru 30 j pada 17 Okt 07:00 WIB; bila ada merger: ensembel bersama | submisi variasi TERAKHIR 20 Okt |
+| 11 Okt 03:00–07:00 | rehearsal `apexof4r3` (OF 4 pekerja) dan `s6plusr` (reader+compact+OF); update dokumen | agen tidak mensubmit sebelum 07:00 (jatah hari-ini habis) |
+| 11 Okt 07:00+ | jatah baru 5/hari (agen ≤2): submit varian S6+ terpilih; baca skor klon S6 (57051680) ±07:00–08:30 | bandingkan: klon S6 vs varian |
+| 11–13 Okt | USER: merger gelombang 1 (11 Okt) dan 2 (13 Okt); pesan ke Kaggle support | merger butuh persetujuan mitra |
+| 13–15 Okt | bila ada mitra: protokol merger; semua kandidat ter-push sebelum 15 Okt | 15 Okt 23:59 UTC = 16 Okt 06:59 WIB |
+| 16–20 Okt | iterasi bergerbang (agen ≤2/hari); GPU baru 30 j 17 Okt 07:00 WIB; pantau publikasi baru (heliosli S7?) | variasi TERAKHIR 20 Okt |
 | 21–22 Okt | cek ulang 743416; pilih 2 final manual; verifikasi via `kaggle competitions submissions` | 22 Okt 23:59 UTC |
 
 ## 5. Anggaran
-- GPU akun utama: ±27 jam tersisa (sesi uji skala berjalan), +30 jam 17 Okt. Run scoring tidak memakai kuota GPU. Submisi tim: 5/hari (reset 07:00 WIB), agen ≤2, sisakan 2–3.
-- Jangan jalankan job proyek lain di akun utama. Disk /kaggle/working ±19 GB efektif; keluaran OF ±330 MB/studi.
+- GPU akun utama: ±20 j tersisa (17 Okt reset +30 j). Run penilaian tak memakai kuota GPU. Submisi tim: 5/hari (reset 07:00 WIB), agen ≤2, sisakan 2–3 utk user & rekan.
+- S6 ±4–4,5 j dari batas 9 j; sisa ±4,5 j dipakai perna tambahan (reader 0,5 j; OF terakhir ±3,4 j).
+- Disk /kaggle/working ±19 GB efektif; /tmp & overlay besar.
 
 ## 6. Risiko utama
 | Risiko | Mitigasi |
 |---|---|
-| OF gagal lagi (timeout/disk) | pemutus proses, penjaga disk, liputan parsial berprioritas, fallback Apex; uji skala dulu |
-| OF tidak menambah skor | aturan G1; pindah fokus ke J1/J3 |
-| Papan privat mengacak dataran 0,950 | dua final beda mekanisme; jangan menyetel ke papan publik |
-| Host melarang data eksternal/OAI | jalur bersih 0,944 hanya melindungi dari diskualifikasi (nilai medali ≈0: rank ≈1.387 di papan 10 Okt; perunggu = 0,950). Host diam 35 komentar → risiko dinilai rendah; putuskan 21–22 Okt setelah cek ulang 743416 |
+| S6 gagal di run penilaian (RAM/DEADLINE/fallback >3 % → ERROR) | sonda/rehearsal dgn log terbaca + monitor RAM; mode `lenient`; klon user = deteksi dini |
+| Klaster 0,954 membengkak → perak = undian | varian dgn informasi baru; merger; final B beda mekanisme |
+| Host melarang OAI/model eksternal | final bersih (compact + reader); keputusan 21–22 Okt setelah cek ulang |
+| Papan privat mengacak dataran | dua final; jangan menyetel ke papan publik; Δ<0,002 = noise |
 | Diskualifikasi akun ganda | J4; semua submisi dari akun utama |
-| Garis perak naik cepat | target publik ≥0,952; merger = satu-satunya lompatan besar |
-| Perunggu pun tak aman (25–41 % tanpa perbaikan) | dua final terdekorelasi (`docs/PLAN_B.md` §4); satu final Apex-terskor sbg lantai; merger |
+| Tim kuat tersembunyi (1−p) | tidak bisa dikendalikan; targetkan skill sejati, bukan hanya publik |
