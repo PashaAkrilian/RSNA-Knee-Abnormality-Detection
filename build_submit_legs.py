@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent
+sys.path.insert(0, str(ROOT))
 BASE = ROOT / "kaggle_base" / "apex_grandmaster_stack_20261008.ipynb"
 args = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
 NAME = args.get("name", "apexlegs")
@@ -52,6 +53,21 @@ if _l_os.path.isdir(_l_own):
     _l_env["PYTHONPATH"] = _l_own + _l_os.pathsep + _l_env.get("PYTHONPATH", "")
 _l_ng = max(1, min(2, _l_torch.cuda.device_count()))
 print("[LEGS] studies", len(_l_ids), "| gpus", _l_ng, flush=True)
+_of_series_dir = _l_data + "/test_series"
+_of_series_csv = _l_data + "/test_series.csv"
+_of_test_csv = _l_data + "/test.csv"
+_of_order = list(_l_ids)
+try:   # prioridade: maior discordancia (nartaa vs reader) primeiro = estudos mais informativos para um 3o parecer
+    _s1 = _l_pd.read_csv("/kaggle/working/_sota_0949.csv", dtype={"StudyInstanceUID": str}).set_index("StudyInstanceUID")
+    _s2 = _l_pd.read_csv("/kaggle/working/_own.csv", dtype={"StudyInstanceUID": str}).set_index("StudyInstanceUID")
+    _cm = [u for u in _l_ids if u in _s1.index and u in _s2.index]
+    _r1 = _s1.loc[_cm, _l_labels].rank(pct=True)
+    _r2 = _s2.loc[_cm, _l_labels].rank(pct=True)
+    _dis = (_r1 - _r2).abs().mean(axis=1).sort_values(ascending=False)
+    _of_order = list(_dis.index) + [u for u in _l_ids if u not in set(_cm)]
+    print("[LEGS] priority order by disagreement | top mean|dr| %.3f median %.3f" % (_dis.iloc[0], _dis.median()), flush=True)
+except Exception as _e:
+    print("[LEGS] priority fallback (ids order):", repr(_e)[:120], flush=True)
 
 def _l_run_shards(script, extra_args, tag, timeout, env=None):
     procs = []
@@ -130,85 +146,7 @@ except Exception as _e:
     print(f"[MaVIT EXCEPTION] {type(_e).__name__}: {_e} -> leg skipped", flush=True)
 '''
 
-OF = r'''
-# ---------------- leg: OrthoFoundation-L fold0 (heliosli) ----------------
-_l_t0 = _l_time.time()
-try:
-    _OF = _l_find("weight_parts.json")
-    _UL = _l_find("assets/bus.jpg")          # resource yaml ultralytics 8.4.166 (dataset sendiri; paket vendored tanpa yaml)
-    _MD = "/kaggle/working/of"
-    _CC = "/kaggle/working/cloud_code"
-    _l_os.makedirs(_MD, exist_ok=True)
-    if not _l_os.path.exists(_CC):
-        _l_shutil.copytree(f"{_OF}/cloud_code", _CC)
-    _l_shutil.copytree(_UL, f"{_CC}/training/vendor_runtime/kneexnet/ultralytics", dirs_exist_ok=True)
-    assert _l_os.path.exists(f"{_CC}/training/vendor_runtime/kneexnet/ultralytics/cfg/default.yaml")
-    _h = _l_hl.sha256()
-    with open(f"{_MD}/best.pt", "wb") as _out:
-        for _p in sorted(_l_glob.glob(f"{_OF}/weights.part*")):
-            with open(_p, "rb") as _f:
-                while True:
-                    _b = _f.read(1 << 24)
-                    if not _b:
-                        break
-                    _out.write(_b)
-                    _h.update(_b)
-    assert _h.hexdigest().startswith("4f424cc7"), "OF best.pt sha mismatch"
-    if not _l_os.path.exists(f"{_MD}/anatomy.pt"):
-        _l_shutil.copy2(f"{_OF}/anatomy.pt", f"{_MD}/anatomy.pt")
-    if not _l_os.path.exists(f"{_MD}/kneexnet"):
-        _l_shutil.copytree(f"{_OF}/dependencies/kneexnet", f"{_MD}/kneexnet")
-    _env = dict(_l_env)
-    _tgt = "/kaggle/working/_of_env"
-    for _w in sorted(_l_glob.glob(f"{_OF}/dependencies/wheels/*.whl")):
-        _l_sp.run([_l_sys.executable, "-m", "pip", "install", "-q", "--no-index", "--no-deps", "--target", _tgt, _w], check=False)
-    _env["PYTHONPATH"] = _tgt + _l_os.pathsep + _CC + _l_os.pathsep + _env.get("PYTHONPATH", "")
-    print("[OF] assembled", _l_os.path.getsize(f"{_MD}/best.pt"), "bytes |", f"{_l_time.time() - _l_t0:.0f}s", flush=True)
-    _script = _l_tw.dedent("""
-        import os, sys, time, shutil
-        import pandas as pd
-        data, model_dir, ids_file, deadline, shard, nsh = sys.argv[1:7]
-        shard, nsh, deadline = int(shard), int(nsh), float(deadline)
-        from training.infer import run_inference
-        ids = open(ids_file).read().split("\\n")[shard::nsh]
-        CH = 30
-        frames, t0, fails = [], time.time(), 0
-        for k in range(0, len(ids), CH):
-            if time.time() > deadline:
-                print("DEADLINE reached; skipping remaining", len(ids) - k, "studies", flush=True)
-                break
-            chunk = ids[k:k + CH]
-            out = f"/kaggle/working/_leg_of_out{shard}_{k}"
-            try:
-                fr = run_inference(data, f"{model_dir}/best.pt", out, anatomy_weights=f"{model_dir}/anatomy.pt", workers=2, study_ids=chunk)
-                frames.append(fr)
-            except Exception as e:
-                fails += len(chunk)
-                print("CHUNK FAIL", k, repr(e)[:300], flush=True)
-            finally:
-                shutil.rmtree(out, ignore_errors=True)
-            done = min(k + CH, len(ids))
-            print("of shard", shard, done, "/", len(ids), "%.1fs/study" % ((time.time() - t0) / done), "fails", fails, flush=True)
-        if frames:
-            pd.concat(frames).to_csv(f"/kaggle/working/_leg_of_s{shard}.csv", index=False)
-        print("done of shard", shard, "frames", len(frames), "fails", fails, flush=True)
-    """)
-    open("/kaggle/working/_leg_of.py", "w").write(_script)
-    _deadline = _l_time.time() + 7.0 * 3600
-    _l_run_shards("/kaggle/working/_leg_of.py", [_l_data, _MD, "/kaggle/working/_leg_ids.txt", _deadline], "of", 8 * 3600, env=_env)
-    _parts = [f"/kaggle/working/_leg_of_s{s}.csv" for s in range(_l_ng) if _l_os.path.exists(f"/kaggle/working/_leg_of_s{s}.csv")]
-    assert _parts, "no OF output"
-    _d = _l_pd.concat([_l_pd.read_csv(p, dtype={"StudyInstanceUID": str}) for p in _parts]
-                      ).set_index("StudyInstanceUID").reindex(_l_ids)[_l_labels]
-    _fail = float(_d.isna().all(axis=1).mean())
-    print(f"[OF] failed/missing-study fraction {_fail:.4f} | {_l_time.time() - _l_t0:.0f}s", flush=True)
-    assert _fail < 0.10, "too many OF failures"
-    _d.to_csv("/kaggle/working/_leg_of.csv")
-    LEG_OUT["of"] = ("/kaggle/working/_leg_of.csv", __WO__)
-except Exception as _e:
-    _l_tb.print_exc()
-    print(f"[OF EXCEPTION] {type(_e).__name__}: {_e} -> leg skipped", flush=True)
-'''
+from of_stage import OF_STAGE as OF
 
 BLEND = r'''
 # ---------------- blend: Apex + successful legs (rank-mean per finding) ----------------
@@ -236,13 +174,16 @@ except Exception as _e:
     print(f"[BLEND EXCEPTION] {type(_e).__name__}: {_e} -> restoring the Apex output", flush=True)
     _l_shutil.copy(_l_bak, _l_pub)
 print("Final submission:", _l_os.path.getsize(_l_pub), "bytes", flush=True)
+for _d in ("/kaggle/working/of", "/kaggle/working/cloud_code", "/kaggle/working/_of_env", "/kaggle/working/fr", "/kaggle/working/ofo"):
+    _l_shutil.rmtree(_d, ignore_errors=True)
 '''
 
 cells_src = [COMMON]
 if "mavit" in LEGS:
     cells_src.append(MAVIT.replace("__WM__", repr(WM)))
 if "of" in LEGS:
-    cells_src.append(OF.replace("__WO__", repr(WO)))
+    cells_src.append(OF.replace("__WO__", repr(WO)).replace("__NPROC__", "4").replace("__CHUNK__", "8")
+                     .replace("__STOP_H__", "6.6").replace("__KILL_H__", "7.0").replace("__MINCOV__", "0.15").replace("__REUSE__", "1"))
 cells_src.append(BLEND)
 for i, c in enumerate(cells_src):
     compile(c, f"cell{i}", "exec")
