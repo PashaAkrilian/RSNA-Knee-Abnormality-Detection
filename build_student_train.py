@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
-"""Bangun kernel student-train (5-fold ConvNeXt-T, fp16, resume) untuk akun alver."""
-import json, os
+"""Bangun kernel student-train (5-fold ConvNeXt-T, fp16, resume) untuk akun alver.
+Pakai: python3 build_student_train.py name=student-train-a folds=0,1
+      python3 build_student_train.py name=student-train-b folds=2,3
+      python3 build_student_train.py name=student-train-c folds=4"""
+import json, os, sys
+
+args = dict(a.split("=", 1) for a in sys.argv[1:])
+NAME = args.get("name", "student-train-a")
+FOLDS = [int(x) for x in args.get("folds", "0,1").split(",")]
+EPOCHS = int(args.get("epochs", "14"))
+SLUG = f"rsna-knee-{NAME}"
 
 MD = {
-    "id": "alverlfarfaraway/rsna-knee-student-train",
-    "title": "RSNA Knee student train",
-    "code_file": "rsna-knee-student-train.ipynb",
+    "id": f"alverlfarfaraway/{SLUG}",
+    "title": f"RSNA Knee {NAME}",
+    "code_file": f"{SLUG}.ipynb",
     "language": "python",
     "kernel_type": "notebook",
     "is_private": True,
@@ -154,9 +163,10 @@ def train_fold(k, epochs=14, bs=8, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5
     say(f"fold{k} SELESAI gold {macro_auc(gold_y, preds['gold'])[0]:.4f} val {macro_auc(val_y, preds['val'])[0]:.4f}")
 
 DEADLINE = t0 + 7.2 * 3600
-for k in range(5):
+FOLDS = __FOLDS__
+for k in FOLDS:
     if time.time() > DEADLINE: say(f"deadline utk fold{k} — stop (fold selesai dipakai)"); break
-    train_fold(k)
+    train_fold(k, epochs=__EPOCHS__)
 say("TRAIN_DONE files:", sorted(os.listdir(RUNS)))
 '''
 
@@ -168,8 +178,12 @@ nb = {"cells": [cell(CELL0, "markdown"), cell(CELL1), cell(CELL2)],
       "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                    "language_info": {"name": "python"}},
       "nbformat": 4, "nbformat_minor": 5}
-out = "kaggle_kernel_student_train"
+# token replace
+for c in nb["cells"]:
+    if c["cell_type"] == "code":
+        c["source"] = [ln.replace("__FOLDS__", repr(FOLDS)).replace("__EPOCHS__", repr(EPOCHS)) for ln in c["source"]]
+out = f"kaggle_kernel_{NAME}"
 os.makedirs(out, exist_ok=True)
-json.dump(nb, open(f"{out}/rsna-knee-student-train.ipynb", "w"), indent=1)
+json.dump(nb, open(f"{out}/{SLUG}.ipynb", "w"), indent=1)
 json.dump(MD, open(f"{out}/kernel-metadata.json", "w"), indent=2)
-print("ditulis:", out)
+print("ditulis:", out, "| folds", FOLDS, "| epochs", EPOCHS)

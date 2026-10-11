@@ -49,10 +49,15 @@ def find(pats, base="/kaggle/input"):
     return None
 
 COMP = None
-for c in glob.glob("/kaggle/input/*"):
+for c in ["/kaggle/input/competitions/rsna-knee-abnormality-detection",
+          "/kaggle/input/rsna-knee-abnormality-detection"] + sorted(glob.glob("/kaggle/input/*")):
     if os.path.exists(os.path.join(c, "train.csv")) and os.path.exists(os.path.join(c, "train_series.csv")):
         COMP = c; break
-assert COMP, "competition mount tidak ketemu"
+    for sub in sorted(glob.glob(os.path.join(c, "*"))):
+        if os.path.exists(os.path.join(sub, "train.csv")) and os.path.exists(os.path.join(sub, "train_series.csv")):
+            COMP = sub; break
+    if COMP: break
+assert COMP, "competition mount tidak ketemu; listing: " + str(sorted(os.listdir("/kaggle/input"))[:30])
 say("COMP =", COMP)
 TRAIN = pd.read_csv(f"{COMP}/train.csv")
 SERIES = pd.read_csv(f"{COMP}/train_series.csv")
@@ -170,7 +175,7 @@ def _job(args):
     if os.path.exists(out):
         return None
     try:
-        vol, extra = load_series(f"{DATA}/train_images/{study}/{series}")
+        vol, extra = load_series(f"{DATA}/train_series/{study}/{series}")
         np.save(out + ".tmp.npy", vol); os.replace(out + ".tmp.npy", out)
         info.update(extra)
     except Exception as e:
