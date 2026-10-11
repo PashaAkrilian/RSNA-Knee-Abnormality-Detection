@@ -64,16 +64,16 @@ SERIES = pd.read_csv(f"{COMP}/train_series.csv")
 say("train", len(TRAIN), "series rows", len(SERIES))
 
 EXT = {}
-EXT["steven"] = find(["stevenleehans_rsna-knee-llm-report-labels/llm_labels_v4_blend.csv"])
-EXT["pilkwang"] = find(["pilkwang_rsna-knee-llm-labels/report_labels_v2.csv"])
-EXT["lixin"] = find(["lixin73_rsna-knee-llm-report-labels-sol56/labels_llm_gpt56sol.csv"])
-EXT["qwen"] = find(["laymond_rsna-knee-abnormality-qwen3-8b-weak-labels/qwen_knee_weak_labels.csv"])
-TEACHER = find(["alverlfarfaraway_rsna-knee-teacher-r384-train/teacher_r384_train_preds.csv"])
-assert all(EXT.values()), EXT
+EXT["steven"] = find(["llm_labels_v4_blend.csv"])
+EXT["pilkwang"] = find(["report_labels_v2.csv"])
+EXT["lixin"] = find(["labels_llm_gpt56sol.csv"])
+EXT["qwen"] = find(["qwen_knee_weak_labels.csv"])
+TEACHER = find(["teacher_r384_train_preds.csv"])
+assert all(EXT.values()), (EXT, sorted(os.listdir("/kaggle/input")))
 say("labels ok:", EXT); say("teacher:", TEACHER)
 
 # pylibjpeg utk decode cepat (wheel dari dataset goodpjw)
-whl_dir = os.path.dirname(find(["goodpjw2008_rsna-knee-2-5d-convnext-reader/pylibjpeg-2.1.0-py3-none-any.whl"]) or "")
+whl_dir = os.path.dirname(find(["pylibjpeg-2.1.0-py3-none-any.whl"]) or "")
 if whl_dir:
     for w in sorted(glob.glob(os.path.join(whl_dir, "*.whl"))):
         subprocess.run([sys.executable, "-m", "pip", "install", "-q", w], check=False)

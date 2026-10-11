@@ -111,7 +111,19 @@ def train_fold(k, epochs=14, bs=8, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5
     gold_y = gold[[f"gold_{c}" for c in LABELS]].values
     val_y = (va[LABELS].values > 0.5).astype(int)
 
-    model = KneeNet("convnext_tiny").cuda().to(memory_format=torch.channels_last)
+    model = KneeNet("convnext_tiny", pretrained=False).cuda().to(memory_format=torch.channels_last)
+    # warm-start dari ckpt goodpjw publik (internet OFF: tak bisa download ImageNet timm)
+    gw = sorted(glob.glob(f"{GOODPJW}/cnxt_v0_fold*.pt"))
+    if gw:
+        try:
+            st0 = torch.load(gw[0], map_location="cpu", weights_only=False)
+            sd = st0.get("model", st0)
+            missing, unexpected = model.load_state_dict(sd, strict=False)
+            say(f"warm-start {os.path.basename(gw[0])}: missing={len(missing)} unexpected={len(unexpected)}")
+        except Exception as e:
+            say("warm-start gagal (train dari awal):", repr(e)[:150])
+    else:
+        say("tidak ada ckpt goodpjw — pretrained=False, train dari random init (BURUK)")
     ema = copy.deepcopy(model).eval()
     for p in ema.parameters(): p.requires_grad_(False)
     enc = list(model.enc.parameters())
