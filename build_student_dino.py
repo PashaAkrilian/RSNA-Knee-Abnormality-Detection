@@ -11,11 +11,25 @@ Catatan loading backbone (diverifikasi lokal thd aset tonylica dinov2-small/pyto
   - KARENA ITU ViTModel HF dari_pretrained TIDAK dipakai (kunci q_proj/layer_norm1 tak cocok +
     layer-scale tak ada di ViT) — dibangun ViT-S/14 setara dgn PyTorch murni + load strict.
 """
-import json, os
+import json, os, sys
 
+args = dict(a.split("=", 1) for a in sys.argv[1:])
+ACCT = args.get("acct", "alver")   # alver | nxtirfan (labels dari dataset akun sendiri)
 SLUG = "rsna-knee-student-dino"
+DATASETS = {
+    "alver": [
+        "alverlfarfaraway/rsna-knee-student-cache256",
+        "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
+        "goodpjw2008/rsna-knee-2-5d-convnext-reader",
+    ],
+    "nxtirfan": [
+        "nxtirfan/rsna-knee-student-labels",
+        "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
+        "goodpjw2008/rsna-knee-2-5d-convnext-reader",
+    ],
+}
 MD = {
-    "id": f"alverlfarfaraway/{SLUG}",
+    "id": f"{'alverlfarfaraway' if ACCT == 'alver' else 'nxtirfan'}/{SLUG}",
     "title": "RSNA Knee student DINOv2-S one-shot",
     "code_file": f"{SLUG}.ipynb",
     "language": "python",
@@ -25,11 +39,7 @@ MD = {
     "enable_internet": False,
     "category": "video",
     "competition_sources": ["rsna-knee-abnormality-detection"],
-    "dataset_sources": [
-        "alverlfarfaraway/rsna-knee-student-cache256",
-        "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
-        "goodpjw2008/rsna-knee-2-5d-convnext-reader",
-    ],
+    "dataset_sources": DATASETS[ACCT],
     "keywords": [],
     "kernel_sources": [],
     "docker_image": "registry Kaggle Python",

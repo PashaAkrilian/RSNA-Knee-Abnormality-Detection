@@ -1,5 +1,5 @@
 {
-  "id": "alverlfarfaraway/rsna-knee-student-dino",
+  "id": "nxtirfan/rsna-knee-student-dino",
   "title": "RSNA Knee student DINOv2-S one-shot",
   "code_file": "rsna-knee-student-dino.ipynb",
   "language": "python",
@@ -12,7 +12,7 @@
     "rsna-knee-abnormality-detection"
   ],
   "dataset_sources": [
-    "alverlfarfaraway/rsna-knee-student-cache256",
+    "nxtirfan/rsna-knee-student-labels",
     "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
     "goodpjw2008/rsna-knee-2-5d-convnext-reader"
   ],
