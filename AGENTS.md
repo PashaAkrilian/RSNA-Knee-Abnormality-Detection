@@ -7,13 +7,13 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,950** (
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
-2. **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt) dan **docs/PLAN_B.md §00** — rencana, model peluang, jalur (J0 dasar S6, J1 merger, J2 tuas teknis, J3 final, J4 kepatuhan), gerbang keputusan, garis waktu.
+2. **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt) dan **docs/PLAN_B.md §00** — rencana, model peluang, jalur (J0 dasar S6, J1 merger = DIBATALKAN 11 Okt, J2 tuas teknis, J3 final, J4 kepatuhan), gerbang keputusan, garis waktu.
 3. **HANDOFF.md** — status & urutan kerja harian (apa yang dikerjakan SEKARANG).
 4. **laporan_push.md** — wadah evaluasi submisi (§2) + temuan.
 5. Riset: **reports/Ringkasan riset 10 Okt (sesi Claude Code).md** (TERBARU). Arsip: `reports/` lain, `research_notes/`, PROGRESS.md, docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (11 Okt 04:00 WIB)
-heliosli memulihkan bundel compact → **S6 (0,954) publik; salinan user 57051680 PENDING (±07:00–08:30 WIB)**; 57044355 (Apex+OF) = 0,950 karena OF mati OOM (bukan vonis OF; premis "resep heliosli = OF" SALAH — resepnya Raptor + compact); perbaikan v4.1 + `build_s6plus.py` (reader/OF opsional, deadline-aman) sedang di-rehearsal; tuas terbesar tetap **merger** (aksi user, batas 15 Okt).
+## Status satu kalimat (11 Okt 09:45 WIB)
+heliosli memulihkan bundel compact → **S6 (0,954) publik; salinan user 57051680 = 0,954 COMPLETE (rank 144/5.709; kandidat final A)**; 57044355 (Apex+OF) = 0,950 karena OF mati OOM (bukan vonis OF; resep heliosli = Raptor + compact); varian `s6reader` 57055673 + `s6plus` 57055781 di-submit 07:03 WIB (PENDING); **keputusan user 11 Okt: TANPA merger & TANPA pesan support — fokus naikkan skor sendiri** (akun 2/3 tetap tidak dipakai).
 
 ## Aturan keras (pelanggaran = rugi tim)
 - **Bahasa kerja: Indonesia.** Bertindak otonom; lapor singkat dgn angka; jangan menjanjikan emas atau 100 %.

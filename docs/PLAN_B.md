@@ -10,8 +10,8 @@
 - **Pohon keputusan baru (menggantikan §2 untuk submisi berikut)**:
   | Hasil klon S6 (57051680) | Tindakan |
   |---|---|
-  | ≈0,954 | final A = S6; buat final B = S6+reader (`s6reader`) atau S6+OF (`s6plus`); lanjutkan merger |
-  | ≤0,952 (S6 gagal/tidak reproduksi) | selidiki log (OOM/fallback >3 % → ERROR?), pakai `lenient`; kembali ke Apex-keluarga + merger |
+  | ≈0,954 | final A = S6; buat final B = S6+reader (`s6reader`) atau S6+OF (`s6plus`); perkuat varian (merger DIBATALKAN 11 Okt) |
+  | ≤0,952 (S6 gagal/tidak reproduksi) | selidiki log (OOM/fallback >3 % → ERROR?), pakai `lenient`; kembali ke Apex-keluarga (merger DIBATALKAN) |
   | ERROR/Timeout | diagnosis lewat sonda `rsna-knee-s6probe`/rehearsal; perbaiki (RAM/waktu) |
 - **Bahan siap (build_s6plus.py; semua lulus kompilasi)**: `s6reader` (reader goodpjw difusikan ke perna Raptor dgn bobot per-temuan Apex; tahap compact "lenient" tidak menjatuhkan notebook), `s6plus` (+ perna OF dgn supervisor v4.1 sebagai tahap TERAKHIR, STOP/KILL absolut 7,9/8,25 j sejak NB_T0 — hanya memakai waktu sisa; bobot 0,55/0,30/0,15), `s6plusr` (rehearsal pseudo-uji 160 studi dgn log terbaca + monitor RAM).
 - **Zoologi bundel heliosli (semua publik)**: V4 `ofl_ft8` (OrthoFoundation-L fine-tune), V7 cnx_s5 (0,951), V8 `dino_s1` (DINOv3-ViT-B), V9 dual (convnext+dino), V10 cnx_s6 (0,954) — kandidat bagging; kendala: tiap bundel ≈3,5–4,5 j GPU di stride 1 (S6 sudah memakai ±4 j dari 9 j).
@@ -47,10 +47,10 @@
 ## 2. Pohon keputusan berdasar skor 57044355 (Apex 0,70 + OF fold0 0,30)
 | Hasil | Arti | Tindakan (agen) |
 |---|---|---|
-| **≥0,953** | OF membawa pengetahuan nyata | final A = Apex+OF; final B = Apex+OF bobot 0,45 ATAU Apex (dekorelasi); merger tetap dikejar utk ≥0,956 |
-| **0,952** | kandidat aman-tipis | A = Apex+OF; B = Apex; boleh 1 varian bobot (0,45) bila jatah; merger tetap |
-| **0,951** | cadangan (lotre) | A/B = {Apex+OF, Apex} (dekorelasi); jalankan Plan B-merger penuh |
-| **0,950** | netral (OF tak menambah) | OF = hedge dekorelasi saja; finals {Apex, Apex+OF}; seluruh tenaga ke merger (B1) |
+| **≥0,953** | OF membawa pengetahuan nyata | final A = Apex+OF; final B = Apex+OF bobot 0,45 ATAU Apex (dekorelasi); fokus varian (merger DIBATALKAN) |
+| **0,952** | kandidat aman-tipis | A = Apex+OF; B = Apex; boleh 1 varian bobot (0,45) bila jatah (merger DIBATALKAN) |
+| **0,951** | cadangan (lotre) | A/B = {Apex+OF, Apex} (dekorelasi); perkuat varian & dekorelasi (merger DIBATALKAN) |
+| **0,950** | netral (OF tak menambah) | OF = hedge dekorelasi saja; finals {Apex, Apex+OF}; seluruh tenaga ke varian & final (merger DIBATALKAN) |
 | **≤0,949** | OF merugikan | buang OF; finals {Apex, varian Apex 0,950 (mis. fork r224/rabari)}; merger |
 | **Timeout/ERROR lagi** | pipeline OF gagal di skala | JANGAN submit ulang tanpa log; kembali ke Apex-only; merger |
 Aturan pakai: finals dipilih dari submisi yang SUDAH terskor (jangan mengandalkan run baru pada 22 Okt). Bila ada dua kandidat setara, pilih pasangan beda mekanisme.

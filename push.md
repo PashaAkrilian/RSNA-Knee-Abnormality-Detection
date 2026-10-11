@@ -23,7 +23,7 @@
 - **J1 Merger** (EV terbesar; batas 15 Okt 23:59 UTC; aksi user; `docs/KANDIDAT_MERGER.md` §3b): Kelompok B (15 tim ≥0,955 ≤30 submisi), Kelompok C (mencari rekan), heliosli. Agen menyiapkan bahan, TIDAK menghubungi siapa pun.
 - **J2 Tuas teknis di atas S6 (EV kecil; LB resolusi 0,001)**: `s6reader` (reader fusi pada perna Raptor), `s6plus` (+OF terakhir, coverage ±60–70 %), bagging bundel heliosli lain (mahal), final bersih (compact + reader).
 - **J3 Final tahan-guncangan**: 2 final beda mekanisme; variasi terakhir ≤20 Okt; pilih dari submisi terskor; verifikasi via daftar submisi.
-- **J4 Kepatuhan**: satu final dgn risiko berbeda; host diam di 743416/744056/747455; pesan ke Kaggle support soal akun = tindakan user.
+- **J4 Kepatuhan**: satu final dgn risiko berbeda; host diam di 743416/744056/747455; pesan ke support = DIBATALKAN (user 11 Okt).
 - Ditutup (jangan ulangi): varian r224/bobot/mirror, MaVIT, pseudo-label/anak-OAI, kompilator aturan heliosli, "Tri-Reader 0,954", klon DINOsaur.
 
 ## 5. Cara kerja teknis ringkas
@@ -35,9 +35,9 @@
 - Git: `git fetch origin && git status -sb` → `git add <path>` → `git commit -F pesan.txt` → push hanya atas perintah user. Remote: github.com/PashaAkrilian/RSNA-Knee-Abnormality-Detection (privat).
 
 ## 6. Kriteria sukses & kapan berhenti
-- Sukses: submisi nyata ≥ klon S6 (≈0,954) dgn informasi baru, atau mitra merger kuat. Catat tiap hasil di `MEMORY.md` §3, `laporan_push.md`, `docs/RESEARCH_NOTES.md`.
-- Bila varian S6+ ≤ klon S6 dlm noise: jangan menambah variasi kecil (Δ<0,002 = noise); fokus merger (user) + final A/B.
-- Peluang jujur (simulasi): klon S6 di klaster ratusan tim → perak ±25–45 %, perunggu ±45–70 %; merger kuat atau perna dgn informasi baru lebih tinggi; emas ≈0–2 %.
+- Sukses: submisi nyata ≥ klon S6 (≈0,954) dgn informasi baru. Catat tiap hasil di `MEMORY.md` §3, `laporan_push.md`, `docs/RESEARCH_NOTES.md`.
+- Bila varian S6+ ≤ klon S6 dlm noise: jangan menambah variasi kecil (Δ<0,002 = noise); fokus final A/B + varian beda mekanisme.
+- Peluang jujur (simulasi): klon S6 di klaster ratusan tim → perak ±25–45 %, perunggu ±45–70 %; perna dgn informasi baru lebih tinggi; emas ≈0–2 %.
 
 ## 7. Laporan ke user (Indonesia, ringkas)
-Setelah tiap unit kerja: hasil + bukti angka, status kuota, langkah berikut. Jangan menjanjikan emas atau 100 %. Minta user hanya untuk tindakan yg hanya bisa dia lakukan (merger, pesan ke Kaggle, UI Kaggle, pendaftaran akun).
+Setelah tiap unit kerja: hasil + bukti angka, status kuota, langkah berikut. Jangan menjanjikan emas atau 100 %. Minta user hanya untuk tindakan yg hanya bisa dia lakukan (UI Kaggle final, pendaftaran akun).

@@ -29,6 +29,8 @@
 | 10 | 10 Okt 09:10 | **57028008** | **Apex 0,70 + OrthoFoundation-L fold0 (heliosli) 0,30** (`build_submit_legs.py legs=of wo=0.30`; kernel `rsna-knee-apexof` v1; inferensi per 30 studi, 2 proses) | **Notebook Timeout (9 j)** | — | GAGAL teknis (tanpa skor) | estimasi 5–6 j meleset. Uji skala 10 Okt: disk 330 MB/studi (potongan 30 studi ≈10 GB → penuh), CPU 4 vCPU hambatan (GPU sering 0 %), 2 proses 45–95 dtk/studi, 4 proses ±60 dtk/studi/proses; pemetaan seluruh test_series 84 dtk/panggilan |
 | 11 | 10 Okt 21:10 | **57044355** | **Apex 0,70 + OF v2** (`kaggle_kernel_apexof2`: potongan 8, 4 proses, penjaga disk, thread=1, prioritas, pemutus proses, reuso anatomi) | **0,950** (COMPLETE 22:45 WIB, ±1 j 35 mnt) | 0,000 | **TANPA VONIS OF** (kaki OF tak jalan di run penilaian) — v4 dibangun/diuji; G1 ditahan | uji skala: 194 studi/jam (6,8 j; reuso anatomi tak membantu); stub v3 lulus (GPU kosong 15 GB); terima bila ≥0,952 (0,951 = cadangan) |
 | 12 | 11 Okt 02:56 | **57051680** | **Salinan S6 heliosli oleh USER** (Raptor 0,7 + compact 0,3; bundel `209a32c8` dipulihkan 02:50 WIB) | **0,954** | +0,004 | **TERBAIK; kandidat final A; rank 144** | COMPLETE ±06:40 WIB (±3 j 45 mnt); papan 06:40: 5.709 tim, ≥0,954 = 150 (49 tepat 0,954) |
+| 13 | 11 Okt 07:03 | **57055673** | **`s6reader` v1**: S6 (Raptor 0,7 + compact 0,3) + reader goodpjw dipatenkan ke perna Raptor (bobot per-temuan ×0,5; kontroler lenient) | PENDING | — | menunggu skor (±10:30–11:00 WIB) | pewaktu `scripts/submit_two.sh`; agen 2/5; monitor jalan |
+| 14 | 11 Okt 07:04 | **57055781** | **`s6plus` v1**: S6 + reader goodpjw ×1,0 + leg OF fold0 0,15 (stage terakhir, supervisor v4.1, deadline 7,9 h) | PENDING | — | menunggu skor | pewaktu; OF = pengetahuan baru pertama di atas S6 |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -57,7 +59,7 @@
 4. TERTUTUP / jangan ulangi: r224-variant & bobot halus (0,950 placebo), resep 746792 (identik stack kita; all-plane flip merugikan), MaVIT (0,9202), heliosli S6 rekonstruksi (mati permanen), SWA manual/seed-avg (nartaa rilis cuma 2 ckpt), d5e-goldw & d5f (placebo), blending tanpa OAI (0,944).
 
 ### 3d. Struktur & final
-- **Merger tim (15 Okt 23:59 UTC)** — hanya user; cek dulu `kaggle competitions submission-limits` (batas gabungan ~355–385); SEMUA kandidat final harus ter-push sebelum 15 Okt.
+- **~~Merger tim~~ DIBATALKAN (perintah user 11 Okt)** — fokus naikkan skor sendiri; arsip `docs/KANDIDAT_MERGER.md`. SEMUA kandidat final harus ter-push sebelum 15 Okt 23:59 UTC.
 - **2 final = beda MEKANISME** (bukan 2 titik bobot): slot A = Apex+heliosli (agresif/OAI), slot B = hedge (leg OF / varian lolos gate; jalur bersih 0,944 hanya bila host melarang OAI — nilai medalinya ≈0, rank ≈1.387 di papan 10 Okt). Pilih **manual** lalu **verifikasi via API** (auto-fill §3.18.c).
 - Stack ±7 jam: aman utk skor private (file sama), tapi mepet limit 9 jam → submit 22 Okt dgn margin ≥6–7 jam.
 
@@ -82,8 +84,8 @@
 - [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) ditutup; 57028008 Timeout; 57044355 = 0,950 (OF tak jalan → OOM terkonfirmasi); v4.1 dibangun/diuji.
 - [x] 11 Okt dini hari: S6 publik lagi → user men-submit 57051680; sonda `s6probe` (compact ±3,5 j); `build_s6plus.py` (reader/OF opsional); riset forum & zoologi bundel; dokumen diperbarui.
 - [ ] 11 Okt 03:35–04:45: rehearsal `s6plusr` (reader+compact+OF+blend 3 perna) dan `apexof4r3` (OF 4 pekerja) → push `s6reader`/`s6plus`.
-- [ ] 11 Okt 07:00+: baca 57051680; submit varian S6+ terpilih (agen ≤2); USER: merger gelombang 1 (§3b `docs/KANDIDAT_MERGER.md`).
-- [ ] 13–15 Okt: merger gelombang 2; semua kandidat ter-push sebelum 15 Okt 23:59 UTC.
+- [x] 11 Okt 07:03: pewaktu submit keduanya — s6reader (57055673) + s6plus (57055781) PENDING; monitor jalan; klon 57051680 = 0,954. ~~Merger~~ DIBATALKAN (user 11 Okt).
+- [ ] 13–15 Okt: semua kandidat ter-push sebelum 15 Okt 23:59 UTC (merger dibatalkan).
 - [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); pantau heliosli (S7?) dan notebook publik; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
 - [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (A = S6/varian terbaik, B = beda mekanisme/bersih); verifikasi via daftar submisi.
 
