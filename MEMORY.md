@@ -1,11 +1,11 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt); arah/cadangan → **`docs/PLAN_B.md` §00**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-11T10:50:00+07:00
+> Last updated: 2026-10-11T11:10:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
-- **Komputasi**: GPU akun utama `dimaspashaakrilian` (30 j/minggu, reset Sabtu 07:00 WIB: 17 Okt; maks 2 sesi GPU, sesi antre dihitung) → Colab GPU → TPU/CPU. **Akun 2 `alverlfarfaraway` & akun 3 `nxtirfan`: TIDAK dipakai oleh sesi Claude Code** (Rules 5.a/5.b + izin satu kalimat = risiko diskualifikasi tim; CLAUDE.md menyebutnya "SAH"). Kredensial `~/.kaggle/`, `akun_kaggle/` — JANGAN dicetak/di-commit.
+- **Komputasi**: GPU akun utama `dimaspashaakrilian` (30 j/minggu, reset 17 Okt 07:00 WIB; sisa ±19 j; maks 2 sesi GPU) + **PERINTAH USER 11 Okt ~11:00: akun 2 `alverlfarfaraway` (kg2.sh, sisa 30 j) & akun 3 `nxtirfan` (kg3.sh, sisa ±19 j) DIPAKAI utk eksperimen** (izin multi-akun diarsip: `docs/IZIN_AKUN_KEDUA.md`; risiko Rules 5.a tetap dicatat — user memutuskan). Kredensial `~/.kaggle/`, `akun_kaggle/` — JANGAN dicetak/di-commit.
 - **Commit TANPA trailer Co-Authored-By/Claude**; pesan multi-baris `git commit -F <file>`; commit MEMORY.md terpisah ("memory: ..."); `git add <path spesifik>`; `git fetch` dulu; "push" = `git push origin master` (hanya atas perintah user).
 - Jangan sentuh kernel proyek lain (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Submisi: agen ≤2/hari, sisakan 2–3 utk user & `nxtirfan` (5/hari tim, reset 07:00 WIB).
 - Data: OAI/pra-latih publik boleh (Rules 2.6.b; host diam 741819/743416/744056/747455); agen TIDAK membuat akun/menyetujui perjanjian atas nama user. Terima varian bila ≥ klon S6 (≈0,954) dlm noise ATAU menambah diversitas murah; Δ<0,002 = noise.
@@ -26,14 +26,15 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (11 Okt 10:50 WIB)
+## 3. Status (11 Okt 11:10 WIB)
 | Hal | Keadaan |
 |---|---|
 | Submisi | **terbaik 0,954 (57051680 = klon S6 oleh user, COMPLETE ±06:40; rank 144)**; Apex 56943646 0,950; 57025414 Apex+MaVIT 0,949; 57028008 Timeout; 57044355 = 0,950 (OF OOM; bukan vonis OF). Jendela 11 Okt: **s6reader 57055673 + s6plus 57055781 di-submit 07:03 (PENDING; monitor jalan)**; sisa 3/5 |
 | Rehearsal | `apexof4r3` LULUS (4 pekerja 228 studi/jam, MemAvail min 13,8 GB); `s6cleanr` LULUS (compact 160 studi = 1.812 dtk, 0 fallback); `s6plusr` (S6+reader+OF terakhir pseudo-uji 160) LULUS (OF coverage 0,65 dlm 24 mnt; blend 3 perna OK; MemAvail min 16 GB); sonda `s6probe` (1.530 dtk; ERROR akhir = artefak pseudo, diperbaiki). RAM compact stabil ±16–17 GB bebas (tak ada kebocoran) |
 | Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu `scripts/submit_two.sh` SUDAH men-submit `s6reader` v1 (57055673) dan `s6plus` v1 (57055781) pada 11 Okt 07:03 WIB (agen 2/5; keduanya PENDING)**; monitor `progress_submisi.sh` ×2 jalan |
 | Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
-| Riset 11 Okt | SELESAI: 18 thread + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md`; satu-satunya (S7) = bundel privat heliosli (tak bisa dipakai); Fase B pseudo-label = langkah berikutnya |
+| Riset 11 Okt | SELESAI: 18 thread + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md`; bundel S7 heliosli privat; Fase B naik prioritas |
+| Eksperimen 11 Okt siang (4 GPU paralel) | **main**: `s6prb` (S6 + probit-blend + residual Synovitis) & `s6of` (S6 + OF 0,15 tanpa reader) RUNNING; **alver**: `s6clean-akun2` (asuransi tanpa Raptor) RUNNING; **irfan**: `teacher-train` (r384 solo → prediksi 4.407 train utk pseudo-label; 1,09 dtk/studi ≈ 80–90 mnt) RUNNING. Rencana submit: s6prb & s6of dari main saat COMPLETE (jatah main 4/5); s6clean dari alver (kuota terpisah) |
 | Git | 65 commit lokal di-push 11 Okt ~09:50 WIB atas perintah user; diff diperiksa: tak ada kredensial |
 | Menunggu user | ~~merger & pesan support~~ **DIBATALKAN (user 11 Okt: fokus skor sendiri)**; sisa: pilihan 2 final 21–22 Okt; `nxtirfan` (token) |
 | Vigia | `watch.sh` (scratchpad) memantau heliosli/nartaa/goodpjw + notebook baru tiap 30 mnt → `watch.log` (cari S7) |

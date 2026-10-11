@@ -15,7 +15,7 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (11 Okt ~10:50 WIB)
+## 0c. Status (11 Okt ~11:10 WIB)
 | Hal | Keadaan |
 |---|---|
 | Papan (06:40 WIB) | 5.709 tim; kita **0,954 rank 144** (klon S6 user; 49 tim tepat di 0,954; ≥0,954 = 150, ≥0,955 = 101, ≥0,960 = 32); perak ≈ rank 285 (0,951), perunggu ≈ 571 (0,950); dataran 0,954 mulai rank 102 dan akan membengkak |
@@ -38,7 +38,8 @@
 - Tanpa aksi; arsip kandidat tetap di `docs/KANDIDAT_MERGER.md`. Agen fokus J2 (varian S6+) dan J3 (final).
 ### E. Final (21–22 Okt)
 - Variasi baru terakhir ≤20 Okt. Pilih 2 final dari submisi TERSKOR; beda mekanisme (A = S6/varian terbaik; B = varian S6+ atau bersih); verifikasi lewat daftar submisi; cek ulang 743416.
-- **Riset 11 Okt SELESAI** (`reports/Riset diskusi + best-score code 11 Okt.md`): `one-click-955` heliosli = bundel privat (tak dipakai); **Fase B pseudo-label OOF 50/50 = prioritas naik** (guru S6/Apex → murid ConvNeXt-T 2.5D 5-fold, target steven_v4/konsensus; validator OOF-vs-weak-label r=0,87); uji post-hoc (probit/residual/bobot per-label) dgn protokol gating kozykappa; gratis: verifikasi slice-order IPP + audit fp16; pantau `kaggle datasets list -s r3cnx`.
+- **Riset 11 Okt SELESAI** (`reports/Riset diskusi + best-score code 11 Okt.md`): Fase B pseudo-label = prioritas naik (validator OOF-vs-weak-label r=0,87); pantau `kaggle datasets list -s r3cnx`.
+- **Eksekusi 11 Okt siang (perintah user: pakai GPU alver+irfan)**: `s6prb` (probit+synres) & `s6of` (OF-only) RUNNING di main; `s6clean-akun2` RUNNING di alver; `teacher-train` RUNNING di irfan (Fase B langkah 1). **Saat COMPLETE**: submit `s6prb` & `s6of` dari main (`kaggle competitions submit -k dimaspashaakrilian/rsna-knee-s6prb -v 1`), submit `s6clean` dari alver (`bash kg2.sh competitions submit -c rsna-knee-abnormality-detection -k alverlfarfaraway/rsna-knee-s6clean-akun2 -v 1`); pasang monitor; teacher CSV → `bash kg3.sh kernels output nxtirfan/rsna-knee-teacher-train --file-pattern 'teacher_r384_train_preds\.csv' -p data/`. Berikutnya bangun murid ConvNeXt-T 2.5D (Fase B langkah 2).
 
 ## 2. Alat & perintah
 - Builder: **`build_s6plus.py`** (`name= reader=1 of=1 wr= wc= wo= pseudo= t0=nb|now stop_h= kill_h= deadline= lenient=1`), `build_s6probe.py` (sonda S6), `build_apexof4.py` (Apex+OF v4.1), `of_stage_v4.py` (+`test_of_v4_local.py`), `build_ofmem.py` (profil memori), lama: `build_submit_legs.py`/`of_stage.py`/`build_scale_of2.py`.

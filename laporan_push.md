@@ -31,6 +31,9 @@
 | 12 | 11 Okt 02:56 | **57051680** | **Salinan S6 heliosli oleh USER** (Raptor 0,7 + compact 0,3; bundel `209a32c8` dipulihkan 02:50 WIB) | **0,954** | +0,004 | **TERBAIK; kandidat final A; rank 144** | COMPLETE ±06:40 WIB (±3 j 45 mnt); papan 06:40: 5.709 tim, ≥0,954 = 150 (49 tepat 0,954) |
 | 13 | 11 Okt 07:03 | **57055673** | **`s6reader` v1**: S6 (Raptor 0,7 + compact 0,3) + reader goodpjw dipatenkan ke perna Raptor (bobot per-temuan ×0,5; kontroler lenient) | PENDING | — | menunggu skor (±10:30–11:00 WIB) | pewaktu `scripts/submit_two.sh`; agen 2/5; monitor jalan |
 | 14 | 11 Okt 07:04 | **57055781** | **`s6plus` v1**: S6 + reader goodpjw ×1,0 + leg OF fold0 0,15 (stage terakhir, supervisor v4.1, deadline 7,9 h) | PENDING | — | menunggu skor | pewaktu; OF = pengetahuan baru pertama di atas S6 |
+| 15 | 11 Okt ~15:00 | **s6prb** (dimilik rencana) | **`s6prb` v1**: S6 + **probit-quantile fusion** (ndtri-space blend; rabari9999) + **residual Synovitis** (0,72/0,23/0,05; romantamrazov; koef TETAP) — `build_s6plus.py probit=1 synres=1` | (kernel RUNNING) | — | submit saat COMPLETE; jatah main 4/5 | dua perubahan pascablend dlm 1 lengan; bila menang tak tahu yg mana — terima risiko |
+| 16 | 11 Okt ~15:00 | **s6of** (direncanakan) | **`s6of` v1**: S6 + leg OF fold0 **0,15 tanpa reader** (Raptor 0,55 + compact 0,30; supervisor v4.1) — mengisolasi pengetahuan OF | (kernel RUNNING) | — | submit saat COMPLETE | pembanding utk s6plus (reader+OF) |
+| 17 | 11 Okt ~14:00 | **s6clean (alver)** | **`s6clean`** asuransi: compact + reader goodpjw, **TANPA Raptor/OAI** (noraptor path) — di akun alverlfarfaraway (kuota terpisah; perintah user 11 Okt) | (kernel RUNNING) | — | submit dari alver saat COMPLETE; skor ekspektasi rendah tapi = asuransi final B | risiko Rules 5.a = keputusan user |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -88,6 +91,7 @@
 - [ ] 13–15 Okt: semua kandidat ter-push sebelum 15 Okt 23:59 UTC (merger dibatalkan).
 - [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); pantau bundel privat heliosli (`-s r3cnx`) dan notebook publik; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
 - [x] 11 Okt 09:50–10:45: riset diskusi (18 thread) + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md` (one-click-955 = bundel privat; Fase B pseudo-label naik prioritas; cek IPP+fp16; protokol kozykappa utk uji post-hoc).
+- [x] 11 Okt 11:00–11:10: builder + flag `probit`/`synres`; push `s6prb` & `s6of` (main), `s6clean-akun2` (alver), `teacher-train` (irfan; Fase B langkah 1) — 4 GPU paralel. Berikutnya: submit saat COMPLETE + bangun murid ConvNeXt-T.
 - [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (A = S6/varian terbaik, B = beda mekanisme/bersih); verifikasi via daftar submisi.
 
 ## 5. Daya & batas (11 Okt 03:45 WIB)
