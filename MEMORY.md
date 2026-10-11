@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt); arah/cadangan → **`docs/PLAN_B.md` §00**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-11T09:45:00+07:00
+> Last updated: 2026-10-11T10:50:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -22,16 +22,18 @@
 - **S6 (heliosli) HIDUP LAGI (11 Okt 02:50 WIB)**: `heliosli/rsna-knee-compact-v1` publik (V1–V13; V10=V13 `209a32c8` cnx_s6: ConvNeXt-S 4 fold, 384/352, state 'opusv11b') + notebook publik = **Raptor 0,7 + compact 0,3 = 0,954 satu klik** (thread 748141). Tahap compact = decode `native_cache` + GPU (2 pekerja ±18–20 dtk/studi) ≈3,5 j; kontroler ERROR bila >3 % fallback; DEADLINE 8,3 j. **Salinan user 57051680 = 0,954 COMPLETE (skor ±06:40 WIB; run penuh ±3 j 45 mnt dari submit 02:56 → compact ±3,2 j) — S6 TERBUKTI jalan di run penilaian; kita rank 144.** Zoologi bundel: V4 ofl_ft8, V7 cnx_s5 (0,951), V8 dino_s1 (DINOv3-B), V9 dual.
 - **KOREKSI**: resep heliosli = Raptor + COMPACT, BUKAN OF; bobot OF fold0 tak pernah dipakai di notebook heliosli (hanya kodenya). OF fold0 (ViT-L; validasi lemah 0,9318; emas-58 0,9535 TERKONTAMINASI 48/58) belum pernah diukur di LB → prior ≥+0,001 di atas S6 ≤20 %.
 - **57044355 = 0,950** karena kaki OF mati OOM (induk Apex 18 GB RSS + pekerja OF 8–10 GB; terkonfirmasi `apexof4d`). **Perbaikan v4.1** (`of_stage_v4.py`, `build_apexof4.py`): supervisor klaim/restart/daur-ulang, `pin_memory=False`, `torch.load(mmap=True)` (puncak/pekerja 8,8→5,1 GB); rehearsal r2 LULUS (194 studi/jam, 3 pekerja). Dipakai ulang di `build_s6plus.py`.
+- **Riset diskusi+16 kernel best-score (11 Okt pagi)**: `one-click-955` heliosli (≈0,955) = bundel **privat** `r3cnx384` (crop 384) — tak bisa dipublik, pantau rilisnya; validator resmi = **OOF-vs-weak-label (r=0,87)**, emas-58 rusak (r=0,66); 8 set label publik tak beda → steven_v4/konsensus + imputasi hanya Synovitis←Effusion; **pseudo-label OOF 50/50 = lever 0,951+** → Fase B prior naik; post-hoc: probit-space (rabari), residual Synovitis (romantamrazov), uji dgn protokol gating gold58 gaya kozykappa (bootstrap 750×); cek gratis: slice order by **IPP** (+0,028), **fp16-only** (bf16 T4 = −0,14 diam), jangan DINOv3/jangan tune bobot di publik split; thread 748141 dihapus, 748111 tak ada bocoran. Laporan: `reports/Riset diskusi + best-score code 11 Okt.md`.
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (11 Okt 09:45 WIB)
+## 3. Status (11 Okt 10:50 WIB)
 | Hal | Keadaan |
 |---|---|
 | Submisi | **terbaik 0,954 (57051680 = klon S6 oleh user, COMPLETE ±06:40; rank 144)**; Apex 56943646 0,950; 57025414 Apex+MaVIT 0,949; 57028008 Timeout; 57044355 = 0,950 (OF OOM; bukan vonis OF). Jendela 11 Okt: **s6reader 57055673 + s6plus 57055781 di-submit 07:03 (PENDING; monitor jalan)**; sisa 3/5 |
 | Rehearsal | `apexof4r3` LULUS (4 pekerja 228 studi/jam, MemAvail min 13,8 GB); `s6cleanr` LULUS (compact 160 studi = 1.812 dtk, 0 fallback); `s6plusr` (S6+reader+OF terakhir pseudo-uji 160) LULUS (OF coverage 0,65 dlm 24 mnt; blend 3 perna OK; MemAvail min 16 GB); sonda `s6probe` (1.530 dtk; ERROR akhir = artefak pseudo, diperbaiki). RAM compact stabil ±16–17 GB bebas (tak ada kebocoran) |
 | Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu `scripts/submit_two.sh` SUDAH men-submit `s6reader` v1 (57055673) dan `s6plus` v1 (57055781) pada 11 Okt 07:03 WIB (agen 2/5; keduanya PENDING)**; monitor `progress_submisi.sh` ×2 jalan |
 | Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
+| Riset 11 Okt | SELESAI: 18 thread + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md`; satu-satunya (S7) = bundel privat heliosli (tak bisa dipakai); Fase B pseudo-label = langkah berikutnya |
 | Git | 65 commit lokal di-push 11 Okt ~09:50 WIB atas perintah user; diff diperiksa: tak ada kredensial |
 | Menunggu user | ~~merger & pesan support~~ **DIBATALKAN (user 11 Okt: fokus skor sendiri)**; sisa: pilihan 2 final 21–22 Okt; `nxtirfan` (token) |
 | Vigia | `watch.sh` (scratchpad) memantau heliosli/nartaa/goodpjw + notebook baru tiap 30 mnt → `watch.log` (cari S7) |
