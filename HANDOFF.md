@@ -15,16 +15,15 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (11 Okt ~11:10 WIB)
+## 0c. Status (11 Okt ~21:45 WIB)
 | Hal | Keadaan |
 |---|---|
-| Papan (06:40 WIB) | 5.709 tim; kita **0,954 rank 144** (klon S6 user; 49 tim tepat di 0,954; ≥0,954 = 150, ≥0,955 = 101, ≥0,960 = 32); perak ≈ rank 285 (0,951), perunggu ≈ 571 (0,950); dataran 0,954 mulai rank 102 dan akan membengkak |
-| **S6 (heliosli) HIDUP LAGI** | 02:50 WIB dataset `rsna-knee-compact-v1` publik (V1–V13) + notebook S6 publik (Raptor 0,7 + compact 0,3 = **0,954**). **Salinan user = 57051680: COMPLETE 0,954 (±06:40 WIB; ±3 j 45 mnt total) → S6 terbukti jalan di run penilaian**. Compact: ConvNeXt-S 4 fold, tahap GPU-bound ±18–20 dtk/studi/pekerja (2 pekerja) → 1.322 studi ±3,5 j (sonda `s6probe`: 80/80 per pekerja, 0 fallback; ERROR sonda = artefak pseudo-uji, sudah diperbaiki) |
-| Submisi | **terbaik 0,954 = 57051680 (klon S6 user)**. Apex 56943646 0,950; 57025414 Apex+MaVIT 0,949 (BUANG); 57028008 Apex+OF Timeout; **57044355 Apex+OF v3 = 0,950 (OF TIDAK jalan: OOM; bukan vonis OF)**. Jendela 11 Okt: 2/5 terpakai (s6reader+s6plus); sisa 3/5 |
-| OF | premis dikoreksi: heliosli TIDAK memakai bobot OF (hanya kode); prior ≥+0,001 di atas S6 ≤20 %. Infrastruktur v4.1 siap (`of_stage_v4.py`, `build_apexof4.py`); rehearsal `apexof4r2` LULUS (194 studi/jam dgn 3 pekerja, MemAvail min 19 GB); `apexof4r3` (4 pekerja tanpa injeksi) berjalan |
-| **Tindakan aktif** | `s6reader` v1 (reader ×0,5) dan `s6plus` v1 (reader ×1,0 + OF 0,15 terakhir): commit-run stub LULUS; **pewaktu SUDAH men-submit keduanya 11 Okt 07:03 WIB: 57055673 `s6reader` + 57055781 `s6plus` (keduanya PENDING; agen 2/5, sisa 3)**; monitor `progress_submisi.sh` ×2 jalan; `s6plusr` (rehearsal OF-terakhir pada pseudo-uji) berjalan ±04:50; `s6clean` (asuransi) siap, submit ≥12 Okt; klon S6 57051680 = 0,954 COMPLETE (final A kandidat) |
-| Kuota | GPU ±19–20 h (reset 17 Okt 07:00 WIB); TPU tak berguna; submisi: reset 07:00 WIB (5/hari tim; agen ≤2) |
-| Forum (11 Okt) | 748141 heliosli memulihkan dataset ("blend my model with yours"); 735304 "best single-model": ConvNeXt-T 5-fold single 0,953–0,959 dgn pseudo-label (MURAD, colum2131) → pemisah = label; 744056 kelayakan hadiah dgn bobot publik (host diam); 748011 validasi OOF-label r=0,87 vs LB. Detail `docs/RESEARCH_NOTES.md` §44 |
+| Submisi terbaik | **0,954** (57051680 klon S6 user; rank 144). Varian 11 Okt semua ≤0,954: s6reader 0,954 (net-zero), s6prb 0,954 (net-zero, aman ulang), s6plus 0,952, s6clean 0,950, **s6of 0,951** (OF−0,003; tutup). Plafon S6+reader = 0,954 — varian S6 TUTUP kecuali murid/blend. Main 5/5 habis; alver 3 sisa |
+| **Malam ini — pipeline murid 0,960** | **prep v4 cache-only RUNNING 21:12** (cache256 ulang + push → dataset `alverlfarfaraway/rsna-knee-student-cache256`; labels+meta sudah ada; watch_prep3.log) → ~23:30 push **train-a+b** paralel (2 GPU alver, ~5 j) → train-c + dino (~05:00–07:30) → fold ckpt + dino_full.pt didatasetkan → **infer** (murid solo; preds → dataset `rsna-knee-student-preds`) → submit murid solo → **`s6student`** (S6 0,65 + murid 0,35; `build_s6student.py`, fallback S6) |
+| Label murid | blend50 (konsensus4⊕teacher 0,5) **emas-58 AUC 0,929** > konsensus 0,896; fold valid GroupKFold 5×870 + 58 emas fold=−1 |
+| OAI | host diam (743416/748276); +0,006–0,008 (nartaa). **User ditanya 21:16 — belum jawab**; agen TIDAK eksekusi tanpa jawaban eksplisit |
+| Kuota | GPU alver ±24 j (2 sesi; prep = CPU-only, tak makan GPU); irfan ±19 j; main reset 17 Okt 07:00 WIB. Submisi: alver 3, irfan 5 |
+| Git | 67+ commit lokal (ac48abf s6student; 11a0f39 prep v4); belum push — perintah user |
 
 ## 1. Urutan kerja
 ### A. 11 Okt 03:35–07:03 — SELESAI
