@@ -47,6 +47,8 @@ T0MODE = args.get("t0", "nb")              # nb = NB_T0 do S6 (producao) | now =
 DEADLINE = args.get("deadline", "")        # troca DEADLINE_HOURS do compact (S6 original 8.3)
 LENIENT = args.get("lenient", "1") == "1"
 RSCALE = float(args.get("rscale", "1.0"))        # escala dos pesos por-finding do reader (Apex TARGET_WEIGHTS); 0.5 = reader conservador
+PROBIT = args.get("probit", "0") == "1"          # blend no espaco z (ndtri/ndtr) — probit-quantile fusion (rabari9999)
+SYNRES = args.get("synres", "0") == "1"          # residual Synovitis pos-blend (romantamrazov V16; coef FIXOS 0.72/0.23/0.05, sem fitting)
 NB = Path(args.get("nb", ROOT / "kaggle_base" / "s6_heliosli_public_20261011.ipynb"))
 BASE_APEX = ROOT / "kaggle_base" / "apex_grandmaster_stack_20261008.ipynb"
 
@@ -128,6 +130,18 @@ BLEND_CELL = r'''
 import csv, os
 import numpy as np
 import pandas as pd
+PROBIT = __PROBIT__   # True = blend em espaco z (probit-quantile fusion); False = rank pct direto (S6 original)
+SYNRES = __SYNRES__   # True = residual Synovitis pos-blend (coef fixos, sem fitting em ouro-58)
+try:
+    from scipy.special import ndtri as _ndtri, ndtr as _ndtr
+except Exception as _e:
+    print('[BLEND] scipy ausente -> probit desligado:', repr(_e)[:90], flush=True)
+    PROBIT = False
+    _ndtri = _ndtr = None
+def _to_leg(v):
+    return _ndtri(np.clip(v, 1e-6, 1.0 - 1e-6)) if PROBIT else np.asarray(v, dtype=np.float64)
+def _from_leg_arr(z):
+    return np.clip(_ndtr(z), 0.0, 1.0) if PROBIT else np.clip(z, 0.0, 1.0)
 W_RAPTOR, W_OURS, W_OF = __WR__, __WC__, __WO__
 READER_W = {"Baker's": 0.35, "Contusion": 0.30, "Medial OA": 0.25, "ACL": 0.25, "Medial Meniscus": 0.20, "MCL": 0.20,
             "Lateral Meniscus": 0.08, "Fracture": 0.08, "Lateral OA": 0.08, "PF OA": 0.08, "Effusion": 0.04, "Synovitis": 0.03}
@@ -189,22 +203,31 @@ for j, c in enumerate(labels):
         w = READER_W.get(c, 0.15) * __RSCALE__
         rr = pct((1.0 - w) * rr + w * pct(reader[c].values))
     ro = pct(ours[c].values)
+    rr, ro = _to_leg(rr), _to_leg(ro)
     num = np.where(rap_fail, 0.0, W_RAPTOR * rr) + np.where(our_fail, 0.0, W_OURS * ro)
     den = np.where(rap_fail, 0.0, W_RAPTOR) + np.where(our_fail, 0.0, W_OURS)
     if ofl is not None:
         ov = ofl[c].values
         ok = ~np.isnan(ov)
         po = np.zeros(n)
-        po[ok] = pct(ov[ok])
+        po[ok] = _to_leg(pct(ov[ok]))
         num = num + np.where(ok, W_OF * po, 0.0)
         den = den + np.where(ok, W_OF, 0.0)
-    b = np.where(den > 0, num / np.maximum(den, 1e-12), 0.5)
+    braw = np.where(den > 0, num / np.maximum(den, 1e-12), 0.0)
+    b = np.where(den > 0, _from_leg_arr(braw), 0.5)
     out[:, j] = b
     if n >= 3:
         rho_rr[c] = round(float(pd.Series(raw[c].values).corr(pd.Series(rsub[c].values), method='spearman')), 4)
         rho_ro[c] = round(float(pd.Series(raw[c].values).corr(pd.Series(ours[c].values), method='spearman')), 4)
 if rho_rr and min(rho_rr.values()) < 0.99:
     raise RuntimeError('Raptor raw dump does not match its own submission ranks: %s' % rho_rr)
+if SYNRES:
+    try:
+        _i_s, _i_e, _i_b = labels.index('Synovitis'), labels.index('Effusion'), labels.index("Baker's")
+        out[:, _i_s] = 0.72 * out[:, _i_s] + 0.23 * out[:, _i_e] + 0.05 * out[:, _i_b]
+        print('[BLEND] residual Synovitis ativo (0.72/0.23/0.05, coef FIXOS)', flush=True)
+    except ValueError as _e:
+        print('[BLEND] synres pulado:', _e, flush=True)
 sub = pd.DataFrame(out.astype(np.float32), columns=labels)
 sub.insert(0, 'StudyInstanceUID', test_ids)
 sub = sub[cols]
@@ -212,6 +235,7 @@ assert sub['StudyInstanceUID'].tolist() == test_ids and np.isfinite(sub[labels].
 assert ((sub[labels].values >= 0) & (sub[labels].values <= 1)).all()
 sub.to_csv(WORK / 'submission.csv', index=False)
 blend = {'weights': {'raptor': W_RAPTOR, 'ours': W_OURS, 'of': W_OF}, 'reader': reader is not None, 'of_leg': ofl is not None, 'rows': n,
+         'probit': PROBIT, 'synres': SYNRES,
          'raptor_failed': int(rap_fail.sum()), 'ours_failed': int(our_fail.sum()), 'raptor_seconds': round(RAPTOR_SECONDS, 1),
          'total_seconds': round(time.time() - NB_T0, 1), 'spearman_raptor_raw_vs_sub': rho_rr, 'spearman_raptor_vs_ours': rho_ro}
 (WORK / 'blend_receipt.json').write_text(json.dumps(blend, indent=1))
@@ -359,7 +383,7 @@ if OF:
     inner = re.search(r'_OF_WORKER_SRC = r"""(.*?)"""\n', of_cell, re.S).group(1)
     compile(inner, "of-worker", "exec")
     new_cells.append(code(of_cell))
-blend = (BLEND_CLEAN if NORAPTOR else BLEND_CELL).replace("__WR__", repr(WR)).replace("__WC__", repr(WC)).replace("__WO__", repr(WO)).replace("__RSCALE__", repr(RSCALE))
+blend = (BLEND_CLEAN if NORAPTOR else BLEND_CELL).replace("__WR__", repr(WR)).replace("__WC__", repr(WC)).replace("__WO__", repr(WO)).replace("__RSCALE__", repr(RSCALE)).replace("__PROBIT__", "True" if PROBIT else "False").replace("__SYNRES__", "True" if SYNRES else "False")
 compile(blend, "blend", "exec")
 new_cells.append(code(blend))
 nb["cells"] = new_cells
