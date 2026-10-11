@@ -35,6 +35,8 @@
 | 16 | 11 Okt 11:03 | **57062953** | **`s6of` v1**: S6 + leg OF fold0 **0,15 tanpa reader** (Raptor 0,55 + compact 0,30; supervisor v4.1) — mengisolasi pengetahuan OF | PENDING | — | jatah main 5/5 (sisa 0 utk hari ini) | pembanding utk s6plus (reader+OF) |
 | 17 | 11 Okt 11:03 | **57062959** | **`s6clean`** asuransi: compact + reader goodpjw, **TANPA Raptor/OAI** (noraptor path) — di akun alverlfarfaraway (kuota terpisah; perintah user 11 Okt) | **0,950** | — | asuransi: Raptor = +0,004 | Rules 5.a risiko = keputusan user; tetap berharga sbg jaring pengaman final |
 | — | 11 Okt ~13:00 | **teacher-train** (irfan) | Fase B langkah 1: r384 solo → prediksi 4.407 studi train; CSV `data/teacher_r384_train_preds.csv` (0 fallback, 80–90 mnt) | COMPLETE | — | bahan murid ConvNeXt-T 2.5D (langkah 2) | in-sample (bukan OOF) — caveat diketahui |
+| — | 11 Okt 17:40 | **student-prep** (alver) | Fase B langkah 2a: cache256 uint8 (FOV 128 mm, max 28 sl, IPP sort) + labels konsensus 4 tabel ⊕ teacher 0,5 + fold transplant | RUNNING v2 | — | push ke dataset alver; v1 ERROR (mount finder 1 level) | CPU-only; ~2 jam |
+| — | 11 Okt (siap) | **student-train-a/b/c** (alver) | Fase B langkah 2b: ConvNeXt-T 5-fold (split 3 kernel: 0-1/2-3/4), fp16+GradScaler, EMA, 14 ep, resume per fold | siap push | — | push a+b paralel setelah prep; lalu c | template goodpjw train.py; jangan bf16 di T4 |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -92,7 +94,8 @@
 - [ ] 13–15 Okt: semua kandidat ter-push sebelum 15 Okt 23:59 UTC (merger dibatalkan).
 - [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); pantau bundel privat heliosli (`-s r3cnx`) dan notebook publik; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
 - [x] 11 Okt 09:50–10:45: riset diskusi (18 thread) + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md` (one-click-955 = bundel privat; Fase B pseudo-label naik prioritas; cek IPP+fp16; protokol kozykappa utk uji post-hoc).
-- [x] 11 Okt 11:00–11:10: builder + flag `probit`/`synres`; push `s6prb` & `s6of` (main), `s6clean-akun2` (alver), `teacher-train` (irfan; Fase B langkah 1) — 4 GPU paralel. Berikutnya: submit saat COMPLETE + bangun murid ConvNeXt-T.
+- [x] 11 Okt 11:00–11:10: builder + flag `probit`/`synres`; push `s6prb` & `s6of` (main), `s6clean-akun2` (alver), `teacher-train` (irfan) — 4 GPU paralel.
+- [x] 11 Okt 16:49–17:50: skor keluar (s6prb/s6reader=0,954; s6plus=0,952; s6clean=0,950); riset mendalam murid+forum (2 subagen); dataset teacher `alverlfarfaraway/rsna-knee-teacher-r384-train`; `student-prep` RUNNING; `student-train-a/b/c` siap. Berikutnya: monitor prep → push train a,b → c → `student-infer` + blend S6 → submit dari alver.
 - [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (A = S6/varian terbaik, B = beda mekanisme/bersih); verifikasi via daftar submisi.
 
 ## 5. Daya & batas (11 Okt 03:45 WIB)

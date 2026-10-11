@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt); arah/cadangan → **`docs/PLAN_B.md` §00**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-11T16:55:00+07:00
+> Last updated: 2026-10-11T17:50:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -34,7 +34,7 @@
 | Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu `scripts/submit_two.sh` SUDAH men-submit `s6reader` v1 (57055673) dan `s6plus` v1 (57055781) pada 11 Okt 07:03 WIB (agen 2/5; keduanya PENDING)**; monitor `progress_submisi.sh` ×2 jalan |
 | Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
 | Riset 11 Okt | SELESAI: 18 thread + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md`; bundel S7 heliosli privat; Fase B naik prioritas |
-| Eksperimen 11 Okt (skor akhir) | `s6reader` 57055673 = **0,954**; `s6prb` 57062952 (probit+synres) = **0,954** (net-zero, aman dipakai ulang); `s6plus` 57055781 (reader ×1,0 + OF 0,15) = **0,952** (−0,002 = noise-bawah); `s6clean` alver 57062959 = **0,950** (asuransi: Raptor = +0,004); `s6of` 57062953 PENDING. **Teacher-train SELESAI** (4.407 preds, 0 fallback) → Fase B langkah 2 = murid ConvNeXt-T. Jatah main habis; alver+irfan masih ada |
+| Eksperimen 11 Okt (skor akhir) | `s6reader`=**0,954**; `s6prb`=**0,954**; `s6plus`=**0,952**; `s6clean` alver=**0,950**; `s6of` PENDING. Plafon S6+reader = 0,954 = dataran 244 tim (rank 289, garis perak 286) → **perak butuh ≥0,955**. **Fase B murid ConvNeXt-T AKTIF** (semua di alver): teacher CSV ready → `student-prep` RUNNING (cache256 + konsensus4⊕teacher 50/50); `student-train-a/b/c` siap (fold 0-1 / 2-3 / 4, fp16, EMA, 14 epoch, resume). Riset mendalam: `reports/Riset murid+forum 11 Okt sore.md` (segera) |
 | Git | 65 commit lokal di-push 11 Okt ~09:50 WIB atas perintah user; diff diperiksa: tak ada kredensial |
 | Menunggu user | ~~merger & pesan support~~ **DIBATALKAN (user 11 Okt: fokus skor sendiri)**; sisa: pilihan 2 final 21–22 Okt; `nxtirfan` (token) |
 | Vigia | `watch.sh` (scratchpad) memantau heliosli/nartaa/goodpjw + notebook baru tiap 30 mnt → `watch.log` (cari S7) |
