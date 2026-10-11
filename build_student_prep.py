@@ -64,13 +64,9 @@ SERIES = pd.read_csv(f"{COMP}/train_series.csv")
 say("train", len(TRAIN), "series rows", len(SERIES))
 
 EXT = {}
-EXT["steven"] = find(["llm_labels_v4_blend.csv"])
-EXT["pilkwang"] = find(["report_labels_v2.csv"])
-EXT["lixin"] = find(["labels_llm_gpt56sol.csv"])
-EXT["qwen"] = find(["qwen_knee_weak_labels.csv"])
-TEACHER = find(["teacher_r384_train_preds.csv"])
-assert all(EXT.values()), (EXT, sorted(os.listdir("/kaggle/input")))
-say("labels ok:", EXT); say("teacher:", TEACHER)
+# labels sudah di dataset cache256 (diunggah dari lokal) — cell labels dilewati di v4 cache-only
+TEACHER = None
+say("cache-only v4: labels dari dataset cache256")
 
 # pylibjpeg utk decode cepat (wheel dari dataset goodpjw)
 whl_dir = os.path.dirname(find(["pylibjpeg-2.1.0-py3-none-any.whl"]) or "")
@@ -201,76 +197,36 @@ say("meta rows", len(meta), "files", len(os.listdir(OUT)))
 
 # ---------- labels: konsensus 4 ⊕ teacher 0.5 ----------
 CELL3 = r'''
-import re, numpy as np, pandas as pd
-from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import GroupKFold
-
-LABELS = ["ACL", "MCL", "Medial Meniscus", "Lateral Meniscus", "Medial OA", "Lateral OA",
-          "PF OA", "Effusion", "Synovitis", "Baker's", "Contusion", "Fracture"]
-ids = TRAIN.StudyInstanceUID
-gold = TRAIN.set_index("StudyInstanceUID")[LABELS]
-is_gold = gold.notna().all(axis=1)
-
-src = {}
-src["steven"] = pd.read_csv(EXT["steven"])
-src["pilkwang"] = pd.read_csv(EXT["pilkwang"])
-src["lixin"] = pd.read_csv(EXT["lixin"])
-q = pd.read_csv(EXT["qwen"])
-src["qwen"] = q[["StudyInstanceUID"] + [f"{c}__label" for c in LABELS]].set_axis(["StudyInstanceUID"] + LABELS, axis=1)
-src = {k: v.set_index("StudyInstanceUID")[LABELS].astype(float).reindex(ids) for k, v in src.items()}
-num = sum(src[k].fillna(0) for k in src); den = sum(src[k].notna() for k in src)
-cons = (num / den).clip(0.01, 0.99)
-
-teacher = pd.read_csv(TEACHER).set_index("StudyInstanceUID")[LABELS].astype(float).reindex(ids)
-alpha = 0.50
-soft = ((1 - alpha) * cons.fillna(0.5) + alpha * teacher.fillna(0.5)).clip(0.01, 0.99)
-
-print("AUC emas-58 (sumber vs label resmi):")
-tab = {}
-for k, v in {**src, "consensus": cons, "teacher": teacher, "blend50": soft}.items():
-    tab[k] = [roc_auc_score(gold.loc[is_gold, c], v.loc[is_gold, c].fillna(0.5)) for c in LABELS]
-t = pd.DataFrame(tab, index=LABELS); t.loc["MEAN"] = t.mean()
-print(t.round(3).to_string())
-
-out = soft.copy(); out.insert(0, "is_gold", is_gold.astype(int)); out["fold"] = -1
-weak = ~is_gold.values
-groups = TRAIN.Report.map(lambda x: re.sub(r"\W+", "", str(x).lower())).values[weak]
-order = np.random.RandomState(0).permutation(weak.sum())
-folds = np.zeros(weak.sum(), int)
-for k, (_, va) in enumerate(GroupKFold(5).split(order, groups=groups[order])):
-    folds[order[va]] = k
-out.loc[weak, "fold"] = folds
-for c in LABELS:
-    out[f"gold_{c}"] = gold[c]
-out["consensus_mean"] = cons.mean(1).values
-out["teacher_mean"] = teacher.mean(1).values
-out.to_csv("/kaggle/working/labels_student_v0.csv")
-say("labels saved; fold sizes", out.fold.value_counts().sort_index().to_dict())
-say("mean soft:", out[LABELS].mean().round(2).to_dict())
+say("labels: dilewati (cache-only v4) — labels_student_v0.csv sudah di dataset cache256")
 '''
 
-# ---------- push ke dataset prep ----------
+# ---------- push cache ke dataset cache256 ----------
 CELL4 = r'''
-import os, json, subprocess, time, glob, shutil
-assert os.environ.get("KAGGLE_USERNAME"), "env kaggle tidak ada"
-DS_ID = f"{os.environ['KAGGLE_USERNAME']}/rsna-knee-student-prep"
+import os, json, subprocess, glob, shutil
+KC = None
+for p in ("/root/.kaggle/kaggle.json", os.path.expanduser("~/.kaggle/kaggle.json")):
+    if os.path.exists(p): KC = p; break
+assert KC, "kaggle.json credentials tidak ada"
+cred = json.load(open(KC))
+os.environ["KAGGLE_USERNAME"] = cred["username"]; os.environ["KAGGLE_KEY"] = cred["key"]
+DS_ID = "alverlfarfaraway/rsna-knee-student-cache256"
 meta = {
-    "id": DS_ID, "title": "RSNA Knee student prep cache256",
+    "id": DS_ID, "title": "RSNA Knee student cache256",
     "licenses": [{"name": "Other"}], "keywords": ["rsna", "knee", "cache"], "resources": []
 }
 os.makedirs("/tmp/ds_push", exist_ok=True)
 with open("/tmp/ds_push/dataset-metadata.json", "w") as f:
     json.dump(meta, f)
-shutil.copy("/kaggle/working/cache256_train_meta.csv", "/tmp/ds_push/")
-shutil.copy("/kaggle/working/labels_student_v0.csv", "/tmp/ds_push/")
-# taruh cache di subfolder (dataset CLI push folder)
-if os.path.exists("/tmp/cache256_train"):
-    os.system("ln -sfn /tmp/cache256_train /tmp/ds_push/cache256_train")
-say("pushing dataset (bisa lama)...")
-r = subprocess.run(["kaggle", "datasets", "version", "-p", "/tmp/ds_push", "-m", "cache256 + labels student v0"],
+if os.path.exists("/kaggle/working/cache256_train_meta.csv"):
+    shutil.copy("/kaggle/working/cache256_train_meta.csv", "/tmp/ds_push/")
+assert os.path.exists("/tmp/cache256_train"), "cache tidak ada"
+n = len(os.listdir("/tmp/cache256_train")); say("cache files", n)
+os.system("ln -sfn /tmp/cache256_train /tmp/ds_push/cache256_train")
+say("pushing dataset cache (bisa lama)...")
+r = subprocess.run(["kaggle", "datasets", "version", "-p", "/tmp/ds_push", "-m", "cache256 train (24371 series)"],
                    capture_output=True, text=True)
-say("push rc", r.returncode); say(r.stdout[-500:]); say(r.stderr[-500:])
-say("DONE prep")
+say("push rc", r.returncode); say((r.stdout + r.stderr)[-600:])
+say("DONE cache-push")
 '''
 
 def cell(src, ctype="code"):
