@@ -86,7 +86,8 @@
 - [ ] 11 Okt 03:35–04:45: rehearsal `s6plusr` (reader+compact+OF+blend 3 perna) dan `apexof4r3` (OF 4 pekerja) → push `s6reader`/`s6plus`.
 - [x] 11 Okt 07:03: pewaktu submit keduanya — s6reader (57055673) + s6plus (57055781) PENDING; monitor jalan; klon 57051680 = 0,954. ~~Merger~~ DIBATALKAN (user 11 Okt).
 - [ ] 13–15 Okt: semua kandidat ter-push sebelum 15 Okt 23:59 UTC (merger dibatalkan).
-- [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); pantau heliosli (S7?) dan notebook publik; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
+- [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); pantau bundel privat heliosli (`-s r3cnx`) dan notebook publik; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
+- [x] 11 Okt 09:50–10:45: riset diskusi (18 thread) + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md` (one-click-955 = bundel privat; Fase B pseudo-label naik prioritas; cek IPP+fp16; protokol kozykappa utk uji post-hoc).
 - [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (A = S6/varian terbaik, B = beda mekanisme/bersih); verifikasi via daftar submisi.
 
 ## 5. Daya & batas (11 Okt 03:45 WIB)
