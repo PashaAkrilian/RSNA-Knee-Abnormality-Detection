@@ -28,7 +28,7 @@ MD = {
     "category": "video",
     "competition_sources": ["rsna-knee-abnormality-detection"],
     "dataset_sources": [
-        "alverlfarfaraway/rsna-knee-student-prep",
+        "alverlfarfaraway/rsna-knee-student-cache256",
         "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
         "goodpjw2008/rsna-knee-2-5d-convnext-reader",
     ],

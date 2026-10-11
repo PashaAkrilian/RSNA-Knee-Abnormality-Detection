@@ -26,7 +26,7 @@ MD = {
     "category": "video",
     "competition_sources": ["rsna-knee-abnormality-detection"],
     "dataset_sources": [
-        "alverlfarfaraway/rsna-knee-student-prep",
+        "alverlfarfaraway/rsna-knee-student-cache256",
         "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
         "goodpjw2008/rsna-knee-2-5d-convnext-reader",
     ],
@@ -45,12 +45,18 @@ CELL0 = """# RSNA Knee — student-dino (Fase B, langkah 2c)
 """
 
 CELL1 = r'''
-import os, sys, glob, json, time, copy, math, shutil
+import os, sys, glob, json, time, copy, math, shutil, subprocess
 import numpy as np, pandas as pd, torch
 t0 = time.time()
 def say(*a): print(f"[{time.time()-t0:7.0f}s]", *a, flush=True)
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
 torch.backends.cudnn.benchmark = True
+
+def find(pats, base="/kaggle/input"):
+    for p in pats:
+        for f in glob.glob(os.path.join(base, "**", p), recursive=True):
+            return f
+    return None
 
 COMP = None
 for c in glob.glob("/kaggle/input/*"):
@@ -72,14 +78,126 @@ assert DINO, "dinov2-small/ (aset tonylica) tidak ketemu"
 sys.path.insert(0, GOODPJW)
 say("COMP", COMP); say("PREP", PREP); say("GOODPJW", GOODPJW); say("DINO", DINO)
 
+whl_dir = os.path.dirname(find(["pylibjpeg-2.1.0-py3-none-any.whl"]) or "")
+if whl_dir:
+    for w in sorted(glob.glob(os.path.join(whl_dir, "*.whl"))):
+        subprocess.run([sys.executable, "-m", "pip", "install", "-q", w], check=False)
+
 from knee import LABELS, KneeNet, StudyDataset, build_study_table, make_views, N_SLOTS  # noqa: E402
 from sklearn.metrics import roc_auc_score  # noqa: E402
 
 TRAIN = pd.read_csv(f"{COMP}/train.csv")
 SERIES = pd.read_csv(f"{COMP}/train_series.csv")
 lab = pd.read_csv(f"{PREP}/labels_student_v0.csv", index_col=0)
-meta = pd.read_csv(f"{PREP}/cache256_train_meta.csv")
 CACHE = f"{PREP}/cache256_train"
+if os.path.isdir(CACHE) and len(os.listdir(CACHE)) > 1000:
+    meta = pd.read_csv(f"{PREP}/cache256_train_meta.csv")
+    say("cache dari dataset", CACHE)
+else:
+    # ---- bangun cache on-demand (resep prep v3: SIZE 256, MM 0.5, MAX 28, IPP sort) ----
+    import cv2, pydicom
+    from multiprocessing import Pool
+    say("cache dataset absen — build on-demand dari DICOM")
+    MM_PER_PX, SIZE, MAX_SLICES = 0.5, 256, 28
+    CANON = {0: (+1, (1, +1), (2, -1)), 1: (+1, (0, +1), (2, -1)), 2: (-1, (0, +1), (1, +1))}
+    PLANES = ["Sagittal", "Coronal", "Axial"]
+    def _read(path):
+        ds = pydicom.dcmread(path)
+        arr = ds.pixel_array.astype(np.float32)
+        if ds.get("PhotometricInterpretation", "MONOCHROME2") == "MONOCHROME1":
+            arr = arr.max() - arr
+        slope, inter = ds.get("RescaleSlope"), ds.get("RescaleIntercept")
+        if slope is not None and inter is not None:
+            arr = arr * float(slope) + float(inter)
+        iop = [float(v) for v in ds.ImageOrientationPatient] if "ImageOrientationPatient" in ds else None
+        ipp = [float(v) for v in ds.ImagePositionPatient] if "ImagePositionPatient" in ds else None
+        ps = [float(v) for v in ds.PixelSpacing] if "PixelSpacing" in ds else None
+        inst = float(ds.get("InstanceNumber") or 0)
+        frames = list(arr) if arr.ndim == 3 else [arr]
+        return [(f, iop, ipp, ps, inst + i * 1e-3) for i, f in enumerate(frames)]
+    def _canon_slice(img, iop, ps, plane):
+        ps = ps or [MM_PER_PX * img.shape[0] / SIZE] * 2
+        if iop is None:
+            return img, ps
+        r, c = np.array(iop[:3]), np.array(iop[3:])
+        _, (cax, csgn), (rax, rsgn) = CANON[plane]
+        if abs(r[cax]) < abs(r[rax]):
+            img, r, c, ps = img.T, c, r, ps[::-1]
+        if r[cax] * csgn < 0:
+            img = img[:, ::-1]
+        if c[rax] * rsgn < 0:
+            img = img[::-1]
+        return img, ps
+    def _resample(img, ps):
+        out = np.zeros((SIZE, SIZE), np.float32)
+        h, w = img.shape
+        ch = min(h, int(round(SIZE * MM_PER_PX / ps[0])))
+        cw = min(w, int(round(SIZE * MM_PER_PX / ps[1])))
+        y0, x0 = (h - ch) // 2, (w - cw) // 2
+        crop = np.ascontiguousarray(img[y0:y0 + ch, x0:x0 + cw])
+        nh = max(1, min(SIZE, int(round(ch * ps[0] / MM_PER_PX))))
+        nw = max(1, min(SIZE, int(round(cw * ps[1] / MM_PER_PX))))
+        interp = cv2.INTER_AREA if nh < ch else cv2.INTER_LINEAR
+        res = cv2.resize(crop, (nw, nh), interpolation=interp)
+        oy, ox = (SIZE - nh) // 2, (SIZE - nw) // 2
+        out[oy:oy + nh, ox:ox + nw] = res
+        return out
+    def load_series(sdir, plane_name=None):
+        slices, bad = [], 0
+        for fn in os.listdir(sdir):
+            try:
+                slices.extend(_read(os.path.join(sdir, fn)))
+            except Exception:
+                bad += 1
+        info = {"n_raw": len(slices), "n_bad": bad}
+        if not slices:
+            return np.zeros((1, SIZE, SIZE), np.uint8), info
+        iop = next((s[1] for s in slices if s[1] is not None), None)
+        if iop is not None:
+            normal = np.cross(iop[:3], iop[3:]); plane = int(np.abs(normal).argmax())
+        else:
+            normal, plane = None, PLANES.index(plane_name) if plane_name in PLANES else 0
+        info["plane"] = PLANES[plane]
+        if normal is not None and all(s[2] is not None for s in slices):
+            sgn = CANON[plane][0] * np.sign(normal[plane])
+            slices.sort(key=lambda s: float(np.dot(s[2], normal)) * sgn)
+        else:
+            slices.sort(key=lambda s: s[4])
+        if len(slices) > MAX_SLICES:
+            keep = np.linspace(0, len(slices) - 1, MAX_SLICES).round().astype(int)
+            slices = [slices[i] for i in keep]
+        vol = np.stack([_resample(*_canon_slice(s[0], s[1], s[3], plane)) for s in slices])
+        lo, hi = np.percentile(vol[:, ::4, ::4], [1, 99.5])
+        vol = np.clip((vol - lo) / max(hi - lo, 1e-6), 0, 1)
+        info["n"] = len(vol)
+        return (vol * 255).round().astype(np.uint8), info
+    def _job(a):
+        study, series, plane = a
+        out = f"{CACHE}/{series}.npy"
+        info = {"study": study, "series": series}
+        if os.path.exists(out):
+            return None
+        try:
+            vol, extra = load_series(f"{COMP}/train_series/{study}/{series}")
+            np.save(out + ".tmp.npy", vol); os.replace(out + ".tmp.npy", out)
+            info.update(extra)
+        except Exception as e:
+            info["error"] = f"{type(e).__name__}: {e}"[:200]
+        return info
+    os.makedirs(CACHE, exist_ok=True)
+    tasks = [(a, b, p) for a, b, p in zip(SERIES.StudyInstanceUID, SERIES.SeriesInstanceUID, SERIES.Anatomical_Plane)]
+    rows = []
+    with Pool(4) as p:
+        for i, r in enumerate(p.imap_unordered(_job, tasks, chunksize=8)):
+            if r: rows.append(r)
+            if i % 1000 == 0:
+                say(f"cache {i}/{len(tasks)} files={len(os.listdir(CACHE))}")
+                if shutil.disk_usage("/tmp").free < 3 * 2**30:
+                    say("DISK HAMPIR HENTI"); break
+    df = pd.DataFrame(rows)
+    if "error" in df: say("errors:", int(df["error"].notna().sum()))
+    meta = df.dropna(subset=["n"]).copy()
+    say("meta rows", len(meta), "files", len(os.listdir(CACHE)))
 say("lab", lab.shape, "meta", meta.shape, "cache files", len(os.listdir(CACHE)))
 say("cuda", torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else "")
 assert torch.cuda.is_available()
