@@ -36,7 +36,9 @@
 | 17 | 11 Okt 11:03 | **57062959** | **`s6clean`** asuransi: compact + reader goodpjw, **TANPA Raptor/OAI** (noraptor path) — di akun alverlfarfaraway (kuota terpisah; perintah user 11 Okt) | **0,950** | — | asuransi: Raptor = +0,004 | Rules 5.a risiko = keputusan user; tetap berharga sbg jaring pengaman final |
 | — | 11 Okt ~13:00 | **teacher-train** (irfan) | Fase B langkah 1: r384 solo → prediksi 4.407 studi train; CSV `data/teacher_r384_train_preds.csv` (0 fallback, 80–90 mnt) | COMPLETE | — | bahan murid ConvNeXt-T 2.5D (langkah 2) | in-sample (bukan OOF) — caveat diketahui |
 | — | 11 Okt 17:40 | **student-prep** (alver) | Fase B langkah 2a: cache256 uint8 (FOV 128 mm, max 28 sl, IPP sort) + labels konsensus 4 tabel ⊕ teacher 0,5 + fold transplant | RUNNING v2 | — | push ke dataset alver; v1 ERROR (mount finder 1 level) | CPU-only; ~2 jam |
-| — | 11 Okt (siap) | **student-train-a/b/c** (alver) | Fase B langkah 2b: ConvNeXt-T 5-fold (split 3 kernel: 0-1/2-3/4), fp16+GradScaler, EMA, 14 ep, resume per fold | siap push | — | push a+b paralel setelah prep; lalu c | template goodpjw train.py; jangan bf16 di T4 |
+| — | 11 Okt (siap) | **student-train-a/b/c** (alver) | Fase B 2b: ConvNeXt-T 5-fold (0-1/2-3/4), fp16, EMA, warm-start goodpjw | siap push | — | push a+b paralel setelah prep | internet OFF → ImageNet tak bisa download; ckpt goodpjw sbg init |
+| — | 11 Okt (siap) | **student-dino** (alver) | keluarga ke-2: ViT-S DINOv2 one-shot (4.349 weak, emas val-only), PyTorch-murni key-strict | siap push | — | gelombang 2 dgn train-c | colum: DINO 0.951 + ConvNeXt → blend |
+| — | 11 Okt (siap) | **student-infer** (alver) | murid solo: mean fold ConvNeXt + DINO rank-blend 50/50 → submission.csv + student_test_preds.csv | siap push | — | setelah folds+dino didatasetkan | blend S6+murid = offline |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -95,7 +97,7 @@
 - [ ] 16–20 Okt: iterasi bergerbang (agen ≤2/hari); pantau bundel privat heliosli (`-s r3cnx`) dan notebook publik; GPU baru 17 Okt. Variasi baru TERAKHIR ≤20 Okt.
 - [x] 11 Okt 09:50–10:45: riset diskusi (18 thread) + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md` (one-click-955 = bundel privat; Fase B pseudo-label naik prioritas; cek IPP+fp16; protokol kozykappa utk uji post-hoc).
 - [x] 11 Okt 11:00–11:10: builder + flag `probit`/`synres`; push `s6prb` & `s6of` (main), `s6clean-akun2` (alver), `teacher-train` (irfan) — 4 GPU paralel.
-- [x] 11 Okt 16:49–17:50: skor keluar (s6prb/s6reader=0,954; s6plus=0,952; s6clean=0,950); riset mendalam murid+forum (2 subagen); dataset teacher `alverlfarfaraway/rsna-knee-teacher-r384-train`; `student-prep` RUNNING; `student-train-a/b/c` siap. Berikutnya: monitor prep → push train a,b → c → `student-infer` + blend S6 → submit dari alver.
+- [x] 11 Okt 16:49–18:55: skor 0,954 plafon; bedah tim 0.960; prep v1/v2 ERROR (mount finder) → v3 RUNNING; train ConvNeXt warm-start goodpjw; kernel DINOv2-S one-shot + infer murid solo siap. Berikutnya: prep→train a+b→c+dino→folds dataset→infer→submit alver.
 - [ ] 21–22 Okt: cek ulang 743416; pilih 2 final manual (A = S6/varian terbaik, B = beda mekanisme/bersih); verifikasi via daftar submisi.
 
 ## 5. Daya & batas (11 Okt 03:45 WIB)
