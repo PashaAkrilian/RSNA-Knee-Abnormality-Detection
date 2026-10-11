@@ -1,0 +1,23 @@
+{
+  "id": "alverlfarfaraway/rsna-knee-student-infer",
+  "title": "RSNA Knee student infer (murid solo)",
+  "code_file": "rsna-knee-student-infer.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "category": "video",
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ],
+  "dataset_sources": [
+    "alverlfarfaraway/rsna-knee-student-prep",
+    "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
+    "goodpjw2008/rsna-knee-2-5d-convnext-reader"
+  ],
+  "keywords": [],
+  "kernel_sources": [],
+  "docker_image": "registry Kaggle Python",
+  "machine_shape": " NvidiaTeslaT4"
+}
