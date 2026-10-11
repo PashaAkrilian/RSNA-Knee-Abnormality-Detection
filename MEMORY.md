@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt); arah/cadangan → **`docs/PLAN_B.md` §00**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-11T18:55:00+07:00
+> Last updated: 2026-10-11T21:45:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -34,7 +34,7 @@
 | Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu `scripts/submit_two.sh` SUDAH men-submit `s6reader` v1 (57055673) dan `s6plus` v1 (57055781) pada 11 Okt 07:03 WIB (agen 2/5; keduanya PENDING)**; monitor `progress_submisi.sh` ×2 jalan |
 | Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
 | Riset 11 Okt | SELESAI: 18 thread + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md`; bundel S7 heliosli privat; Fase B naik prioritas |
-| Eksperimen 11 Okt | Skor: s6reader/s6prb=**0,954**; s6plus=0,952; s6clean=0,950; s6of PENDING. Bedah tim 0.960: azamat ConvNeXt-T solo 0.959; colum ConvNeXt+DINO 0.959; resep = pseudo + train-on-all + 2 keluarga. **Pipeline murid (alver)**: prep v3 RUNNING; train-a/b/c ConvNeXt (warm-start goodpjw); student-dino ViT-S one-shot; student-infer (murid solo). Blend S6+murid offline. Target user 0,960; realistis 0,956–0,959. OAI host diam — keputusan user |
+| Eksperimen 11 Okt | Skor: s6reader/s6prb=**0,954** (net-zero; plafon S6+reader 0,954); s6plus=0,952; s6clean=0,950 (Raptor=+0,004); **s6of=0,951** (OF tanpa reader: −0,003; jangan ulang). Bedah tim 0.960: azamat ConvNeXt-T solo 0.959; colum ConvNeXt+DINO 0.959; resep = pseudo + train-on-all + 2 keluarga. **Pipeline murid (alver)**: label blend50 emas **0,929** (konsensus 0,896) → dataset `rsna-knee-student-cache256` (labels+meta; slug prep bentrok kernel); **prep v4 cache-only RUNNING 21:12** (~23:30); train-a/b/c ConvNeXt warm-start goodpjw siap; dino+infer siap; `s6student` (S6 0,65+murid 0,35) siap. Target user 0,960; realistis 0,956–0,959. OAI host diam — **menunggu keputusan user** (risiko Rules 2.6.b/2.8; +0,006–0,008 menurut nartaa) |
 | Git | 65 commit lokal di-push 11 Okt ~09:50 WIB atas perintah user; diff diperiksa: tak ada kredensial |
 | Menunggu user | ~~merger & pesan support~~ **DIBATALKAN (user 11 Okt: fokus skor sendiri)**; sisa: pilihan 2 final 21–22 Okt; `nxtirfan` (token) |
 | Vigia | `watch.sh` (scratchpad) memantau heliosli/nartaa/goodpjw + notebook baru tiap 30 mnt → `watch.log` (cari S7) |
