@@ -34,6 +34,7 @@
 | 15 | 11 Okt 11:03 | **57062952** | **`s6prb` v1**: S6 + **probit-quantile fusion** (ndtri-space blend; rabari9999) + **residual Synovitis** (0,72/0,23/0,05; romantamrazov; koef TETAP) — `build_s6plus.py probit=1 synres=1` | PENDING | — | jatah main 4/5 | dua perubahan pascablend dlm 1 lengan; bila menang tak tahu yg mana — terima risiko |
 | 16 | 11 Okt 11:03 | **57062953** | **`s6of` v1**: S6 + leg OF fold0 **0,15 tanpa reader** (Raptor 0,55 + compact 0,30; supervisor v4.1) — mengisolasi pengetahuan OF | PENDING | — | jatah main 5/5 (sisa 0 utk hari ini) | pembanding utk s6plus (reader+OF) |
 | 17 | 11 Okt 11:03 | **57062959** | **`s6clean`** asuransi: compact + reader goodpjw, **TANPA Raptor/OAI** (noraptor path) — di akun alverlfarfaraway (kuota terpisah; perintah user 11 Okt) | PENDING | — | skor ekspektasi rendah tapi = asuransi final B | risiko Rules 5.a = keputusan user |
+| — | 11 Okt ~13:00 | **teacher-train** (irfan) | Fase B langkah 1: r384 solo → prediksi 4.407 studi train; CSV `data/teacher_r384_train_preds.csv` (0 fallback, 80–90 mnt) | COMPLETE | — | bahan murid ConvNeXt-T 2.5D (langkah 2) | in-sample (bukan OOF) — caveat diketahui |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)

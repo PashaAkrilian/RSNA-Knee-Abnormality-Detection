@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt); arah/cadangan → **`docs/PLAN_B.md` §00**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-11T12:10:00+07:00
+> Last updated: 2026-10-11T14:00:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -34,7 +34,7 @@
 | Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu `scripts/submit_two.sh` SUDAH men-submit `s6reader` v1 (57055673) dan `s6plus` v1 (57055781) pada 11 Okt 07:03 WIB (agen 2/5; keduanya PENDING)**; monitor `progress_submisi.sh` ×2 jalan |
 | Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
 | Riset 11 Okt | SELESAI: 18 thread + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md`; bundel S7 heliosli privat; Fase B naik prioritas |
-| Eksperimen 11 Okt siang (4 GPU paralel) | **SUBMIT**: 57062952 `s6prb` (probit+synres) + 57062953 `s6of` (OF 0,15) dari main (jatah main 5/5 habis); 57062959 `s6clean-akun2` dari alver — semua PENDING ±15:00 WIB. **irfan**: `teacher-train` RUNNING (Fase B langkah 1). `s6reader` 57055673 = **0,954** (noise). CLI submit 400 (bukan limit) — pakai API `competition_submit_code` venv pipx |
+| Eksperimen 11 Okt siang | **SUBMIT**: 57062952 `s6prb` (probit+synres) + 57062953 `s6of` (OF 0,15) + 57055781 `s6plus` dari main (jatah habis); 57062959 `s6clean-akun2` dari alver — semua PENDING (s6plus 7 jam). `s6reader` = **0,954** (noise). **Teacher-train SELESAI** (r384 solo, 4.407 train, 0 fallback, `data/teacher_r384_train_preds.csv`) → Fase B langkah 2 = murid ConvNeXt-T. CLI submit 400 = bug CLI, pakai API venv pipx |
 | Git | 65 commit lokal di-push 11 Okt ~09:50 WIB atas perintah user; diff diperiksa: tak ada kredensial |
 | Menunggu user | ~~merger & pesan support~~ **DIBATALKAN (user 11 Okt: fokus skor sendiri)**; sisa: pilihan 2 final 21–22 Okt; `nxtirfan` (token) |
 | Vigia | `watch.sh` (scratchpad) memantau heliosli/nartaa/goodpjw + notebook baru tiap 30 mnt → `watch.log` (cari S7) |
