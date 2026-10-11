@@ -1,7 +1,7 @@
 {
-  "id": "nxtirfan/rsna-knee-student-dino",
+  "id": "nxtirfan/rsna-knee-student-dinov2-s-one-shot",
   "title": "RSNA Knee student DINOv2-S one-shot",
-  "code_file": "rsna-knee-student-dino.ipynb",
+  "code_file": "rsna-knee-student-dinov2-s-one-shot.ipynb",
   "language": "python",
   "kernel_type": "notebook",
   "is_private": true,

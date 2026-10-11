@@ -15,7 +15,7 @@ import json, os, sys
 
 args = dict(a.split("=", 1) for a in sys.argv[1:])
 ACCT = args.get("acct", "alver")   # alver | nxtirfan (labels dari dataset akun sendiri)
-SLUG = "rsna-knee-student-dino"
+SLUG = "rsna-knee-student-dinov2-s-one-shot"
 DATASETS = {
     "alver": [
         "alverlfarfaraway/rsna-knee-student-cache256",
@@ -69,22 +69,25 @@ def find(pats, base="/kaggle/input"):
     return None
 
 COMP = None
-for c in glob.glob("/kaggle/input/*"):
-    if os.path.exists(os.path.join(c, "train.csv")): COMP = c; break
-assert COMP
-PREP = None
-for c in glob.glob("/kaggle/input/*"):
-    if os.path.exists(os.path.join(c, "labels_student_v0.csv")): PREP = c; break
-assert PREP, "prep dataset belum ada"
-GOODPJW = None
-for c in glob.glob("/kaggle/input/*"):
-    if os.path.exists(os.path.join(c, "knee.py")): GOODPJW = c; break
-assert GOODPJW
-DINO = None
-for c in sorted(glob.glob("/kaggle/input/*")):
-    if os.path.exists(os.path.join(c, "dinov2-small", "pytorch_model.bin")):
-        DINO = os.path.join(c, "dinov2-small"); break
-assert DINO, "dinov2-small/ (aset tonylica) tidak ketemu"
+for c in ["/kaggle/input/competitions/rsna-knee-abnormality-detection",
+          "/kaggle/input/rsna-knee-abnormality-detection"] + sorted(glob.glob("/kaggle/input/*")):
+    if os.path.exists(os.path.join(c, "train.csv")) and os.path.exists(os.path.join(c, "train_series.csv")):
+        COMP = c; break
+    for sub in sorted(glob.glob(os.path.join(c, "*"))):
+        if os.path.exists(os.path.join(sub, "train.csv")) and os.path.exists(os.path.join(sub, "train_series.csv")):
+            COMP = sub; break
+    if COMP: break
+assert COMP, "competition mount tidak ketemu"
+say("mounts:", sorted(os.listdir("/kaggle/input")))
+_lab = find(["labels_student_v0.csv"])
+assert _lab, "labels_student_v0.csv tidak ada di mount"
+PREP = os.path.dirname(_lab)
+_k = find(["knee.py"])
+assert _k, "knee.py tidak ada di mount"
+GOODPJW = os.path.dirname(_k)
+_dm = find(["dinov2-small/pytorch_model.bin"])
+assert _dm, "dinov2-small/ (aset tonylica) tidak ketemu"
+DINO = os.path.dirname(_dm)
 sys.path.insert(0, GOODPJW)
 say("COMP", COMP); say("PREP", PREP); say("GOODPJW", GOODPJW); say("DINO", DINO)
 

@@ -1,5 +1,5 @@
 {
-  "id": "alverlfarfaraway/rsna-knee-student-train-b",
+  "id": "dimaspashaakrilian/rsna-knee-student-train-b",
   "title": "RSNA Knee student-train-b",
   "code_file": "rsna-knee-student-train-b.ipynb",
   "language": "python",
@@ -13,7 +13,7 @@
   ],
   "dataset_sources": [
     "goodpjw2008/rsna-knee-2-5d-convnext-reader",
-    "alverlfarfaraway/rsna-knee-student-cache256"
+    "dimaspashaakrilian/rsna-knee-student-labels"
   ],
   "keywords": [],
   "kernel_sources": [],
