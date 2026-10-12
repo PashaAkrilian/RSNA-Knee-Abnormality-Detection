@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana & aturan keputusan → **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt); arah/cadangan → **`docs/PLAN_B.md` §00**; langkah harian → **HANDOFF.md**.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-11T21:45:00+07:00
+> Last updated: 2026-10-12T11:00:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -26,18 +26,15 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (11 Okt 11:10 WIB)
+## 3. Status (12 Okt 11:00 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **terbaik 0,954 (57051680 = klon S6 oleh user, COMPLETE ±06:40; rank 144)**; Apex 56943646 0,950; 57025414 Apex+MaVIT 0,949; 57028008 Timeout; 57044355 = 0,950 (OF OOM; bukan vonis OF). Jendela 11 Okt: **s6reader 57055673 + s6plus 57055781 di-submit 07:03 (PENDING; monitor jalan)**; sisa 3/5 |
-| Rehearsal | `apexof4r3` LULUS (4 pekerja 228 studi/jam, MemAvail min 13,8 GB); `s6cleanr` LULUS (compact 160 studi = 1.812 dtk, 0 fallback); `s6plusr` (S6+reader+OF terakhir pseudo-uji 160) LULUS (OF coverage 0,65 dlm 24 mnt; blend 3 perna OK; MemAvail min 16 GB); sonda `s6probe` (1.530 dtk; ERROR akhir = artefak pseudo, diperbaiki). RAM compact stabil ±16–17 GB bebas (tak ada kebocoran) |
-| Bahan siap | `build_s6plus.py`: **`s6reader`** (reader ×0,5 pada perna Raptor) dan **`s6plus`** (reader ×1,0 + OF 0,15 terakhir) — commit-run stub LULUS (v1, COMPLETE 04:24/04:34); **`s6clean`** (compact + reader tanpa Raptor/OAI; rehearsal `s6cleanr` LULUS; asuransi, submit ≥12 Okt). **Pewaktu `scripts/submit_two.sh` SUDAH men-submit `s6reader` v1 (57055673) dan `s6plus` v1 (57055781) pada 11 Okt 07:03 WIB (agen 2/5; keduanya PENDING)**; monitor `progress_submisi.sh` ×2 jalan |
-| Kuota | GPU utama ±19 h (reset 17 Okt 07:00 WIB); TPU tak berguna |
-| Riset 11 Okt | SELESAI: 18 thread + 16 kernel best-score → `reports/Riset diskusi + best-score code 11 Okt.md`; bundel S7 heliosli privat; Fase B naik prioritas |
-| Eksperimen 11 Okt | Skor: s6reader/s6prb=**0,954** (net-zero; plafon S6+reader 0,954); s6plus=0,952; s6clean=0,950 (Raptor=+0,004); **s6of=0,951** (OF tanpa reader: −0,003; jangan ulang). Bedah tim 0.960: azamat ConvNeXt-T solo 0.959; colum ConvNeXt+DINO 0.959; resep = pseudo + train-on-all + 2 keluarga. **Pipeline murid (alver)**: label blend50 emas **0,929** (konsensus 0,896) → dataset `rsna-knee-student-cache256` (labels+meta; slug prep bentrok kernel); **prep v4 cache-only RUNNING 21:12** (~23:30); train-a/b/c ConvNeXt warm-start goodpjw siap; dino+infer siap; `s6student` (S6 0,65+murid 0,35) siap. Target user 0,960; realistis 0,956–0,959. OAI host diam — **menunggu keputusan user** (risiko Rules 2.6.b/2.8; +0,006–0,008 menurut nartaa) |
-| Git | 65 commit lokal di-push 11 Okt ~09:50 WIB atas perintah user; diff diperiksa: tak ada kredensial |
-| Menunggu user | ~~merger & pesan support~~ **DIBATALKAN (user 11 Okt: fokus skor sendiri)**; sisa: pilihan 2 final 21–22 Okt; `nxtirfan` (token) |
-| Vigia | `watch.sh` (scratchpad) memantau heliosli/nartaa/goodpjw + notebook baru tiap 30 mnt → `watch.log` (cari S7) |
+| Submisi | **terbaik 0,954 (57051680 = klon S6 oleh user, rank 144)**; semua varian 11 Okt ≤0,954 (s6reader/s6prb 0,954 net-zero; s6plus 0,952; s6clean 0,950; s6of 0,951 — OF ditutup). Plafon S6+reader = 0,954. Belum ada submisi baru 12 Okt |
+| Pipeline murid | **3 gelombang ERROR (12 Okt)**: (1) cache-on-demand tulis ke mount read-only → fix `/tmp/cache256_train` (v5); (2) OOM bs=8 → bs=4; (3) OOM bs=4 (backbone jalan per bs×series×kwin gambar ~96 px256; goodpjw asli bs=8 di GPU lokal >24GB) → **bs=2**; dino: `_AttnOut` lupa `forward` → fix. **v6/v4/v6 di-push ~10:45 & RUNNING**. Tiap retry bakar ±70 mnt rebuild cache — kalau v6 OOM lagi: gradient checkpointing / kwin 8→6 |
+| Kuota 12 Okt 08:23 | alver **17,3 j** sisa; main **15,8 j**; **nxtirfan 3,5 j ⚠️** (cukup 1 run dino; gagal = pindah akun). Reset 17 Okt 07:00 WIB |
+| Bahan siap | `build_s6student.py` (S6 0,65+murid 0,35, fallback S6); train-c + infer belum dipush; orkestrator `scripts/night_student.sh` exit 00:35 (fold 0 — perlu dijalankan ulang setelah a/b/dino COMPLETE) |
+| Git | 24+ commit lokal; push 12 Okt atas perintah user ("update all md dan push ke github") |
+| Menunggu user | pilihan 2 final 21–22 Okt; OAI diam (tidak dieksekusi); metopen revisi (sesi terpisah) |
 
 ## 4. Operasional
 - ML hanya di Kaggle/Colab (lokal tanpa torch; RAM 5 GB; /tmp tmpfs 2,7 GB). `machine_shape: NvidiaTeslaT4` (2×T4). Maks 2 sesi GPU batch; sesi ANTRE tetap dihitung (batalkan lewat Chrome: sidebar "View Active Events" → ⋯ → Stop Session). `kernels push` baru = sesi baru.
