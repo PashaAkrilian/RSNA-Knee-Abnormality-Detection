@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-12T14:50:00+07:00
+> Last updated: 2026-10-12T17:05:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -28,21 +28,21 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (12 Okt 14:50 WIB)
+## 3. Status (12 Okt 17:05 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **terbaik 0,954 (57051680 = klon S6, rank 466)**; varian 11 Okt ≤0,954. **12 Okt: `s6eq` + `s6eqr` (perintah user, 2 submisi, akun alver) menunggu slot GPU** via `scripts/submit_watch.py` (log `..\kaggle-scrape-rsna-knee-20261012\submit_watch.log`) |
-| Slot & kuota alver | student-train-a **dan** -b RUNNING di alver (2/2 sesi); kuota alver 10,22 j @14:33, terbakar ±2 j/jam → habis ±19:40 WIB bila keduanya jalan terus |
-| Pipeline murid | **3 gelombang ERROR (12 Okt)**: (1) cache-on-demand tulis ke mount read-only → fix `/tmp/cache256_train` (v5); (2) OOM bs=8 → bs=4; (3) OOM bs=4 (backbone jalan per bs×series×kwin gambar ~96 px256; goodpjw asli bs=8 di GPU lokal >24GB) → **bs=2**; dino: `_AttnOut` lupa `forward` → fix. **v6/v4/v6 di-push ~10:45 & RUNNING**. Tiap retry bakar ±70 mnt rebuild cache — kalau v6 OOM lagi: gradient checkpointing / kwin 8→6 |
-| Kuota | alver **10,22 j** (terverifikasi 14:33); main 15,8 j dan nxtirfan 3,5 j ⚠️ (catatan 08:23, belum terverifikasi). Reset 17 Okt 07:00 WIB |
-| Bahan siap | `build_s6eq.py`, `build_compact_oof.py` (fold 0–3 + gold), `scripts/submit_watch.py`, `build_s6student.py` (S6 0,65+murid 0,35, fallback S6); train-c + infer belum dipush; orkestrator `scripts/night_student.sh` (mesin Linux) |
-| Git | 12 Okt: dokumen + builder baru di-push ke **branch + PR** (perintah user; tanpa atribusi Claude) untuk dievaluasi rekan |
-| Menunggu user | pilihan 2 final 21–22 Okt; OAI diam (tidak dieksekusi); metopen revisi (sesi terpisah) |
+| Submisi | **terbaik 0,954 (57051680 klon S6, rank 499/5.812 — papan 16:00: ≥0,954 = 835, tepat 0,954 = 649; perak 290 = 0,954, emas 21 = 0,962)**; varian 11 Okt ≤0,954. **12 Okt: `s6eq` v3 + `s6eqr` v3 TERKIRIMA (ref 57103358/57103359, PENDING, submit 16:50)** di akun utama → skor penuh **±20:35 WIB**; jatah **3/5** tersisa |
+| **Aturan 400 (SUDAH TERPECAHKAN)** | 400 "non-versioned datasets" BUKAN soal pin versi di kernel-metadata (pin server-side tetap ter-strip; field API cuma terima `owner/slug`) — penyebab = **setting dataset "All Versions Accessible" milik PEMILIK dataset** (heliosli mati di `r6cnxfsss`; nartaa/OF/reader lolos). **Fix: mirror dataset** `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (887 MB, file identik, kredit heliosli) → metadata s6eq/s6eqr ganti ke mirror → **v3 diterima** |
+| Pipeline murid | **3 ERROR dini hari → bs=2** (v6) → **train-a/b RUNNING di alver, titik OOM sudah lewat (±5 j jalan) → aman**; **dino COMPLETE** (nxtirfan; `dino_full.pt` siap ditarik); **train-c + infer tertunda**: alver kuota habis ±20:00, nxtirfan 0, main dilarang train → antre **reset 17 Okt 07:00** |
+| Kuota 16:13 | alver **6,89 j** (bakar ±1,9 j/jam → mati ±20:00); main **~12,9 j** (2 commit-run s6eq ±5 mnt; submisi+inferensi boleh, training JANGAN); nxtirfan **0 ⚠️**. Reset 17 Okt 07:00 WIB |
+| Git | **PR #1 di-merge** (scrape 12 Okt peta perak + `STRATEGI_0960.md` + `build_s6eq.py`/`build_compact_oof.py`/`scripts/submit_watch.py` + kernel s6eq/compact-oof); update sesi ini menunggu push |
+| Bahan siap | `build_s6eq.py` (basis mirror), `build_compact_oof.py` (guru OOF 4 fold hash), `submit_watch.py` (+`--resume`), `build_s6student.py`; dataset mirror compact `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (pakai lagi bila ada kernel butuh bundel `209a32c8`); orkestrator `night_student.sh` (belum jalan ulang) |
+| Menunggu user | skor s6eq/s6eqr malam ini (gerbang G0 ≥0,955); pilihan 2 final 21–22 Okt; OAI diam; metopen revisi (sesi terpisah) |
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
 - ML hanya di Kaggle/Colab (lokal tanpa torch; RAM 5 GB; /tmp tmpfs 2,7 GB). `machine_shape: NvidiaTeslaT4` (2×T4). Maks 2 sesi GPU batch; sesi ANTRE tetap dihitung (batalkan lewat Chrome: sidebar "View Active Events" → ⋯ → Stop Session). `kernels push` baru = sesi baru.
-- Kaggle CLI: PATH `~/.local/bin`; 429 → jeda. **Log lewat Chrome**: `/code/<owner>/<slug>/log` (log langsung terlambat ±5 mnt; lengkap setelah selesai) + JS tarik baris `^\d+(\.\d+)?s\s+\d+\s+`, hapus `? & =`; atau `kernels output --file-pattern '<regex>'` (JANGAN tanpa pola pada kernel OF/S6). Forum: `kaggle forums topics show <id> --page-size 200` (daftar topik CLI 403 → Chrome). Versi dataset lama: venv kagglehub di scratchpad.
+- Kaggle CLI: PATH `~/.local/bin`; 429 → jeda. **Submisi kode**: `kaggle competitions submit <comp> -k <owner/slug> -v <ver> -f submission.csv -m "msg"` (`-m` juga wajib; tanpa `-f` → 400). **400 "non-versioned datasets" = setting "All Versions Accessible" di halaman DATASET (milik pemiliknya)** — pin `owner/slug/N` di kernel-metadata TIDAK menolong (server strip); kalau dataset orang lain bermasalah → mirror ke akun kita (lihat `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss`). **Log lewat Chrome**: `/code/<owner>/<slug>/log` (log langsung terlambat ±5 mnt; lengkap setelah selesai) + JS tarik baris `^\d+(\.\d+)?s\s+\d+\s+`, hapus `? & =`; atau `kernels output --file-pattern '<regex>'` (JANGAN tanpa pola pada kernel OF/S6). Forum: `kaggle forums topics show <id> --page-size 200` (daftar topik CLI 403 → Chrome). Versi dataset lama: venv kagglehub di scratchpad.
 - **RAM**: proses induk notebook memegang ±18 GB setelah Raptor (Apex); pekerja OF 5–10 GB; headroom cgroup menyertakan page-cache (pakai MemAvailable). OF hanya via supervisor `nopin+mmap` dan di luar induk besar. Pseudo-uji: `sample_submission.csv` WAJIB berisi id pseudo.
 - JANGAN `pkill -f` pola yg ada di perintah sendiri; JANGAN `VERBOSE=true`; JANGAN cetak kaggle.json. Scratchpad sesi hilang saat restart (simpan di repo). Run scoring tak memakai kuota GPU; log run scoring tak terbaca → uji di commit-run pseudo-uji.
 
