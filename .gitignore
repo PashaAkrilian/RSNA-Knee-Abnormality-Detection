@@ -15,3 +15,12 @@ progress_submisi.log
 /akun_kaggle/
 /akun kaggle/
 progress_submisi2.log
+
+# artefak lokal berat / mentah — jangan pernah commit (sudah atau siap diunggah ke Kaggle)
+/data/mirror_upload/
+/data/student_out_a/
+/data/student_out_b/
+/data/student_dino/
+/data/student_folds/*.pt
+/data/rsna-knee-teacher-train.log
+/rsna-knee-abnormality-detection.zip

@@ -12,8 +12,8 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,954** (
 4. **laporan_push.md** — wadah evaluasi submisi (§2) + temuan.
 5. Riset: **reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md** (TERBARU: papan, 182 topik, 169 notebook, dataset/model) dan reports/Ringkasan riset 10 Okt (sesi Claude Code).md. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md, docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (12 Okt ±17:05 WIB)
-Terbaik **0,954** (klon S6 57051680, rank 499/5.812; dataran 0,954 = 649 tim); **2 submisi test `s6eq`+`s6eqr` v3 TERKIRIMA di akun utama 16:50** (400 "non-versioned datasets" = setting "All Versions Accessible" dataset `r6cnxfsss` milik heliosli mati → diatasi mirror dataset ke akun kita; skor ±20:35 WIB, gerbang G0 ≥0,955; jatah 3/5); train-a/b RUNNING (bs=2 lewat titik OOM), dino COMPLETE, train-c+infer antre reset kuota **17 Okt 07:00**; rencana aktif **STRATEGI_0960.md** (target 0,960, peluang ±20–30 %); **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train**.
+## Status satu kalimat (12 Okt ±23:05 WIB)
+Terbaik **0,954** (klon S6 57051680, rank 499/5.812); **s6eq/s6eqr v3 = 0,954 + 0,954** (18:10 — G0 ≥0,955 TIDAK lulus, reader net-zero; 400 sore terpecahkan via mirror dataset; jatah 3/5); **train-a/b COMPLETE** (fold0–3 + oof di lokal, val 0,9255–0,9279; dino_full.pt tarik; **dataset `rsna-knee-student-folds` v1 LIVE**), train-c+infer+guru OOF antre reset **17 Okt 07:00**; rencana aktif **STRATEGI_0960.md** (target 0,960, peluang ±20–30 %; plafon S6 = 0,954 → kenaikan dari murid); **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train**.
 
 ## Aturan keras (pelanggaran = rugi tim)
 - **Bahasa kerja: Indonesia.** Bertindak otonom; lapor singkat dgn angka; jangan menjanjikan emas atau 100 %.
