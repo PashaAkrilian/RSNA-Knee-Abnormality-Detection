@@ -2,6 +2,11 @@
 > Baca setelah `MEMORY.md`. Dasar: riset 10–11 Okt (`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`, `docs/RESEARCH_NOTES.md` §36–§44), Rules resmi, papan 11 Okt 02:59 WIB.
 > Dokumen ini = RENCANA + ATURAN KEPUTUSAN; status harian ada di `HANDOFF.md` §0c dan `laporan_push.md`. Cadangan/pohon keputusan rinci: `docs/PLAN_B.md` (§00 = yang terbaru).
 
+## 0.0 Pembaruan 12 Okt (sesi Claude Code) — rencana aktif kini `STRATEGI_0960.md`
+- Papan 12 Okt 07:29 UTC (5.809 tim): perak rank 290 = **0,954**, perunggu rank 581 = **0,954** (keduanya di dalam dataran ±600 tim tepat 0,954), emas rank 21 = 0,962; ≥0,955 = 182; ≥0,956 = 119; kita rank 466. Garis perak bergerak 0,950 (8 Okt) → 0,954 (12 Okt).
+- Notebook publik #1 = **S6-eq** heliosli (Raptor 0,5 + compact 0,5, rank sadar-gagal; bundel `r6cnxfsss` = compact-v1 V13) → tim heliosli 0,956; dibangun ulang `build_s6eq.py` (`s6eq`, `s6eqr` + reader goodpjw), 2 submisi menunggu slot GPU (`scripts/submit_watch.py`).
+- Pembeda nyata ke ≥0,957: murid sendiri (ConvNeXt-T/EffNetV2-S 2.5D) dgn pseudo-label OOF; guru = **OOF compact** (4 fold hash `sha1(uid)%4`, gold tak dilatih; `build_compact_oof.py`). Rincian, gerbang, anggaran: `STRATEGI_0960.md`; bukti forum/kode: `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
+
 ## 0. Perubahan besar 11 Okt (baca ini dulu)
 - **KEPUTUSAN USER (09:45 WIB): J1 merger & tindakan pesan support DIBATALKAN** — fokus naikkan skor sendiri dengan tim ini; semua submisi dari akun utama; arsip `docs/KANDIDAT_MERGER.md`/`docs/DRAF_PESAN_KAGGLE_SUPPORT.md` jangan dieksekusi.
 - **S6 heliosli hidup lagi** (02:50 WIB): dataset `heliosli/rsna-knee-compact-v1` publik (V1–V13) + notebook publik "Dataset restored(...)" = **Raptor 0,7 + compact 0,3 = 0,954 satu klik** (thread 748141: "blend my model with yours"). **User men-submit salinannya (57051680, 02:56 WIB) → 0,954 COMPLETE ±06:40 WIB (rank 144 dari 5.709; run penuh ±3 j 45 mnt).**

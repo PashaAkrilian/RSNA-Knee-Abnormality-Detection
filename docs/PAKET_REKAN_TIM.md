@@ -3,9 +3,14 @@
 > (token di `akun_kaggle/` = akses penuh ke akunnya; pastikan ia setuju atau hapus). Berbagi kode di dalam tim boleh (Rules 5.d); notebook di bawah hanya memakai dataset publik + data kompetisi.
 > Run scoring TIDAK memakai kuota GPU; kuota GPU hanya dipakai commit-run (stub 3 studi, ±10 menit) — jadi bantuan komputasi terbesar rekan = menjalankan job latih/probe, bukan submisi.
 
+> **Pembaruan 12 Okt (sesi Claude Code):** kandidat terbaru di bawah (S6-eq dan guru OOF compact). Evaluasi rencana: `STRATEGI_0960.md`; bukti: `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
+
 ## Kandidat yang bisa dijalankan rekan (semua dari repo ini)
 | Notebook | Isi | Dataset yang harus ditambahkan | Catatan |
 |---|---|---|---|
+| `kaggle_kernel_s6eq/rsna-knee-s6eq.ipynb` (12 Okt) | notebook publik #1 heliosli tanpa ubahan: Raptor 0,5 + compact 0,5, rank sadar-gagal | `heliosli/rsna-knee-compact-r6cnxfsss`, `nartaa/rsna-knee-publication-swa-weights-20261007`, `heliosli/rsna-orthofoundation-fold0-epoch7-20261004` | ±4–4,5 j scoring; basis baru |
+| `kaggle_kernel_s6eqr/rsna-knee-s6eqr.ipynb` (12 Okt) | `s6eq` + Part B reader goodpjw tanpa ubahan | di atas + `goodpjw2008/rsna-knee-2-5d-convnext-reader` | +±0,5 j |
+| `kaggle_kernel_compact-oof-f{0..3}` dan `kaggle_kernel_compact-gold` (12 Okt) | guru OOF compact: studi latih fold k (hash sha1 %4) dengan model f{k} saja (stride 3); gold-58 dengan 4 model | `heliosli/rsna-knee-compact-r6cnxfsss`, `heliosli/rsna-orthofoundation-fold0-epoch7-20261004` | BUKAN submisi; ±1,6 j GPU per fold; keluaran `compact_oof_f{k}.csv` |
 | `kaggle_kernel_s6reader/rsna-knee-s6reader.ipynb` | S6 heliosli (Raptor + compact) + reader goodpjw pada perna Raptor (bobot Apex) | `heliosli/rsna-knee-compact-v1`, `nartaa/rsna-knee-publication-swa-weights-20261007`, `heliosli/rsna-orthofoundation-fold0-epoch7-20261004`, `goodpjw2008/rsna-knee-2-5d-convnext-reader` | ±4,5–5 j (compact GPU-bound ±3,5 j); prioritas 1; mode `lenient` |
 | `kaggle_kernel_s6plus/rsna-knee-s6plus.ipynb` | + perna OrthoFoundation fold0 (supervisor v4.1) sbg tahap TERAKHIR dgn deadline (STOP 7,9 j/KILL 8,25 j) | di atas + `dimaspashaakrilian/rsna-knee-ultralytics-cfg` (privat; minta user membagikan atau unggah ulang dari `of_...`) | OF hanya memakai waktu sisa; prior kecil |
 | `kaggle_kernel_apexof2/rsna-knee-apexof2.ipynb` | Apex 0,70 + OrthoFoundation-L fold0 0,30 (v2: potongan 8 studi, 4 proses, penjaga disk, pemutus proses) | `goodpjw2008/rsna-knee-2-5d-convnext-reader`, `nartaa/rsna-knee-publication-swa-weights-20261007`, `heliosli/rsna-orthofoundation-fold0-epoch7-20261004`, **`dimaspashaakrilian/rsna-knee-ultralytics-cfg`** (dataset privat user → user harus membagikannya ke rekan SATU TIM) | scoring ±6–7 jam; skor hanya bila ≥0,952 → kandidat |
