@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-12T17:05:00+07:00
+> Last updated: 2026-10-12T23:05:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -28,16 +28,15 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (12 Okt 17:05 WIB)
+## 3. Status (12 Okt 23:05 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **terbaik 0,954 (57051680 klon S6, rank 499/5.812 — papan 16:00: ≥0,954 = 835, tepat 0,954 = 649; perak 290 = 0,954, emas 21 = 0,962)**; varian 11 Okt ≤0,954. **12 Okt: `s6eq` v3 + `s6eqr` v3 TERKIRIMA (ref 57103358/57103359, PENDING, submit 16:50)** di akun utama → skor penuh **±20:35 WIB**; jatah **3/5** tersisa |
-| **Aturan 400 (SUDAH TERPECAHKAN)** | 400 "non-versioned datasets" BUKAN soal pin versi di kernel-metadata (pin server-side tetap ter-strip; field API cuma terima `owner/slug`) — penyebab = **setting dataset "All Versions Accessible" milik PEMILIK dataset** (heliosli mati di `r6cnxfsss`; nartaa/OF/reader lolos). **Fix: mirror dataset** `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (887 MB, file identik, kredit heliosli) → metadata s6eq/s6eqr ganti ke mirror → **v3 diterima** |
-| Pipeline murid | **3 ERROR dini hari → bs=2** (v6) → **train-a/b RUNNING di alver, titik OOM sudah lewat (±5 j jalan) → aman**; **dino COMPLETE** (nxtirfan; `dino_full.pt` siap ditarik); **train-c + infer tertunda**: alver kuota habis ±20:00, nxtirfan 0, main dilarang train → antre **reset 17 Okt 07:00** |
-| Kuota 16:13 | alver **6,89 j** (bakar ±1,9 j/jam → mati ±20:00); main **~12,9 j** (2 commit-run s6eq ±5 mnt; submisi+inferensi boleh, training JANGAN); nxtirfan **0 ⚠️**. Reset 17 Okt 07:00 WIB |
-| Git | **PR #1 di-merge** (scrape 12 Okt peta perak + `STRATEGI_0960.md` + `build_s6eq.py`/`build_compact_oof.py`/`scripts/submit_watch.py` + kernel s6eq/compact-oof); update sesi ini menunggu push |
-| Bahan siap | `build_s6eq.py` (basis mirror), `build_compact_oof.py` (guru OOF 4 fold hash), `submit_watch.py` (+`--resume`), `build_s6student.py`; dataset mirror compact `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (pakai lagi bila ada kernel butuh bundel `209a32c8`); orkestrator `night_student.sh` (belum jalan ulang) |
-| Menunggu user | skor s6eq/s6eqr malam ini (gerbang G0 ≥0,955); pilihan 2 final 21–22 Okt; OAI diam; metopen revisi (sesi terpisah) |
+| Submisi | **terbaik tetap 0,954** (57051680 klon S6, rank 499/5.812). **18:10: `s6eq` v3 = 0,954 + `s6eqr` v3 = 0,954** (COMPLETE) → **G0 ≥0,955 BELUM lulus**; reader tetap net-zero (s6eqr = s6eq); jatah **3/5** |
+| **400 terpecahkan** | akar = setting "All Versions Accessible" `heliosli/r6cnxfsss` mati (bukan pin metadata) → **mirror** `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (887 MB) → v3 diterima. Dataset buatan sendiri lolos pengecekan |
+| **Murid — train-a/b COMPLETE 18:10** | fold0–3 tarik lokal (`data/student_out_a|b`, 471 MB): **val AUC 0,9255–0,9279, gold 0,9189–0,9223** (14 epoch, ±9 j); **fold4 = train-c → 17 Okt**; `dino_full.pt` (95 MB) tarik dari nxtirfan; **`dimaspashaakrilian/rsna-knee-student-folds` v1 (privat) sudah dibuat** (fold0–3 + oof; student-infer mount saat push 17 Okt) |
+| Pipeline murid | train-c + infer + guru OOF compact + `s6student` **antre reset kuota 17 Okt 07:00** (alver sisa 4,6 j tapi tak dipakai malam ini — train selesai; main 12,67 j; nxtirfan 0) |
+| Git | update sore (resolusi 400 + v3) di-commit & push (`6d2e8f8`); update malam ini menyusul |
+| Menunggu user | pilihan 2 final 21–22 Okt; OAI diam; metopen revisi (sesi terpisah) |
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
