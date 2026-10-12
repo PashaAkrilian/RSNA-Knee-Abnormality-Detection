@@ -110,7 +110,8 @@ else:
     # ---- bangun cache on-demand (resep prep v3: SIZE 256, MM 0.5, MAX 28, IPP sort) ----
     import cv2, pydicom
     from multiprocessing import Pool
-    say("cache dataset absen — build on-demand dari DICOM")
+    say("cache dataset absen — build on-demand dari DICOM (ke /tmp)")
+    CACHE = "/tmp/cache256_train"  # mount /kaggle/input = read-only, jangan dipakai nulis
     MM_PER_PX, SIZE, MAX_SLICES = 0.5, 256, 28
     CANON = {0: (+1, (1, +1), (2, -1)), 1: (+1, (0, +1), (2, -1)), 2: (-1, (0, +1), (1, +1))}
     PLANES = ["Sagittal", "Coronal", "Axial"]
@@ -238,6 +239,8 @@ class _AttnOut(nn.Module):
     def __init__(self, dim):
         super().__init__()
         self.dense = nn.Linear(dim, dim)
+    def forward(self, x):
+        return self.dense(x)
 
 class _Attn(nn.Module):
     def __init__(self, dim, heads):
@@ -364,13 +367,14 @@ class StudentDino(nn.Module):
 
 CELL3 = r'''
 import os, time, copy, math
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 import numpy as np, pandas as pd, torch, torch.nn.functional as F
 from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader
 
 WORK = "/kaggle/working"
 RUNS = f"{WORK}/runs_dino"; os.makedirs(RUNS, exist_ok=True)
-EPOCHS, BS, KWIN, KEVAL = 12, 8, 8, 12          # bs efektif 8 studi; jendela train k=8 / eval k=12
+EPOCHS, BS, KWIN, KEVAL = 12, 2, 8, 12          # bs 2 studi (T4 16GB; backbone jalan per bs×series×kwin gambar); jendela train k=8 / eval k=12
 LR_ENC, LR_HEAD, WD, WARM, EMA_D, CLIP = 1e-5, 5e-4, 0.05, 200, 0.999, 3.0
 table = build_study_table(SERIES, dict(zip(meta.series, meta.n.fillna(0))))
 gold = lab[lab.is_gold == 1]; weak = lab[lab.is_gold == 0]

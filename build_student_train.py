@@ -91,7 +91,8 @@ else:
     # ---- bangun cache on-demand (resep prep v3: SIZE 256, MM 0.5, MAX 28, IPP sort) ----
     import cv2, pydicom
     from multiprocessing import Pool
-    say("cache dataset absen — build on-demand dari DICOM")
+    say("cache dataset absen — build on-demand dari DICOM (ke /tmp)")
+    CACHE = "/tmp/cache256_train"  # mount /kaggle/input = read-only, jangan dipakai nulis
     MM_PER_PX, SIZE, MAX_SLICES = 0.5, 256, 28
     CANON = {0: (+1, (1, +1), (2, -1)), 1: (+1, (0, +1), (2, -1)), 2: (-1, (0, +1), (1, +1))}
     PLANES = ["Sagittal", "Coronal", "Axial"]
@@ -199,6 +200,7 @@ assert torch.cuda.is_available()
 
 CELL2 = r'''
 import numpy as np, torch, torch.nn.functional as F, time, os
+os.environ.setdefault("PYTORCH_CUDA_ALLOC_CONF", "expandable_segments:True")
 from sklearn.metrics import roc_auc_score
 
 WORK = "/kaggle/working"
@@ -220,7 +222,9 @@ def predict(model, loader, res):
             out.append(model(x, mask, pos, res=res).float().cpu())
     return torch.cat(out).numpy()
 
-def train_fold(k, epochs=14, bs=8, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5e-4, wd=0.02, ema_d=0.998):
+def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5e-4, wd=0.02, ema_d=0.998):
+    # bs=2: T4 16GB — backbone menjalankan ~bs×series×kwin gambar 256px sekaligus;
+    # goodpjw asli bs=8 di GPU lokal >24GB, di T4 OOM pada batch pertama.
     ckpt = f"{RUNS}/fold{k}.pt"
     if os.path.exists(ckpt):
         say(f"fold{k} sudah ada, lewati"); return
