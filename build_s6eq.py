@@ -49,8 +49,8 @@ for c in cells:                                              # bersihkan keluara
     if c["cell_type"] == "code":
         c["outputs"], c["execution_count"] = [], None
 
-datasets = ["heliosli/rsna-knee-compact-r6cnxfsss", "nartaa/rsna-knee-publication-swa-weights-20261007",
-            "heliosli/rsna-orthofoundation-fold0-epoch7-20261004"]
+datasets = ["dimaspashaakrilian/rsna-knee-compact-r6cnxfsss/1", "nartaa/rsna-knee-publication-swa-weights-20261007/1",
+            "heliosli/rsna-orthofoundation-fold0-epoch7-20261004/1"]
 if READER:
     rd = json.loads(BASE_RD.read_text(encoding="utf-8"))["cells"]
     assert "Part B" in src(rd[10]) and "OWN_W_PER_TARGET" in src(rd[15]), "struktur notebook goodpjw berubah"
@@ -59,7 +59,7 @@ if READER:
         if c["cell_type"] == "code":
             c["outputs"], c["execution_count"] = [], None
     cells += part_b
-    datasets.append("goodpjw2008/rsna-knee-2-5d-convnext-reader")
+    datasets.append("goodpjw2008/rsna-knee-2-5d-convnext-reader/1")
 
 check_compiles(cells)
 nb["cells"] = cells

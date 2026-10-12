@@ -1,11 +1,11 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 12 Okt 2026 ~14:45 WIB (sesi Claude Code, mesin Windows; sebelumnya ~11:00 WIB sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 12 Okt 2026 ~17:05 WIB (sesi OpenCode, mesin Linux; sebelumnya ~14:45 WIB sesi Claude Code mesin Windows). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
-1. **~~MERGER & pesan support~~ DIBATALKAN (perintah user 11 Okt 09:45 WIB)** — fokus **naikkan skor sendiri dengan tim ini**: tanpa merger, tanpa pesan ke Kaggle support (arsip: `docs/KANDIDAT_MERGER.md`, `docs/DRAF_PESAN_KAGGLE_SUPPORT.md` — JANGAN dieksekusi). Submisi tetap hanya dari akun utama (Rules 5.a/5.b).
+1. **~~MERGER & pesan support~~ DIBATALKAN (perintah user 11 Okt 09:45 WIB)** — fokus **naikkan skor sendiri dengan tim ini**: tanpa merger, tanpa pesan ke Kaggle support (arsip: `docs/KANDIDAT_MERGER.md`, `docs/DRAF_PESAN_KAGGLE_SUPPORT.md` — JANGAN dieksekusi). **Perintah user 12 Okt: ketiga akun boleh dipakai, tetapi akun utama JANGAN untuk training** (risiko Rules 5.a tetap tercatat di MEMORY §0/§2).
 2. Bicarakan dgn `nxtirfan`: setuju/tidak tokennya disimpan di `akun_kaggle/`; ia menjalankan job dari akunnya sendiri bila mau (`docs/PAKET_REKAN_TIM.md`).
-3. **Salinan S6 Anda (57051680) = 0,954 COMPLETE (±06:40 WIB; rank 144 dari 5.709)** — final A kandidat; jangan dihapus. Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master` (65 commit lokal; diff bersih dari kredensial; push atas perintah user).
+3. **Salinan S6 Anda (57051680) = 0,954 (rank 499/5.812 per papan 12 Okt 16:00)** — final A kandidat; jangan dihapus. Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master` (diff bersih dari kredensial; push atas perintah user).
 4. 21–22 Okt: pilih 2 final bersama agen (beda mekanisme; manual di UI Submissions → select 2).
 - Harapan jujur (simulasi): klon S6 di ±0,954 dgn ratusan tim lain → perak ±25–45 %, perunggu ±45–70 %; +varian dgn informasi baru → lebih tinggi; emas ≈0–2 %. **100 % tidak mungkin.**
 
@@ -15,19 +15,19 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (12 Okt ~14:45 WIB)
+## 0c. Status (12 Okt ~17:05 WIB — sesi OpenCode mesin Linux)
 | Hal | Keadaan |
 |---|---|
-| Submisi terbaik | **0,954** (57051680 klon S6 user); papan 12 Okt 07:29 UTC: **rank 466/5.809**; perak rank 290 = 0,954 dan perunggu rank 581 = 0,954 (dataran ±600 tim); emas rank 21 = 0,962 |
-| **S6-eq (12 Okt, sesi Claude Code)** | `build_s6eq.py` → `kaggle_kernel_s6eq` (notebook publik #1 heliosli tanpa ubahan: Raptor 0,5 + compact 0,5, rank sadar-gagal) dan `kaggle_kernel_s6eqr` (+ Part B reader goodpjw tanpa ubahan). Perintah user: 2 submisi → `scripts/submit_watch.py` (akun alver) push otomatis saat slot GPU kosong, submit, pantau skor. Log: `..\kaggle-scrape-rsna-knee-20261012\submit_watch.log` |
-| Kendala slot | alver menjalankan student-train-a **dan** student-train-b (2/2 sesi); kuota alver 10,2 j @14:33 terbakar ±2 j/jam → habis ±19:40 WIB bila keduanya jalan terus |
-| Guru OOF compact | `build_compact_oof.py` siap (fold 0–3: model f{k} saja, stride 3, ±1,6 j/fold; gold: 4 model, stride 1); belum di-push — lihat `STRATEGI_0960.md` §3 |
-| **Pipeline murid — 3 ERROR, fix v6 RUNNING** | Semua kernel train-a/b/dino ERROR 3× (12 Okt): (1) tulis cache ke `/kaggle/input` read-only → fix `/tmp/cache256_train`; (2)(3) OOM CUDA bs=8→4→**2** (backbone ConvNeXt jalan per bs×series×kwin gambar; T4 16GB; goodpjw asli bs=8 di GPU lokal); dino: `_AttnOut` tanpa `forward` → ditambah. **v6/v4/v6 di-push ~10:45 WIB, status RUNNING**. Tiap retry = ±70 mnt rebuild cache on-demand |
-| Keputusan bila v6 OOM lagi | gradient checkpointing (monkey-patch `model.enc`) ATAU kwin 8→6; jangan turunkan res (resep goodpjw = 256) |
-| Setelah a/b/dino COMPLETE | jalankan ulang `scripts/night_student.sh` (PID lama exit 00:35 dgn fold=0): push train-c → tarik fold ckpt → dataset folds → infer → submit murid solo → s6student |
-| Kuota 12 Okt 08:23 | alver 17,3 j; main 15,8 j; **nxtirfan 3,5 j ⚠️** (1 run dino tersisa; gagal = dino pindah main/alver). Reset 17 Okt 07:00 WIB |
+| Submisi terbaik | **0,954** (57051680 klon S6 user); **papan 12 Okt 16:00 WIB: rank 499/5.812**; dataran 0,954 = **649 tim tepat** (≥0,954 = 835); perak 290 = 0,954, perunggu 581 = 0,954, emas 21 = 0,962; ≥0,960 = 39 |
+| **S6-eq — 2 submisi TERKIRIMA 16:50 (ref 57103358 + 57103359)** | Di **AKUN UTAMA** (alver 2/2 slot train + kuota mati ±20:00; main dilarang training tapi inferensi/submisi boleh). v1 & v2 sempat **400 "non-versioned datasets"** → **akar masalah: setting "All Versions Accessible" di halaman dataset `heliosli/rsna-knee-compact-r6cnxfsss` milik heliosli (mati)**; pin versi di metadata TIDAK menolong (server strip). **Fix: mirror dataset** `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (887 MB, file identik, kredit heliosli) → `build_s6eq.py` ganti sumber → **v3 push + submit 16:50 DITERIMA** → skor penuh **±20:35 WIB**. Jatah **3/5** |
+| Dataset mirror | `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 — dipakai s6eq/s6eqr v3; REKAN/PUNYA ORANG bermasalah → mirror pola ini. Dataset kita sendiri tampaknya lolos pengecekan (bukti: v3 diterima) |
+| Pipeline murid | **train-a + train-b RUNNING di alver** (v6 bs=2; sudah ±5 j → titik OOM ±30 mnt sudah lewat, AMAN); **dino COMPLETE** (nxtirfan; `dino_full.pt` siap ditarik via `kernels output --file-pattern`); 3 ERROR dini hari = read-only cache + OOM bs 8→4→2 + `_AttnOut.forward` |
+| train-c + infer | **ANTRE reset kuota 17 Okt 07:00** — alver habis ±20:00 malam ini, nxtirfan 0, main DILARANG training (perintah user). Setelah train-a/b COMPLETE malam ini: tarik fold ckpt + oof (CPU, gratis) → dataset `rsna-knee-student-folds` |
+| Kuota 16:13 | alver **6,89 j** (±1,9 j/jam → mati ±20:00); main **~12,9 j** (2 commit-run s6eq v3 saja); nxtirfan **0 ⚠️**. Reset **17 Okt 07:00 WIB** (+30 j/akun) |
+| Guru OOF compact | `build_compact_oof.py` siap (fold 0–3: 1 model, stride 3, ±1,6 j/fold; gold: 4 model); push 17 Okt — lihat `STRATEGI_0960.md` §3 |
+| Keputusan bila train OOM lagi | gradient checkpointing ATAU kwin 8→6; jangan turunkan res (resep goodpjw = 256) |
+| Git | PR #1 (scrape 12 Okt + STRATEGI_0960 + builders) sudah **merged**; update MD sesi ini (resolusi 400 + v3) menunggu commit/push |
 | OAI | host diam; user belum jawab (21:16 11 Okt) — jangan eksekusi |
-| Git | push 12 Okt atas perintah user |
 
 ## 1. Urutan kerja
 ### A. 11 Okt 03:35–07:03 — SELESAI
@@ -48,6 +48,14 @@
 1. Tunggu hasil `s6eq`/`s6eqr` (watcher) → catat di `laporan_push.md` §2; bila ≥0,955 jadikan basis (gerbang G0 `STRATEGI_0960.md`).
 2. Push `compact-oof-f0..f3` + `compact-gold` (±7 j GPU, 2 sesi paralel) → rakit label `L1 = 0,5 konsensus + 0,5 OOF-compact` → gerbang G1.
 3. Revisi pipeline murid (`STRATEGI_0960.md` §6: cache CPU, 2 GPU paralel, deadline per epoch, 224 px) → murid A/B → notebook final S6-eq + murid.
+
+### G. 12 Okt sore (sesi OpenCode, mesin Linux) — EKSEKUSI 2 submisi test
+1. (SELESAI) `git pull` + merge PR #1 (scrape peta perak + STRATEGI_0960); papan segar 16:00 WIB: rank **499**/5.812, ≥0,954 = 835.
+2. (SELESAI 16:12) Pindah `s6eq`/`s6eqr` ke akun utama; v1+v2 sempat 400 "non-versioned datasets" → pin versi metadata (TERBUKTI TIDAK menolong — server strip).
+3. (SELESAI 17:00) **Akar 400 = setting "All Versions Accessible" dataset `heliosli/rsna-knee-compact-r6cnxfsss` (milik heliosli, mati)** → **mirror** `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (887 MB) → `build_s6eq.py` ganti sumber → **v3 push + submit 16:50 DITERIMA** (ref 57103358/57103359) → skor penuh **±20:35 WIB**; jatah 3/5.
+4. (BERJALAN) Pantau skor `s6eq`/`s6eqr` v3 — **catat di `laporan_push.md` §2 + MEMORY §3**; G0 ≥0,955. (Watcher `--resume` lama mati sendiri setelah 400; skor bisa dicek `kaggle competitions submissions -v`.)
+5. Malam: pantau train-a/b (alver); bila COMPLETE → tarik `fold*.pt`+`oof_fold*.csv` (`kernels output --file-pattern`) → dataset `rsna-knee-student-folds` (CPU); dino sudah COMPLETE → tarik `dino_full.pt`. **JANGAN push apa pun ke alver** (kuota mati ±20:00).
+6. 17 Okt 07:00+ (kuota baru +90 j): push train-c + `compact-oof-f0..f3` + `compact-gold` (alver/nxtirfan) → rantai infer → `s6student`; putaran-2 murid (§F + `STRATEGI_0960.md` §4).
 
 ## 2. Alat & perintah
 - Builder baru 12 Okt: **`build_s6eq.py`** (`name=s6eq|s6eqr owner= reader=1`), **`build_compact_oof.py`** (`fold=0..3 | gold=1 owner= stride=`), **`scripts/submit_watch.py`** (push saat slot kosong → submit → pantau skor).

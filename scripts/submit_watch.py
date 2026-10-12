@@ -12,6 +12,7 @@ Ringkasan akhir ditulis ke <log>.json.
 
 Pakai:
   python -I scripts/submit_watch.py --log <file.log> "<kernel_dir>::<pesan submisi>" ["<kernel_dir>::<pesan>" ...]
+  Lanjut tanpa push ulang (kernel sudah ter-push & berjalan): --resume <versi> tepat setelah <file.log>.
 """
 import csv
 import json
@@ -27,7 +28,7 @@ RETRY_S = 120            # jeda coba push ulang saat slot GPU penuh
 STATUS_POLL_S = 120      # jeda cek status commit-run
 SCORE_POLL_S = 600       # jeda cek skor
 MAX_WAIT_SLOT_H = 10.0   # batas menunggu slot GPU per kernel
-MAX_COMMIT_H = 3.0       # batas menunggu commit-run selesai
+MAX_COMMIT_H = 5.5       # batas menunggu commit-run selesai (S6-eq penuh ±3 j 45 mnt + reader)
 MAX_SCORE_H = 10.0       # batas menunggu skor
 MIN_QUOTA_H = 0.6        # jangan push bila sisa kuota GPU di bawah ini
 
@@ -36,7 +37,12 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 args = sys.argv[1:]
 assert args[0] == "--log", __doc__
 LOG = args[1]
-ITEMS = [a.split("::", 1) for a in args[2:]]
+rest = args[2:]
+RESUME = None
+if rest and rest[0] == "--resume":
+    RESUME = int(rest[1])
+    rest = rest[2:]
+ITEMS = [a.split("::", 1) for a in rest]
 assert ITEMS and all(len(x) == 2 for x in ITEMS), __doc__
 
 
@@ -132,7 +138,7 @@ def remaining_today():
 submitted = []
 for kdir, msg in ITEMS:
     kid = kernel_id(kdir)
-    ver = push(kdir)
+    ver = RESUME if RESUME is not None else push(kdir)
     if ver is None:
         continue
     st = wait_complete(kid)

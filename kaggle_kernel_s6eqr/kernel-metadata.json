@@ -1,5 +1,5 @@
 {
-  "id": "alverlfarfaraway/rsna-knee-s6eqr",
+  "id": "dimaspashaakrilian/rsna-knee-s6eqr",
   "title": "RSNA Knee s6eqr",
   "code_file": "rsna-knee-s6eqr.ipynb",
   "language": "python",
@@ -12,10 +12,10 @@
     "gpu"
   ],
   "dataset_sources": [
-    "heliosli/rsna-knee-compact-r6cnxfsss",
-    "nartaa/rsna-knee-publication-swa-weights-20261007",
-    "heliosli/rsna-orthofoundation-fold0-epoch7-20261004",
-    "goodpjw2008/rsna-knee-2-5d-convnext-reader"
+    "dimaspashaakrilian/rsna-knee-compact-r6cnxfsss/1",
+    "nartaa/rsna-knee-publication-swa-weights-20261007/1",
+    "heliosli/rsna-orthofoundation-fold0-epoch7-20261004/1",
+    "goodpjw2008/rsna-knee-2-5d-convnext-reader/1"
   ],
   "kernel_sources": [],
   "model_sources": [],
