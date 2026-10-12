@@ -13,6 +13,11 @@
 4. Jangan sentuh kernel proyek lain (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Submisi agen ≤2/hari (5/hari tim, reset 07:00 WIB); sisakan 2–3 utk user & rekan.
 5. Rules: dilarang berbagi kode/data secara PRIVAT antar-tim (5.d/6.a); berbagi publik di forum boleh. Jujur melaporkan hasil; keputusan dari skor LB nyata (emas-58: SE ≈0,01 dan terkontaminasi utk OF).
 
+## 3a. Status (12 Okt ±14:45 WIB) — terbaru
+- Terbaik **0,954** (57051680, klon S6), rank 466/5.809; perak & perunggu publik sama-sama 0,954 (dataran ±600 tim). Rencana aktif: **`STRATEGI_0960.md`**.
+- Perintah user 12 Okt: 2 submisi (`s6eq` = notebook publik #1 heliosli 0,5/0,5; `s6eqr` = + reader goodpjw) dari akun alver (satu-satunya kredensial di mesin Windows) lewat `scripts/submit_watch.py` (menunggu slot GPU); push ke branch + PR tanpa atribusi Claude.
+- Siap pakai: `build_s6eq.py`, `build_compact_oof.py` (guru OOF compact 4 fold), scrape lengkap (`reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`).
+
 ## 3. Status (11 Okt 04:00 WIB)
 - Terbaik: **0,950** (Apex 56943646). Dibuang: r224 0,950; fork rabari 0,950; Apex+MaVIT 0,949; klaim "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224). 57028008 (Apex+OF) Timeout; **57044355 (Apex+OF v3) = 0,950 karena OF mati OOM** (bukan vonis OF). **57051680 = salinan S6 oleh USER (PENDING; ±07:00–08:30 WIB).**
 - Koreksi: resep heliosli = Raptor + **compact** (bukan OF); bobot OF tak pernah dipakai di notebook heliosli.

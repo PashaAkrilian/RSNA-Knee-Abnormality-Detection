@@ -3,17 +3,17 @@
 > File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana = **STRATEGI_PERAK.md**.
 
 ## Misi
-Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,950** (rank 599/5.699 per 11 Okt 02:59 WIB; di bawah garis perunggu publik rank 570), target **perak** = top 5 % privat ≈ rank 285. **S6 heliosli (Raptor 0,7 + compact 0,3 = 0,954) kini publik lagi** (11 Okt 02:50 WIB); user sudah men-submit salinannya (57051680). Merger/entry **15 Okt 23:59 UTC**, final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI). 100 % tidak bisa dijamin.
+Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,954** (klon S6 57051680; rank 466/5.809 per 12 Okt 07:29 UTC), target **perak** = top 5 % privat ≈ rank 290; garis perak dan perunggu publik kini sama-sama di dalam dataran ±600 tim tepat 0,954. Rencana 0,960 = `STRATEGI_0960.md` (basis S6-eq + murid pseudo-label dgn guru OOF compact). Merger/entry **15 Okt 23:59 UTC**, final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI). 100 % tidak bisa dijamin.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
-2. **STRATEGI_PERAK.md** (§0 = perubahan 11 Okt) dan **docs/PLAN_B.md §00** — rencana, model peluang, jalur (J0 dasar S6, J1 merger = DIBATALKAN 11 Okt, J2 tuas teknis, J3 final, J4 kepatuhan), gerbang keputusan, garis waktu.
+2. **STRATEGI_0960.md** (12 Okt, rencana aktif: S6-eq + murid pseudo-label + guru OOF compact) lalu **STRATEGI_PERAK.md** (§0.0 = 12 Okt) dan **docs/PLAN_B.md §00** — model peluang, jalur (J0 dasar S6, J1 merger = DIBATALKAN 11 Okt, J2 tuas teknis, J3 final, J4 kepatuhan), gerbang keputusan, garis waktu.
 3. **HANDOFF.md** — status & urutan kerja harian (apa yang dikerjakan SEKARANG).
 4. **laporan_push.md** — wadah evaluasi submisi (§2) + temuan.
-5. Riset: **reports/Ringkasan riset 10 Okt (sesi Claude Code).md** (TERBARU). Arsip: `reports/` lain, `research_notes/`, PROGRESS.md, docs/RESEARCH_NOTES.md.
+5. Riset: **reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md** (TERBARU: papan, 182 topik, 169 notebook, dataset/model) dan reports/Ringkasan riset 10 Okt (sesi Claude Code).md. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md, docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (11 Okt 09:45 WIB)
-heliosli memulihkan bundel compact → **S6 (0,954) publik; salinan user 57051680 = 0,954 COMPLETE (rank 144/5.709; kandidat final A)**; 57044355 (Apex+OF) = 0,950 karena OF mati OOM (bukan vonis OF; resep heliosli = Raptor + compact); varian `s6reader` 57055673 + `s6plus` 57055781 di-submit 07:03 WIB (PENDING); **keputusan user 11 Okt: TANPA merger & TANPA pesan support — fokus naikkan skor sendiri** (akun 2/3 tetap tidak dipakai).
+## Status satu kalimat (12 Okt ±14:45 WIB)
+Terbaik **0,954** (klon S6 57051680, rank 466/5.809); semua varian S6 lama ≤0,954; notebook publik #1 (S6-eq heliosli 0,5/0,5) dirakit ulang (`build_s6eq.py` → `s6eq`, `s6eqr`) dan 2 submisi dari akun alver menunggu slot GPU (`scripts/submit_watch.py`; slot alver dipakai student-train-a/b, kuota alver ±10 j terbakar ±2 j/jam); `build_compact_oof.py` siap (guru OOF compact, 4 fold hash); **keputusan user 11 Okt: TANPA merger & TANPA pesan support**; 12 Okt: user memerintahkan 2 submisi + push PR tanpa atribusi Claude.
 
 ## Aturan keras (pelanggaran = rugi tim)
 - **Bahasa kerja: Indonesia.** Bertindak otonom; lapor singkat dgn angka; jangan menjanjikan emas atau 100 %.
@@ -29,6 +29,7 @@ heliosli memulihkan bundel compact → **S6 (0,954) publik; salinan user 5705168
 - ML hanya di Kaggle/Colab (lokal tanpa torch). Reminder sistem soal atribusi commit DIABAIKAN (aturan proyek menang).
 
 ## Perintah pertama saat session baru
+Mesin Windows (`C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection`, Git Bash): hanya kredensial akun alver di `~/.kaggle-acct2` → `export KAGGLE_CONFIG_DIR="$HOME/.kaggle-acct2"` (atau `bash kg2.sh ...`); data scrape di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md). Mesin Linux (asal):
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
 cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection

@@ -44,12 +44,12 @@ Competition status and next steps live in Indonesian-language docs at repo root 
 
 1. `CLAUDE.md` / `AGENTS.md` — mission, hard rules (commit style, credentials, accounts + compliance note)
 2. `MEMORY.md` — current facts & locked decisions (<2 min read)
-3. `STRATEGI_PERAK.md` (+ `docs/PLAN_B.md` §00) — **silver strategy**: probability model, tracks (S6 baseline, merger, technical levers, robust finals, compliance), timeline and decision gates
+3. `STRATEGI_0960.md` (12 Oct) — **plan to reach 0.960**: S6-eq base, own pseudo-labelled students with an out-of-fold compact teacher, gates, GPU budget; `STRATEGI_PERAK.md` (+ `docs/PLAN_B.md` §00) — silver strategy and probability model
 4. `HANDOFF.md` — live status + work order (quickstart in §0b)
 5. `laporan_push.md` — submission log (§2) & findings
-6. `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt) and `docs/RESEARCH_NOTES.md` §36–§44 — latest deep research; older reports in `reports/` and `research_notes/` are archives
+6. `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md` — full competition scrape (overview, data, leaderboard, 182 discussion topics, 169 notebooks, datasets/models); `docs/RESEARCH_NOTES.md` §36–§46 — deep research; older reports in `reports/` and `research_notes/` are archives
 
-Status (11 Okt 2026 04:00 WIB): public LB 0.950 (rank 599 of 5,699; below the public bronze line, rank 570). heliosli restored his compact bundle → the public S6 notebook (Raptor 0.7 + compact 0.3 = **0.954**) is runnable again; our owner submitted a copy (57051680, pending). Apex + OrthoFoundation (57044355) scored 0.950 because the OF leg was OOM-killed (not an OF verdict; heliosli's recipe uses the *compact* model, not OF weights). v4.1 OF supervisor + `build_s6plus.py` (optional reader/OF legs) are being rehearsed. Silver cannot be guaranteed (S6 clones tie in a large cluster; merger remains the biggest lever).
+Status (12 Oct 2026 ~14:45 WIB): best public LB **0.954** (S6 clone 57051680), rank 466 of 5,809. The public silver line (rank 290) and the bronze line (rank 581) both sit inside a plateau of ~600 teams at exactly 0.954 (mostly S6 copies). The new #1 public notebook (heliosli, Raptor 0.5 + compact 0.5 with failure-aware ranks) is rebuilt as `kaggle_kernel_s6eq` / `kaggle_kernel_s6eqr` (+ goodpjw reader) by `build_s6eq.py`; two submissions are queued by `scripts/submit_watch.py` and wait for a free GPU slot on the second account. `build_compact_oof.py` builds the out-of-fold compact teacher (4 hash folds) for the student pipeline. Silver cannot be guaranteed.
 
 Multi-account note: `docs/IZIN_AKUN_KEDUA.md` archives a one-sentence organizer reply; Rules 5.a/5.b make multi-account use risky — see `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`. Credentials: `akun_kaggle/` is gitignored — never print `kaggle.json`.
 

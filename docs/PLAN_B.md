@@ -2,6 +2,10 @@
 > Disusun 10 Okt 2026 ~22:05 WIB (sesi Claude Code; hanya akun utama). Pelengkap `STRATEGI_PERAK.md`. Skor 57044355 keluar ±04:00 WIB 11 Okt; dokumen ini sudah memuat tindakan utk tiap kemungkinan hasil.
 > Papan acuan: 10 Okt 21:43 WIB (5.673 tim; ≥0,951 = 352; ≥0,952 = 221; =0,950 = 582; kita rank 551; 5 % ≈ rank 284; 10 % ≈ rank 567).
 
+## 000. UPDATE 12 Okt — rencana aktif pindah ke `STRATEGI_0960.md`
+- Varian S6 lama semuanya ≤0,954; basis baru = **S6-eq** (notebook publik #1 heliosli, 0,5/0,5, rank sadar-gagal; `build_s6eq.py`). Cadangan/hedge final B tetap: klon S6 0,954 (57051680) atau S6-eq tanpa murid.
+- Tuas berikut = murid pseudo-label dengan guru **OOF compact** (`build_compact_oof.py`), bukan perna tambahan berlabel sama. Plan B bila murid gagal: S6-eq + (opsional) ckpt publik `jessky/rsna-knee-local-cv-cnx50` setelah dinilai di emas-58.
+
 ## 00. UPDATE 11 Okt 03:30 WIB — S6 HIDUP LAGI: strategi kini BERPUSAT S6 (mengganti prioritas §0–§3 di bawah)
 - **Fakta**: 02:50 WIB heliosli memulihkan dataset `heliosli/rsna-knee-compact-v1` (publik; V10 = V13; semua versi V1–V13 publik) dan menerbitkan ulang notebook S6 publik (**Raptor 0,7 + compact 0,3 = 0,954 satu klik**; thread 748141 "feel free to blend my model with yours"). **User sudah men-submit salinan S6: 57051680 (02:56 WIB, PENDING)**; tahap compact GPU-bound ±25 dtk/studi/pekerja (2 pekerja) → ±4–5 j total → hasil ±07:30–08:30 WIB.
 - **Papan 02:59 WIB**: 5.699 tim; kita rank 599 (0,950) = DI BAWAH garis perunggu publik (rank 570); perak rank 285 (0,951); ≥0,954 = 141. Dataran 0,950 = 618 tim; dataran 0,954 akan membengkak.

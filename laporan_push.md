@@ -7,9 +7,9 @@
 | Hal | Nilai |
 |---|---|
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
-| LB kita | **0,954** (klon S6 user, 57051680) — **rank 144** (papan 06:40 WIB, 5.709 tim; 49 tim tepat di 0,954); Apex 0,950 sebelumnya rank 599 |
-| Peta blok | ≥0,951 = **367** · ≥0,952 = **229** · ≥0,953 = 171 · ≥0,954 = 141 · ≥0,956 = 82 · ≥0,960 = 31 · garis perak (5 %) ≈ rank 285 (0,951), perunggu (10 %) ≈ rank 570 (0,950) |
-| Dinamika | dataran 0,950 +36 tim dalam ±5 j; **S6 publik lagi (02:50 WIB) → dataran 0,954 akan membengkak**; trik "kirim 1−p" membuat tim kuat tersembunyi |
+| LB kita | **0,954** (klon S6 user, 57051680) — **rank 466** (papan 12 Okt 07:29 UTC, 5.809 tim); 11 Okt 06:40 WIB masih rank 144 |
+| Peta blok (12 Okt 07:29 UTC) | ≥0,954 = **803** (±600 tepat 0,954) · ≥0,955 = 182 · ≥0,956 = 119 · ≥0,957 = 86 · ≥0,958 = 66 · ≥0,960 = 38 · garis perak (rank 290) = **0,954**, perunggu (rank 581) = **0,954**, emas (rank 21) = 0,962 |
+| Dinamika | garis perak 0,950 (8 Okt) → 0,954 (12 Okt); ≥0,955 naik 73 → 182 dalam 4 hari; 529 dari 604 tim di dataran 0,954 submit dalam 24 j terakhir (gelombang klon S6); trik "kirim 1−p" membuat tim kuat tersembunyi |
 | Peluang (simulasi) | Apex 0,950: perak 13–20 %, perunggu 25–41 %; klon S6 (0,954) di klaster ratusan tim: perak ±25–45 %, perunggu ±45–70 %; varian dgn informasi baru/merger lebih tinggi; **100 % mustahil** (`silver_prob_sim.py`) |
 | Deadline | merger/entry **15 Okt 23:59 UTC**; final **22 Okt 23:59 UTC**; maks 2 final (PILIH MANUAL); publik 30 % / privat 70 % |
 | Aturan terima uji | varian dibandingkan dgn klon S6 (≈0,954); LB resolusi 0,001 → hanya selisih ≥0,002 yg jelas; Δ<0,002 = noise |
@@ -44,6 +44,8 @@
 | — | 12 Okt 02:23 | **train-a/b + dino** v5/v3/v5 | fix cache ke `/tmp/cache256_train` | **ERROR ~06:15** | — | cache jalan 70 mnt, warm-start OK, lalu **OOM CUDA bs=8** (batch pertama training) | T4 16GB; goodpjw asli bs=8 di GPU lokal |
 | — | 12 Okt ~07:45 | **train-a/b + dino** v5/v4/v5 | bs 8→4 + `expandable_segments` | **ERROR ~10:15** | — | OOM lagi bs=4 (backbone jalan per ~bs×series×kwin gambar px256); **dino: `_AttnOut` missing forward** (bukan OOM) | tiap retry ±70 mnt cache rebuild |
 | — | 12 Okt ~10:45 | **train-a/b + dino** v6/v4/v6 | **bs=2**; dino `_AttnOut.forward` ditambahkan | RUNNING | — | titik kritis OOM ±1 j setelah warm-start; nxtirfan kuota 3,5 j ⚠️ | bila OOM lagi: grad-checkpointing / kwin 8→6 |
+| 18 | 12 Okt (antre) | **`s6eq`** (alver; `build_s6eq.py`) | notebook publik #1 heliosli **tanpa ubahan**: Raptor 0,5 + compact 0,5, rank sadar-gagal, bundel `r6cnxfsss` (= compact-v1 V13) | MENUNGGU slot GPU | — | perintah user 12 Okt (2 submisi); watcher `scripts/submit_watch.py` | harapan ±0,955 (tim heliosli 0,956; salinan 0,955 — skor tim) |
+| 19 | 12 Okt (antre) | **`s6eqr`** (alver) | `s6eq` + Part B reader goodpjw **tanpa ubahan** (bobot per temuan 0,03–0,35) | MENUNGGU slot GPU | — | uji apakah pembaca ke-3 menambah di atas S6-eq | di basis 0,7/0,3 reader = net-zero (s6reader 0,954) |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
@@ -93,7 +95,16 @@
 - **Forum best-score**: model tunggal ConvNeXt-T 5-fold 0,953–0,959 dgn pseudo-label (MURAD rank 10, colum2131); "model is not the key. it is your labels"; validasi: AUC OOF label LLM r=0,87 vs LB (emas-58 r=0,66); trik 1−p; host diam soal OAI/eksternal (743416/744056/747455).
 - **Notebook publik baru**: klaim "Tri-Reader 0,954" (rabari/jcgweb/sameerk) = Apex+r224 (0,950, jangan); tri-hybrid jenillangaliya 0,952 (Raptor+compact+r224 < S6).
 
+### 3g. Temuan 12 Okt (scrape mendalam; detail `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`, rencana `STRATEGI_0960.md`)
+- **Notebook publik #1** = S6 dengan bobot **0,5/0,5** + rank sadar-gagal (heliosli, 11 Okt 14:16 UTC); 25/25 notebook teratas memakai bobot nartaa dan ±22/25 compact heliosli → papan publik atas = satu keluarga klon.
+- **velci-kcd25-20** (BliverRigPåDoge, tim 0,955) = S6 0,7/0,3 tak berubah + model privat (5 anggota ImageNet, target lunak laporan) berbobot 0,20 → pola "+1 kaki independen = +0,001".
+- **Pembeda papan atas** (klaim peserta): murid 2.5D sendiri + pseudo-label OOF (ConvNeXt-T tunggal 0,953–0,959; MURAD rank 4 = 0,964 tanpa data eksternal). Validator OOF-vs-label-lemah r=0,87 vs LB, emas-58 r=0,66.
+- **Kode compact heliosli**: 4 fold hash `sha1(uid)[:8] % 4` atas 4.344 non-gold, `gold_in_training 0` → **guru OOF compact bisa direkonstruksi** (`build_compact_oof.py`).
+- Host: LLM API untuk label = boleh; KneeCoT = dilarang; OAI = boleh bila akses terbuka & gratis; bobot publik hasil OAI = belum dijawab.
+- Simulator repo pada papan baru: P(perak) publik 0,954 ≈ 16–25 %, 0,956 ≈ 19–42 %, 0,958 ≈ 26–60 %, 0,960 ≈ 27–76 %.
+
 ## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_PERAK.md`)
+- [ ] 12 Okt: 2 submisi S6-eq (`s6eq`, `s6eqr`) via watcher; scrape lanjutan; PR untuk evaluasi rekan; lalu jalur 0,960 (`STRATEGI_0960.md`: guru OOF compact → murid A/B → notebook final).
 - [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) ditutup; 57028008 Timeout; 57044355 = 0,950 (OF tak jalan → OOM terkonfirmasi); v4.1 dibangun/diuji.
 - [x] 11 Okt dini hari: S6 publik lagi → user men-submit 57051680; sonda `s6probe` (compact ±3,5 j); `build_s6plus.py` (reader/OF opsional); riset forum & zoologi bundel; dokumen diperbarui.
 - [ ] 11 Okt 03:35–04:45: rehearsal `s6plusr` (reader+compact+OF+blend 3 perna) dan `apexof4r3` (OF 4 pekerja) → push `s6reader`/`s6plus`.

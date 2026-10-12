@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 12 Okt 2026 ~11:00 WIB (sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → `STRATEGI_PERAK.md` (rencana+gerbang; §0 = perubahan 11 Okt) → `docs/PLAN_B.md` (§00 terbaru) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 12 Okt 2026 ~14:45 WIB (sesi Claude Code, mesin Windows; sebelumnya ~11:00 WIB sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
@@ -15,10 +15,13 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (12 Okt ~11:00 WIB)
+## 0c. Status (12 Okt ~14:45 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi terbaik | **0,954** (57051680 klon S6 user; rank 144). Varian 11 Okt semua ≤0,954 — plafon S6+reader; varian S6 TUTUP kecuali murid/blend. Belum ada submisi 12 Okt |
+| Submisi terbaik | **0,954** (57051680 klon S6 user); papan 12 Okt 07:29 UTC: **rank 466/5.809**; perak rank 290 = 0,954 dan perunggu rank 581 = 0,954 (dataran ±600 tim); emas rank 21 = 0,962 |
+| **S6-eq (12 Okt, sesi Claude Code)** | `build_s6eq.py` → `kaggle_kernel_s6eq` (notebook publik #1 heliosli tanpa ubahan: Raptor 0,5 + compact 0,5, rank sadar-gagal) dan `kaggle_kernel_s6eqr` (+ Part B reader goodpjw tanpa ubahan). Perintah user: 2 submisi → `scripts/submit_watch.py` (akun alver) push otomatis saat slot GPU kosong, submit, pantau skor. Log: `..\kaggle-scrape-rsna-knee-20261012\submit_watch.log` |
+| Kendala slot | alver menjalankan student-train-a **dan** student-train-b (2/2 sesi); kuota alver 10,2 j @14:33 terbakar ±2 j/jam → habis ±19:40 WIB bila keduanya jalan terus |
+| Guru OOF compact | `build_compact_oof.py` siap (fold 0–3: model f{k} saja, stride 3, ±1,6 j/fold; gold: 4 model, stride 1); belum di-push — lihat `STRATEGI_0960.md` §3 |
 | **Pipeline murid — 3 ERROR, fix v6 RUNNING** | Semua kernel train-a/b/dino ERROR 3× (12 Okt): (1) tulis cache ke `/kaggle/input` read-only → fix `/tmp/cache256_train`; (2)(3) OOM CUDA bs=8→4→**2** (backbone ConvNeXt jalan per bs×series×kwin gambar; T4 16GB; goodpjw asli bs=8 di GPU lokal); dino: `_AttnOut` tanpa `forward` → ditambah. **v6/v4/v6 di-push ~10:45 WIB, status RUNNING**. Tiap retry = ±70 mnt rebuild cache on-demand |
 | Keputusan bila v6 OOM lagi | gradient checkpointing (monkey-patch `model.enc`) ATAU kwin 8→6; jangan turunkan res (resep goodpjw = 256) |
 | Setelah a/b/dino COMPLETE | jalankan ulang `scripts/night_student.sh` (PID lama exit 00:35 dgn fold=0): push train-c → tarik fold ckpt → dataset folds → infer → submit murid solo → s6student |
@@ -41,7 +44,13 @@
 - **Riset 11 Okt SELESAI** (`reports/Riset diskusi + best-score code 11 Okt.md`): Fase B pseudo-label = prioritas naik (validator OOF-vs-weak-label r=0,87); pantau `kaggle datasets list -s r3cnx`.
 - **Pipeline 0,960 (perintah user; riset bedah tim top — `reports/Riset murid+forum 11 Okt sore.md`)**: azamat1ch rank 4 = ConvNeXt-T 5-fold SOLO **0.959**; colum2131 = ConvNeXt 0.953 + DINOv2 0.951 → blend 0.955 → **0.959**; datnt114 0.961 (OOF 0.937 — train-on-all pseudo). Resep: pseudo-label quality + train-on-all + 2 keluarga blend. **Eksekusi (semua akun alver)**: prep v3 RUNNING (fix filename-find); train-a/b/c CONVNEXT siap (warm-start ckpt goodpjw, internet OFF); **student-dino ViT-S one-shot siap** (PyTorch-murni DinoSmall, key-strict 223, 30–60 mnt); student-infer siap (murid solo submission + student_test_preds.csv). Gelombang: prep→(a+b)→(c+dino)→push folds ke dataset→infer→submit. Blend S6+murid = builder leg CSV offline. OAI: host masih diam (748276) — risiko kepatuhan, keputusan user.
 
+### F. 12 Okt siang (sesi Claude Code) — jalur 0,960
+1. Tunggu hasil `s6eq`/`s6eqr` (watcher) → catat di `laporan_push.md` §2; bila ≥0,955 jadikan basis (gerbang G0 `STRATEGI_0960.md`).
+2. Push `compact-oof-f0..f3` + `compact-gold` (±7 j GPU, 2 sesi paralel) → rakit label `L1 = 0,5 konsensus + 0,5 OOF-compact` → gerbang G1.
+3. Revisi pipeline murid (`STRATEGI_0960.md` §6: cache CPU, 2 GPU paralel, deadline per epoch, 224 px) → murid A/B → notebook final S6-eq + murid.
+
 ## 2. Alat & perintah
+- Builder baru 12 Okt: **`build_s6eq.py`** (`name=s6eq|s6eqr owner= reader=1`), **`build_compact_oof.py`** (`fold=0..3 | gold=1 owner= stride=`), **`scripts/submit_watch.py`** (push saat slot kosong → submit → pantau skor).
 - Builder: **`build_s6plus.py`** (`name= reader=1 of=1 wr= wc= wo= pseudo= t0=nb|now stop_h= kill_h= deadline= lenient=1`), `build_s6probe.py` (sonda S6), `build_apexof4.py` (Apex+OF v4.1), `of_stage_v4.py` (+`test_of_v4_local.py`), `build_ofmem.py` (profil memori), lama: `build_submit_legs.py`/`of_stage.py`/`build_scale_of2.py`.
 - Status/keluaran: `kaggle kernels status <slug>` · `kaggle kernels push -p <dir>` (commit-run; maks 2 sesi GPU; sesi antre tetap dihitung) · `kernels output --file-pattern '<regex>'` (JANGAN tanpa pola pada kernel OF).
 - **Baca log lewat Chrome**: `https://www.kaggle.com/code/dimaspashaakrilian/<slug>/log` (log langsung terlambat ±5 mnt; baru lengkap setelah selesai) → JS: `[...document.body.innerText.matchAll(/^\d+(\.\d+)?s\s+\d+\s+.*$/gm)].map(x=>x[0].replace(/[?&=]/g,' '))` lalu saring. Panel "View Active Events" (sidebar) → ⋯ → Stop Session utk membatalkan sesi antre.
