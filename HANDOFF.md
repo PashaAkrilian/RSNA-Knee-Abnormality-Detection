@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 11 Okt 2026 ~09:45 WIB (sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → `STRATEGI_PERAK.md` (rencana+gerbang; §0 = perubahan 11 Okt) → `docs/PLAN_B.md` (§00 terbaru) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 12 Okt 2026 ~11:00 WIB (sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → `STRATEGI_PERAK.md` (rencana+gerbang; §0 = perubahan 11 Okt) → `docs/PLAN_B.md` (§00 terbaru) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
@@ -15,15 +15,16 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (11 Okt ~21:45 WIB)
+## 0c. Status (12 Okt ~11:00 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi terbaik | **0,954** (57051680 klon S6 user; rank 144). Varian 11 Okt semua ≤0,954: s6reader 0,954 (net-zero), s6prb 0,954 (net-zero, aman ulang), s6plus 0,952, s6clean 0,950, **s6of 0,951** (OF−0,003; tutup). Plafon S6+reader = 0,954 — varian S6 TUTUP kecuali murid/blend. Main 5/5 habis; alver 3 sisa |
-| **Malam ini — pipeline murid 0,960** | **prep v4 cache-only RUNNING 21:12** (cache256 ulang + push → dataset `alverlfarfaraway/rsna-knee-student-cache256`; labels+meta sudah ada; watch_prep3.log) → ~23:30 push **train-a+b** paralel (2 GPU alver, ~5 j) → train-c + dino (~05:00–07:30) → fold ckpt + dino_full.pt didatasetkan → **infer** (murid solo; preds → dataset `rsna-knee-student-preds`) → submit murid solo → **`s6student`** (S6 0,65 + murid 0,35; `build_s6student.py`, fallback S6) |
-| Label murid | blend50 (konsensus4⊕teacher 0,5) **emas-58 AUC 0,929** > konsensus 0,896; fold valid GroupKFold 5×870 + 58 emas fold=−1 |
-| OAI | host diam (743416/748276); +0,006–0,008 (nartaa). **User ditanya 21:16 — belum jawab**; agen TIDAK eksekusi tanpa jawaban eksplisit |
-| Kuota | GPU alver ±24 j (2 sesi; prep = CPU-only, tak makan GPU); irfan ±19 j; main reset 17 Okt 07:00 WIB. Submisi: alver 3, irfan 5 |
-| Git | 67+ commit lokal (ac48abf s6student; 11a0f39 prep v4); belum push — perintah user |
+| Submisi terbaik | **0,954** (57051680 klon S6 user; rank 144). Varian 11 Okt semua ≤0,954 — plafon S6+reader; varian S6 TUTUP kecuali murid/blend. Belum ada submisi 12 Okt |
+| **Pipeline murid — 3 ERROR, fix v6 RUNNING** | Semua kernel train-a/b/dino ERROR 3× (12 Okt): (1) tulis cache ke `/kaggle/input` read-only → fix `/tmp/cache256_train`; (2)(3) OOM CUDA bs=8→4→**2** (backbone ConvNeXt jalan per bs×series×kwin gambar; T4 16GB; goodpjw asli bs=8 di GPU lokal); dino: `_AttnOut` tanpa `forward` → ditambah. **v6/v4/v6 di-push ~10:45 WIB, status RUNNING**. Tiap retry = ±70 mnt rebuild cache on-demand |
+| Keputusan bila v6 OOM lagi | gradient checkpointing (monkey-patch `model.enc`) ATAU kwin 8→6; jangan turunkan res (resep goodpjw = 256) |
+| Setelah a/b/dino COMPLETE | jalankan ulang `scripts/night_student.sh` (PID lama exit 00:35 dgn fold=0): push train-c → tarik fold ckpt → dataset folds → infer → submit murid solo → s6student |
+| Kuota 12 Okt 08:23 | alver 17,3 j; main 15,8 j; **nxtirfan 3,5 j ⚠️** (1 run dino tersisa; gagal = dino pindah main/alver). Reset 17 Okt 07:00 WIB |
+| OAI | host diam; user belum jawab (21:16 11 Okt) — jangan eksekusi |
+| Git | push 12 Okt atas perintah user |
 
 ## 1. Urutan kerja
 ### A. 11 Okt 03:35–07:03 — SELESAI

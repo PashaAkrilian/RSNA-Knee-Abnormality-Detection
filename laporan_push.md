@@ -40,6 +40,10 @@
 | — | 11 Okt (siap) | **student-dino** (alver) | keluarga ke-2: ViT-S DINOv2 one-shot (4.349 weak, emas val-only), PyTorch-murni key-strict | siap push | — | gelombang 2 dgn train-c | colum: DINO 0.951 + ConvNeXt → blend |
 | — | 11 Okt (siap) | **student-infer** (alver) | murid solo: mean fold ConvNeXt + DINO rank-blend 50/50 → submission.csv + student_test_preds.csv | siap push | — | setelah folds+dino didatasetkan; preds → dataset `rsna-knee-student-preds` (placeholder sudah dibuat) | blend S6+murid = `s6student` 0,65/0,35 |
 | — | 11 Okt 21:17 (siap) | **s6student** (alver) | S6 (probit+synres) + murid 0,35 rank-blend (`build_s6student.py`); fallback S6 bila preds absen | siap push | — | setelah student-preds ada isinya | commit ac48abf |
+| — | 12 Okt 00:15 | **train-a/b + dino** (alver/main/irfan) | gelombang 1: cache-on-demand + ConvNeXt warm-start goodpjw / DINOv2-S one-shot | **ERROR 00:30** | — | tulis cache ke `/kaggle/input` (read-only mount) | orkestrator `night_student.sh` exit 00:35 (fold=0) |
+| — | 12 Okt 02:23 | **train-a/b + dino** v5/v3/v5 | fix cache ke `/tmp/cache256_train` | **ERROR ~06:15** | — | cache jalan 70 mnt, warm-start OK, lalu **OOM CUDA bs=8** (batch pertama training) | T4 16GB; goodpjw asli bs=8 di GPU lokal |
+| — | 12 Okt ~07:45 | **train-a/b + dino** v5/v4/v5 | bs 8→4 + `expandable_segments` | **ERROR ~10:15** | — | OOM lagi bs=4 (backbone jalan per ~bs×series×kwin gambar px256); **dino: `_AttnOut` missing forward** (bukan OOM) | tiap retry ±70 mnt cache rebuild |
+| — | 12 Okt ~10:45 | **train-a/b + dino** v6/v4/v6 | **bs=2**; dino `_AttnOut.forward` ditambahkan | RUNNING | — | titik kritis OOM ±1 j setelah warm-start; nxtirfan kuota 3,5 j ⚠️ | bila OOM lagi: grad-checkpointing / kwin 8→6 |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
