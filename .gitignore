@@ -24,3 +24,5 @@ progress_submisi2.log
 /data/student_folds/*.pt
 /data/rsna-knee-teacher-train.log
 /rsna-knee-abnormality-detection.zip
+/data/student_folds_alver/
+/data/student_dino_alver/

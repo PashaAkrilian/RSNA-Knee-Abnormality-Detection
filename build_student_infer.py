@@ -6,8 +6,7 @@ Pakai: python3 build_student_infer.py
 Desain:
   - Mount: kompetisi (test_series/test_images on-the-fly, decode meniru student-prep), prep, tonylica, goodpjw.
   - Ckpt murid dicari TOLERAN: /kaggle/input/**/fold[0-9].pt & /kaggle/input/**/dino_full.pt
-    (dataset folds rsna-knee-student-folds BELUM dimount di metadata — ditambah saat push nanti
-    oleh agen lain; kalau belum ada kernel tetap jalan dgn model yang tersedia).
+    (dataset folds dimount: alverlfarfaraway/rsna-knee-student-folds — v1 fold0-3, v2 = +fold4 setelah train-c; dino: alverlfarfaraway/rsna-knee-student-dino).
   - Output: student_test_preds.csv (uid + 12 kolom cnxt_* + 12 kolom dino_*) + submission.csv
     (mean rank-pct 50/50 per finding) — blend S6+murid = kerjaan offline lokal, BUKAN di sini.
 Sel model (DinoSmall/StudentDino) diimpor dari build_student_dino (sumber tunggal).
@@ -29,6 +28,8 @@ MD = {
     "competition_sources": ["rsna-knee-abnormality-detection"],
     "dataset_sources": [
         "alverlfarfaraway/rsna-knee-student-cache256",
+        "alverlfarfaraway/rsna-knee-student-folds",
+        "alverlfarfaraway/rsna-knee-student-dino",
         "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
         "goodpjw2008/rsna-knee-2-5d-convnext-reader",
     ],

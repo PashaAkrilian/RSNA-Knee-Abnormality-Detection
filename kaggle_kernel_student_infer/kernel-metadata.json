@@ -13,6 +13,8 @@
   ],
   "dataset_sources": [
     "alverlfarfaraway/rsna-knee-student-cache256",
+    "alverlfarfaraway/rsna-knee-student-folds",
+    "alverlfarfaraway/rsna-knee-student-dino",
     "tonylica/rsna-knee-bend-dinov3-0917-repro-assets",
     "goodpjw2008/rsna-knee-2-5d-convnext-reader"
   ],
