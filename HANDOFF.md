@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 12 Okt 2026 ~23:05 WIB (sesi OpenCode, mesin Linux; sebelumnya ~14:45 WIB sesi Claude Code mesin Windows). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 12 Okt 2026 ~23:58 WIB (sesi OpenCode, mesin Linux; sebelumnya ~14:45 WIB sesi Claude Code mesin Windows). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
@@ -15,7 +15,7 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (12 Okt ~23:05 WIB — sesi OpenCode mesin Linux)
+## 0c. Status (12 Okt ~23:58 WIB — sesi OpenCode mesin Linux)
 | Hal | Keadaan |
 |---|---|
 | Submisi terbaik | **0,954 tetap** (57051680 klon S6, rank 499/5.812; papan 16:00: dataran 0,954 = 649 tim, ≥0,954 = 835, perak 290 = 0,954, emas 21 = 0,962) |
@@ -24,7 +24,8 @@
 | train-c + infer + OOF | **ANTRE 17 Okt 07:00**: train-c (fold4) → dataset v2 → infer murid → blend/`s6student`; `build_compact_oof.py` (guru OOF, fold 0–3 stride 3 ±1,6 j/fold) juga 17 Okt (alver 4,6 j sisa malam ini TIDAK dipakai — train sudah selesai, jangan push). OOM lagi → gradient checkpointing / kwin 8→6, res 256 jangan diturunkan |
 | Kuota 23:00 | main **12,67 j** (tak terpakai malam — tak ada rencana GPU); alver **4,6 j** (sisa, idle); nxtirfan 0. Reset **17 Okt 07:00 WIB** (+30 j/akun) |
 | **Persiapan 17 Okt SELESAI 23:30** | builder train-c + compact-oof-f0..f3 + gold + student_infer + s6student siap push; **dataset alver `rsna-knee-student-folds` v1 + `rsna-knee-student-dino` v1 LIVE** (mount akun-2 aman); rincian perintah di §G6. akun 2/3 **kuota 0 s/d 17 Okt 07:00 — JANGAN push sebelumnya** |
-| Git | update sore (`6d2e8f8`) sudah push; update malam (skor + train + persiapan) menyusul commit/push |
+| Pantau kuota | `scripts/quota_watch.sh` **JALAN** (PID 11661, 5 mnt → `data/quota_watch.log`): main 12,67 j · alver 0 · nxtirfan 0, refresh 17 Okt 07:00. Stop: `kill 11661`; start: `setsid nohup bash scripts/quota_watch.sh >/dev/null 2>&1 &` |
+| Git | update 12 Okt (skor + train + persiapan + pantau kuota) **sudah push** sampai `c063ef5` |
 | OAI | host diam; user belum jawab (21:16 11 Okt) — jangan eksekusi |
 
 ## 1. Urutan kerja

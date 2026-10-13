@@ -1657,3 +1657,9 @@ ATURAN PENULISAN:
 - **Dataset `dimaspashaakrilian/rsna-knee-student-folds` v1 (privat) LIVE**: fold0–3.pt (123 MB ×4) + oof_fold0–3.csv; deskripsi mencatat fold4 = train-c 17 Okt (naik ke v2). Upload privat lolos (mirip mirror publik tadi → setting versi bawaan aman). `build_student_infer.py` dicatat belum mount folds → tambah saat push.
 - **Bersih-bersih**: `data/mirror_upload` dihapus (846 MB; dataset mirror sudah di Kaggle) → disk 19 GB free. Malam ini TIDAK ada push GPU lagi (alver sisa 4,6 j dibiarkan — train selesai; main 12,67 j; nxtirfan 0).
 - **MD**: MEMORY §3 (23:05), HANDOFF §0c/§G (4–6), laporan_push baris 20/21, PROGRESS §60.
+
+
+## 61. 12 Okt 2026 23:58 — pemantauan kuota GPU 3 akun
+- Permintaan user: "saya mau pantau gpu akun 1 2 3" → `scripts/quota_watch.sh` (interval `INTERVAL` dtk, default 300): 3× `kaggle quota` (KAGGLE_CONFIG_DIR masing-masing: main `~/.kaggle`, alver `~/.kaggle-acct2`, nxtirfan `akun_kaggle/`) → baris `main[used|sisa|total|refresh] alver[...] nxtirfan[...]` di `data/quota_watch.log` (di-.gitignore, log hidup).
+- Status awal 23:55: main 17,33/12,67 sisa · alver 34,02/0 sisa · nxtirfan 31,45/0 sisa · refresh 2026-10-17T00:00:00 (= 17 Okt 07:00 WIB). Proses: `setsid nohup` PID 11661 — matikan `kill 11661`, nyalakan ulang `setsid nohup bash scripts/quota_watch.sh >/dev/null 2>&1 &`.
+- Commit `c063ef5` (skrip + gitignore) sudah push; MD diperbarui (MEMORY §3 23:58 + baris Pantau, HANDOFF §0c, AGENTS/CLAUDE one-liner).
