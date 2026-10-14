@@ -21,7 +21,7 @@
 | **Submisi terbaik** | **0,956** = salinan R7 heliosli oleh user (57146631, 13 Okt 21:26 WIB) + duplikat 57150970 (0,956); rank **558/5.957**; dataran 0,956 ±750 tim (rank 202–951) = garis perak (297) DAN perunggu (595) |
 | **Basis baru R7** | `heliosli/rsna-knee-compact-r7cnxfsss` (bundel `8c7b666e`) + notebook "≈0.957 one click"; salinan disimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb` (+ `.meta.json`) |
 | **Hasil 14 Okt** | `r7murid` 57174015 = 0,956, rank 558→604 (murid r1 di luar slot tak menambah). **`r7r224` 57185636 PENDING** (resep varshitha; skor ±02:30). Varian siap jatah 15 Okt: `r7r224f` (flip-TTA, commit jalan), `r7m224s` (murid di slot Raptor). Submit: `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/<slug> -v 1 -f submission.csv -m "..."` |
-| **Terjadwal 15 Okt 07:03 WIB** | `scripts/submit_two.sh` **PID 14026** (log `data/submit_15okt.log`): `r7v3f` v1 (R7 + r224 bercermin + flip compact) lalu `r7v3fs` v1 (+ murid r1 di slot Raptor 0,25); commit keduanya lulus. Batal: `kill 14026` (cek `ps -o cmd= -p 14026` dulu) |
+| **Terjadwal (systemd --user)** | 15 Okt 07:03 `rsna-submit-15okt` (`r7v3f` + `r7v3fs`) · 17 Okt 07:05 `rsna-push-17okt` (latih r2a alver + r2c nxtirfan). Cek `systemctl --user list-timers 'rsna-*'`; log `data/submit_15okt.log`, `data/push_17okt.log`. (Penjadwal setsid/nohup lama MATI saat sesi tertutup → jangan dipakai lagi) |
 | **Guru OOF R7** | f0/f1 COMPLETE → `data/r7oof/`; f2/f3 RUNNING (nxtirfan, push 21:21); lalu `bash kg3.sh kernels push -p kaggle_kernel_compact-gold-r7`; tarik: `bash kg3.sh kernels output nxtirfan/<slug> -p data/r7oof --file-pattern '(compact_(oof|gold).*\.csv|receipt.*\.json)$'` → `python3 make_labels_v1.py` |
 | Kuota 21:20 | main 11,54 j (inferensi saja) · alver 0 · nxtirfan 8,54 j · reset 17 Okt 07:00 WIB |
 | Dibatalkan | `s6student` + `student_infer` rencana 17 Okt (preds murid dari dataset → fallback diam-diam di run penilaian; DINO emas-58 0,71). Diganti `r7murid` |
@@ -74,7 +74,8 @@
 3. (RUNNING) Guru OOF R7 di nxtirfan (f0,f1 → f2,f3 → gold). Setelah lengkap: `make_labels_v1.py` (lokal) → `labels_student_v1.csv` → dataset privat akun pelatih.
 4. (17 Okt 07:00) Murid putaran-2 (alver; 2 fold paralel/sesi bila builder 2-GPU siap, warm-start dari r1) → `r7murid` dgn fold r2 → probe.
 5. Final 21–22 Okt: A = varian R7 terbaik yg terskor (δ>0), B = salinan R7 murni (57146631) atau varian beda mekanisme.
-6. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
+6. (15 Okt 02:30) rank 447 (r7r224 efektif); OOF R7 lengkap + label v1 diunggah (alver); timer systemd 07:03 & 17 Okt 07:05; builder `folds=` + `slot=compact` utk inferensi murid r2 (dataset fold r2 dibuat setelah latih: `dimaspashaakrilian/rsna-knee-student-r2a|r2c`).
+7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
 
 ## 2. Alat & perintah

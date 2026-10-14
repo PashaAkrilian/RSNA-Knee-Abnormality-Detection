@@ -39,7 +39,8 @@ assert BASE_ARG in ("r7", "v224", "v224m"), BASE_ARG
 V224 = BASE_ARG in ("v224", "v224m")          # basis varshitha (slot Raptor = 0,65 r384 + 0,35 r224)
 SLOT = args.get("slot", "final")
 FLIP = args.get("flip", "0") == "1"
-assert SLOT in ("final", "raptor")
+assert SLOT in ("final", "raptor", "compact")
+FOLDS_DS = args.get("folds", "dimaspashaakrilian/rsna-knee-student-folds")   # set fold murid (r1 = default; r2a/r2c = dataset baru)
 NAME = args.get("name", "r7m224" if V224 else "r7murid")
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
@@ -47,7 +48,7 @@ _b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "
 BASE = ROOT / "kaggle_base" / f"{_b}.ipynb"
 BASE_META = ROOT / "kaggle_base" / f"{_b}.meta.json"
 SLUG = "rsna-knee-" + NAME
-EXTRA_DS = ["dimaspashaakrilian/rsna-knee-student-folds", "goodpjw2008/rsna-knee-2-5d-convnext-reader"]
+EXTRA_DS = [FOLDS_DS, "goodpjw2008/rsna-knee-2-5d-convnext-reader"]
 MB, ME = "# ---- [murid] kaki ke-3", "# ---- [murid] selesai ----"
 
 DECODE = bsi.CELL3.split("# cache volume per-worker")[0]      # fungsi decode = salinan student-prep (geometri cache latih)
@@ -68,7 +69,7 @@ def mount(slug, required):
     raise FileNotFoundError(slug + '/' + required)
 COMP = mount('rsna-knee-abnormality-detection', 'test.csv')
 GOODPJW = mount('rsna-knee-2-5d-convnext-reader', 'knee.py')
-FOLD_DIR = mount('rsna-knee-student-folds', 'fold0.pt')
+FOLD_DIR = mount('__FOLDSLUG__', 'fold0.pt')
 sys.path.insert(0, GOODPJW)
 from knee import LABELS, KneeNet, StudyDataset, build_study_table
 __DECODE__
@@ -191,6 +192,7 @@ APPLY_FINAL = r'''if _stu_ok is not None:   # [murid] third leg on the final ble
 
 IN_LOOP = ("    if _stu_ok is not None:   # [murid] student inside the Raptor slot (Raptor-like, rho 0.93), over its own scored rows\n"
            "        rr = np.where(_stu_ok, (1.0 - W_MURID) * rr + W_MURID * pct_on(_stu_v[:, j], _stu_ok), rr)\n")
+IN_LOOP_COMPACT = IN_LOOP.replace("Raptor slot (Raptor-like, rho 0.93)", "compact (R7) slot (student taught by R7 OOF)").replace("rr", "ro")
 
 
 def src(c):
@@ -225,10 +227,10 @@ def build():
     load = LOAD.replace("__W__", repr(W)).replace("__SLOT__", SLOT)
     if W > 0 and SLOT == "final":
         c6 = c6.replace(anchor, load + APPLY_FINAL + anchor)
-    elif W > 0:                                                    # slot=raptor: muat sebelum loop, campur ke rr di dalam loop
+    elif W > 0:                                                    # slot=raptor|compact: muat sebelum loop, campur ke rr|ro di dalam loop
         a_out, a_wr = "out = np.zeros((n, len(labels)))\n", "    wr = W_RAPTOR_C.get(c, W_RAPTOR)\n"
         assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
-        c6 = c6.replace(a_out, load + a_out).replace(a_wr, IN_LOOP + a_wr)
+        c6 = c6.replace(a_out, load + a_out).replace(a_wr, (IN_LOOP if SLOT == "raptor" else IN_LOOP_COMPACT) + a_wr)
     if W > 0:
         c6 = c6.replace(rec, rec[:-1] + ", 'murid': murid}")
     mid = cells[i_st1 + 1:i_bl]
@@ -241,7 +243,7 @@ def build():
             assert c4.count(a_) == 1, a_
             c4 = c4.replace(a_, b_)
         mid = mid[:k_set[0]] + [code(c4)] + mid[k_set[0] + 1:]
-    student = STUDENT.replace("__BUDGET__", str(BUDGET)).replace("__DECODE__", DECODE)
+    student = STUDENT.replace("__BUDGET__", str(BUDGET)).replace("__DECODE__", DECODE).replace("__FOLDSLUG__", FOLDS_DS.split("/")[1])
     stage0 = STAGE0.replace("__TIMEOUT__", str(BUDGET + 2400))     # + gold check in commit mode (≤1800 s) + model load
     base_txt = ("varshithakolupuri's R7 + Raptor-r224 public notebook (Raptor slot = 0.65 r384 + 0.35 r224; R7 0.5)" if V224 else
                 "heliosli R7 public notebook (Raptor 0.5 + compact R7 0.5, bundle `8c7b666e27dc0e8f`)")
@@ -318,15 +320,16 @@ def check_leg():
     # slot=raptor: muat + campur ke rr di dalam loop (baris NaN murid -> rr tetap)
         ns = dict(np=np, pd=pd, json=json, pct=pct, pct_on=pct_on, labels=labels, test_ids=ids_b, WORK=Path(d))
         exec(compile(LOAD.replace("__W__", repr(wt)).replace("__SLOT__", "raptor"), "load", "exec"), ns)
-        loop = "for j in range(12):\n    rr = pct(base_b[:, j])\n" + IN_LOOP + "    got.append(rr)\n"
-        ns.update(base_b=base_b, got=[])
-        exec(compile(loop, "loop", "exec"), ns)
         v = s3[["cnxt_" + c for c in labels]].to_numpy()
         ok = np.isfinite(v).all(axis=1)
-        for j in range(12):
-            want = np.where(ok, (1 - wt) * pct(base_b[:, j]) + wt * pct_on(v[:, j], ok), pct(base_b[:, j]))
-            assert np.allclose(ns["got"][j], want)
-    print(f"cek kaki murid OK (w={wt}): tanpa file, lengkap, 5 % NaN -> fallback, 1 % NaN -> baris itu rank R7, slot raptor")
+        for var, tmpl in (("rr", IN_LOOP), ("ro", IN_LOOP_COMPACT)):     # slot raptor -> rr, slot compact -> ro
+            loop = f"for j in range(12):\n    {var} = pct(base_b[:, j])\n" + tmpl + f"    got.append({var})\n"
+            ns.update(base_b=base_b, got=[])
+            exec(compile(loop, "loop", "exec"), ns)
+            for j in range(12):
+                want = np.where(ok, (1 - wt) * pct(base_b[:, j]) + wt * pct_on(v[:, j], ok), pct(base_b[:, j]))
+                assert np.allclose(ns["got"][j], want), var
+    print(f"cek kaki murid OK (w={wt}): tanpa file, lengkap, 5 % NaN -> fallback, 1 % NaN -> baris itu rank R7, slot raptor & compact")
 
 
 if __name__ == "__main__":

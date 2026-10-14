@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-14T22:45:00+07:00
+> Last updated: 2026-10-15T03:00:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -18,6 +18,7 @@
 
 ## 2. Temuan terkunci
 - **14 Okt — basis baru R7 (0,956)**: heliosli merilis bundel **R7** `heliosli/rsna-knee-compact-r7cnxfsss` (`8c7b666e`; ConvNeXt-S 4 fold, crop 352, aux **fastMRI**, stacker Effusion/Baker; fungsi fold `sha1(uid)[:8] % 4`, gold tak dilatih — terverifikasi dari `compact_train.py` tertanam) + notebook "≈0.957 one click" (Raptor 0,5 + R7 0,5). **User submit 13 Okt: 57146631 & 57150970 = 0,956** (basis tersimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb`). Semua notebook publik teratas = keluarga R7; tak ada yang terverifikasi ≥0,957.
+- **15 Okt 03:00**: R7+r224 terbukti utk kita (rank 615→447). Resep komponen publik mentok ±rank 290–350 (Jingshui Fu/Arthritis/varshitha/Nut_RJ); S6 di slot compact ≈ netral (Nut_RJ 351 ≈ varshitha 350); reader goodpjw merugikan (MAYANK 549). Tembus 0,957 hanya dgn **model sendiri** (heliosli #171, BliverRigPåDoge #212) → murid r2a/r2c 17 Okt = tuas utama.
 - **14 Okt 22:40 — riset perak**: target user = PERAK. Garis perak publik diproyeksi naik ke 0,957 (≥0,957: 86→213 dlm 2 hari) → butuh +0,001 nyata di atas R7. Bukti publik: r224+cermin (rank 289), model sendiri beragam 0,2 → 0,957 (bliverrigpdoge). Tim teratas: kuncinya label AI berbasis gambar, bukan laporan saja.
 - **14 Okt malam — hasil & pelajaran**: `r7murid` (57174015; murid r1 sbg kaki ke-3 0,20) = 0,956, rank tim 558→604 → **tidak menambah** (murid r1 = distilasi Raptor, ρ 0,93 → hanya menaikkan bobot keluarga Raptor; medvax: R7 70/30 = 0,955). **Pelajaran: anggota baru masuk DI DALAM slot keluarganya** (seperti r224 di slot Raptor), keseimbangan Raptor/R7 0,5/0,5 dijaga. **Peringkat di dalam blok mengikuti skor tak-dibulatkan**, tapi klon R7 identik pun tersebar ±400 rank (nondeterminisme GPU: jash 672, kita 604, Hackers 558) → hanya lompatan besar yg bermakna. Salinan R7+r224 mengelompok rank ±286–315 → r224 = kenaikan nyata (publik). Pseudo-label: generasi 1 (CoAtNet fused_r1, 30 Sep–5 Okt, solo 0,93) kadaluarsa; generasi 2 (v0, guru Raptor) = murid r1 di atas; generasi 3 = guru OOF R7.
 - **Model blok-klon (14 Okt)**: ±750 tim di 0,956; klon identik = skor privat identik, urutan dalam blok = waktu submit (kita submit 13 Okt sore → tengah blok ≈ garis perunggu). **Perak menuntut varian dgn δ>0 di atas R7** (δ kecil pun melompati ratusan klon); δ<0 jatuh di bawah blok. 0,965 = top-7 → realistisnya <2 %.
@@ -36,10 +37,10 @@
 ## 3. Status (14 Okt 15:20 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **terbaik 0,956** (R7 57146631/57150970; rank 604/5.980 per 21:20). 14 Okt: **57174015 `r7murid` = 0,956 (tak menaikkan rank)**; **57185636 `r7r224` (resep varshitha) PENDING** (skor ±02:30 WIB); 57185606 (21:32, tanpa deskripsi) = submisi anggota tim lain. Jatah agen 14 Okt 2/2 habis (reset 07:00 WIB) |
-| Jadwal 15 Okt 07:03 | PID 14026 submit **`r7v3f`** (R7 + r224 bercermin [varshitha 357→289] + flip compact) & **`r7v3fs`** (+ murid r1 di slot Raptor 0,25) — commit lulus. Murid 17 Okt: r2a (alver, v1) + **r2c (nxtirfan, konsensus saja)**. Riset: `reports/Riset 14 Okt malam - jalan ke perak.md` |
-| **Guru OOF R7** | f0/f1 COMPLETE (1.029 + 1.135 studi, 0 fallback, ±1 j/fold) di `data/r7oof/`; f2/f3 RUNNING (push 21:21); `compact-gold-r7` menyusul → `make_labels_v1.py` → murid r2 (kernel `student-r2-a/b` alver siap, 17 Okt 07:00) |
-| Kuota GPU (21:20) | main **11,54 j** (inferensi/submisi saja), alver **0**, nxtirfan **8,54 j** → OOF f2/f3+gold ±2,3 j. Reset semua **17 Okt 07:00 WIB** (+30 j/akun) |
+| Submisi | **0,956, rank 447/6.006** (15 Okt 02:30; naik dari 615 berkat `r7r224` 57185636 = R7+r224). Acuan: heliosli 0,957 #171, BliverRigPåDoge 0,957 #212 (model sendiri), Jingshui Fu #291, Arthritis #312, varshitha #350, Nut_RJ (R7+S6+r224) #351, salinan R7 murni jash #462, MAYANK (R7+reader) #549. Perak = rank 300 (0,956) |
+| Jadwal (systemd --user, tahan sesi tertutup) | **15 Okt 07:03** `rsna-submit-15okt.timer` → `data/run_submit_15okt.sh` submit `r7v3f` + `r7v3fs` (log `data/submit_15okt.log`); **17 Okt 07:05** `rsna-push-17okt.timer` → `data/run_push_17okt.sh` push murid r2a (alver, label v1) + r2c (nxtirfan, konsensus) (log `data/push_17okt.log`). Cek: `systemctl --user list-timers 'rsna-*'`; batal: `systemctl --user stop <timer>` |
+| **Guru OOF R7** | SELESAI: f0–f3 (4.349 studi) + gold di `data/r7oof/`; emas-58: **R7 0,9312** > murid r1 0,9240 > Raptor 0,9229 > konsensus 0,8970; Spearman R7~Raptor 0,780, murid r1~Raptor 0,927. Label v1 (0,5 kons + 0,5 R7) emas 0,9307 vs v0 0,9289 → `labels_student_v1.csv` diunggah ke `alverlfarfaraway/rsna-knee-student-cache256` |
+| Kuota GPU (15 Okt 02:30) | main **10,83 j** (inferensi/submisi), alver **0**, nxtirfan **5,72 j**; reset **17 Okt 07:00 WIB** (+30 j/akun) |
 | Murid r1 | fold0–3 lokal `data/student_folds/` + dataset main `dimaspashaakrilian/rsna-knee-student-folds` v1; label v0 + meta cache diunduh ke `data/labels/` (dataset cache256 alver hanya 1,1 MB = label saja → latih membangun cache ±72 mnt/sesi) |
 | Git | sinkron dgn origin s/d `909242f` (12 Okt 23:58); update 14 Okt di-commit lokal |
 | Menunggu user | pilihan 2 final 21–22 Okt; OAI/fastMRI (R7 dilatih dgn aux fastMRI) = risiko kepatuhan sama kelas dgn S6 |
