@@ -10,8 +10,13 @@
   (harus ≈ emas per fold 0,919–0,924; jauh di bawah = decode/bobot rusak -> JANGAN submit).
 - Murid DINO TIDAK dipakai (emas-58 0,71).
 
-Pakai: python3 build_r7murid.py [w=0.2] [name=r7murid] [budget=4500] [base=r7|v224]
+Pakai: python3 build_r7murid.py [w=0.2] [name=r7murid] [budget=4500] [base=r7|v224] [slot=final|raptor] [flip=0|1]
   base=v224: basis = notebook varshitha (R7 + Raptor-r224 0,35 di slot Raptor; rank naik 233->156 di blok 0,956) -> nama default r7m224.
+  w=0      : tanpa tahap murid sama sekali (mis. hanya flip=1).
+  slot=raptor: murid masuk DI DALAM slot Raptor (rr = (1-w) rr + w murid) -> keseimbangan keluarga Raptor/R7 tetap 0,5/0,5
+             (pelajaran 14 Okt: murid r1 mirip Raptor, rho 0,93; sebagai kaki ke-3 di luar slot rank tidak naik).
+  flip=1   : compact R7 memakai --flip-tta heliosli (v4c, mirror anatomis = augmentasi latih R7 mirror 0,5) dgn eval-stride 2
+             (biaya GPU ≈ stride 1 tanpa flip).
 """
 import copy
 import json
@@ -29,6 +34,9 @@ ROOT = Path(__file__).parent
 args = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
 W = float(args.get("w", "0.2"))
 V224 = args.get("base", "r7") == "v224"
+SLOT = args.get("slot", "final")
+FLIP = args.get("flip", "0") == "1"
+assert SLOT in ("final", "raptor")
 NAME = args.get("name", "r7m224" if V224 else "r7murid")
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
@@ -152,11 +160,12 @@ except subprocess.TimeoutExpired:
     print('MURID_STAGE timeout -> R7 only', flush=True)
 '''
 
-LEG = r'''
-# ---- [murid] kaki ke-3 (build_r7murid): our ConvNeXt-T student, weight fixed before any run; ranked over its own scored rows;
-# a study it did not score keeps the R7 blend's rank; fewer than 97 % scored -> no student leg (R7 only, printed)
+LOAD = r'''
+# ---- [murid] kaki murid (build_r7murid): our ConvNeXt-T student, weight fixed before any run; ranked over its own scored rows;
+# a study it did not score keeps the other legs' rank; fewer than 97 % scored -> no student leg (printed)
 W_MURID = __W__
-murid = {'w': W_MURID, 'used': False}
+murid = {'w': W_MURID, 'slot': '__SLOT__', 'used': False}
+_stu_v = _stu_ok = None
 _sp = WORK / 'student_test_preds.csv'
 if W_MURID > 0 and _sp.is_file():
     _s = pd.read_csv(_sp, dtype={'StudyInstanceUID': str}).drop_duplicates('StudyInstanceUID').set_index('StudyInstanceUID')
@@ -166,13 +175,19 @@ if W_MURID > 0 and _sp.is_file():
         _ok = np.isfinite(_v).all(axis=1)
         murid['scored'] = int(_ok.sum())
         if _ok.mean() >= 0.97:
-            for j, c in enumerate(labels):
-                _rb = pct(out[:, j])
-                out[:, j] = np.where(_ok, (1.0 - W_MURID) * _rb + W_MURID * pct_on(_v[:, j], _ok), _rb)
-            murid['used'] = True
+            _stu_v, _stu_ok, murid['used'] = _v, _ok, True
 print('MURID_LEG', json.dumps(murid), flush=True)
+'''
+
+APPLY_FINAL = r'''if _stu_ok is not None:   # [murid] third leg on the final blend
+    for j, c in enumerate(labels):
+        _rb = pct(out[:, j])
+        out[:, j] = np.where(_stu_ok, (1.0 - W_MURID) * _rb + W_MURID * pct_on(_stu_v[:, j], _stu_ok), _rb)
 # ---- [murid] selesai ----
 '''
+
+IN_LOOP = ("    if _stu_ok is not None:   # [murid] student inside the Raptor slot (Raptor-like, rho 0.93), over its own scored rows\n"
+           "        rr = np.where(_stu_ok, (1.0 - W_MURID) * rr + W_MURID * pct_on(_stu_v[:, j], _stu_ok), rr)\n")
 
 
 def src(c):
@@ -204,14 +219,34 @@ def build():
     anchor = "sub = pd.DataFrame(out.astype(np.float32), columns=labels)\n"
     rec = "'rank_basis': 'each model over its own non-failed rows'}"
     assert c6.count(anchor) == 1 and c6.count(rec) == 1 and "def pct_on(" in c6 and MB not in c6
-    c6 = c6.replace(anchor, LEG.replace("__W__", repr(W)) + anchor).replace(rec, rec[:-1] + ", 'murid': murid}")
+    load = LOAD.replace("__W__", repr(W)).replace("__SLOT__", SLOT)
+    if W > 0 and SLOT == "final":
+        c6 = c6.replace(anchor, load + APPLY_FINAL + anchor)
+    elif W > 0:                                                    # slot=raptor: muat sebelum loop, campur ke rr di dalam loop
+        a_out, a_wr = "out = np.zeros((n, len(labels)))\n", "    wr = W_RAPTOR_C.get(c, W_RAPTOR)\n"
+        assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
+        c6 = c6.replace(a_out, load + a_out).replace(a_wr, IN_LOOP + a_wr)
+    if W > 0:
+        c6 = c6.replace(rec, rec[:-1] + ", 'murid': murid}")
+    mid = cells[i_st1 + 1:i_bl]
+    if FLIP:                                                       # compact R7: flip-TTA heliosli v4c + eval-stride 2
+        k_set = [k for k, c in enumerate(mid) if "if manifest.get('flip_tta'):" in src(c)]
+        assert len(k_set) == 1, k_set
+        c4 = src(mid[k_set[0]])
+        for a_, b_ in (("if manifest.get('flip_tta'):", "if True:   # [flip=1] anatomical mirror TTA (trainer v9.4 mirror; R7 trained with mirror 0.5)"),
+                       ("'--eval-stride', str(manifest.get('eval_stride', 3))", "'--eval-stride', '2'")):   # stride 2 x 2 pass ~ GPU stride 1
+            assert c4.count(a_) == 1, a_
+            c4 = c4.replace(a_, b_)
+        mid = mid[:k_set[0]] + [code(c4)] + mid[k_set[0] + 1:]
     student = STUDENT.replace("__BUDGET__", str(BUDGET)).replace("__DECODE__", DECODE)
     stage0 = STAGE0.replace("__TIMEOUT__", str(BUDGET + 2400))     # + gold check in commit mode (≤1800 s) + model load
     base_txt = ("varshithakolupuri's R7 + Raptor-r224 public notebook (Raptor slot = 0.65 r384 + 0.35 r224; R7 0.5)" if V224 else
                 "heliosli R7 public notebook (Raptor 0.5 + compact R7 0.5, bundle `8c7b666e27dc0e8f`)")
-    title = (f"# RSNA Knee: R7 + Raptor + our student ({NAME})\n\n{base_txt} unchanged, plus a third per-finding rank leg: "
-             f"our ConvNeXt-T 2.5D student (4 folds, weight {W}). Built by `build_r7murid.py`.\n")
-    nb["cells"] = ([md(title)] + cells[1:i_st1] + [code(student), code(stage0), code(c3)] + cells[i_st1 + 1:i_bl] + [code(c6)])
+    extra = ([f"our ConvNeXt-T 2.5D student (4 folds, weight {W}, slot {SLOT})"] if W > 0 else []) + (
+        ["R7 compact with heliosli's anatomical flip TTA at eval stride 2"] if FLIP else [])
+    title = (f"# RSNA Knee: R7 variant ({NAME})\n\n{base_txt}, plus: {'; '.join(extra) or 'nothing'}. Built by `build_r7murid.py`.\n")
+    stu_cells = [code(student), code(stage0), code(c3)] if W > 0 else [cells[i_st1]]
+    nb["cells"] = [md(title)] + cells[1:i_st1] + stu_cells + mid + [code(c6)]
     for k, c in enumerate(nb["cells"]):
         if c["cell_type"] == "code":
             s = src(c)
@@ -223,7 +258,7 @@ def build():
     for k in ("id_no",):
         meta.pop(k, None)
     meta.update(id=f"dimaspashaakrilian/{SLUG}", title="RSNA Knee " + NAME, code_file=f"{SLUG}.ipynb", is_private=True,
-                dataset_sources=meta["dataset_sources"] + [d for d in EXTRA_DS if d not in meta["dataset_sources"]])
+                dataset_sources=meta["dataset_sources"] + [d for d in EXTRA_DS if W > 0 and d not in meta["dataset_sources"]])
     (out / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     return out
 
@@ -232,7 +267,8 @@ def check_leg():
     """Uji matematika kaki murid di luar Kaggle: tanpa file / lengkap / sebagian NaN / terlalu banyak NaN."""
     labels = ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis',
               "Baker's", 'Contusion', 'Fracture']
-    leg = LEG.replace("__W__", repr(W))
+    wt = W if W > 0 else 0.2                                       # w=0 (mis. flip saja): logika tetap diuji dgn 0,2
+    leg = LOAD.replace("__W__", repr(wt)).replace("__SLOT__", "final") + APPLY_FINAL
     pct = lambda v: pd.Series(np.asarray(v, dtype=np.float64)).rank(method='average', pct=True).values
 
     def pct_on(v, ok):
@@ -260,7 +296,7 @@ def check_leg():
         stu = pd.DataFrame(rng.random((n, 12)), columns=['cnxt_' + c for c in labels])
         stu.insert(0, "StudyInstanceUID", ids)
         o, m = run(stu.sample(frac=1, random_state=1))                 # lengkap, urutan acak
-        exp = np.column_stack([(1 - W) * pct(base[:, j]) + W * pct(stu.iloc[:, j + 1]) for j in range(12)])
+        exp = np.column_stack([(1 - wt) * pct(base[:, j]) + wt * pct(stu.iloc[:, j + 1]) for j in range(12)])
         assert m["used"] and np.allclose(o, exp) and ((o >= 0) & (o <= 1)).all()
         s2 = stu.copy()
         s2.iloc[3:5, 1:] = np.nan                                      # 2/40 = 5 % tak terskor -> < 97 % -> R7 murni
@@ -276,7 +312,18 @@ def check_leg():
         ns = dict(np=np, pd=pd, json=json, pct=pct, pct_on=pct_on, labels=labels, test_ids=ids_b, WORK=Path(d), out=base_b.copy())
         exec(compile(leg, "leg", "exec"), ns)
         assert ns["murid"]["used"] and np.isclose(ns["out"][7, 0], pct(base_b[:, 0])[7])
-    print(f"cek kaki murid OK (w={W}): tanpa file, lengkap, 5 % NaN -> fallback, 1 % NaN -> baris itu rank R7")
+    # slot=raptor: muat + campur ke rr di dalam loop (baris NaN murid -> rr tetap)
+        ns = dict(np=np, pd=pd, json=json, pct=pct, pct_on=pct_on, labels=labels, test_ids=ids_b, WORK=Path(d))
+        exec(compile(LOAD.replace("__W__", repr(wt)).replace("__SLOT__", "raptor"), "load", "exec"), ns)
+        loop = "for j in range(12):\n    rr = pct(base_b[:, j])\n" + IN_LOOP + "    got.append(rr)\n"
+        ns.update(base_b=base_b, got=[])
+        exec(compile(loop, "loop", "exec"), ns)
+        v = s3[["cnxt_" + c for c in labels]].to_numpy()
+        ok = np.isfinite(v).all(axis=1)
+        for j in range(12):
+            want = np.where(ok, (1 - wt) * pct(base_b[:, j]) + wt * pct_on(v[:, j], ok), pct(base_b[:, j]))
+            assert np.allclose(ns["got"][j], want)
+    print(f"cek kaki murid OK (w={wt}): tanpa file, lengkap, 5 % NaN -> fallback, 1 % NaN -> baris itu rank R7, slot raptor")
 
 
 if __name__ == "__main__":

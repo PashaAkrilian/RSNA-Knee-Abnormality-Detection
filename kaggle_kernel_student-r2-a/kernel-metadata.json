@@ -1,0 +1,23 @@
+{
+  "id": "alverlfarfaraway/rsna-knee-student-r2-a",
+  "title": "RSNA Knee student-r2-a",
+  "code_file": "rsna-knee-student-r2-a.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "category": "video",
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ],
+  "dataset_sources": [
+    "goodpjw2008/rsna-knee-2-5d-convnext-reader",
+    "alverlfarfaraway/rsna-knee-student-cache256",
+    "alverlfarfaraway/rsna-knee-student-folds"
+  ],
+  "keywords": [],
+  "kernel_sources": [],
+  "docker_image": "registry Kaggle Python",
+  "machine_shape": " NvidiaTeslaT4"
+}
