@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-15T03:00:00+07:00
+> Last updated: 2026-10-15T03:10:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -38,7 +38,7 @@
 | Hal | Keadaan |
 |---|---|
 | Submisi | **0,956, rank 447/6.006** (15 Okt 02:30; naik dari 615 berkat `r7r224` 57185636 = R7+r224). Acuan: heliosli 0,957 #171, BliverRigPåDoge 0,957 #212 (model sendiri), Jingshui Fu #291, Arthritis #312, varshitha #350, Nut_RJ (R7+S6+r224) #351, salinan R7 murni jash #462, MAYANK (R7+reader) #549. Perak = rank 300 (0,956) |
-| Jadwal (systemd --user, tahan sesi tertutup) | **15 Okt 07:03** `rsna-submit-15okt.timer` → `data/run_submit_15okt.sh` submit `r7v3f` + `r7v3fs` (log `data/submit_15okt.log`); **17 Okt 07:05** `rsna-push-17okt.timer` → `data/run_push_17okt.sh` push murid r2a (alver, label v1) + r2c (nxtirfan, konsensus) (log `data/push_17okt.log`). Cek: `systemctl --user list-timers 'rsna-*'`; batal: `systemctl --user stop <timer>` |
+| Berjalan (15 Okt 03:10) | **57194021 `r7v3f` + 57194035 `r7v3fs`** (2 jatah sisa 14 Okt, izin user; skor ±08:00; pemantau rank systemd → `data/rank_watch.log`); **murid r2a-n** (nxtirfan fold 0–1, label v1, ±08:00) → `r7v3c`; **`r7v4`** (flip stride 1) commit. Timer 17 Okt 07:05 latih r2a/r2c (sesuaikan). Rank 03:03 = 454 |
 | **Guru OOF R7** | SELESAI: f0–f3 (4.349 studi) + gold di `data/r7oof/`; emas-58: **R7 0,9312** > murid r1 0,9240 > Raptor 0,9229 > konsensus 0,8970; Spearman R7~Raptor 0,780, murid r1~Raptor 0,927. Label v1 (0,5 kons + 0,5 R7) emas 0,9307 vs v0 0,9289 → `labels_student_v1.csv` diunggah ke `alverlfarfaraway/rsna-knee-student-cache256` |
 | Kuota GPU (15 Okt 02:30) | main **10,83 j** (inferensi/submisi), alver **0**, nxtirfan **5,72 j**; reset **17 Okt 07:00 WIB** (+30 j/akun) |
 | Murid r1 | fold0–3 lokal `data/student_folds/` + dataset main `dimaspashaakrilian/rsna-knee-student-folds` v1; label v0 + meta cache diunduh ke `data/labels/` (dataset cache256 alver hanya 1,1 MB = label saja → latih membangun cache ±72 mnt/sesi) |
