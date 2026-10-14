@@ -5,7 +5,7 @@
 export PATH="$HOME/.local/bin:$PATH"
 cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection || exit 1
 S1="$1"; V1="$2"; M1="$3"; S2="$4"; V2="$5"; M2="$6"
-TARGET=$(date -d '2026-10-11 07:03:00' +%s)
+TARGET=$(date -d "${AT:-2026-10-11 07:03:00}" +%s)   # AT='YYYY-MM-DD HH:MM:SS' (WIB) utk hari lain
 echo "$(date '+%F %T') aguardando ate $(date -d @$TARGET '+%F %T') para submeter $S1 v$V1 e $S2 v$V2"
 while [ "$(date +%s)" -lt "$TARGET" ]; do sleep 60; done
 submit_one() {
