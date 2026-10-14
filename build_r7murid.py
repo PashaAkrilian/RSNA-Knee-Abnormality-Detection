@@ -39,6 +39,8 @@ assert BASE_ARG in ("r7", "v224", "v224m"), BASE_ARG
 V224 = BASE_ARG in ("v224", "v224m")          # basis varshitha (slot Raptor = 0,65 r384 + 0,35 r224)
 SLOT = args.get("slot", "final")
 FLIP = args.get("flip", "0") == "1"
+FSTRIDE = int(args.get("fstride", "2"))   # eval-stride compact saat flip=1 (2 = biaya GPU ≈ tanpa flip; 1 = TTA penuh, ±+1,7 j)
+assert FSTRIDE in (1, 2, 3)
 assert SLOT in ("final", "raptor", "compact")
 FOLDS_DS = args.get("folds", "dimaspashaakrilian/rsna-knee-student-folds")   # set fold murid (r1 = default; r2a/r2c = dataset baru)
 NAME = args.get("name", "r7m224" if V224 else "r7murid")
@@ -74,7 +76,7 @@ sys.path.insert(0, GOODPJW)
 from knee import LABELS, KneeNet, StudyDataset, build_study_table
 __DECODE__
 FOLDS = sorted(glob.glob(FOLD_DIR + '/fold[0-9].pt'))
-assert len(FOLDS) >= 4, FOLDS
+assert len(FOLDS) >= 2, FOLDS   # >=2: murid r2 dua fold boleh diuji lebih awal
 torch.backends.cudnn.benchmark = True
 MODELS = []
 for f in FOLDS:
@@ -239,7 +241,7 @@ def build():
         assert len(k_set) == 1, k_set
         c4 = src(mid[k_set[0]])
         for a_, b_ in (("if manifest.get('flip_tta'):", "if True:   # [flip=1] anatomical mirror TTA (trainer v9.4 mirror; R7 trained with mirror 0.5)"),
-                       ("'--eval-stride', str(manifest.get('eval_stride', 3))", "'--eval-stride', '2'")):   # stride 2 x 2 pass ~ GPU stride 1
+                       ("'--eval-stride', str(manifest.get('eval_stride', 3))", f"'--eval-stride', '{FSTRIDE}'")):   # flip x stride FSTRIDE
             assert c4.count(a_) == 1, a_
             c4 = c4.replace(a_, b_)
         mid = mid[:k_set[0]] + [code(c4)] + mid[k_set[0] + 1:]
@@ -248,7 +250,7 @@ def build():
     base_txt = ("varshithakolupuri's R7 + Raptor-r224 public notebook (Raptor slot = 0.65 r384 + 0.35 r224; R7 0.5)" if V224 else
                 "heliosli R7 public notebook (Raptor 0.5 + compact R7 0.5, bundle `8c7b666e27dc0e8f`)")
     extra = ([f"our ConvNeXt-T 2.5D student (4 folds, weight {W}, slot {SLOT})"] if W > 0 else []) + (
-        ["R7 compact with heliosli's anatomical flip TTA at eval stride 2"] if FLIP else [])
+        [f"R7 compact with heliosli's anatomical flip TTA at eval stride {FSTRIDE}"] if FLIP else [])
     title = (f"# RSNA Knee: R7 variant ({NAME})\n\n{base_txt}, plus: {'; '.join(extra) or 'nothing'}. Built by `build_r7murid.py`.\n")
     stu_cells = [code(student), code(stage0), code(c3)] if W > 0 else [cells[i_st1]]
     nb["cells"] = [md(title)] + cells[1:i_st1] + stu_cells + mid + [code(c6)]
