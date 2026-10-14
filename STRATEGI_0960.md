@@ -4,6 +4,13 @@
 > Status awal: LB terbaik **0,954** (klon S6 57051680), peringkat 455/5.807. Submisi hari ini: 0/5 terpakai. Kuota GPU: alver 12,0 j (terverifikasi), main ±15,8 j dan nxtirfan ±3,5 j (catatan repo); +30 j/akun pada 17 Okt 07:00 WIB.
 > Batas: variasi baru terakhir **20 Okt**; final **23 Okt 06:59 WIB** (pilih 2 manual). Merger tidak dipakai (keputusan user 11 Okt).
 
+## 0.2 Pembaruan 14 Okt malam — target user = PERAK (riset: `reports/Riset 14 Okt malam - jalan ke perak.md`)
+- Papan 15:00 UTC: ≥0,957 = 213 (12 Okt: 86), blok 0,956 = 840, perak = perunggu = 0,956, kita rank **615**. Proyeksi 22 Okt: garis perak publik ≈ **0,957** → butuh **+0,001 nyata di atas R7**.
+- Terbukti publik: r224 (rank 233→156→357 saat blok terisi), **r224 + cermin anatomis → 289** (varshitha); **model sendiri yg beragam bobot 0,2 → 0,957** (bliverrigpdoge: ConvNeXt-S + EffNetV2-S pada potongan kompartemen, label laporan). Kaki murid r1 kita (distilasi Raptor) tidak menambah.
+- Forum: tim teratas "short answer is labels… AI, not by hand… don't rely on reports alone"; label gold dari gambar → label laporan mentok ±0,89. OAI (749145): host diam, dianggap sah; mayoritas papan memakai Raptor.
+- **Urutan baru**: (1) 15 Okt 07:03 submit `r7v3f` (R7 + r224 bercermin + flip compact) & `r7v3fs` (+ murid r1 di slot Raptor) — A/B murid; (2) 17 Okt 07:00 dua murid: **r2a** (alver; label v1 = konsensus ⊕ OOF-R7; warm r1; slot compact) & **r2c** (nxtirfan; label **konsensus saja**, warm goodpjw, 12 epoch; kaki ke-3 0,2 ala bliverrigpdoge); (3) 18–20 Okt gabung pemenang; (4) 21–22 Okt final.
+- Peluang perak (perkiraan): R7 saja 15–25 %; + r224 cermin + flip 25–35 %; + model sendiri +0,001 40–55 %. Merger (tenggat 15 Okt 23:59 UTC) = keputusan user.
+
 ## 0.1 Pembaruan 14 Okt (sesi Claude Code) — basis R7, target user 0,965
 - **Fakta**: heliosli merilis R7 (11–12 Okt; compact ConvNeXt-S crop 352 + aux fastMRI + stacker) → user submit 2 salinan 13 Okt = **0,956** (rank 558/5.957). Papan 14 Okt: ≥0,965 = 7 tim, ≥0,960 = 55, ≥0,957 = 201, dataran 0,956 ±750 tim; garis perak & perunggu = 0,956.
 - **Jujur soal 0,965**: itu skor 7 tim teratas (+0,009 dari kita; dua kali lompatan S6→R7). Dengan sisa 8 hari, ±80 j GPU T4 setelah reset 17 Okt, dan tanpa data/model baru yang kuat, peluang ≥0,965 publik **<2 %**. Target kerja: **varian δ>0 di atas R7** (0,957–0,958 publik) — itu yang memindahkan kita dari tengah blok klon ke zona perak privat.

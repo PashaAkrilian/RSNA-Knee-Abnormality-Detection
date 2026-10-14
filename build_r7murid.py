@@ -12,6 +12,7 @@
 
 Pakai: python3 build_r7murid.py [w=0.2] [name=r7murid] [budget=4500] [base=r7|v224] [slot=final|raptor] [flip=0|1]
   base=v224: basis = notebook varshitha (R7 + Raptor-r224 0,35 di slot Raptor; rank naik 233->156 di blok 0,956) -> nama default r7m224.
+  base=v224m: notebook varshitha 14 Okt = v224 + TTA cermin anatomis nartaa utk r224 (rank 357->289 di blok 0,956).
   w=0      : tanpa tahap murid sama sekali (mis. hanya flip=1).
   slot=raptor: murid masuk DI DALAM slot Raptor (rr = (1-w) rr + w murid) -> keseimbangan keluarga Raptor/R7 tetap 0,5/0,5
              (pelajaran 14 Okt: murid r1 mirip Raptor, rho 0,93; sebagai kaki ke-3 di luar slot rank tidak naik).
@@ -33,14 +34,16 @@ import build_student_infer as bsi
 ROOT = Path(__file__).parent
 args = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
 W = float(args.get("w", "0.2"))
-V224 = args.get("base", "r7") == "v224"
+BASE_ARG = args.get("base", "r7")
+assert BASE_ARG in ("r7", "v224", "v224m"), BASE_ARG
+V224 = BASE_ARG in ("v224", "v224m")          # basis varshitha (slot Raptor = 0,65 r384 + 0,35 r224)
 SLOT = args.get("slot", "final")
 FLIP = args.get("flip", "0") == "1"
 assert SLOT in ("final", "raptor")
 NAME = args.get("name", "r7m224" if V224 else "r7murid")
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
-_b = "r7_r224_varshitha_20261013" if V224 else "r7_heliosli_0957_20261013"
+_b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "v224m": "r7_r224m_varshitha_20261014"}[BASE_ARG]
 BASE = ROOT / "kaggle_base" / f"{_b}.ipynb"
 BASE_META = ROOT / "kaggle_base" / f"{_b}.meta.json"
 SLUG = "rsna-knee-" + NAME

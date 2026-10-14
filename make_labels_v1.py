@@ -9,7 +9,8 @@ Masukan (lokal):
   data/student_folds/oof_fold{k}.csv    (opsional) OOF murid r1 (logit) -> pembanding
 Keluaran: data/labels/labels_student_v1.csv (skema = v0; baris tanpa OOF-R7 terskor tetap v0).
 
-Pakai: python3 make_labels_v1.py [w=0.5] [calib=none|quantile] [oof_dir=data/r7oof] [out=data/labels/labels_student_v1.csv]
+Pakai: python3 make_labels_v1.py cons=1 out=data/labels/labels_student_v0c.csv   # konsensus saja (murid r2c, tanpa guru)
+       python3 make_labels_v1.py [w=0.5] [calib=none|quantile] [oof_dir=data/r7oof] [out=data/labels/labels_student_v1.csv]
   calib=quantile: OOF-R7 dipetakan ke sebaran konsensus per temuan (urutan R7 tetap) — dipakai bila keluaran R7 bukan probabilitas.
 """
 import glob
@@ -50,6 +51,15 @@ t.index = t.index.astype(str)
 t = t.loc[v0.index, L]
 cons = (2 * v0[L] - t).clip(0.01, 0.99)
 assert np.allclose(0.5 * cons + 0.5 * t, v0[L], atol=0.011), "v0 bukan 0,5 konsensus + 0,5 Raptor"
+if args.get("cons") == "1":                               # murid r2c: label laporan saja -> beragam dari Raptor & R7
+    v1 = v0.copy()
+    ng = v0.index[v0.is_gold == 0]
+    v1.loc[ng, L] = cons.loc[ng, L].values
+    v1["teacher_mean"] = np.nan
+    assert np.array_equal(v1.loc[v0.is_gold == 1, L].values, v0.loc[v0.is_gold == 1, L].values) and (v1.fold == v0.fold).all()
+    v1.to_csv(OUT)
+    print(f"ditulis {OUT} | konsensus saja utk {len(ng)} non-gold")
+    sys.exit(0)
 
 oof = pd.concat([pd.read_csv(f, dtype={"StudyInstanceUID": str}) for f in sorted(glob.glob(str(OOF_DIR / "compact_oof_f*.csv")))])
 oof = oof[oof["scored"] == 1].drop_duplicates("StudyInstanceUID").set_index("StudyInstanceUID")
