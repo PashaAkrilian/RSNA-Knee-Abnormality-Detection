@@ -12,7 +12,7 @@ Mode:
 Keluaran kernel: /kaggle/working/compact_oof_f{k}.csv atau compact_gold.csv (+ receipt).
 
 Pakai:
-  python3 build_compact_oof.py fold=0 owner=alverlfarfaraway     (ulang untuk fold 1..3)
+  python3 build_compact_oof.py fold=0 owner=nxtirfan [base=r7|s6]   (ulang untuk fold 1..3; default base=r7)
   python3 build_compact_oof.py gold=1 owner=alverlfarfaraway
 Basis: kaggle_base/heliosli_blend_mine_in_20261011.ipynb (sel 2 cek bundel, sel 5 setup compact, sel 6 jalankan compact).
 """
@@ -29,8 +29,13 @@ FOLD = None if GOLD else int(args.get("fold", "0"))
 assert GOLD or FOLD in (0, 1, 2, 3), FOLD
 STRIDE = int(args.get("stride", "1" if GOLD else "3"))
 OWNER = args.get("owner", "dimaspashaakrilian")
-NAME = args.get("name", "compact-gold" if GOLD else f"compact-oof-f{FOLD}")
-BASE = ROOT / "kaggle_base" / "heliosli_blend_mine_in_20261011.ipynb"
+R7 = args.get("base", "r7") == "r7"          # r7 = bundel R7 8c7b666e (14 Okt, guru lebih kuat); s6 = bundel r6cnxfsss
+_sfx = "-r7" if R7 else ""
+NAME = args.get("name", f"compact-gold{_sfx}" if GOLD else f"compact-oof{_sfx}-f{FOLD}")
+BASE = ROOT / "kaggle_base" / ("r7_heliosli_0957_20261013.ipynb" if R7 else "heliosli_blend_mine_in_20261011.ipynb")
+# indeks sel di basis: (jumlah sel, sel setup compact, sel jalankan compact); R7 tak punya sel cek bundel terpisah
+NCELL, I_SETUP, I_RUN = (7, 4, 5) if R7 else (8, 5, 6)
+C_DS = "heliosli/rsna-knee-compact-r7cnxfsss" if R7 else "heliosli/rsna-knee-compact-r6cnxfsss"
 DOCKER = "gcr.io/kaggle-private-byod/python@sha256:2757e0c7d1e0a9cb43da657b97e223c321a98f5014bdf64f44f2f6b083ad2b2f"
 LABELS = ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis',
           "Baker's", 'Contusion', 'Fracture']
@@ -113,14 +118,16 @@ print("TEACHER_DONE", _out, json.dumps({k: _rc.get(k) for k in ("status", "rows"
 
 nb = json.loads(BASE.read_text(encoding="utf-8"))
 cells = copy.deepcopy(nb["cells"])
-assert len(cells) == 8
+assert len(cells) == NCELL
 
-c2 = src(cells[2])                                        # cek bundel: Raptor tidak dipakai -> lepas cek bobot nartaa
-old = "_checked_mount('rsna-knee-publication-swa-weights-20261007', 'raptor_ft_alldata_t16_blendjev_oai_d96_r384_swa.pt')\n"
-assert c2.count(old) == 1
-c2 = c2.replace(old, "")
+c2 = None
+if not R7:
+    c2 = src(cells[2])                                    # cek bundel: Raptor tidak dipakai -> lepas cek bobot nartaa
+    old = "_checked_mount('rsna-knee-publication-swa-weights-20261007', 'raptor_ft_alldata_t16_blendjev_oai_d96_r384_swa.pt')\n"
+    assert c2.count(old) == 1
+    c2 = c2.replace(old, "")
 
-c5 = src(cells[5])
+c5 = src(cells[I_SETUP])
 rep = {
     "T0 = NB_T0   # [blend] the 8.3 h deadline counts from the notebook start (the Raptor stage ran first)":
         "T0 = NB_T0   # [oof] the deadline counts from the notebook start (no Raptor stage)",
@@ -134,17 +141,18 @@ for a, b in rep.items():
     c5 = c5.replace(a, b)
 c5 = c5.replace("__STRIDE__", str(STRIDE))
 
-c6 = src(cells[6])                                        # sudah lenient di basis (--max-fallback-fraction 1.0); dipakai apa adanya
+c6 = src(cells[I_RUN])                                    # sudah lenient di basis (--max-fallback-fraction 1.0); dipakai apa adanya
 assert c6.count("'--max-fallback-fraction', '1.0'") == 1 and "ours_sub.csv" in c6
 
 pseudo = PSEUDO.replace("__GOLD__", "True" if GOLD else "False").replace("__FOLD__", repr(FOLD)).replace("__LABELS__", repr(LABELS))
 final = FINAL.replace("__STRIDE__", str(STRIDE))
 title = "# Guru OOF compact — " + ("58 gold, 4 model" if GOLD else f"fold {FOLD}, model f{FOLD} saja") + f", eval-stride {STRIDE}\n" \
-        "Dibangun oleh `build_compact_oof.py` dari notebook publik heliosli (S6). Lihat `STRATEGI_0960.md` §3.\n"
+        f"Dibangun oleh `build_compact_oof.py` dari notebook publik heliosli ({'R7' if R7 else 'S6'}). Lihat `STRATEGI_0960.md` §3.\n"
 new_cells = [md(title), cells[1], code(pseudo)]
-for s in (c2, c5, c6, final):
+body = [s for s in (c2, c5, c6, final) if s is not None]
+for s in body:
     compile(s, "cell", "exec")
-new_cells += [code(c2), code(c5), code(c6), code(final)]
+new_cells += [code(s) for s in body]
 compile(pseudo, "pseudo", "exec")
 nb["cells"] = new_cells
 
@@ -155,7 +163,7 @@ out.mkdir(exist_ok=True)
 meta = {
     "id": f"{OWNER}/{slug}", "title": "RSNA Knee " + NAME, "code_file": f"{slug}.ipynb", "language": "python",
     "kernel_type": "notebook", "is_private": True, "enable_gpu": True, "enable_tpu": False, "enable_internet": False,
-    "keywords": ["gpu"], "dataset_sources": ["heliosli/rsna-knee-compact-r6cnxfsss", "heliosli/rsna-orthofoundation-fold0-epoch7-20261004"],
+    "keywords": ["gpu"], "dataset_sources": [C_DS, "heliosli/rsna-orthofoundation-fold0-epoch7-20261004"],
     "kernel_sources": [], "model_sources": [], "competition_sources": ["rsna-knee-abnormality-detection"],
     "docker_image": DOCKER, "machine_shape": "NvidiaTeslaT4",
 }

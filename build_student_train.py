@@ -2,18 +2,26 @@
 """Bangun kernel student-train (5-fold ConvNeXt-T, fp16, resume) untuk akun alver.
 Pakai: python3 build_student_train.py name=student-train-a folds=0,1
       python3 build_student_train.py name=student-train-b folds=2,3
-      python3 build_student_train.py name=student-train-c folds=4"""
+      python3 build_student_train.py name=student-train-c folds=4
+Putaran-2 (14 Okt): label v1 (konsensus ⊕ OOF-R7), warm-start dari fold r1, 2 fold paralel (satu per T4):
+      python3 build_student_train.py name=student-r2-a folds=0,1 acct=alver labels=labels_student_v1.csv warm=r1 epochs=8 lr=5e-5 par=1"""
 import json, os, sys
 
 args = dict(a.split("=", 1) for a in sys.argv[1:])
 NAME = args.get("name", "student-train-a")
 FOLDS = [int(x) for x in args.get("folds", "0,1").split(",")]
 EPOCHS = int(args.get("epochs", "14"))
-ACCT = args.get("acct", "alver")   # alver | main (labels dari dataset akun sendiri)
+ACCT = args.get("acct", "alver")   # alver | main | nxtirfan (labels dari dataset akun sendiri)
+LABFILE = args.get("labels", "labels_student_v0.csv")
+WARM = args.get("warm", "goodpjw")  # goodpjw | r1 (fold{k}.pt murid r1 dari dataset rsna-knee-student-folds akun itu)
+LR = float(args.get("lr", "1e-4"))
+PAR = args.get("par", "0") == "1"   # 2 fold paralel: satu subproses per T4 (cache dibangun sekali oleh proses notebook)
+assert WARM in ("goodpjw", "r1") and (not PAR or len(FOLDS) == 2), (WARM, PAR, FOLDS)
 SLUG = f"rsna-knee-{NAME}"
-OWNERS = {"alver": "alverlfarfaraway", "main": "dimaspashaakrilian"}
+OWNERS = {"alver": "alverlfarfaraway", "main": "dimaspashaakrilian", "nxtirfan": "nxtirfan"}
 PREPS = {"alver": "alverlfarfaraway/rsna-knee-student-cache256",
-         "main": "dimaspashaakrilian/rsna-knee-student-labels"}
+         "main": "dimaspashaakrilian/rsna-knee-student-labels",
+         "nxtirfan": "nxtirfan/rsna-knee-student-labels"}
 
 MD = {
     "id": f"{OWNERS[ACCT]}/{SLUG}",
@@ -29,7 +37,7 @@ MD = {
     "dataset_sources": [
         "goodpjw2008/rsna-knee-2-5d-convnext-reader",
         PREPS[ACCT],
-    ],
+    ] + ([f"{OWNERS[ACCT]}/rsna-knee-student-folds"] if WARM == "r1" else []),
     "keywords": [],
     "kernel_sources": [],
     "docker_image": "registry Kaggle Python",
@@ -63,8 +71,8 @@ for c in ["/kaggle/input/competitions/rsna-knee-abnormality-detection",
     if COMP: break
 assert COMP, "competition mount tidak ketemu"
 say("mounts:", sorted(os.listdir("/kaggle/input")))
-_lab = find(["labels_student_v0.csv"])
-assert _lab, "labels_student_v0.csv tidak ada di mount"
+_lab = find(["__LABFILE__"])
+assert _lab, "__LABFILE__ tidak ada di mount"
 PREP = os.path.dirname(_lab)
 _k = find(["knee.py"])
 assert _k, "knee.py tidak ada di mount"
@@ -82,11 +90,17 @@ from sklearn.metrics import roc_auc_score  # noqa: E402
 
 TRAIN = pd.read_csv(f"{COMP}/train.csv")
 SERIES = pd.read_csv(f"{COMP}/train_series.csv")
-lab = pd.read_csv(f"{PREP}/labels_student_v0.csv", index_col=0)
+lab = pd.read_csv(_lab, index_col=0)
+say("label", os.path.basename(_lab), lab.shape)
 CACHE = f"{PREP}/cache256_train"
+META_TMP = "/tmp/cache256_train_meta.csv"   # ditulis proses notebook setelah membangun cache; subproses latih (par=1) memakainya
 if os.path.isdir(CACHE) and len(os.listdir(CACHE)) > 1000:
     meta = pd.read_csv(f"{PREP}/cache256_train_meta.csv")
     say("cache dari dataset", CACHE)
+elif os.path.exists(META_TMP):
+    CACHE = "/tmp/cache256_train"
+    meta = pd.read_csv(META_TMP)
+    say("cache /tmp sudah dibangun proses induk:", len(meta), "seri")
 else:
     # ---- bangun cache on-demand (resep prep v3: SIZE 256, MM 0.5, MAX 28, IPP sort) ----
     import cv2, pydicom
@@ -193,6 +207,7 @@ else:
     if "error" in df: say("errors:", int(df["error"].notna().sum()))
     meta = df.dropna(subset=["n"]).copy()
     say("meta rows", len(meta), "files", len(os.listdir(CACHE)))
+    meta.to_csv(META_TMP, index=False)
 say("lab", lab.shape, "meta", meta.shape, "cache files", len(os.listdir(CACHE)))
 say("cuda", torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else "")
 assert torch.cuda.is_available()
@@ -222,7 +237,7 @@ def predict(model, loader, res):
             out.append(model(x, mask, pos, res=res).float().cpu())
     return torch.cat(out).numpy()
 
-def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5e-4, wd=0.02, ema_d=0.998):
+def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=__LR__, lr_head=5 * __LR__, wd=0.02, ema_d=0.998):
     # bs=2: T4 16GB — backbone menjalankan ~bs×series×kwin gambar 256px sekaligus;
     # goodpjw asli bs=8 di GPU lokal >24GB, di T4 OOM pada batch pertama.
     ckpt = f"{RUNS}/fold{k}.pt"
@@ -231,7 +246,7 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5
     torch.manual_seed(0); np.random.seed(0)
     tr = weak[weak.fold != k]; va = weak[weak.fold == k]
     say(f"fold{k}: train {len(tr)} val {len(va)} gold {len(gold)}")
-    dl_kw = dict(num_workers=4, pin_memory=True, persistent_workers=True)
+    dl_kw = dict(num_workers=__NW__, pin_memory=True, persistent_workers=True)
     train_dl = torch.utils.data.DataLoader(
         StudyDataset(tr.index, table, CACHE, tr[LABELS].values.astype(np.float32), kwin, train=True),
         batch_size=bs, shuffle=True, drop_last=True, **dl_kw)
@@ -244,7 +259,8 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5
 
     model = KneeNet("convnext_tiny", pretrained=False).cuda().to(memory_format=torch.channels_last)
     # warm-start dari ckpt goodpjw publik (internet OFF: tak bisa download ImageNet timm)
-    gw = sorted(glob.glob(f"{GOODPJW}/cnxt_v0_fold*.pt"))
+    gw = [find([f"fold{k}.pt"])] if "__WARM__" == "r1" else sorted(glob.glob(f"{GOODPJW}/cnxt_v0_fold*.pt"))
+    assert "__WARM__" != "r1" or gw[0], f"fold{k}.pt murid r1 tidak ada di mount"   # warm r1: fold k r1 tak pernah melihat val fold k
     if gw:
         try:
             st0 = torch.load(gw[0], map_location="cpu", weights_only=False)
@@ -274,6 +290,8 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5
         step, start_ep = st["step"], st["epoch"] + 1
         say(f"resume epoch {st['epoch']}")
     for ep in range(start_ep, epochs):
+        if time.time() > EP_DEADLINE:
+            say(f"fold{k}: batas waktu sebelum epoch {ep} — simpan EMA yang ada"); break
         model.train(); t1, tot, n = time.time(), 0.0, 0
         for x, mask, pos, y in train_dl:
             x, mask, pos, y = x.cuda(non_blocking=True), mask.cuda(), pos.cuda(), y.cuda()
@@ -306,7 +324,8 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=1e-4, lr_head=5
     say(f"fold{k} SELESAI gold {macro_auc(gold_y, preds['gold'])[0]:.4f} val {macro_auc(val_y, preds['val'])[0]:.4f}")
 
 DEADLINE = t0 + 7.2 * 3600
-FOLDS = __FOLDS__
+EP_DEADLINE = float(os.environ.get("EP_DEADLINE", t0 + 8.0 * 3600))   # par=1: diberi proses notebook (mulai notebook + 8,2 j)
+FOLDS = [int(x) for x in os.environ["FOLDS_ENV"].split(",")] if os.environ.get("FOLDS_ENV") else __FOLDS__
 for k in FOLDS:
     if time.time() > DEADLINE: say(f"deadline utk fold{k} — stop (fold selesai dipakai)"); break
     train_fold(k, epochs=__EPOCHS__)
@@ -317,16 +336,39 @@ def cell(src, ctype="code"):
     return {"cell_type": ctype, "metadata": {}, "source": src.splitlines(keepends=True),
             **({"outputs": [], "execution_count": None} if ctype == "code" else {})}
 
-nb = {"cells": [cell(CELL0, "markdown"), cell(CELL1), cell(CELL2)],
+# par=1: proses notebook membangun cache sekali (CELL1), lalu CELL1+CELL2 jalan sbg 2 subproses (satu fold per T4)
+CELL_PAR = r"""
+import subprocess, sys, os, time
+open("/tmp/train_fold.py", "w").write(__SCRIPT__)
+procs = {}
+for g, k in enumerate(__FOLDS__):
+    env = dict(os.environ, CUDA_VISIBLE_DEVICES=str(g), FOLDS_ENV=str(k), EP_DEADLINE=str(t0 + 8.2 * 3600))
+    procs[k] = subprocess.Popen([sys.executable, "-u", "/tmp/train_fold.py"], env=env)
+    say(f"fold{k} -> GPU{g} pid {procs[k].pid}")
+rc = {k: p.wait() for k, p in procs.items()}
+say("TRAIN_PAR_DONE rc", rc, "| files", sorted(os.listdir("/kaggle/working/runs_student")) if os.path.isdir("/kaggle/working/runs_student") else [])
+assert all(v == 0 for v in rc.values()), rc
+"""
+
+
+def tok(src):
+    return (src.replace("__FOLDS__", repr(FOLDS)).replace("__EPOCHS__", repr(EPOCHS)).replace("__LABFILE__", LABFILE)
+            .replace("__LR__", repr(LR)).replace("__NW__", "3" if PAR else "4").replace("__WARM__", WARM))
+
+
+cells = [cell(CELL0, "markdown"), cell(tok(CELL1))]
+cells.append(cell(tok(CELL_PAR).replace("__SCRIPT__", repr(tok(CELL1) + "\n" + tok(CELL2)))) if PAR else cell(tok(CELL2)))
+nb = {"cells": cells,
       "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
                    "language_info": {"name": "python"}},
       "nbformat": 4, "nbformat_minor": 5}
-# token replace
-for c in nb["cells"]:
+for i, c in enumerate(nb["cells"]):
     if c["cell_type"] == "code":
-        c["source"] = [ln.replace("__FOLDS__", repr(FOLDS)).replace("__EPOCHS__", repr(EPOCHS)) for ln in c["source"]]
+        s_ = "".join(c["source"])
+        assert "__" not in s_.replace("__name__", "").replace("__file__", "") or "__init__" in s_, f"token tersisa di cell {i}"
+        compile(s_, f"<cell{i}>", "exec")
 out = f"kaggle_kernel_{NAME}"
 os.makedirs(out, exist_ok=True)
 json.dump(nb, open(f"{out}/{SLUG}.ipynb", "w"), indent=1)
 json.dump(MD, open(f"{out}/kernel-metadata.json", "w"), indent=2)
-print("ditulis:", out, "| folds", FOLDS, "| epochs", EPOCHS)
+print("ditulis:", out, "| folds", FOLDS, "| epochs", EPOCHS, "| labels", LABFILE, "| warm", WARM, "| lr", LR, "| par", PAR, "| id", MD["id"])

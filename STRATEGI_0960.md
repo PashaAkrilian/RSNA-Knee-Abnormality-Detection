@@ -4,6 +4,14 @@
 > Status awal: LB terbaik **0,954** (klon S6 57051680), peringkat 455/5.807. Submisi hari ini: 0/5 terpakai. Kuota GPU: alver 12,0 j (terverifikasi), main ±15,8 j dan nxtirfan ±3,5 j (catatan repo); +30 j/akun pada 17 Okt 07:00 WIB.
 > Batas: variasi baru terakhir **20 Okt**; final **23 Okt 06:59 WIB** (pilih 2 manual). Merger tidak dipakai (keputusan user 11 Okt).
 
+## 0.1 Pembaruan 14 Okt (sesi Claude Code) — basis R7, target user 0,965
+- **Fakta**: heliosli merilis R7 (11–12 Okt; compact ConvNeXt-S crop 352 + aux fastMRI + stacker) → user submit 2 salinan 13 Okt = **0,956** (rank 558/5.957). Papan 14 Okt: ≥0,965 = 7 tim, ≥0,960 = 55, ≥0,957 = 201, dataran 0,956 ±750 tim; garis perak & perunggu = 0,956.
+- **Jujur soal 0,965**: itu skor 7 tim teratas (+0,009 dari kita; dua kali lompatan S6→R7). Dengan sisa 8 hari, ±80 j GPU T4 setelah reset 17 Okt, dan tanpa data/model baru yang kuat, peluang ≥0,965 publik **<2 %**. Target kerja: **varian δ>0 di atas R7** (0,957–0,958 publik) — itu yang memindahkan kita dari tengah blok klon ke zona perak privat.
+- **Basis diganti S6-eq → R7** (gerbang G0 jadi: varian ≥ R7 0,956). Guru OOF dibuat dari **R7** (fungsi fold sama, `build_compact_oof.py` default `base=r7`), bukan S6.
+- **Murid r1 langsung diuji** di atas R7 (`build_r7murid.py`, bobot 0,20, murid jalan di DALAM notebook). Murid DINO dibuang (emas-58 0,71). Desain `s6student` (preds dari dataset) dibatalkan karena run penilaian memakai test tersembunyi.
+- **Urutan baru**: (1) `r7murid` w=0,20 → skor; (2) guru OOF R7 f0–f3 + gold (nxtirfan, 14 Okt) → `L1 = 0,5 konsensus + 0,5 OOF-R7` (konsensus per temuan direkonstruksi persis dari v0); (3) 17 Okt 07:00: murid putaran-2 (warm-start r1, 2 fold paralel per sesi) di alver/nxtirfan; (4) 17–18 Okt: `r7murid` dengan murid r2 → probe; (5) ≤20 Okt variasi terakhir; 21–22 Okt pilih final.
+- **Risiko yang diketahui**: murid r2 didistilasi dari R7 → makin berkorelasi dengan kaki R7 (keragaman turun); karena itu bobot murid tetap kecil (0,15–0,25) dan diputuskan sebelum submit.
+
 ## 0. Ringkasan
 - **0,960 publik = papan atas ±38 tim hari ini** (garis emas 0,961). Itu berarti +0,006 dari posisi kita. Blend ulang S6 tidak akan sampai ke sana: semua varian S6 yang diuji repo dan publik berhenti di 0,954–0,956.
 - **Satu-satunya jalur yang terbukti** di forum: **model murid 2.5D milik sendiri yang dilatih dengan pseudo-label OOF** (ConvNeXt-T / EfficientNetV2-S / ResNet), lalu di-blend dengan basis publik. Contoh yang dilaporkan peserta (belum terverifikasi): ConvNeXt-T 5-fold tunggal 0,959 dan ensembel 0,964 (azamat1ch, tanpa data eksternal); ConvNeXt-T 0,953 + DINOv2-S 0,951 → 0,955 (colum2131); ResNet-50 5-fold 224 px 0,954.

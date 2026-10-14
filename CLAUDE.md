@@ -3,7 +3,7 @@
 > File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana = **STRATEGI_PERAK.md**.
 
 ## Misi
-Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,954** (klon S6 57051680; rank 466/5.809 per 12 Okt 07:29 UTC), target **perak** = top 5 % privat ≈ rank 290; garis perak dan perunggu publik kini sama-sama di dalam dataran ±600 tim tepat 0,954. Rencana 0,960 = `STRATEGI_0960.md` (basis S6-eq + murid pseudo-label dgn guru OOF compact). Merger/entry **15 Okt 23:59 UTC**, final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI). 100 % tidak bisa dijamin.
+Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956** (salinan R7 heliosli 57146631, 13 Okt; rank 558/5.957 per 14 Okt 07:44 UTC). Garis perak (rank ±297) dan perunggu (±595) sama-sama di dalam dataran ±750 tim tepat 0,956 → perak menuntut varian dgn δ>0 di atas R7. Target user 14 Okt: **0,965** (= top-7 papan; jujur <2 %); target kerja realistis 0,957–0,958. Rencana: `STRATEGI_0960.md` (§0.1 = 14 Okt: basis R7 + murid). Merger/entry **15 Okt 23:59 UTC**, final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI). 100 % tidak bisa dijamin.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
@@ -12,8 +12,8 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,954** (
 4. **laporan_push.md** — wadah evaluasi submisi (§2) + temuan.
 5. Riset: **reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md** (TERBARU: papan, 182 topik, 169 notebook, dataset/model) dan reports/Ringkasan riset 10 Okt (sesi Claude Code).md. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md, docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (12 Okt ±23:58 WIB)
-Terbaik **0,954** (klon S6 57051680, rank 499/5.812); **s6eq/s6eqr v3 = 0,954 + 0,954** (18:10 — G0 ≥0,955 TIDAK lulus, reader net-zero; 400 sore terpecahkan via mirror dataset; jatah 3/5); **train-a/b COMPLETE** (fold0–3 + oof di lokal, val 0,9255–0,9279; dino_full.pt tarik; **dataset `rsna-knee-student-folds` v1 LIVE**), train-c+infer+guru OOF **SEMUA BUILDER+DATASET SIAP** antre reset **17 Okt 07:00** (akun 2/3 kuota 0 s/d reset; perintah HANDOFF §G6; pantau kuota: `scripts/quota_watch.sh` → `data/quota_watch.log`); rencana aktif **STRATEGI_0960.md** (target 0,960, peluang ±20–30 %; plafon S6 = 0,954 → kenaikan dari murid); **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train**.
+## Status satu kalimat (14 Okt ±15:20 WIB)
+Terbaik **0,956** (salinan R7 user 57146631 + duplikat 57150970; rank 558/5.957); **`r7murid` v1** (R7 + murid ConvNeXt-T kita 0,20, `build_r7murid.py`) commit-run di akun utama → submit bila log GOLD58 ≈0,92; **guru OOF R7** (`build_compact_oof.py`, default `base=r7`) jalan di nxtirfan (f0/f1 → f2/f3 → gold) → label L1 → murid putaran-2 pada reset kuota **17 Okt 07:00 WIB**; murid DINO dibuang (emas-58 0,71); rencana lama `s6student` dibatalkan (preds dari dataset → fallback diam-diam di run penilaian); kuota: main 11,97 j (inferensi/submisi saja), alver 0, nxtirfan 10,55 j; **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train**.
 
 ## Aturan keras (pelanggaran = rugi tim)
 - **Bahasa kerja: Indonesia.** Bertindak otonom; lapor singkat dgn angka; jangan menjanjikan emas atau 100 %.

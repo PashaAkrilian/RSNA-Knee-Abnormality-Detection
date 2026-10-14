@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 12 Okt 2026 ~23:58 WIB (sesi OpenCode, mesin Linux; sebelumnya ~14:45 WIB sesi Claude Code mesin Windows). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 14 Okt 2026 ~15:20 WIB (sesi Claude Code, mesin Linux; sebelumnya 12 Okt 23:58 sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
@@ -15,10 +15,17 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (12 Okt ~23:58 WIB — sesi OpenCode mesin Linux)
+## 0c. Status (14 Okt ~15:20 WIB — sesi Claude Code mesin Linux)
 | Hal | Keadaan |
 |---|---|
-| Submisi terbaik | **0,954 tetap** (57051680 klon S6, rank 499/5.812; papan 16:00: dataran 0,954 = 649 tim, ≥0,954 = 835, perak 290 = 0,954, emas 21 = 0,962) |
+| **Submisi terbaik** | **0,956** = salinan R7 heliosli oleh user (57146631, 13 Okt 21:26 WIB) + duplikat 57150970 (0,956); rank **558/5.957**; dataran 0,956 ±750 tim (rank 202–951) = garis perak (297) DAN perunggu (595) |
+| **Basis baru R7** | `heliosli/rsna-knee-compact-r7cnxfsss` (bundel `8c7b666e`) + notebook "≈0.957 one click"; salinan disimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb` (+ `.meta.json`) |
+| **`r7murid` v1** | `build_r7murid.py w=0.2` → R7 + Stage 0 murid ConvNeXt-T (4 fold, subproses, anggaran 4.500 dtk) + kaki ke-3 0,20; **commit-run RUNNING** (akun utama). Syarat submit: log `GOLD58 macro AUC ≈0,92` + `MURID_LEG {"used": true}`; lalu `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/rsna-knee-r7murid -v 1 -f submission.csv -m "..."` |
+| **Guru OOF R7** | `build_compact_oof.py fold=k owner=nxtirfan` (default `base=r7`) → `nxtirfan/rsna-knee-compact-oof-r7-f0/f1` RUNNING; berikutnya f2, f3, `compact-gold-r7` (`gold=1`). Tarik: `bash kg3.sh kernels output nxtirfan/<slug> -p data/r7oof --file-pattern 'compact_(oof|gold)'` |
+| Kuota 14:45 | main 11,97 j (inferensi saja) · alver 0 · nxtirfan 10,55 j · reset 17 Okt 07:00 WIB |
+| Dibatalkan | `s6student` + `student_infer` rencana 17 Okt (preds murid dari dataset → fallback diam-diam di run penilaian; DINO emas-58 0,71). Diganti `r7murid` |
+| *(riwayat 12 Okt di bawah)* | |
+| Submisi terbaik (12 Okt) | **0,954 tetap** (57051680 klon S6, rank 499/5.812; papan 16:00: dataran 0,954 = 649 tim, ≥0,954 = 835, perak 290 = 0,954, emas 21 = 0,962) |
 | **S6-eq — SKOR MASUK 18:10** | `s6eq` v3 = **0,954** (57103358) + `s6eqr` v3 = **0,954** (57103359) → **G0 ≥0,955 BELUM lulus**; reader net-zero (konsisten 11 Okt); **jatah 3/5**. 400 sore = setting "All Versions Accessible" `heliosli/r6cnxfsss` → mirror `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 |
 | **Murid — train-a/b COMPLETE 18:10** | fold0–3 + oof sudah **di lokal** `data/student_out_a|b` (471 MB): **val AUC 0,9255–0,9279, gold 0,9189–0,9223**; `dino_full.pt` (95 MB) sudah ditarik (nxtirfan); **dataset `dimaspashaakrilian/rsna-knee-student-folds` v1 (privat) LIVE** (fold0–3+oof) — `build_student_infer.py` masih perlu mount folds saat push |
 | train-c + infer + OOF | **ANTRE 17 Okt 07:00**: train-c (fold4) → dataset v2 → infer murid → blend/`s6student`; `build_compact_oof.py` (guru OOF, fold 0–3 stride 3 ±1,6 j/fold) juga 17 Okt (alver 4,6 j sisa malam ini TIDAK dipakai — train sudah selesai, jangan push). OOM lagi → gradient checkpointing / kwin 8→6, res 256 jangan diturunkan |
@@ -59,6 +66,13 @@
    - **Dataset ALVER LIVE**: `alverlfarfaraway/rsna-knee-student-folds` v1 (fold0–3+oof) + `alverlfarfaraway/rsna-knee-student-dino` v1 (`dino_full.pt`) — privat, milik akun sendiri (mount aman); salinan main `dimaspashaakrilian/rsna-knee-student-folds` v1 = cadangan.
    - Urutan 07:00: (1) kg2 push `student-train-c` + `compact-oof-f0` (retry bila "Maximum batch GPU session count"); kg3 push `compact-oof-f2` + `f3`; (2) setelah f0/f1 lengkap, kg2 push `f1` → `compact-gold` bila kuota sisa; (3) train-c COMPLETE → kg2 `kernels output ... --file-pattern "runs_student/(fold|oof)"` → `datasets version -p student_folds_alver` (v2 = +fold4; ulangi versi folds main bila perlu); (4) kg2 push `student_infer` → COMPLETE → tarik `submission.csv` + `student_test_preds.csv` → `datasets version -p` untuk `alverlfarfaraway/rsna-knee-student-preds`; (5) submit **murid solo** (kg2) → submit **`s6student`** (kg2) — jatah harian 5, agen ≤2; (6) catat skor di `laporan_push.md` §2 + MEMORY §3. Log tiap langkah di HANDOFF §0c.
    - **Catatan**: jangan push ke alver/nxtirfan SEBELUM 07:00 (kuota 0 → run ERROR); `build_student_infer.py`/`build_s6student.py` jangan diubah mount-nya tanpa rebuild; ganti ke basis `s6eq` utk final (`build_s6student.py nb=`) = putusan terpisah.
+
+### H. 14 Okt (sesi Claude Code) — basis R7 + murid; target user 0,965 (jujur: top-7, <2 %)
+1. (SELESAI) Baca md + cek: 13 Okt user submit 2 salinan R7 = 0,956 (rank 558). Papan 14 Okt: ≥0,957 = 201; dataran 0,956 ±750 tim.
+2. (RUNNING) `r7murid` v1 (akun utama) → baca log commit (GOLD58 & MURID_LEG) → submit 1× (agen ≤2/hari).
+3. (RUNNING) Guru OOF R7 di nxtirfan (f0,f1 → f2,f3 → gold). Setelah lengkap: `make_labels_v1.py` (lokal) → `labels_student_v1.csv` → dataset privat akun pelatih.
+4. (17 Okt 07:00) Murid putaran-2 (alver; 2 fold paralel/sesi bila builder 2-GPU siap, warm-start dari r1) → `r7murid` dgn fold r2 → probe.
+5. Final 21–22 Okt: A = varian R7 terbaik yg terskor (δ>0), B = salinan R7 murni (57146631) atau varian beda mekanisme.
 
 ## 2. Alat & perintah
 - Builder baru 12 Okt: **`build_s6eq.py`** (`name=s6eq|s6eqr owner= reader=1`), **`build_compact_oof.py`** (`fold=0..3 | gold=1 owner= stride=`), **`scripts/submit_watch.py`** (push saat slot kosong → submit → pantau skor).

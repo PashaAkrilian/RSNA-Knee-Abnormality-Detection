@@ -7,7 +7,8 @@
 | Hal | Nilai |
 |---|---|
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
-| LB kita | **0,954** (klon S6 user, 57051680) — **rank 466** (papan 12 Okt 07:29 UTC, 5.809 tim); 11 Okt 06:40 WIB masih rank 144 |
+| LB kita | **0,956** (salinan R7 user, 57146631) — **rank 558** (papan 14 Okt 07:44 UTC, 5.957 tim). Riwayat: 0,954 rank 466 (12 Okt), rank 144 (11 Okt pagi) |
+| Peta blok (14 Okt 07:44 UTC) | ≥0,966 = 4 · ≥0,965 = 7 · ≥0,964 = 12 · ≥0,962 = 27 · ≥0,960 = 55 · ≥0,958 = 108 · ≥0,957 = 201 · **≥0,956 = 951 (±750 tepat 0,956 = dataran R7)** · garis perak (rank 297) = **0,956**, perunggu (rank 595) = **0,956**, emas (±rank 22) ≈ 0,962. **0,965 = 7 tim teratas** |
 | Peta blok (12 Okt 07:29 UTC) | ≥0,954 = **803** (±600 tepat 0,954) · ≥0,955 = 182 · ≥0,956 = 119 · ≥0,957 = 86 · ≥0,958 = 66 · ≥0,960 = 38 · garis perak (rank 290) = **0,954**, perunggu (rank 581) = **0,954**, emas (rank 21) = 0,962 |
 | Dinamika | garis perak 0,950 (8 Okt) → 0,954 (12 Okt); ≥0,955 naik 73 → 182 dalam 4 hari; 529 dari 604 tim di dataran 0,954 submit dalam 24 j terakhir (gelombang klon S6); trik "kirim 1−p" membuat tim kuat tersembunyi |
 | Peluang (simulasi) | Apex 0,950: perak 13–20 %, perunggu 25–41 %; klon S6 (0,954) di klaster ratusan tim: perak ±25–45 %, perunggu ±45–70 %; varian dgn informasi baru/merger lebih tinggi; **100 % mustahil** (`silver_prob_sim.py`) |
@@ -51,6 +52,10 @@
 | — | 12 Okt 17:00 | **mirror + `s6eq` v3 + `s6eqr` v3 (AKUN UTAMA) TERKIRIMA** | mirror `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (887 MB, file identik, kredit heliosli) → metadata ganti sumber → v3 | **DITERIMA 16:50** (ref **57103358** s6eq / **57103359** s6eqr) | — | jatah 3/5 | |
 | 20 | 12 Okt 18:10 | **`s6eq` v3 — SKOR 0,954** | S6-eq 0,5/0,5 rank sadar-gagal (publik #1 heliosli, tanpa ubahan; basis mirror) | **COMPLETE 0,954** | **0,954** | = klon S6 terbaik, **G0 ≥0,955 TIDAK lulus**; arah ke murid (17 Okt) | net-zero di atas 0,7/0,3? == klon; noise (Δ<0,002) |
 | 21 | 12 Okt 18:10 | **`s6eqr` v3 — SKOR 0,954** | s6eq + Part B reader goodpjw (bobot 0,03–0,35) | **COMPLETE 0,954** | **0,954** | reader **net-zero** (konsisten s6reader 11 Okt: 0,954→0,954) | reader ke-3 tidak menambah di basis S6-eq |
+| 22 | 13 Okt 21:26 WIB | **57146631** (USER) | salinan `heliosli/0-957-latest-dataset-score-in-one-click` = **R7**: Raptor 0,5 + compact R7 0,5 (bundel `8c7b666e`, ConvNeXt-S 4 fold crop 352, aux fastMRI, stacker Effusion/Baker) — kernel `dimaspashaakrilian/0-957-latest-dataset-score-in-one-click` | **0,956** | **+0,002 vs S6** | **TERBAIK BARU; kandidat final A** | rank 558/5.957 (papan 14 Okt 07:44 UTC); dataran 0,956 = ±750 tim (rank 202–951) |
+| 23 | 14 Okt 00:09 WIB | **57150970** (USER) | salinan `degnonguidi/rsna-knee-abnormality-detection` (= R7 identik + find_mount toleran) | **0,956** | — | duplikat R7 (tidak menambah informasi) | `RSNA_Versia_7` (evgendvorkin, R7 juga) di-run 13 Okt tapi tidak disubmit |
+| — | 14 Okt 15:00 | **`r7murid` v1** (akun utama; `build_r7murid.py w=0.2`) | R7 tanpa ubahan + **Stage 0 murid ConvNeXt-T 4 fold** (subproses sebelum Raptor, anggaran 75 mnt, fallback R7) + kaki ke-3 rank **0,20**; murid DINO DIBUANG (emas-58 0,71); commit-run memvalidasi murid di 58 gold | commit-run RUNNING | — | submit bila GOLD58 log ≈0,92 & MURID_LEG used | uji pertama apakah informasi murid kita menambah di atas R7 (δ>0 = lompat di atas ±750 klon) |
+| — | 14 Okt 15:00 | **guru OOF R7** f0/f1 (nxtirfan; `build_compact_oof.py base=r7`) | compact R7 fold-k pada studi latih hash-fold k (OOF bersih; fungsi fold R7 terverifikasi `sha1[:8] % 4`, gold tak dilatih) | RUNNING (±1,6–2 j/fold) | — | f2/f3 + gold menyusul; bahan label `L1 = 0,5 konsensus + 0,5 OOF-R7` utk murid putaran-2 | konsensus per temuan direkonstruksi persis dari v0 (v0 = 0,5 konsensus + 0,5 Raptor in-sample) |
 
 ## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
