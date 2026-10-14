@@ -1,11 +1,11 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-12T23:58:00+07:00
+> Last updated: 2026-10-14T15:20:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
-- **Komputasi**: GPU akun utama `dimaspashaakrilian` (30 j/minggu, reset 17 Okt 07:00 WIB; sisa ±19 j; maks 2 sesi GPU) + **PERINTAH USER 11 Okt ~11:00: akun 2 `alverlfarfaraway` (kg2.sh, sisa 30 j) & akun 3 `nxtirfan` (kg3.sh, sisa ±19 j) DIPAKAI utk eksperimen** (izin multi-akun diarsip: `docs/IZIN_AKUN_KEDUA.md`; risiko Rules 5.a tetap dicatat — user memutuskan). Kredensial `~/.kaggle/`, `akun_kaggle/` — JANGAN dicetak/di-commit.
+- **Komputasi** (perintah user 12 Okt): akun utama `dimaspashaakrilian` = **inferensi + submisi saja (JANGAN untuk training)**; akun 2 `alverlfarfaraway` (kg2.sh) & akun 3 `nxtirfan` (kg3.sh) = training/eksperimen. 30 j GPU/akun/minggu, reset Sabtu 07:00 WIB (17 Okt); maks 2 sesi GPU/akun. Submisi hanya dari akun utama. Izin multi-akun diarsip `docs/IZIN_AKUN_KEDUA.md`; risiko Rules 5.a tetap dicatat — user memutuskan. Kredensial `~/.kaggle/`, `~/.kaggle-acct2`, `akun_kaggle/` — JANGAN dicetak/di-commit.
 - **Commit TANPA trailer Co-Authored-By/Claude**; pesan multi-baris `git commit -F <file>`; commit MEMORY.md terpisah ("memory: ..."); `git add <path spesifik>`; `git fetch` dulu; "push" = `git push origin master` (hanya atas perintah user).
 - Jangan sentuh kernel proyek lain (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Submisi: agen ≤2/hari, sisakan 2–3 utk user & `nxtirfan` (5/hari tim, reset 07:00 WIB).
 - Data: OAI/pra-latih publik boleh (Rules 2.6.b; host diam 741819/743416/744056/747455); agen TIDAK membuat akun/menyetujui perjanjian atas nama user. Terima varian bila ≥ klon S6 (≈0,954) dlm noise ATAU menambah diversitas murah; Δ<0,002 = noise.
@@ -13,10 +13,13 @@
 ## 1. Fakta
 - Code competition, **5.699 tim** (11 Okt 02:59 WIB; 12 hari lagi), hadiah $77k. Tim **Krazy KIller** (3 akun di halaman tim). Metrik macro ROC-AUC 12 label. Entry/merger **15 Okt 23:59 UTC**; final **22 Okt 23:59 UTC**; maks 2 final (PILIH MANUAL). Run ≤9 jam, internet mati; publik 30 % / privat 70 %.
 - Data: 4.407 studi latih (58 gold), teks `Report` utk semua; uji tersembunyi ≈1.322 studi. Mesin run: T4×2, 4 vCPU, RAM ±31 GB, /kaggle/working 20 GB.
-- **Papan 12 Okt 07:29 UTC** (5.809 tim): #1 0,966; ≥0,960 = 38; ≥0,958 = 66; ≥0,956 = 119; ≥0,955 = 182; ≥0,954 = 803 (±600 tepat 0,954, rank ±177–780); **kita rank 466 (0,954 = klon S6 57051680)**; perak (rank 290) = **0,954**, perunggu (rank 581) = **0,954**, emas (rank 21) = 0,962. 8 Okt garis perak masih 0,950.
+- **Papan 14 Okt 07:44 UTC** (5.957 tim): #1 0,966 (4 tim); ≥0,965 = 7; ≥0,964 = 12; ≥0,962 = 27; ≥0,960 = 55; ≥0,958 = 108; ≥0,957 = 201; **≥0,956 = 951 (±750 tepat 0,956 = dataran klon R7, rank 202–951)**; **kita rank 558 (0,956 = salinan R7 57146631)**; perak (rank 297) = **0,956**, perunggu (rank 595) = **0,956**, emas (±rank 22) ≈ 0,962. Riwayat garis perak: 0,950 (8 Okt) → 0,954 (12 Okt) → 0,956 (14 Okt).
 - **Rules**: 5.a "disqualified if Submissions through more than one Kaggle account"; 5.b anggota = individu terpisah; 5.c merger sah bila gabungan ≤5, submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤±225), sebelum batas; 5.d/6.a dilarang berbagi privat antar-tim; 2.6.b model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a menyangkut kelayakan hadiah (belum dijawab host).
 
 ## 2. Temuan terkunci
+- **14 Okt — basis baru R7 (0,956)**: heliosli merilis bundel **R7** `heliosli/rsna-knee-compact-r7cnxfsss` (`8c7b666e`; ConvNeXt-S 4 fold, crop 352, aux **fastMRI**, stacker Effusion/Baker; fungsi fold `sha1(uid)[:8] % 4`, gold tak dilatih — terverifikasi dari `compact_train.py` tertanam) + notebook "≈0.957 one click" (Raptor 0,5 + R7 0,5). **User submit 13 Okt: 57146631 & 57150970 = 0,956** (basis tersimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb`). Semua notebook publik teratas = keluarga R7; tak ada yang terverifikasi ≥0,957.
+- **Model blok-klon (14 Okt)**: ±750 tim di 0,956; klon identik = skor privat identik, urutan dalam blok = waktu submit (kita submit 13 Okt sore → tengah blok ≈ garis perunggu). **Perak menuntut varian dgn δ>0 di atas R7** (δ kecil pun melompati ratusan klon); δ<0 jatuh di bawah blok. 0,965 = top-7 → realistisnya <2 %.
+- **Murid**: ConvNeXt-T r1 (fold 0–3; target v0 = 0,5 konsensus + 0,5 Raptor in-sample) emas-58 0,919–0,924 per fold (≈ Raptor 0,921 di ukuran kasar ini). **Murid DINO = emas-58 0,71 → DIBUANG.** Desain lama `s6student` (preds murid dari DATASET) **cacat**: run penilaian memakai test tersembunyi (ID lain) → kaki murid diam-diam fallback; murid harus jalan DI DALAM notebook submisi (`build_r7murid.py`).
 - **12 Okt (scrape mendalam)**: notebook publik #1 = **S6-eq** heliosli (Raptor 0,5 + compact 0,5, rank sadar-gagal, bundel `r6cnxfsss` = compact-v1 V13; tim heliosli 0,956) → dirakit `build_s6eq.py` (`s6eq`, `s6eqr`+reader). 25/25 notebook teratas = keluarga Raptor+compact. Pembeda papan atas = **murid pseudo-label sendiri** (klaim ConvNeXt-T tunggal 0,953–0,959; MURAD rank 4 tanpa data eksternal).
 - **Compact S6 = 4 fold hash `int(sha1(uid)[:8],16) % 4`** atas 4.344 non-gold, gold tak dilatih → **guru OOF compact** dapat direkonstruksi (`build_compact_oof.py`; satu model fold per studi, stride 3, ±1,6 j/fold). Rencana 0,960 + gerbang: `STRATEGI_0960.md` (peluang ≥0,960 ±20–30 %, ≥0,957 ±50–60 %).
 - **KEPUTUSAN USER (11 Okt 09:45 WIB)**: **TANPA merger & TANPA pesan ke Kaggle support** — fokus naikkan skor sendiri dengan tim ini (J1 & tindakan support DIBATALKAN; arsip `docs/KANDIDAT_MERGER.md`/`docs/DRAF_PESAN_KAGGLE_SUPPORT.md` jangan dieksekusi); submisi hanya akun utama.
@@ -28,16 +31,16 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (12 Okt 23:58 WIB)
+## 3. Status (14 Okt 15:20 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **terbaik tetap 0,954** (57051680 klon S6, rank 499/5.812). **18:10: `s6eq` v3 = 0,954 + `s6eqr` v3 = 0,954** (COMPLETE) → **G0 ≥0,955 BELUM lulus**; reader tetap net-zero (s6eqr = s6eq); jatah **3/5** |
-| **400 terpecahkan** | akar = setting "All Versions Accessible" `heliosli/r6cnxfsss` mati (bukan pin metadata) → **mirror** `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 (887 MB) → v3 diterima. Dataset buatan sendiri lolos pengecekan |
-| **Murid — train-a/b COMPLETE 18:10** | fold0–3 tarik lokal (`data/student_out_a|b`, 471 MB): **val AUC 0,9255–0,9279, gold 0,9189–0,9223** (14 epoch, ±9 j); **fold4 = train-c → 17 Okt**; `dino_full.pt` (95 MB) tarik dari nxtirfan; **`dimaspashaakrilian/rsna-knee-student-folds` v1 (privat) sudah dibuat** (fold0–3 + oof; student-infer mount saat push 17 Okt) |
-| Pipeline murid | **PERSIAPAN 17 Okt SELESAI** (train-c, compact-oof-f0..f3+gold, student_infer, s6student siap push; dataset ALVER `rsna-knee-student-folds`+`rsna-knee-student-dino` LIVE) — **antre reset kuota 17 Okt 07:00**; akun 2/3 kuota 0 (jangan push sebelumnya); main 12,67 j (inferensi/submisi saja) |
-| Pantau kuota | **`scripts/quota_watch.sh` JALAN** (PID 11661, cek 5 mnt → `data/quota_watch.log`): main **12,67 j**, alver **0**, nxtirfan **0** — semua refresh **17 Okt 07:00** |
-| Git | semua update 12 Okt sudah di-commit & push (terakhir `c063ef5`); MEMORY = commit terpisah `memory: ...` |
-| Menunggu user | pilihan 2 final 21–22 Okt; OAI diam; metopen revisi (sesi terpisah) |
+| Submisi | **terbaik 0,956** (57146631 salinan R7 oleh user, 13 Okt; + duplikat 57150970 = 0,956) → rank 558/5.957. Hari ini 0/5 terpakai (reset 07:00 WIB). Lifetime 118 |
+| **`r7murid` v1** | R7 + murid ConvNeXt-T 4 fold (Stage 0 subproses, anggaran 4.500 dtk, fallback R7) + kaki ke-3 rank 0,20 — **commit-run RUNNING (akun utama, push 14:56)** → syarat submit: log `GOLD58 macro AUC ≈0,92` + `MURID_LEG used` |
+| **Guru OOF R7** | `nxtirfan/rsna-knee-compact-oof-r7-f0/f1` RUNNING (push 14:58); f2/f3 + `compact-gold-r7` menyusul (maks 2 sesi) → `make_labels_v1` (L1 = 0,5 konsensus + 0,5 OOF-R7) → murid putaran-2 (17 Okt, alver/nxtirfan) |
+| Kuota GPU (14 Okt 14:45) | main **11,97 j** (inferensi/submisi SAJA — perintah user), alver **0**, nxtirfan **10,55 j** (catatan lama "0" keliru) → OOF R7 ±7 j. Reset semua **17 Okt 07:00 WIB** (+30 j/akun). `quota_watch.sh` MATI (log berhenti 13 Okt 10:41) |
+| Murid r1 | fold0–3 lokal `data/student_folds/` + dataset main `dimaspashaakrilian/rsna-knee-student-folds` v1; label v0 + meta cache diunduh ke `data/labels/` (dataset cache256 alver hanya 1,1 MB = label saja → latih membangun cache ±72 mnt/sesi) |
+| Git | sinkron dgn origin s/d `909242f` (12 Okt 23:58); update 14 Okt di-commit lokal |
+| Menunggu user | pilihan 2 final 21–22 Okt; OAI/fastMRI (R7 dilatih dgn aux fastMRI) = risiko kepatuhan sama kelas dgn S6 |
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
