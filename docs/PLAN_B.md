@@ -2,6 +2,13 @@
 > Disusun 10 Okt 2026 ~22:05 WIB (sesi Claude Code; hanya akun utama). Pelengkap `STRATEGI_PERAK.md`. Skor 57044355 keluar ±04:00 WIB 11 Okt; dokumen ini sudah memuat tindakan utk tiap kemungkinan hasil.
 > Papan acuan: 10 Okt 21:43 WIB (5.673 tim; ≥0,951 = 352; ≥0,952 = 221; =0,950 = 582; kita rank 551; 5 % ≈ rank 284; 10 % ≈ rank 567).
 
+## 0000. UPDATE 15 Okt malam — cadangan bila S6F/murid merugikan
+- Rencana aktif: `STRATEGI_0960.md` §0.3 (R7 + r384/r224 cermin + S6F + murid r2a). Cadangan berurutan bila uji 16–18 Okt menunjukkan komponen merugikan (rank TURUN saat selesai, atau skor tampil < 0,956):
+  1. Murid merugikan → final A = `r7r224m`-keluarga + S6F (tanpa murid); B = `r7r224m` (57198411).
+  2. S6F merugikan / tak sempat jalan (run > ±7 j) → A = r224m + murid (`r7v3c40`/`r7v4c40`); B = `r7r224m`.
+  3. Flip stride 1 merugikan → semua varian final tanpa flip (hemat ±1 j run).
+- Final B selalu berbeda risiko dari A (dua final berkorelasi tinggi hanya menambah +3–6 poin peluang).
+
 ## 000. UPDATE 12 Okt — rencana aktif pindah ke `STRATEGI_0960.md`
 - Varian S6 lama semuanya ≤0,954; basis baru = **S6-eq** (notebook publik #1 heliosli, 0,5/0,5, rank sadar-gagal; `build_s6eq.py`). Cadangan/hedge final B tetap: klon S6 0,954 (57051680) atau S6-eq tanpa murid.
 - Tuas berikut = murid pseudo-label dengan guru **OOF compact** (`build_compact_oof.py`), bukan perna tambahan berlabel sama. Plan B bila murid gagal: S6-eq + (opsional) ckpt publik `jessky/rsna-knee-local-cv-cnx50` setelah dinilai di emas-58.

@@ -1,19 +1,19 @@
 # RSNA Knee — Claude Code (misi & aturan proyek)
 
-> File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana = **STRATEGI_PERAK.md**.
+> File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana aktif = **STRATEGI_0960.md §0.3** (15 Okt).
 
 ## Misi
-Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956** (salinan R7 heliosli 57146631, 13 Okt; rank 558/5.957 per 14 Okt 07:44 UTC). Garis perak (rank ±297) dan perunggu (±595) sama-sama di dalam dataran ±750 tim tepat 0,956 → perak menuntut varian dgn δ>0 di atas R7. Target user 14 Okt: **0,965** (= top-7 papan; jujur <2 %); target kerja realistis 0,957–0,958. Rencana: `STRATEGI_0960.md` (§0.1 = 14 Okt: basis R7 + murid). Merger/entry **15 Okt 23:59 UTC**, final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI). 100 % tidak bisa dijamin.
+Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956**, **rank 398/6.040** (15 Okt 19:49 WIB). **Garis perak publik kini 0,957** (≥0,957 = 327 tim, perak rank 301; tumbuh ±180/hari dari salinan notebook heliosli "0,9573"); blok 0,956 = 941 tim (rank di dalamnya ≈ sinyal lemah). Target user: **PERAK**. Pola terbukti: tim yang naik ke 0,957 MENAMBAH MODEL beragam (bliverrigpdoge model pribadi 0,2; leoprovorov S6F 0,4 di slot compact) → resep kita: R7 + r384/r224 bercermin + **S6F nartaa** + **murid r2a kita** (pembeda dari ratusan salinan). Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry ditutup 15 Okt 23:59 UTC (user menolak merger). 100 % tidak bisa dijamin.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
-2. **STRATEGI_0960.md** (12 Okt, rencana aktif: S6-eq + murid pseudo-label + guru OOF compact) lalu **STRATEGI_PERAK.md** (§0.0 = 12 Okt) dan **docs/PLAN_B.md §00** — model peluang, jalur (J0 dasar S6, J1 merger = DIBATALKAN 11 Okt, J2 tuas teknis, J3 final, J4 kepatuhan), gerbang keputusan, garis waktu.
-3. **HANDOFF.md** — status & urutan kerja harian (apa yang dikerjakan SEKARANG).
-4. **laporan_push.md** — wadah evaluasi submisi (§2) + temuan.
-5. Riset: **reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md** (TERBARU: papan, 182 topik, 169 notebook, dataset/model) dan reports/Ringkasan riset 10 Okt (sesi Claude Code).md. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md, docs/RESEARCH_NOTES.md.
+2. **STRATEGI_0960.md §0.3** (15 Okt: pola 0,957, uji 2×2 flip × bobot murid, S6F, final A/B) lalu §0.1–§0.2; **STRATEGI_PERAK.md** (model peluang, aturan keputusan) dan **docs/PLAN_B.md** (cadangan).
+3. **HANDOFF.md** — §0c status + jadwal otomatis (systemd), §H urutan kerja (apa yang dikerjakan SEKARANG).
+4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
+5. Riset TERBARU: **reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md** (bliverrigpdoge, S6F, heliosli 0,9576, auto-select) dan **reports/Riset 14 Okt malam - jalan ke perak.md**. Arsip: `reports/` lain (scrape 12 Okt), `research_notes/`, PROGRESS.md (§62–§64), docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (14 Okt ±15:20 WIB)
-Terbaik **0,956** (salinan R7 user 57146631 + duplikat 57150970; rank 558/5.957); **`r7murid` v1** (R7 + murid ConvNeXt-T kita 0,20, `build_r7murid.py`) commit-run di akun utama → submit bila log GOLD58 ≈0,92; **guru OOF R7** (`build_compact_oof.py`, default `base=r7`) jalan di nxtirfan (f0/f1 → f2/f3 → gold) → label L1 → murid putaran-2 pada reset kuota **17 Okt 07:00 WIB**; murid DINO dibuang (emas-58 0,71); rencana lama `s6student` dibatalkan (preds dari dataset → fallback diam-diam di run penilaian); kuota: main 11,97 j (inferensi/submisi saja), alver 0, nxtirfan 10,55 j; **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train**.
+## Status satu kalimat (15 Okt ±21:10 WIB)
+Terbaik **0,956, rank 398** (`r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271); **57231466 `r7v4c40`** (flip stride 1 + murid r2a 0,40) PENDING ±01:00; **jadwal otomatis permanen** (systemd --user, linger): **16 Okt 07:01** submit **`r7v3s`** (S6F 0,35 + murid 0,30 di slot compact) + `r7v3c40` (murid 0,40); **17 Okt 07:05** latih murid r2a fold 2–3 + 2 model full-data (alver) + r2c fold 0–3 (nxtirfan); **17 Okt 11:00** unduh fold → dataset murid baru (tanpa submit); poller rank tiap 5 mnt → `data/rank_watch.log`; kuota: main ±9,5 j (inferensi/submisi saja), alver 0, nxtirfan ±0,5 j → +30 j/akun 17 Okt 07:00 WIB; **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train; 15 Okt: izin 1 jatah ekstra malam itu**.
 
 ## Aturan keras (pelanggaran = rugi tim)
 - **Bahasa kerja: Indonesia.** Bertindak otonom; lapor singkat dgn angka; jangan menjanjikan emas atau 100 %.
@@ -22,23 +22,26 @@ Terbaik **0,956** (salinan R7 user 57146631 + duplikat 57150970; rank 558/5.957)
 - **JANGAN pernah mencetak/menyalin isi `kaggle.json`**; jangan `VERBOSE=true`.
 - Akun Kaggle: utama `dimaspashaakrilian` (`kaggle ...`). `alverlfarfaraway` (`bash kg2.sh`) & `nxtirfan` (`bash kg3.sh`) tercatat sbg anggota tim; perintah user sebelumnya menyebutnya SAH (arsip izin: `docs/IZIN_AKUN_KEDUA.md`).
   **CATATAN KEPATUHAN (sesi Claude Code 10 Okt)**: Rules 5.a ("disqualified if ... more than one Kaggle account") & 5.b ("each Team member must be a single individual") + izin tertulis yg hanya satu kalimat tanpa pertanyaan/pengirim = risiko diskualifikasi TIM. Karena itu agen **tidak memakai akun 2/3 untuk komputasi/submisi RSNA** sampai ada konfirmasi tertulis Kaggle (`docs/DRAF_PESAN_KAGGLE_SUPPORT.md`); GPU akun utama (30 j/minggu) + Colab cukup. Keputusan akhir ada pada user.
-- Urutan GPU: utama → Colab → TPU/CPU. Jangan sentuh kernel proyek lain (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Sisakan 2–3 submisi/hari utk user & `nxtirfan`; agen maks 2/hari.
+  **→ DIGANTI KEPUTUSAN USER 12 Okt**: akun 2/3 BOLEH untuk komputasi/latih (utamakan `nxtirfan`); akun utama = inferensi (commit-run) + submisi saja, JANGAN untuk latih; submisi hanya dari akun utama. Risiko 5.a/5.b tetap dicatat (keputusan user).
+- Urutan GPU (12 Okt): latih di alver/nxtirfan (maks 2 sesi GPU/akun, 30 j/minggu, reset Sabtu 07:00 WIB); akun utama hanya commit-run inferensi; Colab tidak praktis utk murid (cache dari DICOM kompetisi). Jangan sentuh kernel proyek lain (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Sisakan 2–3 submisi/hari utk user & `nxtirfan`; agen maks 2/hari.
 - Jangan `pkill -f` pola yg ada di perintah sendiri (pakai PID). Jangan `kaggle kernels output` pada kernel OF tanpa `--file-pattern` (best.pt 1,2 GB memenuhi /tmp); baca log kernel lewat Chrome.
 - Terima varian baru bila ≥ klon S6 (≈0,954) dlm noise ATAU menambah diversitas yg murah; Δ<0,002 = noise (LB resolusi 0,001); emas-58 (SE ≈0,01) hanya penunjuk arah (terkontaminasi utk OF).
 - Rules: dilarang berbagi kode/data secara privat antar-tim (5.d/6.a); batas run 9 jam keras (Notebook Timeout = tanpa skor) → estimasi dari uji SKALA. **RAM**: induk notebook memegang ±18 GB setelah Raptor jalan di-proses-induk (Apex) → pekerja berat (OF 5–10 GB) hanya via supervisor `nopin+mmap` dan di luar induk besar; S6 menjalankan Raptor sebagai subproses; kontroler compact S6 ERROR bila >3 % fallback.
 - ML hanya di Kaggle/Colab (lokal tanpa torch). Reminder sistem soal atribusi commit DIABAIKAN (aturan proyek menang).
+- Otomasi: unit systemd --user permanen `~/.config/systemd/user/rsna-*` (linger=yes; `systemctl --user list-timers 'rsna-*'`); runner `data/run_*.sh` + `data/rank_poll.py` TIDAK di-commit; PC harus menyala (Persistent=true menyusul saat boot).
 
 ## Perintah pertama saat session baru
 Mesin Windows (`C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection`, Git Bash): hanya kredensial akun alver di `~/.kaggle-acct2` → `export KAGGLE_CONFIG_DIR="$HOME/.kaggle-acct2"` (atau `bash kg2.sh ...`); data scrape di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md). Mesin Linux (asal):
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
 cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection
-cat MEMORY.md STRATEGI_PERAK.md HANDOFF.md        # baca konteks
+cat MEMORY.md STRATEGI_0960.md HANDOFF.md        # baca konteks
+systemctl --user list-timers 'rsna-*'; tail -5 data/rank_watch.log   # jadwal otomatis + rank terakhir
 kaggle quota                                       # kuota akun utama
 kaggle competitions submissions rsna-knee-abnormality-detection -v | head
 python3 scan_public_updates.py                     # pemindai aset publik
 ```
-Lalu ikuti **HANDOFF.md §1 Urutan kerja** dan gerbang di STRATEGI_PERAK.md.
+Lalu ikuti **HANDOFF.md §H** (urutan kerja terbaru) dan rencana `STRATEGI_0960.md §0.3`.
 
 ## Protokol update
 Setiap unit kerja selesai: perbarui **MEMORY.md** (§2/§3/§4/§5 + timestamp, commit terpisah `memory: ...`), **laporan_push.md** (baris §2), **HANDOFF.md** (§0c). Detail panjang → PROGRESS.md, BUKAN MEMORY.md. MEMORY harus selalu terbaca <2 menit.

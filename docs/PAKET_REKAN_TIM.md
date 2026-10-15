@@ -5,6 +5,8 @@
 
 > **Pembaruan 12 Okt (sesi Claude Code):** kandidat terbaru di bawah (S6-eq dan guru OOF compact). Evaluasi rencana: `STRATEGI_0960.md`; bukti: `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 
+> **Pembaruan 15 Okt malam (sesi Claude Code):** akun `nxtirfan` dipakai OTOMATIS utk latih murid r2c pada **17 Okt 07:05 WIB** (2 sesi GPU paralel ±5,5 j; kernel `nxtirfan/rsna-knee-student-r2c-a|b`) — mohon **jangan menjalankan sesi GPU di akun nxtirfan 17 Okt 07:00–13:00** (maks 2 sesi/akun). Submisi tetap dari akun utama; jatah tim 5/hari (agen ≤2). Varian terbaru: `kaggle_kernel_r7v3s` (R7 + r224 cermin + S6F + murid), `kaggle_kernel_r7v4c40`; tabel lama di bawah = arsip.
+
 ## Kandidat yang bisa dijalankan rekan (semua dari repo ini)
 | Notebook | Isi | Dataset yang harus ditambahkan | Catatan |
 |---|---|---|---|

@@ -2,27 +2,28 @@
 > Diperbarui 14 Okt 2026 ~15:20 WIB (sesi Claude Code, mesin Linux; sebelumnya 12 Okt 23:58 sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
-## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan
-1. **~~MERGER & pesan support~~ DIBATALKAN (perintah user 11 Okt 09:45 WIB)** — fokus **naikkan skor sendiri dengan tim ini**: tanpa merger, tanpa pesan ke Kaggle support (arsip: `docs/KANDIDAT_MERGER.md`, `docs/DRAF_PESAN_KAGGLE_SUPPORT.md` — JANGAN dieksekusi). **Perintah user 12 Okt: ketiga akun boleh dipakai, tetapi akun utama JANGAN untuk training** (risiko Rules 5.a tetap tercatat di MEMORY §0/§2).
-2. Bicarakan dgn `nxtirfan`: setuju/tidak tokennya disimpan di `akun_kaggle/`; ia menjalankan job dari akunnya sendiri bila mau (`docs/PAKET_REKAN_TIM.md`).
-3. **Salinan S6 Anda (57051680) = 0,954 (rank 499/5.812 per papan 12 Okt 16:00)** — final A kandidat; jangan dihapus. Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master` (diff bersih dari kredensial; push atas perintah user).
-4. 21–22 Okt: pilih 2 final bersama agen (beda mekanisme; manual di UI Submissions → select 2).
-- Harapan jujur (simulasi): klon S6 di ±0,954 dgn ratusan tim lain → perak ±25–45 %, perunggu ±45–70 %; +varian dgn informasi baru → lebih tinggi; emas ≈0–2 %. **100 % tidak mungkin.**
+## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan (15 Okt malam)
+1. **Baca penanda auto-select** di halaman Kaggle *Submissions*: bila final belum dipilih manual, Kaggle menandai 2 submisi = **2 skor publik tak-dibulatkan tertinggi**. Kirim nomor/deskripsinya ke agen → kita tahu komponen mana yang benar-benar menaikkan skor (r7v3c? r7v4c40? r7v3s?) tanpa memakai jatah.
+2. **Biarkan PC menyala** 16–17 Okt: jadwal otomatis (systemd --user, linger) submit 16 Okt 07:01, latih 17 Okt 07:05, unduh fold 17 Okt 11:00. Bila PC mati, tugas menyusul saat boot (bisa terlambat).
+3. Jatah submisi: agen ≤2/hari (sisakan 2–3 utk Anda & rekan); jatah ekstra hanya atas izin Anda (15 Okt: 1 jatah dipakai utk `r7v4c40`).
+4. **21–22 Okt: pilih 2 final** (manual di UI Submissions → select 2). Agen akan merekomendasikan A (resep terlengkap: S6F + murid) dan B (lindung nilai) pada 21 Okt.
+5. Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master`. Merger & pesan support DIBATALKAN (keputusan Anda 11 Okt; entry/merger ditutup 15 Okt 23:59 UTC).
+- Harapan jujur: perak ±35–50 % bila murid + S6F memberi +0,0005–0,001 nyata; hanya salinan publik ±15–25 %; emas ≈0–2 %. **100 % tidak mungkin.**
 
 ## 0b. Quickstart AGEN BARU (Claude Code / OpenCode / lain)
 1. `export PATH="$HOME/.local/bin:$PATH"` · `cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection`
-2. Baca `MEMORY.md` → `STRATEGI_PERAK.md` → `docs/PLAN_B.md` §00 → file ini. Cek: `kaggle quota` · `kaggle competitions submissions rsna-knee-abnormality-detection -v` · `python3 scan_public_updates.py` · papan (`kaggle competitions leaderboard ... -d -p <dir>`).
-3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
-4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
+2. Baca `MEMORY.md` → `STRATEGI_0960.md` §0.3 → file ini (§0c + §H). Cek: `kaggle quota` (+ `bash kg2.sh quota`, `bash kg3.sh quota`) · `kaggle competitions submissions rsna-knee-abnormality-detection -v | head` · `tail data/rank_watch.log` · `systemctl --user list-timers 'rsna-*'` · `python3 scan_public_updates.py`.
+3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
+4. Bangun varian: `python3 build_r7murid.py base=v224m w=<murid> slot=compact folds=dimaspashaakrilian/rsna-knee-student-r2a [flip=1 fstride=1] [s6f=0.35] name=<nama>` → `kaggle kernels push -p kaggle_kernel_<nama>` → cek log commit (`GOLD58`, `MURID_LEG used`, `S6F_LEG used`, tanpa error) → submit. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (15 Okt ~20:00 WIB — sesi Claude Code mesin Linux)
+## 0c. Status (15 Okt ~21:10 WIB — sesi Claude Code mesin Linux)
 | Hal | Keadaan |
 |---|---|
 | **Papan 15 Okt 19:49** | 6.040 tim; ≥0,958 = 132; **≥0,957 = 327 → garis PERAK (rank 301) = 0,957**; tepat 0,956 = 941; perunggu (603) = 0,956. **Kita rank 398 (0,956)** = ±ke-71 di blok 0,956 |
 | **Submisi 15 Okt** | `r7r224m` 57198411 = 0,956 (rank 506→403) · `r7v3c` 57201659 = 0,956 (rank saat selesai tak tercatat — PC mati) · 57223271 (user/rekan, salinan heliosli "=0.9573" = R7+r224) = 0,956. Jatah tim 15 Okt 3/5 |
 | **Terjadwal (systemd --user, PERMANEN, linger=yes)** | `rsna-rankpoll` (tiap 5 mnt → `data/rank_watch.log`, state `data/rank_poll_seen.json`) · **16 Okt 07:01** `rsna-submit-16okt` (`r7v3s` + `r7v3c40`) · **17 Okt 07:05** `rsna-push-17okt` (alver: `student-r2a-n2` fold 2–3 + `student-r2a-full` fold 8/9 full-data; nxtirfan: `student-r2c-a/b`) · **17 Okt 11:00** `rsna-after-train-17okt` (tunggu → unduh → gerbang gold → dataset r2a versi baru + `rsna-knee-student-r2c`; TIDAK submit). Unit di `~/.config/systemd/user/rsna-*`; cek `systemctl --user list-timers 'rsna-*'` |
 | **Kandidat siap (commit LULUS)** | **`r7v3s`** (S6F 0,35 + r2a 0,30 compact, tanpa flip; 16 Okt 07:01), `r7v6` (sama + flip stride 1), `r7v3c40` (r2a 0,40; 16 Okt 07:01), `r7v4c` (flip + r2a 0,25), `r7v3t` (r2a kaki ke-3 0,2), `r7v4` (flip saja). Tersubmit 20:08: `r7v4c40` 57231466 |
-| Kuota 19:50 | main ±9,9 j (inferensi saja) · alver 0 · nxtirfan ±0,5 j · reset **17 Okt 07:00 WIB** |
+| Kuota 21:06 | main **9,26 j** (inferensi saja) · alver **0** (34,02 j terpakai) · nxtirfan **0,50 j** · TPU 20 j/akun tak terpakai · reset **17 Okt 07:00 WIB** |
 | *(riwayat 14 Okt di bawah)* | |
 | **Submisi terbaik** | **0,956** = salinan R7 heliosli oleh user (57146631, 13 Okt 21:26 WIB) + duplikat 57150970 (0,956); rank **558/5.957**; dataran 0,956 ±750 tim (rank 202–951) = garis perak (297) DAN perunggu (595) |
 | **Basis baru R7** | `heliosli/rsna-knee-compact-r7cnxfsss` (bundel `8c7b666e`) + notebook "≈0.957 one click"; salinan disimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb` (+ `.meta.json`) |
@@ -87,6 +88,14 @@
 7. (15 Okt 02:30) rank 447 (r7r224 efektif); OOF R7 lengkap + label v1 diunggah (alver); timer systemd 07:03 & 17 Okt 07:05; builder `folds=` + `slot=compact` utk inferensi murid r2 (dataset fold r2 dibuat setelah latih: `dimaspashaakrilian/rsna-knee-student-r2a|r2c`).
 7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
+
+### I. 16–22 Okt — URUTAN KERJA AKTIF (rencana `STRATEGI_0960.md` §0.3)
+1. **16 Okt ±01:00**: skor `r7v4c40` 57231466 → `data/rank_watch.log` (rank saat SELESAI vs saat submit 403).
+2. **16 Okt 07:01 (otomatis)**: `r7v3s` (S6F 0,35 + murid 0,30, tanpa flip) + `r7v3c40` (murid 0,40). Skor ±10:30 (r7v3c40) & ±12:30 (r7v3s, +S6F ±2 j). Bandingkan rank saat selesai: `r7v3s` vs `r7v3c40` = efek S6F; `r7v4c40` vs `r7v3c40` = efek flip. Catat di `laporan_push.md` §2.
+3. **17 Okt 07:05 (otomatis)**: push latih `student-r2a-n2` (fold 2–3) + `student-r2a-full` (fold 8/9) di alver, `student-r2c-a/b` di nxtirfan (`data/push_17okt.log`). **11:00 (otomatis)**: `data/run_after_train_17okt.sh` → dataset `rsna-knee-student-r2a` versi baru (fold 0–3 + 8–9) + `rsna-knee-student-r2c` (`data/after_train_17okt.log`).
+4. **17 Okt siang (agen)**: bangun `r7v5*` = basis terbaik 16 Okt + murid 6 model (± r2c sbg `fold4–7.pt`, ± S6F) → commit (cek `GOLD58` ≥0,928 & detik/studi; naikkan `budget=` bila 6–10 model) → submit 2 jatah agen.
+5. **18–20 Okt**: gabungkan komponen yang terbukti tak merugikan; variasi terakhir 20 Okt; pastikan durasi run < ±7 j (S6F + flip + murid).
+6. **21 Okt**: rekomendasi 2 final ke user (A = resep terlengkap; B = lindung nilai berbeda risiko); **22 Okt 23:59 UTC** user memilih manual di UI.
 
 ## 2. Alat & perintah
 - Builder baru 12 Okt: **`build_s6eq.py`** (`name=s6eq|s6eqr owner= reader=1`), **`build_compact_oof.py`** (`fold=0..3 | gold=1 owner= stride=`), **`scripts/submit_watch.py`** (push saat slot kosong → submit → pantau skor).

@@ -1,13 +1,14 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
-> Konteks aturan: `MEMORY.md` · rencana & gerbang: **`STRATEGI_PERAK.md`** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset terbaru: **`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`** · arsip OpenCode: `reports/Cara menembus 0951 perak.md`, `reports/Strategi meraih perak RSNA.md`, `research_notes/`.
-> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 11 Okt ~03:45 WIB. Bahasa kerja: Indonesia. **Cadangan/arah terbaru: `docs/PLAN_B.md` §00 (S6 hidup lagi).**
+> Konteks aturan: `MEMORY.md` · rencana aktif: **`STRATEGI_0960.md` §0.3** (gerbang/peluang: `STRATEGI_PERAK.md`) · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset terbaru: **`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`** · arsip OpenCode: `reports/Cara menembus 0951 perak.md`, `reports/Strategi meraih perak RSNA.md`, `research_notes/`.
+> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 15 Okt ~21:10 WIB (riset terbaru: `reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md`). Bahasa kerja: Indonesia. **Cadangan/arah terbaru: `docs/PLAN_B.md` §00 (S6 hidup lagi).**
 
-## 1. Posisi vs garis perak (papan 11 Okt 02:59 WIB, 5.699 tim; angka lama di MEMORY/arsip)
+## 1. Posisi vs garis perak (papan 15 Okt 19:49 WIB, 6.040 tim; baris lama = arsip)
 | Hal | Nilai |
 |---|---|
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
-| LB kita | **0,956** (salinan R7 user, 57146631) — **rank 558** (papan 14 Okt 07:44 UTC, 5.957 tim). Riwayat: 0,954 rank 466 (12 Okt), rank 144 (11 Okt pagi) |
+| LB kita | **0,956 — rank 398/6.040** (15 Okt 19:49; skor terbaik dari `r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271). Riwayat: rank 403 (15 Okt pagi), 447 (r7r224), 558 (R7, 14 Okt), 0,954 rank 466 (12 Okt) |
+| Peta blok (15 Okt 19:49 WIB) | ≥0,958 = 132 · **≥0,957 = 327** · tepat 0,956 = 941 · **garis perak (rank 301) = 0,957** · perunggu (rank 603) = 0,956 → perak publik menuntut tampil 0,957 |
 | Peta blok (14 Okt 07:44 UTC) | ≥0,966 = 4 · ≥0,965 = 7 · ≥0,964 = 12 · ≥0,962 = 27 · ≥0,960 = 55 · ≥0,958 = 108 · ≥0,957 = 201 · **≥0,956 = 951 (±750 tepat 0,956 = dataran R7)** · garis perak (rank 297) = **0,956**, perunggu (rank 595) = **0,956**, emas (±rank 22) ≈ 0,962. **0,965 = 7 tim teratas** |
 | Peta blok (12 Okt 07:29 UTC) | ≥0,954 = **803** (±600 tepat 0,954) · ≥0,955 = 182 · ≥0,956 = 119 · ≥0,957 = 86 · ≥0,958 = 66 · ≥0,960 = 38 · garis perak (rank 290) = **0,954**, perunggu (rank 581) = **0,954**, emas (rank 21) = 0,962 |
 | Dinamika | garis perak 0,950 (8 Okt) → 0,954 (12 Okt); ≥0,955 naik 73 → 182 dalam 4 hari; 529 dari 604 tim di dataran 0,954 submit dalam 24 j terakhir (gelombang klon S6); trik "kirim 1−p" membuat tim kuat tersembunyi |

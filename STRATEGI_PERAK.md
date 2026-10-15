@@ -1,6 +1,12 @@
-# STRATEGI PERAK — RSNA Knee 2026 (disusun 10 Okt 2026; DIPERBARUI 11 Okt 09:45 WIB; sesi Claude Code; HANYA akun utama)
+# STRATEGI PERAK — RSNA Knee 2026 (disusun 10 Okt 2026; DIPERBARUI 15 Okt 21:10 WIB — §0.-1 terbaru; sesi Claude Code)
 > Baca setelah `MEMORY.md`. Dasar: riset 10–11 Okt (`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`, `docs/RESEARCH_NOTES.md` §36–§44), Rules resmi, papan 11 Okt 02:59 WIB.
 > Dokumen ini = RENCANA + ATURAN KEPUTUSAN; status harian ada di `HANDOFF.md` §0c dan `laporan_push.md`. Cadangan/pohon keputusan rinci: `docs/PLAN_B.md` (§00 = yang terbaru).
+
+## 0.-1 Pembaruan 15 Okt malam (sesi Claude Code) — rencana aktif `STRATEGI_0960.md` §0.3
+- Papan 15 Okt 19:49 WIB (6.040 tim): ≥0,958 = 132; **≥0,957 = 327 → garis PERAK (rank 301) = 0,957**; blok tepat 0,956 = 941 tim; perunggu (rank 603) = 0,956. **Kita rank 398 (0,956)**.
+- Pola terbukti publik: tim naik ke 0,957 dgn MENAMBAH MODEL beragam (bliverrigpdoge model pribadi 0,2; leoprovorov S6F 0,4 di slot compact). Menyetel bobot saja tidak menaikkan.
+- Resep kita menuju final: R7 + r384/r224 bercermin + **S6F** (publik) + **murid r2a 4 fold + 2 full-data** (milik kita) ± flip stride 1 ± r2c. Uji 16 Okt: `r7v3s` (S6F + murid) & `r7v3c40` (murid 0,40); 15 Okt malam `r7v4c40` (flip + murid 0,40).
+- Peluang perak (perkiraan jujur): hanya salinan publik ±15–25 %; + S6F & murid memberi +0,0005–0,001 nyata ±35–50 %; emas ≈0–2 %. 100 % tidak mungkin. Papan privat (70 %, ±900 studi) mengacak ulang blok salinan.
 
 ## 0.0 Pembaruan 12 Okt (sesi Claude Code) — rencana aktif kini `STRATEGI_0960.md`
 - Papan 12 Okt 07:29 UTC (5.809 tim): perak rank 290 = **0,954**, perunggu rank 581 = **0,954** (keduanya di dalam dataran ±600 tim tepat 0,954), emas rank 21 = 0,962; ≥0,955 = 182; ≥0,956 = 119; kita rank 466. Garis perak bergerak 0,950 (8 Okt) → 0,954 (12 Okt).
