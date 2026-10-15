@@ -44,6 +44,8 @@ assert FSTRIDE in (1, 2, 3)
 assert SLOT in ("final", "raptor", "compact")
 FOLDS_DS = args.get("folds", "dimaspashaakrilian/rsna-knee-student-folds")   # set fold murid (r1 = default; r2a/r2c = dataset baru)
 NAME = args.get("name", "r7m224" if V224 else "r7murid")
+S6F = float(args.get("s6f", "0"))   # bobot S6F nartaa (all-data) DI DALAM slot compact, diterapkan sebelum murid; 0 = tanpa tahap S6F
+assert 0.0 <= S6F <= 0.6, S6F
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
 _b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "v224m": "r7_r224m_varshitha_20261014"}[BASE_ARG]
@@ -52,6 +54,8 @@ BASE_META = ROOT / "kaggle_base" / f"{_b}.meta.json"
 SLUG = "rsna-knee-" + NAME
 EXTRA_DS = [FOLDS_DS, "goodpjw2008/rsna-knee-2-5d-convnext-reader"]
 MB, ME = "# ---- [murid] kaki ke-3", "# ---- [murid] selesai ----"
+S6F_DS = "nartaa/rsna-knee-s6fall-weights"
+S6F_BASE = ROOT / "kaggle_base" / "s6fall_solo_nartaa_20261015.py"   # skrip publik nartaa (komponen B = S6F all-data, 0,950 solo)
 
 DECODE = bsi.CELL3.split("# cache volume per-worker")[0]      # fungsi decode = salinan student-prep (geometri cache latih)
 assert all(f"def {f}(" in DECODE for f in ("_read", "_canon_slice", "_resample", "load_series")) and "say(" not in DECODE
@@ -197,6 +201,83 @@ IN_LOOP = ("    if _stu_ok is not None:   # [murid] student inside the Raptor sl
 IN_LOOP_COMPACT = IN_LOOP.replace("Raptor slot (Raptor-like, rho 0.93)", "compact (R7) slot (student taught by R7 OOF)").replace("rr", "ro")
 
 
+# tahap S6F: skrip nartaa UTUH, hanya komponen B (A = tahap-1 Raptor-384 kita sendiri, sumber byte-identik bcd864cb...);
+# guard skrip = sisa waktu run; keluaran B_probs.csv -> /kaggle/working/s6f_raw.csv; gagal apa pun -> tanpa kaki S6F
+S6F_PATCH = [
+    ('GUARD_MAX_S = 480 * 60', 'GUARD_MAX_S = int(float(os.environ.get("S6F_GUARD_S", "3600")))   # [s6f] sisa waktu notebook induk'),
+    ('A_TIMEOUT_S = 9000', 'A_TIMEOUT_S = 0   # [s6f] A tidak dijalankan'),
+    ('B_TIMEOUT_S = 14400', 'B_TIMEOUT_S = 600   # [s6f] lantai (hanya peringatan); anggaran B = guard - END_SLACK_S'),
+    ('SETUP_SLACK_S = 30 * 60', 'SETUP_SLACK_S = 10 * 60'),
+    ('    for p in (WORK / "submission.csv", WORK / ".submission.csv.tmp"):',
+     '    for p in ():   # [s6f] submission.csv milik notebook induk, jangan disentuh'),
+    ('        A, a_info = run_a(I)', '        A, a_info = None, {"skipped": "[s6f] A = stage-1 Raptor-384 of the host notebook"}'),
+    ('        _RECEIPT["blend"] = blend_and_write(I, A, B, b_failed)',
+     '        _RECEIPT["blend"] = {"s6f_probs": str(OUT / "B" / "B_probs.csv"), "b_failed": b_failed}   # [s6f] blend di notebook induk'),
+    ('"submission_sha256": _RECEIPT["blend"]["submission_sha256"]', '"s6f_probs": _RECEIPT["blend"]["s6f_probs"]'),
+]
+
+S6F_RUN = r"""# Stage 2c (ours, build_r7murid s6f): nartaa's public S6 ConvNeXt trained on all data (0.950 alone; forum 749359), component B of
+# his published script only (A = our stage-1 Raptor-384, the same scored source).  Own time cap from what is left of the run
+# (ends by NB_T0 + 8.0 h); any failure or timeout -> no S6F leg (the blend then uses the other members).
+import os, sys, time, json, shutil, subprocess
+from pathlib import Path
+_s6f_t0 = time.time()
+_s6f_left = (NB_T0 + 8.0 * 3600) - time.time()
+S6F_STATUS = {'status': 'not started', 'left_s': round(_s6f_left)}
+if _s6f_left < 45 * 60:
+    S6F_STATUS['status'] = 'skipped: too little time left'
+else:
+    _cap = int(min(4 * 3600, _s6f_left - 10 * 60))
+    S6F_STATUS['cap_s'] = _cap
+    try:
+        _rc = subprocess.run([sys.executable, '-u', '/tmp/s6f_run.py'], env=dict(os.environ, S6F_GUARD_S=str(_cap)),
+                             timeout=_cap + 900).returncode
+        _p = Path('/kaggle/working/k1/B/B_probs.csv')
+        if _rc == 0 and _p.is_file():
+            shutil.copyfile(_p, '/kaggle/working/s6f_raw.csv')
+            S6F_STATUS['status'] = 'ok'
+        else:
+            S6F_STATUS['status'] = 'failed rc %s' % _rc
+    except subprocess.TimeoutExpired:
+        S6F_STATUS['status'] = 'timeout'
+S6F_STATUS['seconds'] = round(time.time() - _s6f_t0)
+print('S6F_STAGE', json.dumps(S6F_STATUS), flush=True)
+"""
+
+S6F_LOAD = r"""
+# ---- [s6f] nartaa's S6 ConvNeXt (all data) inside the compact slot, weight fixed before any run, ranked over its own scored
+# rows; fewer than 97 % scored, or a mean rank correlation with R7 below 0.5 (n >= 100) -> no S6F leg (printed)
+W_S6F = __WS6F__
+s6f = {'w': W_S6F, 'used': False}
+_s6f_v = _s6f_ok = None
+_s6p = WORK / 's6f_raw.csv'
+if W_S6F > 0 and _s6p.is_file():
+    _s = pd.read_csv(_s6p, dtype={'StudyInstanceUID': str}).drop_duplicates('StudyInstanceUID').set_index('StudyInstanceUID')
+    if set(labels) <= set(_s.columns):
+        _v = _s.reindex(test_ids)[labels].to_numpy(dtype=np.float64)
+        _ok = np.isfinite(_v).all(axis=1)
+        _both = _ok & ~our_fail
+        s6f['scored'] = int(_ok.sum())
+        if _both.sum() >= 3:
+            _rho = [pd.Series(_v[_both, j]).corr(pd.Series(ours[c].values[_both]), method='spearman') for j, c in enumerate(labels)]
+            s6f['rho_r7_mean'] = round(float(np.nanmean(_rho)), 4)
+        if _ok.mean() >= 0.97 and (_both.sum() < 100 or s6f.get('rho_r7_mean', 0) >= 0.5):
+            _s6f_v, _s6f_ok, s6f['used'] = _v, _ok, True
+print('S6F_LEG', json.dumps(s6f), flush=True)
+"""
+S6F_IN_LOOP = ("    if _s6f_ok is not None:   # [s6f] S6F inside the compact (R7) slot, over its own scored rows (before the student)\n"
+               "        ro = np.where(_s6f_ok, (1.0 - W_S6F) * ro + W_S6F * pct_on(_s6f_v[:, j], _s6f_ok), ro)\n")
+
+
+def s6f_script():
+    s = S6F_BASE.read_text(encoding="utf-8")
+    for a, b in S6F_PATCH:
+        assert s.count(a) == 1, ("pola S6F tidak tunggal", a)
+        s = s.replace(a, b)
+    compile(s, "s6f_run.py", "exec")
+    return "%%writefile /tmp/s6f_run.py\n" + s
+
+
 def src(c):
     return "".join(c["source"])
 
@@ -226,15 +307,19 @@ def build():
     anchor = "sub = pd.DataFrame(out.astype(np.float32), columns=labels)\n"
     rec = "'rank_basis': 'each model over its own non-failed rows'}"
     assert c6.count(anchor) == 1 and c6.count(rec) == 1 and "def pct_on(" in c6 and MB not in c6
+    a_out, a_wr = "out = np.zeros((n, len(labels)))\n", "    wr = W_RAPTOR_C.get(c, W_RAPTOR)\n"
+    if S6F > 0:                                                    # S6F: muat sebelum loop; campur ke ro SEBELUM baris murid
+        assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
+        c6 = c6.replace(a_out, S6F_LOAD.replace("__WS6F__", repr(S6F)) + a_out).replace(a_wr, S6F_IN_LOOP + a_wr)
     load = LOAD.replace("__W__", repr(W)).replace("__SLOT__", SLOT)
     if W > 0 and SLOT == "final":
         c6 = c6.replace(anchor, load + APPLY_FINAL + anchor)
     elif W > 0:                                                    # slot=raptor|compact: muat sebelum loop, campur ke rr|ro di dalam loop
-        a_out, a_wr = "out = np.zeros((n, len(labels)))\n", "    wr = W_RAPTOR_C.get(c, W_RAPTOR)\n"
         assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
         c6 = c6.replace(a_out, load + a_out).replace(a_wr, (IN_LOOP if SLOT == "raptor" else IN_LOOP_COMPACT) + a_wr)
-    if W > 0:
-        c6 = c6.replace(rec, rec[:-1] + ", 'murid': murid}")
+    extra_rec = (["'murid': murid"] if W > 0 else []) + (["'s6f': s6f"] if S6F > 0 else [])
+    if extra_rec:
+        c6 = c6.replace(rec, rec[:-1] + ", " + ", ".join(extra_rec) + "}")
     mid = cells[i_st1 + 1:i_bl]
     if FLIP:                                                       # compact R7: flip-TTA heliosli v4c + eval-stride 2
         k_set = [k for k, c in enumerate(mid) if "if manifest.get('flip_tta'):" in src(c)]
@@ -250,9 +335,12 @@ def build():
     base_txt = ("varshithakolupuri's R7 + Raptor-r224 public notebook (Raptor slot = 0.65 r384 + 0.35 r224; R7 0.5)" if V224 else
                 "heliosli R7 public notebook (Raptor 0.5 + compact R7 0.5, bundle `8c7b666e27dc0e8f`)")
     extra = ([f"our ConvNeXt-T 2.5D student (4 folds, weight {W}, slot {SLOT})"] if W > 0 else []) + (
-        [f"R7 compact with heliosli's anatomical flip TTA at eval stride {FSTRIDE}"] if FLIP else [])
+        [f"R7 compact with heliosli's anatomical flip TTA at eval stride {FSTRIDE}"] if FLIP else []) + (
+        [f"nartaa's public S6 ConvNeXt (all data) inside the compact slot, weight {S6F}"] if S6F > 0 else [])
     title = (f"# RSNA Knee: R7 variant ({NAME})\n\n{base_txt}, plus: {'; '.join(extra) or 'nothing'}. Built by `build_r7murid.py`.\n")
     stu_cells = [code(student), code(stage0), code(c3)] if W > 0 else [cells[i_st1]]
+    if S6F > 0:                                                    # tahap S6F setelah R7 (GPU sudah bebas), sebelum blend
+        mid = mid + [code(s6f_script()), code(S6F_RUN)]
     nb["cells"] = [md(title)] + cells[1:i_st1] + stu_cells + mid + [code(c6)]
     for k, c in enumerate(nb["cells"]):
         if c["cell_type"] == "code":
@@ -265,7 +353,8 @@ def build():
     for k in ("id_no",):
         meta.pop(k, None)
     meta.update(id=f"dimaspashaakrilian/{SLUG}", title="RSNA Knee " + NAME, code_file=f"{SLUG}.ipynb", is_private=True,
-                dataset_sources=meta["dataset_sources"] + [d for d in EXTRA_DS if W > 0 and d not in meta["dataset_sources"]])
+                dataset_sources=meta["dataset_sources"] + [d for d in EXTRA_DS if W > 0 and d not in meta["dataset_sources"]]
+                + ([S6F_DS] if S6F > 0 and S6F_DS not in meta["dataset_sources"] else []))
     (out / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     return out
 
@@ -334,7 +423,57 @@ def check_leg():
     print(f"cek kaki murid OK (w={wt}): tanpa file, lengkap, 5 % NaN -> fallback, 1 % NaN -> baris itu rank R7, slot raptor & compact")
 
 
+def check_s6f():
+    """Uji kaki S6F di luar Kaggle: tanpa file / lengkap / 5 % NaN / korelasi rendah dgn R7; campuran ro sebelum murid."""
+    labels = ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis',
+              "Baker's", 'Contusion', 'Fracture']
+    ws = S6F if S6F > 0 else 0.35
+    pct = lambda v: pd.Series(np.asarray(v, dtype=np.float64)).rank(method='average', pct=True).values
+
+    def pct_on(v, ok):
+        r = np.full(len(v), np.nan)
+        if ok.any():
+            r[ok] = pct(np.asarray(v, dtype=np.float64)[ok])
+        return r
+
+    rng = np.random.default_rng(1)
+    n = 120
+    ids = [f"7.{i}" for i in range(n)]
+    r7 = rng.random((n, 12))
+    ours = pd.DataFrame(r7, index=ids, columns=labels)
+    load = S6F_LOAD.replace("__WS6F__", repr(ws))
+    with tempfile.TemporaryDirectory() as d:
+        def run(df):
+            p = Path(d) / "s6f_raw.csv"
+            if p.exists():
+                p.unlink()
+            if df is not None:
+                df.to_csv(p, index=False)
+            ns = dict(np=np, pd=pd, json=json, pct=pct, pct_on=pct_on, labels=labels, test_ids=ids, WORK=Path(d), ours=ours,
+                      our_fail=np.zeros(n, bool), got=[])
+            exec(compile(load, "s6f_load", "exec"), ns)
+            exec(compile("for j, c in enumerate(labels):\n    ro = pct_on(ours[c].values, ~our_fail)\n" + S6F_IN_LOOP
+                         + "    got.append(ro)\n", "s6f_loop", "exec"), ns)
+            return ns
+        ns = run(None)                                             # tanpa file -> ro = R7
+        assert not ns["s6f"]["used"] and all(np.allclose(g, pct(r7[:, j])) for j, g in enumerate(ns["got"]))
+        good = pd.DataFrame(r7 + 0.3 * rng.random((n, 12)), columns=labels)   # berkorelasi dgn R7
+        good.insert(0, "StudyInstanceUID", ids)
+        ns = run(good.sample(frac=1, random_state=2))              # lengkap, urutan acak -> dipakai
+        assert ns["s6f"]["used"] and ns["s6f"]["rho_r7_mean"] > 0.5
+        for j in range(12):
+            want = (1 - ws) * pct(r7[:, j]) + ws * pct(good.iloc[:, j + 1].values)
+            assert np.allclose(ns["got"][j], want)
+        g2 = good.copy(); g2.iloc[:6, 1:] = np.nan                 # 6/120 = 5 % tak terskor -> tanpa kaki
+        assert not run(g2)["s6f"]["used"]
+        bad = good.copy(); bad[labels] = rng.random((n, 12))       # tak berkorelasi (rho ~0) -> tanpa kaki
+        nb_ = run(bad)
+        assert not nb_["s6f"]["used"] and nb_["s6f"]["rho_r7_mean"] < 0.5
+    print(f"cek kaki S6F OK (w={ws}): tanpa file, lengkap, 5 % NaN -> tanpa kaki, rho rendah -> tanpa kaki")
+
+
 if __name__ == "__main__":
     out = build()
     check_leg()
+    check_s6f()
     print("ditulis:", out, "| id dimaspashaakrilian/" + SLUG, "| w", W, "| budget", BUDGET, "s | datasets +", EXTRA_DS)

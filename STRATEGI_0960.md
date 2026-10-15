@@ -4,6 +4,13 @@
 > Status awal: LB terbaik **0,954** (klon S6 57051680), peringkat 455/5.807. Submisi hari ini: 0/5 terpakai. Kuota GPU: alver 12,0 j (terverifikasi), main ±15,8 j dan nxtirfan ±3,5 j (catatan repo); +30 j/akun pada 17 Okt 07:00 WIB.
 > Batas: variasi baru terakhir **20 Okt**; final **23 Okt 06:59 WIB** (pilih 2 manual). Merger tidak dipakai (keputusan user 11 Okt).
 
+## 0.3 Pembaruan 15 Okt malam — garis perak publik 0,957; murid = satu-satunya pembeda
+- Papan 19:49 WIB: ≥0,957 = 327 (perak rank 301 = **0,957**), tumbuh ±180/hari dari salinan beruntung notebook heliosli "=0.9573" (= R7 + r224, tanpa komponen baru). Kita rank 398 (0,956). Di blok 0,956 (941 tim / 0,001) satu rank ≈ 1e-6; nondeterminisme GPU ±0,0003 → **rank publik di dalam blok = sinyal lemah**; papan privat (±925 studi) mengacak ulang salinan.
+- **Pembeda nyata satu-satunya = keluarga murid kita** (model sendiri, label konsensus ⊕ OOF-R7). Ide lain sudah tertutup: pasien berulang (PatientID unik), metadata DICOM, S6/S6F di slot compact (Nut_RJ ≈ varshitha), reader goodpjw (merugikan), Colab (cache dari DICOM).
+- **Uji 2×2 (flip stride 1 × bobot murid compact 0,25/0,40)**: `r7v3c` (tanpa flip, 0,25; 15 Okt) · **`r7v4c40`** (flip, 0,40; 15 Okt malam, izin user 1 jatah) · `r7v4c` (flip, 0,25) + `r7v3c40` (tanpa flip, 0,40) otomatis 16 Okt 07:01. Rank saat tiap selesai dicatat `rsna-rankpoll`.
+- **17 Okt**: latih r2a fold 2–3 + **2 model full-data** (fold 8/9) + r2c fold 0–3 → 11:00 skrip pasca-latih memperbarui dataset → bangun `r7v5*` (murid 6 model; opsi r2c digabung sbg `fold4–7.pt`) → commit (cek GOLD58 & detik/studi) → submit.
+- **Final (21–22 Okt)**: A = resep dgn murid terlengkap (r224 cermin + flip bila tak merugikan + murid 4 fold+full, bobot terbaik 2×2); B = lindung nilai = `r7r224m`-keluarga dgn bobot murid lebih kecil (atau tanpa murid) — dua final berbeda risiko, skor privat terbaik yang dihitung.
+
 ## 0.2 Pembaruan 14 Okt malam — target user = PERAK (riset: `reports/Riset 14 Okt malam - jalan ke perak.md`)
 - Papan 15:00 UTC: ≥0,957 = 213 (12 Okt: 86), blok 0,956 = 840, perak = perunggu = 0,956, kita rank **615**. Proyeksi 22 Okt: garis perak publik ≈ **0,957** → butuh **+0,001 nyata di atas R7**.
 - Terbukti publik: r224 (rank 233→156→357 saat blok terisi), **r224 + cermin anatomis → 289** (varshitha); **model sendiri yg beragam bobot 0,2 → 0,957** (bliverrigpdoge: ConvNeXt-S + EffNetV2-S pada potongan kompartemen, label laporan). Kaki murid r1 kita (distilasi Raptor) tidak menambah.
