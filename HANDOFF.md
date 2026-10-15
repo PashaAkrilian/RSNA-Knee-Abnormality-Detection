@@ -15,9 +15,15 @@
 3. **JANGAN** memakai akun 2/3 (`kg2.sh`/`kg3.sh`) tanpa konfirmasi tertulis Kaggle (Rules 5.a/5.b). GPU akun utama cukup.
 4. Kerjakan §1. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (14 Okt ~15:20 WIB — sesi Claude Code mesin Linux)
+## 0c. Status (15 Okt ~20:00 WIB — sesi Claude Code mesin Linux)
 | Hal | Keadaan |
 |---|---|
+| **Papan 15 Okt 19:49** | 6.040 tim; ≥0,958 = 132; **≥0,957 = 327 → garis PERAK (rank 301) = 0,957**; tepat 0,956 = 941; perunggu (603) = 0,956. **Kita rank 398 (0,956)** = ±ke-71 di blok 0,956 |
+| **Submisi 15 Okt** | `r7r224m` 57198411 = 0,956 (rank 506→403) · `r7v3c` 57201659 = 0,956 (rank saat selesai tak tercatat — PC mati) · 57223271 (user/rekan, salinan heliosli "=0.9573" = R7+r224) = 0,956. Jatah tim 15 Okt 3/5 |
+| **Terjadwal (systemd --user, PERMANEN, linger=yes)** | `rsna-rankpoll` (tiap 5 mnt → `data/rank_watch.log`, state `data/rank_poll_seen.json`) · **16 Okt 07:01** `rsna-submit-16okt` (`r7v4c` + `r7v3c40`) · **17 Okt 07:05** `rsna-push-17okt` (alver: `student-r2a-n2` fold 2–3 + `student-r2a-full` fold 8/9 full-data; nxtirfan: `student-r2c-a/b`) · **17 Okt 11:00** `rsna-after-train-17okt` (tunggu → unduh → gerbang gold → dataset r2a versi baru + `rsna-knee-student-r2c`; TIDAK submit). Unit di `~/.config/systemd/user/rsna-*`; cek `systemctl --user list-timers 'rsna-*'` |
+| **Kandidat siap (commit LULUS)** | `r7v4c` (v224m + flip stride 1 + r2a 0,25 compact), `r7v3c40` (r2a 0,40 compact), `r7v3t` (r2a kaki ke-3 0,2), `r7v4` (flip stride 1 saja) |
+| Kuota 19:50 | main ±9,9 j (inferensi saja) · alver 0 · nxtirfan ±0,5 j · reset **17 Okt 07:00 WIB** |
+| *(riwayat 14 Okt di bawah)* | |
 | **Submisi terbaik** | **0,956** = salinan R7 heliosli oleh user (57146631, 13 Okt 21:26 WIB) + duplikat 57150970 (0,956); rank **558/5.957**; dataran 0,956 ±750 tim (rank 202–951) = garis perak (297) DAN perunggu (595) |
 | **Basis baru R7** | `heliosli/rsna-knee-compact-r7cnxfsss` (bundel `8c7b666e`) + notebook "≈0.957 one click"; salinan disimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb` (+ `.meta.json`) |
 | **Hasil 14 Okt** | `r7murid` 57174015 = 0,956, rank 558→604 (murid r1 di luar slot tak menambah). **`r7r224` 57185636 PENDING** (resep varshitha; skor ±02:30). Varian siap jatah 15 Okt: `r7r224f` (flip-TTA, commit jalan), `r7m224s` (murid di slot Raptor). Submit: `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/<slug> -v 1 -f submission.csv -m "..."` |
@@ -74,6 +80,7 @@
 3. (RUNNING) Guru OOF R7 di nxtirfan (f0,f1 → f2,f3 → gold). Setelah lengkap: `make_labels_v1.py` (lokal) → `labels_student_v1.csv` → dataset privat akun pelatih.
 4. (17 Okt 07:00) Murid putaran-2 (alver; 2 fold paralel/sesi bila builder 2-GPU siap, warm-start dari r1) → `r7murid` dgn fold r2 → probe.
 5. Final 21–22 Okt: A = varian R7 terbaik yg terskor (δ>0), B = salinan R7 murni (57146631) atau varian beda mekanisme.
+8. (15 Okt 10:45) **`r7r224m` 57198411 = 0,956, rank 506→403** (cermin r224 menaikkan kita) → basis `v224m`. Notebook publik baru heliosli "=0.9573" = resep SAMA dgn `r7r224` (R7 + r224 A224 0,35, tanpa flip; dataset `r6-frozen-fe055406` v2 = bundel R7) → 0,9573 = salinan beruntung, tak ada komponen baru; `dkim54` = tim agent 0,946; papan 03:23 UTC: ≥0,957 = 255, tepat 0,956 = 916, perak rank 300 = 0,956. Commit LULUS: **`r7v4c`** (v224m + flip stride 1 + r2a compact 0,25; GPU compact 18 dtk/studi), **`r7v3c40`** (r2a compact 0,40), `r7v3t` (r2a kaki ke-3 0,2) commit LULUS. Colab TIDAK layak (cache latih dibangun dari DICOM kompetisi). Timer **17 Okt 11:00 `rsna-after-train-17okt`** → `data/run_after_train_17okt.sh` (tunggu r2a-n2 + r2c-a/b → unduh fold + gerbang gold ≥0,90/0,88 → dataset r2a v2 [fold 0–3] + dataset baru `dimaspashaakrilian/rsna-knee-student-r2c`; TIDAK submit) → log `data/after_train_17okt.log`. r2c bisa digabung ke slot murid sebagai `fold4–7.pt` (skrip murid merata-rata semua `fold[0-9].pt`).
 6. (15 Okt 08:35) r7v3f/r7v3fs (57194021/35) = 0,956 tanpa naik rank → flip stride 2 dibuang. Submit `r7r224m` (57198411, 07:01) + `r7v3c` (57201659, 08:35; murid r2a 2 fold di slot compact). Murid r2a-n selesai: gold-58 0,9282. 17 Okt 07:05: alver `student-r2a-n2` (fold 2–3, resep sama) + nxtirfan r2c-a/b. Pemantau rank: `data/rank_watch.log`.
 7. (15 Okt 03:05) user: "masih ada 2 submission, coba tingkatkan sampai perak" → submit r7v3f + r7v3fs; murid r2a-n (nxtirfan, fold 0–1, label v1) mulai latih; `r7v4` (flip stride 1) commit. Siang: r2a-n → dataset main → `r7v3c` (slot compact) → submit.
 7. (15 Okt 02:30) rank 447 (r7r224 efektif); OOF R7 lengkap + label v1 diunggah (alver); timer systemd 07:03 & 17 Okt 07:05; builder `folds=` + `slot=compact` utk inferensi murid r2 (dataset fold r2 dibuat setelah latih: `dimaspashaakrilian/rsna-knee-student-r2a|r2c`).

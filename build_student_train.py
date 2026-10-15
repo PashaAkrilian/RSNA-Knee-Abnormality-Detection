@@ -243,8 +243,9 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=__LR__, lr_head
     ckpt = f"{RUNS}/fold{k}.pt"
     if os.path.exists(ckpt):
         say(f"fold{k} sudah ada, lewati"); return
-    torch.manual_seed(0); np.random.seed(0)
-    tr = weak[weak.fold != k]; va = weak[weak.fold == k]
+    full = k >= 4                       # fold 8/9 = model full-data (semua non-gold, tanpa val), seed = k
+    torch.manual_seed(k if full else 0); np.random.seed(k if full else 0)
+    tr = weak if full else weak[weak.fold != k]; va = weak.iloc[:0] if full else weak[weak.fold == k]
     say(f"fold{k}: train {len(tr)} val {len(va)} gold {len(gold)}")
     dl_kw = dict(num_workers=__NW__, pin_memory=True, persistent_workers=True)
     train_dl = torch.utils.data.DataLoader(
@@ -252,8 +253,9 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=__LR__, lr_head
         batch_size=bs, shuffle=True, drop_last=True, **dl_kw)
     eval_dl = {
         "gold": torch.utils.data.DataLoader(StudyDataset(gold.index, table, CACHE, None, keval), batch_size=bs, shuffle=False, **dl_kw),
-        "val": torch.utils.data.DataLoader(StudyDataset(va.index, table, CACHE, None, keval), batch_size=bs, shuffle=False, **dl_kw),
     }
+    if len(va):
+        eval_dl["val"] = torch.utils.data.DataLoader(StudyDataset(va.index, table, CACHE, None, keval), batch_size=bs, shuffle=False, **dl_kw)
     gold_y = gold[[f"gold_{c}" for c in LABELS]].values
     val_y = (va[LABELS].values > 0.5).astype(int)
 
@@ -308,7 +310,7 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=__LR__, lr_head
             tot += loss.item(); n += 1
             if n % 100 == 0: say(f"  ep{ep} {n}/{len(train_dl)} loss {tot/n:.4f} {(time.time()-t1)/n:.2f}s/it")
         preds = {s: predict(ema, dl, res) for s, dl in eval_dl.items()}
-        g_auc, _ = macro_auc(gold_y, preds["gold"]); v_auc, _ = macro_auc(val_y, preds["val"])
+        g_auc, _ = macro_auc(gold_y, preds["gold"]); v_auc = macro_auc(val_y, preds["val"])[0] if len(va) else float("nan")
         say(f"ep{ep:2d} loss {tot/n:.4f} time {time.time()-t1:.0f}s | gold {g_auc:.4f} | val {v_auc:.4f}")
         torch.save({"model": model.state_dict(), "ema": ema.state_dict(), "opt": opt.state_dict(),
                     "sched": sched.state_dict(), "scaler": scaler.state_dict(), "step": step, "epoch": ep},
@@ -317,11 +319,11 @@ def train_fold(k, epochs=14, bs=2, kwin=8, keval=12, res=256, lr=__LR__, lr_head
         preds = {s: predict(ema, dl, res) for s, dl in eval_dl.items()}
     torch.save({"model": ema.state_dict(), "args": {"k": k}}, ckpt)
     rows = []
-    for s, v in (("val", va), ("gold", gold)):
+    for s, v in (("val", va), ("gold", gold)) if len(va) else (("gold", gold),):
         df = pd.DataFrame(preds[s], index=v.index, columns=LABELS); df.insert(0, "set", s); rows.append(df)
     pd.concat(rows).to_csv(f"{RUNS}/oof_fold{k}.csv")
     if os.path.exists(state): os.remove(state)
-    say(f"fold{k} SELESAI gold {macro_auc(gold_y, preds['gold'])[0]:.4f} val {macro_auc(val_y, preds['val'])[0]:.4f}")
+    say(f"fold{k} SELESAI gold {macro_auc(gold_y, preds['gold'])[0]:.4f} val {macro_auc(val_y, preds['val'])[0] if len(va) else float('nan'):.4f}")
 
 DEADLINE = t0 + 7.2 * 3600
 EP_DEADLINE = float(os.environ.get("EP_DEADLINE", t0 + 8.0 * 3600))   # par=1: diberi proses notebook (mulai notebook + 8,2 j)

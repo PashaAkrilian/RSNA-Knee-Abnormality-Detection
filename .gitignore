@@ -26,5 +26,7 @@ progress_submisi2.log
 /rsna-knee-abnormality-detection.zip
 /data/student_folds_alver/
 /data/student_dino_alver/
+# fold murid putaran-2 (±123 MB/fold) — hanya lewat dataset Kaggle
+/data/student_r2*/
 # log hidup pantau kuota (jangan commit)
 /data/quota_watch.log
