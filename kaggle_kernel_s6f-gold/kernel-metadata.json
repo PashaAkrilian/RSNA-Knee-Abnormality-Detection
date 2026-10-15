@@ -1,0 +1,20 @@
+{
+  "id": "dimaspashaakrilian/rsna-knee-s6f-gold",
+  "title": "RSNA Knee s6f-gold",
+  "code_file": "rsna-knee-s6f-gold.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ],
+  "dataset_sources": [
+    "nartaa/rsna-knee-s6fall-weights",
+    "heliosli/rsna-orthofoundation-fold0-epoch7-20261004"
+  ],
+  "kernel_sources": [],
+  "model_sources": [],
+  "machine_shape": "NvidiaTeslaT4"
+}

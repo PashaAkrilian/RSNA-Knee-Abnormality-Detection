@@ -50,3 +50,20 @@
 - **Integrasi S6F** di `build_r7murid.py` (opsi `s6f=<bobot>`): skrip publik nartaa disimpan `kaggle_base/s6fall_solo_nartaa_20261015.py` (sha256 6e87350d…), ditanam UTUH dengan 8 patch berassert: komponen A dilewati (A = tahap-1 Raptor-384 kita, sumber byte-identik `bcd864cb…`), guard skrip = sisa waktu run (selesai ≤ NB_T0 + 8,0 j; dilewati bila sisa < 45 mnt), `submission.csv` induk tak disentuh, keluaran `k1/B/B_probs.csv` → `s6f_raw.csv`. Kaki S6F di slot compact SEBELUM murid; gerbang cakupan ≥97 % dan ρ(S6F, R7) rata-rata ≥0,5 (n ≥100); gagal → tanpa kaki S6F. Uji lokal `check_s6f()` lulus.
 - Kernel: `r7v6` (flip stride 1 + S6F 0,35 + murid 0,30) dan **`r7v3s`** (TANPA flip + S6F 0,35 + murid 0,30; bobot efektif compact R7 0,455 / S6F 0,245 / murid 0,30) → commit-run.
 - **Rencana 16 Okt 07:01**: `r7v3s` + `r7v3c40` (keduanya tanpa flip) → `r7v3s` vs `r7v3c40` = efek S6F; `r7v4c40` vs `r7v3c40` = efek flip. Varian tanpa flip dipilih agar S6F pasti sempat jalan (log run penilaian tak terbaca).
+
+## 7. Riset kuantitatif (15 Okt 21:30–22:10)
+### 7.1 Simulasi perak sadar-klaster (`silver_sim_cluster.py`, papan nyata 15 Okt)
+Blok 0,956–0,957 = keluarga resep (salinan byte-identik → satu skor privat per keluarga, seri dipecah waktu submit). Proyeksi akhir 6.150 tim, perak = rank ≤308; keluarga: R7 dasar 380, R7+r224 520, R7+r224 cermin 230, R6+flip 180, r224 cermin + S6F 140, variasi kecil 150; tim kuat ≥0,958 200–300.
+
+| δ privat vs R7 dasar | 0 | +0,0003 | +0,0006 | +0,0010 | +0,0015 | +0,0020 |
+|---|---|---|---|---|---|---|
+| P(perak), 12 skenario | 2–10 % | 13–19 % | 27–47 % | 49–86 % | 76–99 % | 91–100 % |
+
+→ salinan publik ≈ gagal; target δ ≥ +0,001 (di atas keluarga S6F publik).
+
+### 7.2 S6F pada gold-58 (kernel `dimaspashaakrilian/rsna-knee-s6f-gold`, 15 Okt 22:02)
+- 58/58 terskor, 0 fallback, 320 dtk di 2 GPU (stabil ±7,3 dtk/studi/GPU) → tahap S6F di 1.284 studi test ≈ **1,3–1,5 j**.
+- AUC gold-58: **S6F 0,9314** · R7 0,9312 · murid r2a 0,9282 · Raptor384* 0,9229 (*terkontaminasi). Spearman: S6F~R7 0,871, S6F~Raptor 0,879, S6F~murid 0,882, R7~murid 0,911, R7~Raptor 0,865.
+- Blend vs dasar (Raptor .5 + R7 .5 = 0,9355; bootstrap 2.000×): +S6F .35 compact **+0,0010** (P 0,68) · +murid .40 saja +0,0003 (0,55) · +S6F .35 +murid .30 (= `r7v3s`) **+0,0014** (0,71) · +S6F .25 +murid .30 +0,0021 (0,83). Grid S6F 0,15–0,45 × murid 0,2–0,4: datar +0,001…+0,002.
+- Struktur: **S6F di separuh Raptor .35 (+murid .30 compact) +0,0034 (P 0,92)**; S6F kaki-3 atas .20–.25 +0,0031–0,0035 (0,88); 4 kaki setara .25 +0,0044 (0,90). Catatan: proksi Raptor = r384 saja (tanpa r224/cermin) → struktur yg mengecilkan Raptor bisa terlalu dipuji → diuji di papan: **16 Okt `r7v3s` (compact) vs `r7v3sr` (separuh Raptor)**.
+- Kesimpulan: S6F = model setara R7 yang beragam (+0,001 pasti arah); murid kita paling berguna BERSAMA S6F.

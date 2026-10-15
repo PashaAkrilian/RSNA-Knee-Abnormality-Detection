@@ -1,19 +1,19 @@
 # RSNA Knee — Claude Code (misi & aturan proyek)
 
-> File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana aktif = **STRATEGI_0960.md §0.3** (15 Okt).
+> File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana PERAK aktif = **STRATEGI_PERAK.md §0** (ditulis ulang 15 Okt malam) + `STRATEGI_0960.md` §0.3.
 
 ## Misi
 Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956**, **rank 398/6.040** (15 Okt 19:49 WIB). **Garis perak publik kini 0,957** (≥0,957 = 327 tim, perak rank 301; tumbuh ±180/hari dari salinan notebook heliosli "0,9573"); blok 0,956 = 941 tim (rank di dalamnya ≈ sinyal lemah). Target user: **PERAK**. Pola terbukti: tim yang naik ke 0,957 MENAMBAH MODEL beragam (bliverrigpdoge model pribadi 0,2; leoprovorov S6F 0,4 di slot compact) → resep kita: R7 + r384/r224 bercermin + **S6F nartaa** + **murid r2a kita** (pembeda dari ratusan salinan). Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry ditutup 15 Okt 23:59 UTC (user menolak merger). 100 % tidak bisa dijamin.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
-2. **STRATEGI_0960.md §0.3** (15 Okt: pola 0,957, uji 2×2 flip × bobot murid, S6F, final A/B) lalu §0.1–§0.2; **STRATEGI_PERAK.md** (model peluang, aturan keputusan) dan **docs/PLAN_B.md** (cadangan).
+2. **STRATEGI_PERAK.md §0** (RENCANA PERAK aktif: definisi perak privat, simulasi sadar-klaster, bukti tiap komponen incl. gold-58 S6F, gerbang 16–22 Okt, aturan 2 final) lalu `STRATEGI_0960.md` §0.3 dan **docs/PLAN_B.md** §0000 (cadangan).
 3. **HANDOFF.md** — §0c status + jadwal otomatis (systemd), §H urutan kerja (apa yang dikerjakan SEKARANG).
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md** (bliverrigpdoge, S6F, heliosli 0,9576, auto-select) dan **reports/Riset 14 Okt malam - jalan ke perak.md**. Arsip: `reports/` lain (scrape 12 Okt), `research_notes/`, PROGRESS.md (§62–§64), docs/RESEARCH_NOTES.md.
 
 ## Status satu kalimat (15 Okt ±21:10 WIB)
-Terbaik **0,956, rank 398** (`r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271); **57231466 `r7v4c40`** (flip stride 1 + murid r2a 0,40) PENDING ±01:00; **jadwal otomatis permanen** (systemd --user, linger): **16 Okt 07:01** submit **`r7v3s`** (S6F 0,35 + murid 0,30 di slot compact) + `r7v3c40` (murid 0,40); **17 Okt 07:05** latih murid r2a fold 2–3 + 2 model full-data (alver) + r2c fold 0–3 (nxtirfan); **17 Okt 11:00** unduh fold → dataset murid baru (tanpa submit); poller rank tiap 5 mnt → `data/rank_watch.log`; kuota: main ±9,5 j (inferensi/submisi saja), alver 0, nxtirfan ±0,5 j → +30 j/akun 17 Okt 07:00 WIB; **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train; 15 Okt: izin 1 jatah ekstra malam itu**.
+Terbaik **0,956, rank 398** (`r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271); **57231466 `r7v4c40`** (flip stride 1 + murid r2a 0,40) PENDING ±01:00; **jadwal otomatis permanen** (systemd --user, linger): **16 Okt 07:01** submit **`r7v3s`** (S6F 0,35 di slot compact + murid 0,30) & **±08:30 `r7v3sr`** (S6F di separuh Raptor; gold-58 +0,0034 vs +0,0015); **17 Okt 07:05** latih murid r2a fold 2–3 + 2 model full-data (alver) + r2c fold 0–3 (nxtirfan); **17 Okt 11:00** unduh fold → dataset murid baru (tanpa submit); poller rank tiap 5 mnt → `data/rank_watch.log`; kuota: main ±9,5 j (inferensi/submisi saja), alver 0, nxtirfan ±0,5 j → +30 j/akun 17 Okt 07:00 WIB; **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train; 15 Okt: izin 1 jatah ekstra malam itu**.
 
 ## Aturan keras (pelanggaran = rugi tim)
 - **Bahasa kerja: Indonesia.** Bertindak otonom; lapor singkat dgn angka; jangan menjanjikan emas atau 100 %.

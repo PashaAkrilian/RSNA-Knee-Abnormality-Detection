@@ -20,6 +20,7 @@ Pakai: python3 build_r7murid.py [w=0.2] [name=r7murid] [budget=4500] [base=r7|v2
              (biaya GPU ≈ stride 1 tanpa flip).
 """
 import copy
+import re
 import json
 import os
 import sys
@@ -46,6 +47,8 @@ FOLDS_DS = args.get("folds", "dimaspashaakrilian/rsna-knee-student-folds")   # s
 NAME = args.get("name", "r7m224" if V224 else "r7murid")
 S6F = float(args.get("s6f", "0"))   # bobot S6F nartaa (all-data) DI DALAM slot compact, diterapkan sebelum murid; 0 = tanpa tahap S6F
 assert 0.0 <= S6F <= 0.6, S6F
+S6F_SLOT = args.get("s6fslot", "compact")   # compact = campur ke ro (R7); raptor = campur ke rr (keluarga label Raptor/JEV)
+assert S6F_SLOT in ("compact", "raptor"), S6F_SLOT
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
 _b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "v224m": "r7_r224m_varshitha_20261014"}[BASE_ARG]
@@ -267,6 +270,7 @@ print('S6F_LEG', json.dumps(s6f), flush=True)
 """
 S6F_IN_LOOP = ("    if _s6f_ok is not None:   # [s6f] S6F inside the compact (R7) slot, over its own scored rows (before the student)\n"
                "        ro = np.where(_s6f_ok, (1.0 - W_S6F) * ro + W_S6F * pct_on(_s6f_v[:, j], _s6f_ok), ro)\n")
+S6F_IN_LOOP_RAPTOR = re.sub(r"\bro\b", "rr", S6F_IN_LOOP.replace("compact (R7) slot", "Raptor slot (JEV-label family)"))
 
 
 def s6f_script():
@@ -310,7 +314,8 @@ def build():
     a_out, a_wr = "out = np.zeros((n, len(labels)))\n", "    wr = W_RAPTOR_C.get(c, W_RAPTOR)\n"
     if S6F > 0:                                                    # S6F: muat sebelum loop; campur ke ro SEBELUM baris murid
         assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
-        c6 = c6.replace(a_out, S6F_LOAD.replace("__WS6F__", repr(S6F)) + a_out).replace(a_wr, S6F_IN_LOOP + a_wr)
+        c6 = c6.replace(a_out, S6F_LOAD.replace("__WS6F__", repr(S6F)) + a_out).replace(
+            a_wr, (S6F_IN_LOOP if S6F_SLOT == "compact" else S6F_IN_LOOP_RAPTOR) + a_wr)
     load = LOAD.replace("__W__", repr(W)).replace("__SLOT__", SLOT)
     if W > 0 and SLOT == "final":
         c6 = c6.replace(anchor, load + APPLY_FINAL + anchor)
@@ -336,7 +341,7 @@ def build():
                 "heliosli R7 public notebook (Raptor 0.5 + compact R7 0.5, bundle `8c7b666e27dc0e8f`)")
     extra = ([f"our ConvNeXt-T 2.5D student (4 folds, weight {W}, slot {SLOT})"] if W > 0 else []) + (
         [f"R7 compact with heliosli's anatomical flip TTA at eval stride {FSTRIDE}"] if FLIP else []) + (
-        [f"nartaa's public S6 ConvNeXt (all data) inside the compact slot, weight {S6F}"] if S6F > 0 else [])
+        [f"nartaa's public S6 ConvNeXt (all data) inside the {S6F_SLOT} slot, weight {S6F}"] if S6F > 0 else [])
     title = (f"# RSNA Knee: R7 variant ({NAME})\n\n{base_txt}, plus: {'; '.join(extra) or 'nothing'}. Built by `build_r7murid.py`.\n")
     stu_cells = [code(student), code(stage0), code(c3)] if W > 0 else [cells[i_st1]]
     if S6F > 0:                                                    # tahap S6F setelah R7 (GPU sudah bebas), sebelum blend
@@ -466,6 +471,11 @@ def check_s6f():
             assert np.allclose(ns["got"][j], want)
         g2 = good.copy(); g2.iloc[:6, 1:] = np.nan                 # 6/120 = 5 % tak terskor -> tanpa kaki
         assert not run(g2)["s6f"]["used"]
+        ns = run(good)                                             # slot raptor: rumus sama pada rr
+        ns.update(rr_got=[])
+        exec(compile("for j, c in enumerate(labels):\n    rr = pct_on(ours[c].values, ~our_fail)\n" + S6F_IN_LOOP_RAPTOR
+                     + "    rr_got.append(rr)\n", "s6f_loop_rr", "exec"), ns)
+        assert all(np.allclose(a, b) for a, b in zip(ns["rr_got"], ns["got"]))
         bad = good.copy(); bad[labels] = rng.random((n, 12))       # tak berkorelasi (rho ~0) -> tanpa kaki
         nb_ = run(bad)
         assert not nb_["s6f"]["used"] and nb_["s6f"]["rho_r7_mean"] < 0.5
