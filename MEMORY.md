@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-15T08:40:00+07:00
+> Last updated: 2026-10-15T20:05:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -13,6 +13,7 @@
 ## 1. Fakta
 - Code competition, **5.699 tim** (11 Okt 02:59 WIB; 12 hari lagi), hadiah $77k. Tim **Krazy KIller** (3 akun di halaman tim). Metrik macro ROC-AUC 12 label. Entry/merger **15 Okt 23:59 UTC**; final **22 Okt 23:59 UTC**; maks 2 final (PILIH MANUAL). Run ≤9 jam, internet mati; publik 30 % / privat 70 %.
 - Data: 4.407 studi latih (58 gold), teks `Report` utk semua; uji tersembunyi ≈1.322 studi. Mesin run: T4×2, 4 vCPU, RAM ±31 GB, /kaggle/working 20 GB.
+- **Papan 15 Okt 19:49 WIB** (6.040 tim): ≥0,958 = 132; **≥0,957 = 327 → garis PERAK (rank 301) = 0,957** (tumbuh ±180/hari: salinan beruntung notebook heliosli "=0.9573" = R7+r224); tepat 0,956 = 941; perunggu (603) = 0,956; **kita rank 398 (0,956)**.
 - **Papan 14 Okt 07:44 UTC** (5.957 tim): #1 0,966 (4 tim); ≥0,965 = 7; ≥0,964 = 12; ≥0,962 = 27; ≥0,960 = 55; ≥0,958 = 108; ≥0,957 = 201; **≥0,956 = 951 (±750 tepat 0,956 = dataran klon R7, rank 202–951)**; **kita rank 558 (0,956 = salinan R7 57146631)**; perak (rank 297) = **0,956**, perunggu (rank 595) = **0,956**, emas (±rank 22) ≈ 0,962. Riwayat garis perak: 0,950 (8 Okt) → 0,954 (12 Okt) → 0,956 (14 Okt).
 - **Rules**: 5.a "disqualified if Submissions through more than one Kaggle account"; 5.b anggota = individu terpisah; 5.c merger sah bila gabungan ≤5, submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤±225), sebelum batas; 5.d/6.a dilarang berbagi privat antar-tim; 2.6.b model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a menyangkut kelayakan hadiah (belum dijawab host).
 
@@ -34,13 +35,13 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (14 Okt 15:20 WIB)
+## 3. Status (15 Okt 20:05 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **0,956, rank 447/6.006** (15 Okt 02:30; naik dari 615 berkat `r7r224` 57185636 = R7+r224). Acuan: heliosli 0,957 #171, BliverRigPåDoge 0,957 #212 (model sendiri), Jingshui Fu #291, Arthritis #312, varshitha #350, Nut_RJ (R7+S6+r224) #351, salinan R7 murni jash #462, MAYANK (R7+reader) #549. Perak = rank 300 (0,956) |
-| Berjalan (15 Okt 08:40) | `r7v3f`/`r7v3fs` = 0,956 TANPA naik rank (flip stride 2 dibuang). Kini PENDING: **57198411 `r7r224m`** (salinan varshitha cermin r224, ±10:20) & **57201659 `r7v3c`** (r7r224m + murid r2a di slot compact, ±12:00). **Murid r2a-n**: gold-58 0,9282 (r1 0,9240), ρ~R7 0,911 / ~Raptor 0,892; dataset `dimaspashaakrilian/rsna-knee-student-r2a`. Rank 506; ≥0,957 = 247 → garis perak segera = **0,957** |
+| Submisi | **0,956, rank 398/6.040** (15 Okt 19:49; `r7r224m` 57198411 → 403, lalu `r7v3c` 57201659 / user 57223271 [salinan 0,9573] = 0,956; mana yg menaikkan tak tercatat). Sebelumnya rank 447 (`r7r224` 57185636). Acuan: heliosli 0,957 #171, BliverRigPåDoge 0,957 #212 (model sendiri), Jingshui Fu #291, Arthritis #312, varshitha #350, Nut_RJ (R7+S6+r224) #351, salinan R7 murni jash #462, MAYANK (R7+reader) #549. Perak = rank 300 (0,956) |
+| Berjalan (15 Okt 20:05) | **Terjadwal permanen (systemd --user, linger=yes)**: `rsna-rankpoll` tiap 5 mnt → `data/rank_watch.log`; **16 Okt 07:01** submit `r7v4c` (v224m + flip stride 1 + r2a 0,25 compact) + `r7v3c40` (r2a 0,40 compact); **17 Okt 07:05** latih `student-r2a-n2` (fold 2–3) + `student-r2a-full` (fold 8/9 full-data) di alver, `student-r2c-a/b` di nxtirfan; **17 Okt 11:00** `run_after_train_17okt.sh` (unduh → gerbang gold → dataset r2a versi baru + r2c; TANPA submit). Siap: `r7v3t` (r2a kaki ke-3 0,2), `r7v4`. Murid r2a 2 fold: gold-58 0,9282, ρ~R7 0,911 / ~Raptor 0,892 |
 | **Guru OOF R7** | SELESAI: f0–f3 (4.349 studi) + gold di `data/r7oof/`; emas-58: **R7 0,9312** > murid r1 0,9240 > Raptor 0,9229 > konsensus 0,8970; Spearman R7~Raptor 0,780, murid r1~Raptor 0,927. Label v1 (0,5 kons + 0,5 R7) emas 0,9307 vs v0 0,9289 → `labels_student_v1.csv` diunggah ke `alverlfarfaraway/rsna-knee-student-cache256` |
-| Kuota GPU (15 Okt 02:30) | main **10,83 j** (inferensi/submisi), alver **0**, nxtirfan **5,72 j**; reset **17 Okt 07:00 WIB** (+30 j/akun) |
+| Kuota GPU (15 Okt 19:50) | main **±9,9 j** (inferensi/submisi), alver **0**, nxtirfan **±0,5 j**; reset **17 Okt 07:00 WIB** (+30 j/akun) |
 | Murid r1 | fold0–3 lokal `data/student_folds/` + dataset main `dimaspashaakrilian/rsna-knee-student-folds` v1; label v0 + meta cache diunduh ke `data/labels/` (dataset cache256 alver hanya 1,1 MB = label saja → latih membangun cache ±72 mnt/sesi) |
 | Git | sinkron dgn origin s/d `909242f` (12 Okt 23:58); update 14 Okt di-commit lokal |
 | Menunggu user | pilihan 2 final 21–22 Okt; OAI/fastMRI (R7 dilatih dgn aux fastMRI) = risiko kepatuhan sama kelas dgn S6 |
