@@ -74,7 +74,8 @@
 3. (RUNNING) Guru OOF R7 di nxtirfan (f0,f1 → f2,f3 → gold). Setelah lengkap: `make_labels_v1.py` (lokal) → `labels_student_v1.csv` → dataset privat akun pelatih.
 4. (17 Okt 07:00) Murid putaran-2 (alver; 2 fold paralel/sesi bila builder 2-GPU siap, warm-start dari r1) → `r7murid` dgn fold r2 → probe.
 5. Final 21–22 Okt: A = varian R7 terbaik yg terskor (δ>0), B = salinan R7 murni (57146631) atau varian beda mekanisme.
-6. (15 Okt 03:05) user: "masih ada 2 submission, coba tingkatkan sampai perak" → submit r7v3f + r7v3fs; murid r2a-n (nxtirfan, fold 0–1, label v1) mulai latih; `r7v4` (flip stride 1) commit. Siang: r2a-n → dataset main → `r7v3c` (slot compact) → submit.
+6. (15 Okt 08:35) r7v3f/r7v3fs (57194021/35) = 0,956 tanpa naik rank → flip stride 2 dibuang. Submit `r7r224m` (57198411, 07:01) + `r7v3c` (57201659, 08:35; murid r2a 2 fold di slot compact). Murid r2a-n selesai: gold-58 0,9282. 17 Okt 07:05: alver `student-r2a-n2` (fold 2–3, resep sama) + nxtirfan r2c-a/b. Pemantau rank: `data/rank_watch.log`.
+7. (15 Okt 03:05) user: "masih ada 2 submission, coba tingkatkan sampai perak" → submit r7v3f + r7v3fs; murid r2a-n (nxtirfan, fold 0–1, label v1) mulai latih; `r7v4` (flip stride 1) commit. Siang: r2a-n → dataset main → `r7v3c` (slot compact) → submit.
 7. (15 Okt 02:30) rank 447 (r7r224 efektif); OOF R7 lengkap + label v1 diunggah (alver); timer systemd 07:03 & 17 Okt 07:05; builder `folds=` + `slot=compact` utk inferensi murid r2 (dataset fold r2 dibuat setelah latih: `dimaspashaakrilian/rsna-knee-student-r2a|r2c`).
 7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
