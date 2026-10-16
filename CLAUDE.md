@@ -12,7 +12,10 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956**, 
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md** (bliverrigpdoge, S6F, heliosli 0,9576, auto-select) dan **reports/Riset 14 Okt malam - jalan ke perak.md**. Arsip: `reports/` lain (scrape 12 Okt), `research_notes/`, PROGRESS.md (§62–§64), docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (16 Okt ±20:40 WIB) — terbaru di MEMORY/HANDOFF §I000
+## Status satu kalimat (17 Okt ±03:00 WIB) — terbaru di MEMORY/HANDOFF §I0000
+Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; perak publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % perak); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.
+
+## Status 16 Okt ±20:40 WIB (arsip)
 Garis perak publik **0,958**; kita **0,957 rank 461 (ke-15 di blok 0,957)**; terbaik papan `r7v3sr`; **17 Okt 07:01 `r7v6a`** (S6F .5 separuh Raptor + murid 4 fold .3 + bobot heliosli; gold setia 0,9414) + **±14:30 `r7v7a`** (murid 8 model, otomatis bergerbang).
 
 ## Status 15 Okt ±21:10 WIB (arsip)

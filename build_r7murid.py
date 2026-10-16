@@ -10,7 +10,8 @@
   (harus ≈ emas per fold 0,919–0,924; jauh di bawah = decode/bobot rusak -> JANGAN submit).
 - Murid DINO TIDAK dipakai (emas-58 0,71).
 
-Pakai: python3 build_r7murid.py [w=0.2] [name=r7murid] [budget=4500] [base=r7|v224] [slot=final|raptor] [flip=0|1]
+Pakai: python3 build_r7murid.py [w=0.2] [name=r7murid] [budget=4500] [base=r7|v224|v224m|g958] [slot=final|raptor] [flip=0|1]
+  base=g958: notebook goodpjw 0,958 v27 tanpa Part B (compact = R6 + flip TTA heliosli, 384m + 224m, wc heliosli; 17 Okt).
   base=v224: basis = notebook varshitha (R7 + Raptor-r224 0,35 di slot Raptor; rank naik 233->156 di blok 0,956) -> nama default r7m224.
   base=v224m: notebook varshitha 14 Okt = v224 + TTA cermin anatomis nartaa utk r224 (rank 357->289 di blok 0,956).
   w=0      : tanpa tahap murid sama sekali (mis. hanya flip=1).
@@ -36,8 +37,8 @@ ROOT = Path(__file__).parent
 args = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
 W = float(args.get("w", "0.2"))
 BASE_ARG = args.get("base", "r7")
-assert BASE_ARG in ("r7", "v224", "v224m"), BASE_ARG
-V224 = BASE_ARG in ("v224", "v224m")          # basis varshitha (slot Raptor = 0,65 r384 + 0,35 r224)
+assert BASE_ARG in ("r7", "v224", "v224m", "g958"), BASE_ARG
+V224 = BASE_ARG in ("v224", "v224m", "g958")  # basis varshitha (slot Raptor = 0,65 r384 + 0,35 r224)
 SLOT = args.get("slot", "final")
 FLIP = args.get("flip", "0") == "1"
 FSTRIDE = int(args.get("fstride", "2"))   # eval-stride compact saat flip=1 (2 = biaya GPU ≈ tanpa flip; 1 = TTA penuh, ±+1,7 j)
@@ -53,7 +54,8 @@ WC = args.get("wc", "")   # "h" = bobot Raptor per temuan heliosli 16 Okt (noteb
 assert WC in ("", "h"), WC
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
-_b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "v224m": "r7_r224m_varshitha_20261014"}[BASE_ARG]
+_b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "v224m": "r7_r224m_varshitha_20261014",
+      "g958": "r6_goodpjw_0958_20261016"}[BASE_ARG]   # g958: goodpjw v27 (0,958) tanpa Part B = R6+flip compact, 384m+224m, wc heliosli
 BASE = ROOT / "kaggle_base" / f"{_b}.ipynb"
 BASE_META = ROOT / "kaggle_base" / f"{_b}.meta.json"
 SLUG = "rsna-knee-" + NAME
@@ -344,7 +346,9 @@ def build():
         mid = mid[:k_set[0]] + [code(c4)] + mid[k_set[0] + 1:]
     student = STUDENT.replace("__BUDGET__", str(BUDGET)).replace("__DECODE__", DECODE).replace("__FOLDSLUG__", FOLDS_DS.split("/")[1])
     stage0 = STAGE0.replace("__TIMEOUT__", str(BUDGET + 2400))     # + gold check in commit mode (≤1800 s) + model load
-    base_txt = ("varshithakolupuri's R7 + Raptor-r224 public notebook (Raptor slot = 0.65 r384 + 0.35 r224; R7 0.5)" if V224 else
+    base_txt = ("goodpjw2008's public 0.958 notebook v27 without its Part B reader (Raptor slot = 0.65 r384 + 0.35 r224 mirror; compact = "
+                "heliosli's R6 with flip TTA; heliosli's per-finding Raptor weights)" if BASE_ARG == "g958" else
+                "varshithakolupuri's R7 + Raptor-r224 public notebook (Raptor slot = 0.65 r384 + 0.35 r224; R7 0.5)" if V224 else
                 "heliosli R7 public notebook (Raptor 0.5 + compact R7 0.5, bundle `8c7b666e27dc0e8f`)")
     extra = ([f"our ConvNeXt-T 2.5D student (4 folds, weight {W}, slot {SLOT})"] if W > 0 else []) + (
         [f"R7 compact with heliosli's anatomical flip TTA at eval stride {FSTRIDE}"] if FLIP else []) + (

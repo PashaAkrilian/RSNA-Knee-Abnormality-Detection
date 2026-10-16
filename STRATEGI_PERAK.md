@@ -5,6 +5,7 @@
 ## 0. RENCANA PERAK (AKTIF, 15 Okt malam)
 
 ### 0.1 Apa itu perak di kompetisi ini
+- **PEMBARUAN 17 Okt 03:00**: papan 01:51 WIB (6.103 tim): ≥0,959 = 124, **blok 0,958 = 488 (kebanyakan salinan R6+flip goodpjw/heliosli), garis perak publik = rank 305 (0,958)**; **kita 0,958 rank 317** (salinan user goodpjw 57269378). Simulasi ulang (`silver_sim_1017.py`, δ relatif thd klaster goodpjw): salinan murni 0–12 %; unik δ 0 → 25–30 %; δ +0,0003 → 40–62 %; **δ +0,0006 → 57–86 %**; δ +0,001 → 76–99 %. Kandidat unik: `r7v6a` (gold +0,0031 vs goodpjw, P 0,84), `g6a` (gold +0,0015, P 0,69). Papan publik condong ke R6+flip (0,958 vs 0,957) → dua sinyal saling tarik, keduanya dlm derau.
 - Perak = **5 % teratas papan PRIVAT** (70 % uji ≈ 900 dari 1.284 studi). Proyeksi ±6.150 tim saat tutup → **rank ≤ ±308**. Papan publik (30 %, ±385 studi) hanya penunjuk.
 - Papan publik 15 Okt 19:49 WIB: ≥0,958 = 132 · **≥0,957 = 327 (garis perak publik rank 301 = 0,957)** · tepat 0,956 = 941 · kita **rank 398 (0,956)**. ≥0,957 tumbuh ±180/hari (salinan notebook publik yang beruntung), ≥0,958 ±20/hari.
 - Medali ditentukan papan privat dari **2 final yang dipilih user secara manual**. 100 % tidak bisa dijamin.
