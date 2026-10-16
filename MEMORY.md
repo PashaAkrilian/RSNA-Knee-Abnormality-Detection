@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-16T20:40:00+07:00
+> Last updated: 2026-10-17T03:00:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -18,6 +18,7 @@
 - **Rules**: 5.a "disqualified if Submissions through more than one Kaggle account"; 5.b anggota = individu terpisah; 5.c merger sah bila gabungan ≤5, submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤±225), sebelum batas; 5.d/6.a dilarang berbagi privat antar-tim; 2.6.b model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a menyangkut kelayakan hadiah (belum dijawab host).
 
 ## 2. Temuan terkunci
+- **17 Okt 03:00 — tim 0,958, rank 317/6.103** (papan 01:51 WIB) berkat salinan user **57269378 = notebook publik goodpjw2008 "CoAtNet + R6 + 2.5D MIL" v27 (0,958, 230 vote)** = Raptor 384m + 224m (cermin) + **R6+flip** compact + bobot wc heliosli + pembaca goodpjw 1/10; run ±6 j. **Perak publik = rank 305** (≥0,959 = 124; blok 0,958 = 488 tim, kita ke-193 di dalamnya). Gold setia: goodpjw 0,9384; **r7v6a 0,9414 (+0,0031, P 0,84)**; R6flip + S6F .5 + murid4 .3 = 0,9398 (+0,0015, P 0,69); R6 .35 + R7 .35 + murid + S6F = 0,9414 (tak muat 9 j). Papan: resep R6+flip = 0,958, resep R7 kita = 0,957 → dua sinyal bertentangan, keduanya dlm derau. Simulasi 17 Okt (`silver_sim_1017.py`): **salinan murni goodpjw (klaster ±450 tim, urutan waktu) 0–12 % perak**; submisi unik δ 0 → 25–30 %, δ +0,0006 → 57–86 %, δ +0,001 → 77–99 % → final harus resep UNIK. Rencana 17 Okt: 07:01 `r7v6a`, 07:03 **`g6a`** (basis `g958` baru di `build_r7murid.py` = goodpjw v27 tanpa Part B + S6F .5 separuh Raptor + murid4 .3; submit bergerbang), `r7v7a` (murid 8 model) hanya dibangun+commit (tanpa submit). Sinyal tajam: rank tim naik hanya bila skor TAK-DIBULATKAN submisi baru > 57269378.
 - **16 Okt 20:40 — garis perak publik 0,958** (≥0,958 = 446); kita 0,957 rank 461 (ke-15 di blok 0,957). `r7v5a`/`r7v3sw` = 0,957 (urutan tak-dibulatkan tak diketahui → minta penanda auto-select). Murid fold 2–3 (akun utama) gold 0,9311/0,9326 → **murid 4 fold gold 0,9334**; **R6+flip gold 0,9366** tapi tak menambah di resep kita; **`r7v6a` gold setia 0,9414** → submit 17 Okt 07:01; `r7v7a` (8 model) otomatis ±14:30 bergerbang.
 - **16 Okt 14:30 — gold SETIA** (`build_gold_full.py`: pipeline submisi pd 58 gold; `gold_eval_full.py`): r7v3sr 0,9387 (+0,0033 vs dasar), S6F compact ±0; S6F 0,5–0,55 di separuh Raptor + murid 0,3 ≈0,9405–0,9410; + bobot heliosli +0,0006…0,0012; murid +0,0011…0,0014; **flip DIBUANG** (−0,0005, papan 0,956). → `r7v5a` (S6F 0,5 Raptor + murid 0,3 + wc=h) jatah terakhir 16 Okt.
 - **16 Okt 14:00 — `r7v3sr` (S6F 0,35 di separuh Raptor + murid 0,30) = 0,957, rank 495→317** (lompatan terbesar; struktur separuh Raptor > compact, cocok dgn gold-58). Papan 13:40: 6.066 tim, ≥0,958 = 213 (naik cepat: salinan heliosli 0,958), perak rank 303 = 0,957, kita rank 337. **Ketentuan host 14 Okt (Chris Carr RSNA, 743416)**: data eksternal yg hanya butuh registrasi + lisensi = sah (OAI, fastMRI); minta transparansi pengungkapan dataset.
@@ -41,16 +42,16 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (15 Okt 20:50 WIB)
+## 3. Status (17 Okt 03:00 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **0,956, rank 398/6.040** (15 Okt 19:49; `r7r224m` 57198411 → 403, lalu `r7v3c` 57201659 / user 57223271 [salinan 0,9573] = 0,956; mana yg menaikkan tak tercatat). Sebelumnya rank 447 (`r7r224` 57185636). Acuan: heliosli 0,957 #171, BliverRigPåDoge 0,957 #212 (model sendiri), Jingshui Fu #291, Arthritis #312, varshitha #350, Nut_RJ (R7+S6+r224) #351, salinan R7 murni jash #462, MAYANK (R7+reader) #549. Perak = rank 300 (0,956) |
-| Berjalan (15 Okt 20:50) | **57231466 `r7v4c40`** (flip stride 1 + r2a 0,40 compact; izin user 1 jatah) PENDING ±01:00. **Terjadwal permanen (systemd --user, linger=yes)**: `rsna-rankpoll` tiap 5 mnt → `data/rank_watch.log`; **16 Okt 07:01** submit **`r7v3s`** (S6F 0,35 compact + r2a 0,30) lalu **±08:30 `r7v3sr`** (S6F 0,35 di separuh Raptor + r2a 0,30); **17 Okt 07:05** latih `student-r2a-n2` (fold 2–3) + `student-r2a-full` (fold 8/9 full-data) di alver, `student-r2c-a/b` di nxtirfan; **17 Okt 11:00** `run_after_train_17okt.sh` (unduh → gerbang gold → dataset r2a versi baru + r2c; TANPA submit). Siap: `r7v3t` (r2a kaki ke-3 0,2), `r7v4`. Murid r2a 2 fold: gold-58 0,9282, ρ~R7 0,911 / ~Raptor 0,892 |
-| **Guru OOF R7** | SELESAI: f0–f3 (4.349 studi) + gold di `data/r7oof/`; emas-58: **R7 0,9312** > murid r1 0,9240 > Raptor 0,9229 > konsensus 0,8970; Spearman R7~Raptor 0,780, murid r1~Raptor 0,927. Label v1 (0,5 kons + 0,5 R7) emas 0,9307 vs v0 0,9289 → `labels_student_v1.csv` diunggah ke `alverlfarfaraway/rsna-knee-student-cache256` |
-| Kuota GPU (15 Okt 21:06) | main **9,26 j** (inferensi/submisi saja), alver **0** (34,02 j terpakai), nxtirfan **0,50 j**; TPU 20 j/akun tak terpakai; reset **17 Okt 07:00 WIB** (+30 j/akun) |
-| Murid | r2a (label v1 = 0,5 konsensus + 0,5 OOF-R7) fold 0–1: gold-58 0,9282, dataset `dimaspashaakrilian/rsna-knee-student-r2a` (lokal `data/student_r2a/runs_student/`, gitignored); 17 Okt: fold 2–3 + full-data fold 8/9 (alver) → versi dataset baru; r2c (label konsensus saja) fold 0–3 (nxtirfan) → `rsna-knee-student-r2c`. r1 lama (distilasi Raptor) tak dipakai lagi |
-| Git | sinkron dgn origin s/d `7ca355f` (15 Okt 20:50); runner `data/run_*.sh` & `data/rank_poll.py` sengaja tidak di-commit |
-| Menunggu user | (1) baca penanda auto-select di UI Submissions (2 skor tak-dibulatkan tertinggi); (2) pilihan 2 final 21–22 Okt (rekomendasi agen 21 Okt); OAI/fastMRI = risiko kepatuhan kelas sama dgn mayoritas papan |
+| Submisi | **0,958, rank 317/6.103** (papan 17 Okt 01:51 WIB) = salinan user goodpjw v27 **57269378**; perak publik = rank 305. Resep kita sendiri 0,957: `r7v3s`/`r7v3sr`/`r7v3sw`/`r7v5a` (`r7v3sr` pernah rank 317 di blok 0,957). |
+| Terjadwal 17 Okt | 07:01 submit **`r7v6a`** (gold 0,9414); 07:03 **`g6a`** bergerbang (`data/run_submit_g6a_17okt.sh`); 07:05 latih murid full-data (alver) + r2c (nxtirfan); 11:00 pasca-latih → dataset murid 8 model + **`r7v7a` dibangun+commit TANPA submit** (`SUBMIT_R7V7A` kosong). |
+| Gold setia (58) | goodpjw 0,9384 · r7v3sr 0,9387 · **r7v6a 0,9414** · g6a (R6flip + S6F .5 + murid4 .3) 0,9398 · komponen: R6flip 0,9366, murid4 0,9334, R7 0,9312, S6F 0,9314. |
+| Kuota GPU | main 1,6 j → reset **17 Okt 07:00 WIB** (+30 j/akun); alver 0; nxtirfan 0,5 j. |
+| Waktu run (uji tersembunyi) | goodpjw ±6 j (submit→skor); `r7v5a` ±5 j. g6a perkiraan ±6,5–7 j (S6F berhenti paksa di NB_T0+8,0 j → tanpa kaki S6F bila telat). |
+| Git | runner `data/run_*.sh`, `data/rank_poll.py` tidak di-commit. |
+| Menunggu user | (1) penanda auto-select UI Submissions; (2) pilih 2 final 22 Okt (rekomendasi agen 21 Okt). |
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
@@ -61,8 +62,8 @@
 - JANGAN `pkill -f` pola yg ada di perintah sendiri; JANGAN `VERBOSE=true`; JANGAN cetak kaggle.json. Scratchpad sesi hilang saat restart (simpan di repo). Run scoring tak memakai kuota GPU; log run scoring tak terbaca → uji di commit-run pseudo-uji.
 
 ## 5. Menunggu keputusan user
-1. **Final (21–22 Okt)**: A = resep terlengkap (R7 + r384/r224 cermin + S6F + murid 4 fold+full, flip bila tak merugikan); B = lindung nilai (bobot murid lebih kecil / tanpa S6F). OAI: host belum menjawab (749145) → dianggap sah; final bersih tanpa Raptor tidak realistis (≈0,950).
-2. Penanda auto-select (UI Submissions) → kirim ke agen; `nxtirfan`: token di `akun_kaggle/` dipakai utk latih 17 Okt (r2c) — sesuai keputusan user 12 Okt.
+1. **Final (21–22 Okt)**: keduanya HARUS resep unik (salinan murni goodpjw ≈0–12 % perak menurut `silver_sim_1017.py`). Kandidat A = resep dgn bukti gabungan terbaik (gold + rank tak-dibulatkan di papan) dari {`r7v6a`, `g6a`, `r7v7a`}; B = lindung nilai keluarga compact lain (R7 vs R6+flip). 57269378 hanya cadangan.
+2. Penanda auto-select (UI Submissions) → kirim ke agen.
 
 ## 6. Referensi
 - Kernel kita (akun utama): `rsna-knee-s6probe/s6plusr/s6reader/s6plus/s6clean(r)` (S6+), `rsna-knee-apexof4/4t/4r/4r2/4r3/4d` (Apex+OF v4.1), `rsna-knee-ofmem1/3` (profil memori), lama: `apexof2`, `apexof`, `apexmavit`, `ofscale3/4`; dataset `rsna-knee-ultralytics-cfg` (yaml ultralytics, wajib utk OF), `rsna-knee-volcache-z{0,1,2}`, `rsna-knee-fused-labels-r1`.
