@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-15T22:20:00+07:00
+> Last updated: 2026-10-16T12:00:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -18,6 +18,7 @@
 - **Rules**: 5.a "disqualified if Submissions through more than one Kaggle account"; 5.b anggota = individu terpisah; 5.c merger sah bila gabungan ≤5, submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤±225), sebelum batas; 5.d/6.a dilarang berbagi privat antar-tim; 2.6.b model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a menyangkut kelayakan hadiah (belum dijawab host).
 
 ## 2. Temuan terkunci
+- **16 Okt 11:50 — `r7v3s` (S6F 0,35 + murid 0,30 compact) = 0,957** (57247278; tampil naik pertama kali; rank 483/6.061, ke-323 dari 403 di blok 0,957; perak rank 303 = 0,957). `r7v4c40` (flip, tanpa S6F) = 0,956. heliosli 0,958 = R6+flip + bobot Raptor per-temuan (Syn .8, LatOA .2, PFOA .6, Baker .35) → varian `r7v3sw` (`wc=h`). User 16 Okt "gunakan semua gpu": murid r2a fold 2–3 dilatih di AKUN UTAMA (`student-r2a-m`); alver 17 Okt hanya r2a-full.
 - **15 Okt 22:00 — bukti gold-58 & simulasi**: S6F gold-58 **0,9314** (= R7 0,9312; bersih), ρ~R7 0,871; blend gold vs dasar: S6F compact +0,0010, + murid +0,0014, **S6F di separuh Raptor + murid +0,0034 (P 0,92)**, murid saja +0,0003 → murid berguna BERSAMA S6F. S6F di test ±1,4 j (7,3 dtk/studi/GPU). Simulasi sadar-klaster: salinan 2–10 %, δ +0,0006 27–47 %, **δ +0,001 49–86 %** → target δ ≥ +0,001. Rencana perak: `STRATEGI_PERAK.md` §0 (ditulis ulang).
 - **15 Okt malam — pola 0,957 & S6F**: semua tim yang naik ke 0,957 MENAMBAH MODEL beragam (bliverrigpdoge: model knee-centred pribadi 0,2, bobot privat; **leoprovorov: r224m + S6F nartaa 0,4 di slot compact = 0,957, rank 212, 4 submisi**), bukan menyetel bobot. S6F = ConvNeXt-S all-data publik (solo 0,950, gold-58 0,931, label JEV) → terintegrasi `build_r7murid.py s6f=` (skrip nartaa komponen B saja, guard sisa waktu). Klaim heliosli "0,9573/0,9576" tak terbukti (salinan byte-identik = 0,956). Penanda auto-select UI = 2 skor tak-dibulatkan tertinggi milik sendiri.
 - **14 Okt — basis baru R7 (0,956)**: heliosli merilis bundel **R7** `heliosli/rsna-knee-compact-r7cnxfsss` (`8c7b666e`; ConvNeXt-S 4 fold, crop 352, aux **fastMRI**, stacker Effusion/Baker; fungsi fold `sha1(uid)[:8] % 4`, gold tak dilatih — terverifikasi dari `compact_train.py` tertanam) + notebook "≈0.957 one click" (Raptor 0,5 + R7 0,5). **User submit 13 Okt: 57146631 & 57150970 = 0,956** (basis tersimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb`). Semua notebook publik teratas = keluarga R7; tak ada yang terverifikasi ≥0,957.
