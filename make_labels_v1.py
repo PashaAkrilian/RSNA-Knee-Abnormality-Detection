@@ -11,6 +11,7 @@ Keluaran: data/labels/labels_student_v1.csv (skema = v0; baris tanpa OOF-R7 ters
 
 Pakai: python3 make_labels_v1.py cons=1 out=data/labels/labels_student_v0c.csv   # konsensus saja (murid r2c, tanpa guru)
        python3 make_labels_v1.py [w=0.5] [calib=none|quantile] [oof_dir=data/r7oof] [out=data/labels/labels_student_v1.csv]
+       python3 make_labels_v1.py w=0.5 oof_dir2=data/r6oof out=data/labels/labels_student_v3.csv   # 17 Okt: guru = rerata OOF-R7 & OOF-R6+flip
   calib=quantile: OOF-R7 dipetakan ke sebaran konsensus per temuan (urutan R7 tetap) — dipakai bila keluaran R7 bukan probabilitas.
 """
 import glob
@@ -33,6 +34,7 @@ W = float(args.get("w", "0.5"))
 CALIB = args.get("calib", "none")
 OOF_DIR = Path(args.get("oof_dir", ROOT / "data/r7oof"))
 OUT = Path(args.get("out", ROOT / "data/labels/labels_student_v1.csv"))
+OOF_DIR2 = Path(args["oof_dir2"]) if "oof_dir2" in args else None   # guru ke-2 (R6+flip): guru = rerata keduanya pd baris yg punya keduanya
 assert 0.0 <= W <= 1.0 and CALIB in ("none", "quantile")
 L = ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis',
      "Baker's", 'Contusion', 'Fracture']
@@ -69,6 +71,16 @@ rows = v0.index[(v0.is_gold == 0) & v0.index.isin(oof.index)]
 print(f"OOF-R7 terskor: {len(oof)} studi | dipakai (non-gold di v0): {len(rows)} / {int((v0.is_gold == 0).sum())} | "
       f"rentang {oof[L].values.min():.3f}..{oof[L].values.max():.3f}, rerata {oof[L].values.mean():.3f}")
 r7 = oof.loc[rows, L].astype(float)
+if OOF_DIR2 is not None:
+    o2 = pd.concat([pd.read_csv(f, dtype={"StudyInstanceUID": str}) for f in sorted(glob.glob(str(OOF_DIR2 / "compact_oof_f*.csv")))])
+    o2 = o2[o2["scored"] == 1].drop_duplicates("StudyInstanceUID").set_index("StudyInstanceUID")
+    assert not set(o2.index) & set(gold_rows), "OOF guru-2 memuat studi gold"
+    both = rows[rows.isin(o2.index)]
+    yb = (cons.loc[both, L].values > 0.5).astype(int)
+    a7, a6 = macro(yb, r7.loc[both].values), macro(yb, o2.loc[both, L].values.astype(float))
+    print(f"guru-2 {OOF_DIR2}: {len(both)} baris | AUC vs konsensus>0,5: OOF-R7 {a7:.4f} | OOF-guru2 {a6:.4f}")
+    assert a6 - a7 < 0.03, "guru-2 jauh di atas R7 vs label laporan -> curiga bukan OOF (bocor); periksa fungsi fold"
+    r7.loc[both] = 0.5 * r7.loc[both].values + 0.5 * o2.loc[both, L].values.astype(float)
 if CALIB == "quantile":                                    # urutan R7, sebaran nilai = konsensus (per temuan)
     for c in L:
         q = np.sort(cons.loc[rows, c].values)

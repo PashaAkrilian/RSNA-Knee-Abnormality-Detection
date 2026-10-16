@@ -1,0 +1,22 @@
+{
+  "id": "nxtirfan/rsna-knee-student-r3-b",
+  "title": "RSNA Knee student-r3-b",
+  "code_file": "rsna-knee-student-r3-b.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_internet": false,
+  "category": "video",
+  "competition_sources": [
+    "rsna-knee-abnormality-detection"
+  ],
+  "dataset_sources": [
+    "goodpjw2008/rsna-knee-2-5d-convnext-reader",
+    "nxtirfan/rsna-knee-student-labels"
+  ],
+  "keywords": [],
+  "kernel_sources": [],
+  "docker_image": "registry Kaggle Python",
+  "machine_shape": " NvidiaTeslaT4"
+}

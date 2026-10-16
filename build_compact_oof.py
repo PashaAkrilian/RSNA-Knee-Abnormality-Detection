@@ -12,7 +12,8 @@ Mode:
 Keluaran kernel: /kaggle/working/compact_oof_f{k}.csv atau compact_gold.csv (+ receipt).
 
 Pakai:
-  python3 build_compact_oof.py fold=0 owner=nxtirfan [base=r7|s6]   (ulang untuk fold 1..3; default base=r7)
+  python3 build_compact_oof.py fold=0 owner=nxtirfan [base=r7|s6|r6]   (ulang untuk fold 1..3; default base=r7)
+  base=r6 (17 Okt): bundel R6 fe055406 + flip TTA (sel goodpjw v27 = cara R6 dipakai di submisi), eval-stride 1 (= manifest R6)
   python3 build_compact_oof.py gold=1 owner=alverlfarfaraway
 Basis: kaggle_base/heliosli_blend_mine_in_20261011.ipynb (sel 2 cek bundel, sel 5 setup compact, sel 6 jalankan compact).
 """
@@ -27,16 +28,21 @@ args = dict(a.split("=", 1) for a in sys.argv[1:] if "=" in a)
 GOLD = args.get("gold", "0") == "1"
 FOLD = None if GOLD else int(args.get("fold", "0"))
 assert GOLD or FOLD in (0, 1, 2, 3), FOLD
-STRIDE = int(args.get("stride", "1" if GOLD else "3"))
+BASE_ARG = args.get("base", "r7")
+assert BASE_ARG in ("r7", "s6", "r6"), BASE_ARG
+STRIDE = int(args.get("stride", "1" if GOLD or BASE_ARG == "r6" else "3"))
 OWNER = args.get("owner", "dimaspashaakrilian")
-R7 = args.get("base", "r7") == "r7"          # r7 = bundel R7 8c7b666e (14 Okt, guru lebih kuat); s6 = bundel r6cnxfsss
-_sfx = "-r7" if R7 else ""
+R7 = BASE_ARG == "r7"          # r7 = bundel R7 8c7b666e (14 Okt, guru lebih kuat); s6 = bundel r6cnxfsss
+R6 = BASE_ARG == "r6"          # r6 = bundel R6 fe055406 + flip TTA (guru murid r3)
+_sfx = "-r7" if R7 else "-r6" if R6 else ""
 NAME = args.get("name", f"compact-gold{_sfx}" if GOLD else f"compact-oof{_sfx}-f{FOLD}")
-BASE = ROOT / "kaggle_base" / ("r7_heliosli_0957_20261013.ipynb" if R7 else "heliosli_blend_mine_in_20261011.ipynb")
+BASE = ROOT / "kaggle_base" / {"r7": "r7_heliosli_0957_20261013.ipynb", "s6": "heliosli_blend_mine_in_20261011.ipynb",
+                                "r6": "r6_goodpjw_0958_20261016.ipynb"}[BASE_ARG]
 # indeks sel di basis: (jumlah sel, sel setup compact, sel jalankan compact); R7 tak punya sel cek bundel terpisah
-NCELL, I_SETUP, I_RUN = (7, 4, 5) if R7 else (8, 5, 6)
-C_DS = "heliosli/rsna-knee-compact-r7cnxfsss" if R7 else "heliosli/rsna-knee-compact-r6cnxfsss"
-DOCKER = "gcr.io/kaggle-private-byod/python@sha256:2757e0c7d1e0a9cb43da657b97e223c321a98f5014bdf64f44f2f6b083ad2b2f"
+NCELL, I_SETUP, I_RUN = {"r7": (7, 4, 5), "s6": (8, 5, 6), "r6": (13, 9, 10)}[BASE_ARG]
+C_DS = {"r7": "heliosli/rsna-knee-compact-r7cnxfsss", "s6": "heliosli/rsna-knee-compact-r6cnxfsss", "r6": "rostigor/rsna-knee-r6-fe055406"}[BASE_ARG]
+DOCKER = ("gcr.io/kaggle-private-byod/python@sha256:37c64f7dd9c54116ecd1bcc88817c5469b88387388fade02bfa8bf3fc647d461" if R6 else   # image goodpjw (R6+flip jalan)
+          "gcr.io/kaggle-private-byod/python@sha256:2757e0c7d1e0a9cb43da657b97e223c321a98f5014bdf64f44f2f6b083ad2b2f")
 LABELS = ['ACL', 'MCL', 'Medial Meniscus', 'Lateral Meniscus', 'Medial OA', 'Lateral OA', 'PF OA', 'Effusion', 'Synovitis',
           "Baker's", 'Contusion', 'Fracture']
 
@@ -121,7 +127,7 @@ cells = copy.deepcopy(nb["cells"])
 assert len(cells) == NCELL
 
 c2 = None
-if not R7:
+if BASE_ARG == "s6":
     c2 = src(cells[2])                                    # cek bundel: Raptor tidak dipakai -> lepas cek bobot nartaa
     old = "_checked_mount('rsna-knee-publication-swa-weights-20261007', 'raptor_ft_alldata_t16_blendjev_oai_d96_r384_swa.pt')\n"
     assert c2.count(old) == 1
@@ -147,7 +153,7 @@ assert c6.count("'--max-fallback-fraction', '1.0'") == 1 and "ours_sub.csv" in c
 pseudo = PSEUDO.replace("__GOLD__", "True" if GOLD else "False").replace("__FOLD__", repr(FOLD)).replace("__LABELS__", repr(LABELS))
 final = FINAL.replace("__STRIDE__", str(STRIDE))
 title = "# Guru OOF compact — " + ("58 gold, 4 model" if GOLD else f"fold {FOLD}, model f{FOLD} saja") + f", eval-stride {STRIDE}\n" \
-        f"Dibangun oleh `build_compact_oof.py` dari notebook publik heliosli ({'R7' if R7 else 'S6'}). Lihat `STRATEGI_0960.md` §3.\n"
+        f"Dibangun oleh `build_compact_oof.py` dari notebook publik ({'R7 heliosli' if R7 else 'R6 + flip TTA, sel goodpjw v27' if R6 else 'S6 heliosli'}). Lihat `STRATEGI_0960.md` §3.\n"
 new_cells = [md(title), cells[1], code(pseudo)]
 body = [s for s in (c2, c5, c6, final) if s is not None]
 for s in body:
