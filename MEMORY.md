@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-16T12:00:00+07:00
+> Last updated: 2026-10-16T20:40:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -18,6 +18,7 @@
 - **Rules**: 5.a "disqualified if Submissions through more than one Kaggle account"; 5.b anggota = individu terpisah; 5.c merger sah bila gabungan ≤5, submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤±225), sebelum batas; 5.d/6.a dilarang berbagi privat antar-tim; 2.6.b model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a menyangkut kelayakan hadiah (belum dijawab host).
 
 ## 2. Temuan terkunci
+- **16 Okt 20:40 — garis perak publik 0,958** (≥0,958 = 446); kita 0,957 rank 461 (ke-15 di blok 0,957). `r7v5a`/`r7v3sw` = 0,957 (urutan tak-dibulatkan tak diketahui → minta penanda auto-select). Murid fold 2–3 (akun utama) gold 0,9311/0,9326 → **murid 4 fold gold 0,9334**; **R6+flip gold 0,9366** tapi tak menambah di resep kita; **`r7v6a` gold setia 0,9414** → submit 17 Okt 07:01; `r7v7a` (8 model) otomatis ±14:30 bergerbang.
 - **16 Okt 14:30 — gold SETIA** (`build_gold_full.py`: pipeline submisi pd 58 gold; `gold_eval_full.py`): r7v3sr 0,9387 (+0,0033 vs dasar), S6F compact ±0; S6F 0,5–0,55 di separuh Raptor + murid 0,3 ≈0,9405–0,9410; + bobot heliosli +0,0006…0,0012; murid +0,0011…0,0014; **flip DIBUANG** (−0,0005, papan 0,956). → `r7v5a` (S6F 0,5 Raptor + murid 0,3 + wc=h) jatah terakhir 16 Okt.
 - **16 Okt 14:00 — `r7v3sr` (S6F 0,35 di separuh Raptor + murid 0,30) = 0,957, rank 495→317** (lompatan terbesar; struktur separuh Raptor > compact, cocok dgn gold-58). Papan 13:40: 6.066 tim, ≥0,958 = 213 (naik cepat: salinan heliosli 0,958), perak rank 303 = 0,957, kita rank 337. **Ketentuan host 14 Okt (Chris Carr RSNA, 743416)**: data eksternal yg hanya butuh registrasi + lisensi = sah (OAI, fastMRI); minta transparansi pengungkapan dataset.
 - **16 Okt 11:50 — `r7v3s` (S6F 0,35 + murid 0,30 compact) = 0,957** (57247278; tampil naik pertama kali; rank 483/6.061, ke-323 dari 403 di blok 0,957; perak rank 303 = 0,957). `r7v4c40` (flip, tanpa S6F) = 0,956. heliosli 0,958 = R6+flip + bobot Raptor per-temuan (Syn .8, LatOA .2, PFOA .6, Baker .35) → varian `r7v3sw` (`wc=h`). User 16 Okt "gunakan semua gpu": murid r2a fold 2–3 dilatih di AKUN UTAMA (`student-r2a-m`); alver 17 Okt hanya r2a-full.
