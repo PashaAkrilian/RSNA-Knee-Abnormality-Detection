@@ -89,6 +89,8 @@
 7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
 
+### I000. 16 Okt 20:40 — Garis perak publik kini **0,958** (≥0,958 = 446); kita rank 461 = ke-15 di blok 0,957. Murid 4 fold (gold 0,9334) siap; **`r7v6a`** (gold setia 0,9414) submit otomatis **17 Okt 07:01** (`rsna-submit-17okt`); `data/run_after_train_17okt.sh` (11:00) kini juga membangun **`r7v7a`** (murid 8 model) → commit → gerbang (gold ≥0,930, kaki murid & S6F, jumlah fold) → submit otomatis. R6+flip (heliosli) diuji di gold: tak menambah bila murid 4 fold ada. Flip DIBUANG.
+
 ### I00. 16 Okt 14:40 — `r7v3sr` = 0,957 **rank 317** (terbaik). Gold setia (`build_gold_full.py` + `gold_eval_full.py`): S6F 0,5 di separuh Raptor + murid 0,3 + bobot heliosli = 0,9410; flip DIBUANG. Tersubmit: `r7v3sw` (12:25), **`r7v5a`** (14:37). 17 Okt 07:05: alver `student-r2a-full` + `student-r2a-full2` (4 model full-data), nxtirfan r2c; 11:00 dataset murid 8 model → bangun `r7v5*` final (budget murid 6000 dtk).
 
 ### I0. 16 Okt 12:00 — HASIL: `r7v3s` = **0,957** (S6F + murid). `r7v3sr` pending ±13:15. Latih `dimaspashaakrilian/rsna-knee-student-r2a-m` (fold 2–3, akun utama, izin user) ±17:00. `r7v3sw` (bobot per-temuan heliosli) commit-run. 17 Okt: alver hanya `student-r2a-full`; skrip pasca-latih ambil fold 2–3 dari akun utama (`data/kg1.sh`).

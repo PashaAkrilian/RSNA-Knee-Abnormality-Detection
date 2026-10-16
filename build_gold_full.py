@@ -42,9 +42,9 @@ print('GOLDCOMP', len(_gold), 'studies |', len(pd.read_csv(G + '/test_series.csv
 PATCH = [  # (pola, ganti, jumlah sel yg harus kena)
     ('    cands = ["/kaggle/input/competitions/rsna-knee-abnormality-detection",',
      f'    cands = ["{G}", "/kaggle/input/competitions/rsna-knee-abnormality-detection",   # [gold]', 2),
-    ("COMP = mount('rsna-knee-abnormality-detection', 'test.csv')", f"COMP = '{G}'   # [gold]", 1),
+    ("COMP = mount('rsna-knee-abnormality-detection', 'test.csv')", f"COMP = '{G}'   # [gold]", (0, 1)),   # murid opsional
     ("DATA = find_mount(COMPETITION, 'test.csv')", f"DATA = Path('{G}')   # [gold]", 1),
-    ('I.comp = find_mount(COMP, "test.csv")', f'I.comp = Path("{G}")   # [gold]', 1),
+    ('I.comp = find_mount(COMP, "test.csv")', f'I.comp = Path("{G}")   # [gold]', (0, 1)),   # S6F opsional
 ]
 
 if __name__ == "__main__":
@@ -62,7 +62,7 @@ if __name__ == "__main__":
                 hits[a] += 1
         c["source"] = s.splitlines(keepends=True)
     for a, _, want in PATCH:
-        assert hits[a] == want, (a, hits[a], want)
+        assert hits[a] in (want if isinstance(want, tuple) else (want,)), (a, hits[a], want)
     nb["cells"].insert(1, {"cell_type": "code", "metadata": {}, "execution_count": None, "outputs": [],
                            "source": SETUP.splitlines(keepends=True)})
     out = ROOT / f"kaggle_kernel_{NAME}"
@@ -70,6 +70,7 @@ if __name__ == "__main__":
     slug = "rsna-knee-" + NAME
     (out / f"{slug}.ipynb").write_text(json.dumps(nb, indent=1, ensure_ascii=False), encoding="utf-8")
     meta = json.loads((src_dir / "kernel-metadata.json").read_text(encoding="utf-8"))
-    meta.update(id=f"dimaspashaakrilian/{slug}", title="RSNA Knee " + NAME, code_file=f"{slug}.ipynb")
+    meta.pop("id_no", None)   # salinan kernel orang lain: id numerik pemilik asal -> 403
+    meta.update(id=f"dimaspashaakrilian/{slug}", title="RSNA Knee " + NAME, code_file=f"{slug}.ipynb", is_private=True)   # notebook kompetisi tak boleh publik
     (out / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     print("ditulis:", out, "| patch:", {a[:40]: n for a, n in hits.items()})

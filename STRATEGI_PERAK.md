@@ -34,6 +34,7 @@ Blok 0,956–0,957 = **keluarga resep** (ratusan salinan byte-identik → SATU s
 | Murid r2c (label konsensus saja) | keragaman tambahan | belum (latih 17 Okt) | opsional sbg `fold4–7.pt` |
 | Flip-TTA R7 stride 1 | TTA | gold setia: ρ R7~R7flip 0,9976, efek blend −0,0004…−0,0007; papan `r7v4c40` 0,956; +40 % waktu R7 | **DIBUANG (16 Okt)** |
 
+- **16 Okt 20:30 — murid 4 fold & R6**: murid r2a 4 fold gold **0,9334** (> R7); R6+flip (basis heliosli 0,958) gold 0,9366 tetapi **tak menambah** di resep kita bila murid 4 fold ada; resep heliosli 0,958 direkonstruksi = 0,9382 < `r7v6a` **0,9414**. Papan 19:48: garis perak publik **0,958**; kita ke-15 di blok 0,957.
 - **16 Okt — gold SETIA (pipeline submisi pd 58 gold, `gold_eval_full.py`)**: r7v3sr 0,9387 (+0,0033 vs dasar; papan 495→317 ✔); S6F compact = ±0; S6F di separuh Raptor 0,55 + murid 0,30 = 0,9410; + bobot heliosli 0,9416; murid +0,0011…0,0014. **Resep kerja: S6F ±0,5 di separuh Raptor + murid 0,30 (6 model 17 Okt) ± bobot per-temuan heliosli** (`r7v5a`).
 - Evaluasi gold-58 (`gold_eval_blend.py`): 58 studi, SE ±0,01 absolut; selisih berpasangan lebih presisi tetapi tetap ARAH. Proksi Raptor = r384 saja (tanpa r224/cermin, dan dipilih pd gold) → struktur yg mengurangi porsi Raptor bisa tampak terlalu bagus → **struktur diputuskan papan publik (16 Okt), bobot tetap a priori**.
 
@@ -41,6 +42,8 @@ Blok 0,956–0,957 = **keluarga resep** (ratusan salinan byte-identik → SATU s
 | Waktu | Aksi (otomatis = systemd --user) | Gerbang / keputusan |
 |---|---|---|
 | 16 Okt ±01:00 | skor `r7v4c40` 57231466 (flip stride 1 + murid 0,40) dicatat poller | rank saat selesai < rank saat submit (403) → flip+murid ≥ terbaik lama |
+| **17 Okt 07:01 (otomatis)** | submit **`r7v6a`** (S6F .5 separuh Raptor + murid 4 fold .3 + bobot heliosli) | rank saat selesai vs r7v3sr |
+| **17 Okt ±14:30 (otomatis, bergerbang)** | `r7v7a` = resep `r7v6a` dgn murid 8 model | gold murid ≥0,930 & kaki terpakai |
 | 16 Okt 07:01 & ±08:30 (otomatis) | submit **`r7v3s`** (S6F 0,35 di slot compact + murid 0,30) lalu **`r7v3sr`** (S6F 0,35 di separuh Raptor + murid 0,30); keduanya tanpa flip | struktur S6F mana yg menaikkan rank (log rank saat selesai, ±11:45 & ±13:15) + penanda auto-select dari user → struktur itu dipakai di `r7v5*` |
 | 17 Okt 07:05 (otomatis) | latih murid r2a fold 2–3 + full-data fold 8/9 (alver), r2c fold 0–3 (nxtirfan) | gerbang gold per fold ≥0,90 (r2a) / ≥0,88 (r2c) di `run_after_train_17okt.sh` |
 | 17 Okt 11:00–14:00 | dataset murid versi baru → `r7v5*` = komponen terbukti + murid 6 model (± r2c `fold4–7.pt`) → commit | GOLD58 murid naik (≥0,930) & `MURID_LEG`/`S6F_LEG used`; perkiraan run < ±7 j |

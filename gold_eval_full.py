@@ -35,6 +35,12 @@ P = {"r384m": load(nf / "raptor_raw.csv"), "r224m": load(nf / "raptor224_sub.csv
      "S6F": load(nf / "s6f_raw.csv"), "murid": load(nf / "student_test_preds.csv", "cnxt_")}
 if (fl / "ours_sub.csv").is_file():
     P["R7flip"] = load(fl / "ours_sub.csv")
+h = G / "gold-h958"                                    # notebook 0,958 heliosli: R6 + flip, r224 TANPA cermin
+if (h / "ours_sub.csv").is_file():
+    P["R6flip"] = load(h / "ours_sub.csv")
+    P["r224plain"] = load(h / ("raptor224_raw.csv" if (h / "raptor224_raw.csv").is_file() else "raptor224_sub.csv"))
+for _c in sorted((ROOT / "data").glob("commit_r7v6*/student_gold_preds.csv"))[:1]:   # murid 4 fold (gold check commit-run)
+    P["murid4"] = load(_c, "cnxt_")
 for k, v in P.items():
     assert np.isfinite(v).all(), (k, int((~np.isfinite(v)).sum()))
 R = {k: pct(v) for k, v in P.items()}
@@ -53,16 +59,18 @@ def macro(y, p):
 WC_H = {'Lateral OA': 0.2, 'PF OA': 0.6, 'Synovitis': 0.8, "Baker's": 0.35}
 
 
-def recipe(s6=0.0, s6slot="compact", st=0.0, wc=None, r7="R7", a224=0.35, wr=0.5):
-    rr = (1 - a224) * R["r384m"] + a224 * R["r224m"]
+def recipe(s6=0.0, s6slot="compact", st=0.0, wc=None, r7="R7", a224=0.35, wr=0.5, stu="murid", r224="r224m", r6=0.0):
+    rr = (1 - a224) * R["r384m"] + a224 * R[r224]
     ro = R[r7].copy()
+    if r6:                                             # R6flip sbg anggota compact tambahan
+        ro = (1 - r6) * ro + r6 * R["R6flip"]
     if s6:
         if s6slot == "compact":
             ro = (1 - s6) * ro + s6 * R["S6F"]
         else:
             rr = (1 - s6) * rr + s6 * R["S6F"]
     if st:
-        ro = (1 - st) * ro + st * R["murid"]
+        ro = (1 - st) * ro + st * R[stu]
     w = np.array([(wc or {}).get(c, wr) for c in L])
     return w * rr + (1 - w) * ro
 
@@ -84,6 +92,17 @@ if __name__ == "__main__":
     if "R7flip" in P:
         V["r7v3sr + flip"] = recipe(0.35, "raptor", 0.30, r7="R7flip")
         V["r7r224m + flip"] = recipe(r7="R7flip")
+    if "R6flip" in P:
+        h958 = recipe(wc=WC_H, r7="R6flip", r224="r224plain")
+        if (h / "submission.csv").is_file():
+            print("cek rekonstruksi heliosli 0,958 vs submission.csv gold-h958: maks |selisih| %.2e" % np.abs(h958 - load(h / "submission.csv")).max())
+        V["heliosli 0,958 (R6flip, r224 polos, wc)"] = h958
+        V["r7v3sr dgn R6flip ganti R7"] = recipe(0.35, "raptor", 0.30, r7="R6flip")
+        V["r7v6a dgn compact .5 R7 + .5 R6flip"] = recipe(0.5, "raptor", 0.30, WC_H, r6=0.5)
+    if "murid4" in P:
+        V["r7v6sr (murid 4 fold)"] = recipe(0.35, "raptor", 0.30, stu="murid4")
+        V["r7v6a (S6F .5 + murid4 .3 + wc)"] = recipe(0.5, "raptor", 0.30, WC_H, stu="murid4")
+        V["S6F .5 + murid4 .4 + wc"] = recipe(0.5, "raptor", 0.40, WC_H, stu="murid4")
     base = V["r7r224m (dasar)"]
     ref = V["r7v3sr (S6F .35 Raptor + murid .30)"]
     rng = np.random.default_rng(0)

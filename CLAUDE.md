@@ -12,7 +12,10 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956**, 
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md** (bliverrigpdoge, S6F, heliosli 0,9576, auto-select) dan **reports/Riset 14 Okt malam - jalan ke perak.md**. Arsip: `reports/` lain (scrape 12 Okt), `research_notes/`, PROGRESS.md (§62–§64), docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (15 Okt ±21:10 WIB)
+## Status satu kalimat (16 Okt ±20:40 WIB) — terbaru di MEMORY/HANDOFF §I000
+Garis perak publik **0,958**; kita **0,957 rank 461 (ke-15 di blok 0,957)**; terbaik papan `r7v3sr`; **17 Okt 07:01 `r7v6a`** (S6F .5 separuh Raptor + murid 4 fold .3 + bobot heliosli; gold setia 0,9414) + **±14:30 `r7v7a`** (murid 8 model, otomatis bergerbang).
+
+## Status 15 Okt ±21:10 WIB (arsip)
 Terbaik **0,956, rank 398** (`r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271); **57231466 `r7v4c40`** (flip stride 1 + murid r2a 0,40) PENDING ±01:00; **jadwal otomatis permanen** (systemd --user, linger): **16 Okt 07:01** submit **`r7v3s`** (S6F 0,35 di slot compact + murid 0,30) & **±08:30 `r7v3sr`** (S6F di separuh Raptor; gold-58 +0,0034 vs +0,0015); **17 Okt 07:05** latih murid r2a fold 2–3 + 2 model full-data (alver) + r2c fold 0–3 (nxtirfan); **17 Okt 11:00** unduh fold → dataset murid baru (tanpa submit); poller rank tiap 5 mnt → `data/rank_watch.log`; kuota: main ±9,5 j (inferensi/submisi saja), alver 0, nxtirfan ±0,5 j → +30 j/akun 17 Okt 07:00 WIB; **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train; 15 Okt: izin 1 jatah ekstra malam itu**.
 
 ## Aturan keras (pelanggaran = rugi tim)

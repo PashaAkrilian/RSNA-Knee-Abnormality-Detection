@@ -83,3 +83,9 @@ Blok 0,956–0,957 = keluarga resep (salinan byte-identik → satu skor privat p
   | S6F Raptor 0,55 + murid 0,30 + bobot heliosli | 0,9416 | +0,0030 (P 0,91) |
   Murid 0,30 menambah +0,0011…+0,0014 (P 0,75–0,80) di konfigurasi ini. Catatan: puncak grid ±24 konfigurasi pd 58 studi = bias seleksi → dipilih nilai bulat konservatif **`r7v5a` = S6F 0,50 separuh Raptor + murid 0,30 + bobot heliosli**.
 - **Flip-TTA R7 (run `gold-f`)**: R7flip AUC 0,9317 vs R7 0,9312, Spearman 0,9976 (hampir identik); di blend efek flip −0,0004…−0,0007 (P>0 0,28–0,34); tahap R7 +40 % waktu (1.036 vs 731 dtk / 58 studi). Papan: `r7v4c40` (flip) = 0,956. → **FLIP DIBUANG** dari semua varian final.
+
+## 9. 16 Okt malam — papan 0,958, murid 4 fold, R6+flip
+- Papan 19:48: 6.085 tim; ≥0,958 = 446 → **garis perak publik (rank 304) = 0,958**; =0,957 = 345; kita rank 461 = ke-15 di blok 0,957 (skor tak-dibulatkan dekat 0,9575). heliosli & varshitha 0,958.
+- Murid r2a fold 2–3 (akun utama): gold 0,9311 / 0,9326 → ensembel 4 fold gold **0,9334**.
+- Gold setia `gold-h958` (notebook heliosli 0,958): R6+flip **0,9366** (ρ~R7 0,979); resep heliosli direkonstruksi 0,9382 (selisih rekonstruksi 5,6e-3).
+- Resep: `r7v6sr` (r7v3sr + murid4) 0,9399; **`r7v6a` (S6F .5 Raptor + murid4 .3 + wc) 0,9414** (+0,0027 vs r7v3sr, P 0,90); + R6flip di compact (0,3–1,0) = −0,0017…+0,0002 → tidak dipakai.
