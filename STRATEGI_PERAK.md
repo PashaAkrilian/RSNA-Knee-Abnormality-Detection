@@ -32,8 +32,9 @@ Blok 0,956–0,957 = **keluarga resep** (ratusan salinan byte-identik → SATU s
 | **S6F** nartaa (ConvNeXt-S all-data, label JEV, potongan knee-centred) | model ke-3 yg beragam | **gold-58 0,9314 (bersih)**, ρ~R7 0,871, ρ~Raptor 0,879; blend gold **+0,0010 di slot compact**, **+0,0034 di separuh Raptor** (P>0 0,92); leoprovorov 0,957 publik; waktu run ±1,3–1,5 j (gold: 7,3 dtk/studi/GPU) | terintegrasi (`s6f=`, `s6fslot=`); uji 16 Okt `r7v3s` vs `r7v3sr` |
 | **Murid r2a kita** (ConvNeXt-T 2.5D; label 0,5 konsensus + 0,5 OOF-R7) | **pembeda milik kita** | gold-58 0,9282 (2 fold), ρ~R7 0,911; sendirian +0,0003, **bersama S6F +0,0014 s/d +0,0021** | 2 fold kini; 17 Okt → 4 fold + 2 full-data |
 | Murid r2c (label konsensus saja) | keragaman tambahan | belum (latih 17 Okt) | opsional sbg `fold4–7.pt` |
-| Flip-TTA R7 stride 1 | TTA | belum terukur (`r7v4c40` 15 Okt); stride 2 merugikan (r7v3f) | opsional; dibuang bila run mepet |
+| Flip-TTA R7 stride 1 | TTA | gold setia: ρ R7~R7flip 0,9976, efek blend −0,0004…−0,0007; papan `r7v4c40` 0,956; +40 % waktu R7 | **DIBUANG (16 Okt)** |
 
+- **16 Okt — gold SETIA (pipeline submisi pd 58 gold, `gold_eval_full.py`)**: r7v3sr 0,9387 (+0,0033 vs dasar; papan 495→317 ✔); S6F compact = ±0; S6F di separuh Raptor 0,55 + murid 0,30 = 0,9410; + bobot heliosli 0,9416; murid +0,0011…0,0014. **Resep kerja: S6F ±0,5 di separuh Raptor + murid 0,30 (6 model 17 Okt) ± bobot per-temuan heliosli** (`r7v5a`).
 - Evaluasi gold-58 (`gold_eval_blend.py`): 58 studi, SE ±0,01 absolut; selisih berpasangan lebih presisi tetapi tetap ARAH. Proksi Raptor = r384 saja (tanpa r224/cermin, dan dipilih pd gold) → struktur yg mengurangi porsi Raptor bisa tampak terlalu bagus → **struktur diputuskan papan publik (16 Okt), bobot tetap a priori**.
 
 ### 0.5 Jadwal & gerbang keputusan (WIB; agen ≤2 submisi/hari, jatah ekstra hanya atas izin user)
@@ -59,7 +60,7 @@ Blok 0,956–0,957 = **keluarga resep** (ratusan salinan byte-identik → SATU s
 | Run > 9 j (tanpa skor) | murid & S6F punya anggaran/guard sendiri (S6F selesai ≤ NB_T0+8,0 j atau dilewati); varian final diukur durasinya dari jam submit→selesai |
 | Komponen diam-diam tidak jalan di run tersembunyi (log tak terbaca) | gerbang di commit-run (`GOLD58`, `MURID_LEG used`, `S6F_LEG used`); fallback = resep tanpa komponen itu (aman, bukan rusak) |
 | Komponen merugikan di privat | uji per komponen 16–18 Okt; final B berbeda risiko; bobot ditetapkan a priori (tidak disetel ke papan publik) |
-| Host melarang OAI (Raptor) | risiko kolektif hampir seluruh papan atas; tak ada alternatif bersih yang realistis (≈0,950) → diterima |
+| Data eksternal (OAI di Raptor/S6F, fastMRI di R7) | **ketentuan host 14 Okt (Chris Carr, RSNA, thread 743416)**: dataset yg hanya butuh registrasi + persetujuan lisensi = memenuhi aturan; butuh perjanjian institusi = tidak. OAI (Login.gov + syarat NDA, tanpa institusi) & fastMRI → memenuhi. Host meminta transparansi: catat dataset eksternal semua komponen (siapkan teks pengungkapan bila diminta) |
 | PC mati / reboot | unit systemd permanen + linger; Persistent=true menyusul saat boot; agen memeriksa `list-timers` tiap sesi |
 | Kuota GPU latih habis | 17 Okt +30 j/akun (alver, nxtirfan); akun utama hanya commit-run |
 

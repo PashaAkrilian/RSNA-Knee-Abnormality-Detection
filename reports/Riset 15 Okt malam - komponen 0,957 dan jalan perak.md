@@ -67,3 +67,19 @@ Blok 0,956–0,957 = keluarga resep (salinan byte-identik → satu skor privat p
 - Blend vs dasar (Raptor .5 + R7 .5 = 0,9355; bootstrap 2.000×): +S6F .35 compact **+0,0010** (P 0,68) · +murid .40 saja +0,0003 (0,55) · +S6F .35 +murid .30 (= `r7v3s`) **+0,0014** (0,71) · +S6F .25 +murid .30 +0,0021 (0,83). Grid S6F 0,15–0,45 × murid 0,2–0,4: datar +0,001…+0,002.
 - Struktur: **S6F di separuh Raptor .35 (+murid .30 compact) +0,0034 (P 0,92)**; S6F kaki-3 atas .20–.25 +0,0031–0,0035 (0,88); 4 kaki setara .25 +0,0044 (0,90). Catatan: proksi Raptor = r384 saja (tanpa r224/cermin) → struktur yg mengecilkan Raptor bisa terlalu dipuji → diuji di papan: **16 Okt `r7v3s` (compact) vs `r7v3sr` (separuh Raptor)**.
 - Kesimpulan: S6F = model setara R7 yang beragam (+0,001 pasti arah); murid kita paling berguna BERSAMA S6F.
+
+## 8. 16 Okt — papan, ketentuan host, evaluasi gold SETIA
+- **Papan**: `r7v3s` (S6F compact) = 0,957 rank 478; **`r7v3sr` (S6F separuh Raptor) = 0,957, rank 495→317**. 13:40: 6.066 tim, ≥0,958 = 213 (naik cepat; salinan heliosli 0,958 = R6+flip+bobot per-temuan Syn .8/LatOA .2/PFOA .6/Baker .35), perak rank 303 = 0,957, kita 337.
+- **Ketentuan host** (Chris Carr, Director of Informatics RSNA, 14 Okt, 743416): data eksternal yg hanya butuh registrasi + persetujuan lisensi = sah; butuh perjanjian institusi = tidak; minta transparansi pengungkapan dataset. OAI & fastMRI → sah.
+- **Evaluasi gold setia** (`build_gold_full.py`: pipeline submisi persis dijalankan pd 58 gold sbg "test"; rekonstruksi `r7v3sr` = submission.csv-nya, selisih 6e-08; `gold_eval_full.py`): komponen r384m 0,9228 · r224m 0,9160 · R7 0,9312 · S6F 0,9314 · murid 0,9282.
+  | Varian | AUC gold | vs r7v3sr |
+  |---|---|---|
+  | r7r224m (dasar) | 0,9354 | −0,0033 |
+  | r7v3s (S6F compact) | 0,9355 | −0,0033 |
+  | **r7v3sr** | **0,9387** | — |
+  | r7v3sr + bobot heliosli | 0,9398 | +0,0010 (P 0,71) |
+  | S6F Raptor 0,45 + murid 0,30 | 0,9401 | +0,0014 (P 0,88) |
+  | S6F Raptor 0,55 + murid 0,30 | 0,9410 | +0,0023 (P 0,90) |
+  | S6F Raptor 0,55 + murid 0,30 + bobot heliosli | 0,9416 | +0,0030 (P 0,91) |
+  Murid 0,30 menambah +0,0011…+0,0014 (P 0,75–0,80) di konfigurasi ini. Catatan: puncak grid ±24 konfigurasi pd 58 studi = bias seleksi → dipilih nilai bulat konservatif **`r7v5a` = S6F 0,50 separuh Raptor + murid 0,30 + bobot heliosli**.
+- **Flip-TTA R7 (run `gold-f`)**: R7flip AUC 0,9317 vs R7 0,9312, Spearman 0,9976 (hampir identik); di blend efek flip −0,0004…−0,0007 (P>0 0,28–0,34); tahap R7 +40 % waktu (1.036 vs 731 dtk / 58 studi). Papan: `r7v4c40` (flip) = 0,956. → **FLIP DIBUANG** dari semua varian final.
