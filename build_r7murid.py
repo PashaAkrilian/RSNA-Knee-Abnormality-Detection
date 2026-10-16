@@ -49,6 +49,8 @@ S6F = float(args.get("s6f", "0"))   # bobot S6F nartaa (all-data) DI DALAM slot 
 assert 0.0 <= S6F <= 0.6, S6F
 S6F_SLOT = args.get("s6fslot", "compact")   # compact = campur ke ro (R7); raptor = campur ke rr (keluarga label Raptor/JEV)
 assert S6F_SLOT in ("compact", "raptor"), S6F_SLOT
+WC = args.get("wc", "")   # "h" = bobot Raptor per temuan heliosli 16 Okt (notebook 0,958; dari probe papan per kelas)
+assert WC in ("", "h"), WC
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
 _b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "v224m": "r7_r224m_varshitha_20261014"}[BASE_ARG]
@@ -312,6 +314,11 @@ def build():
     rec = "'rank_basis': 'each model over its own non-failed rows'}"
     assert c6.count(anchor) == 1 and c6.count(rec) == 1 and "def pct_on(" in c6 and MB not in c6
     a_out, a_wr = "out = np.zeros((n, len(labels)))\n", "    wr = W_RAPTOR_C.get(c, W_RAPTOR)\n"
+    if WC == "h":
+        k = [l for l in c6.splitlines(keepends=True) if l.startswith("W_RAPTOR_C = {")]
+        assert len(k) == 1, k
+        c6 = c6.replace(k[0], "W_RAPTOR_C = {'Medial OA': 0.5, 'Lateral OA': 0.2, 'PF OA': 0.6, 'Synovitis': 0.8, \"Baker's\": 0.35}"
+                        "   # [wc=h] heliosli 16 Okt (notebook 0,958)\n")
     if S6F > 0:                                                    # S6F: muat sebelum loop; campur ke ro SEBELUM baris murid
         assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
         c6 = c6.replace(a_out, S6F_LOAD.replace("__WS6F__", repr(S6F)) + a_out).replace(
