@@ -89,6 +89,8 @@
 7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
 
+### I0000000. 17 Okt 19:10 — heliosli 0,9586 = goodpjw + bobot V2 (probe papan). Kernel `g8a`/`g8b` (wc=h2 + murid 8 model, ± S6F) → `rsna-submit-g8` (log `data/submit_g8_17okt.log`). r7v6a = 0,957; g6a pending. Murid r3: r3-a (nxtirfan) + r3-bm (akun utama) jalan → dataset r3 MANUAL (pasca-latih dihentikan 19:05).
+
 ### I000000. 17 Okt 12:30 — PC mati 02:45–12:11; `r7v6a`/`g6a` tersubmit 12:11 (pending). OOF R6 f0–f1 bebas bocor; f2–f3 jalan (akun utama) → label v3 → r3 di nxtirfan (push script menunggu label s/d ±14:41, selain itu r2c). Gold setia g6a 0,9400.
 
 ### I00000. 17 Okt 02:30 — Target user 0,962 → jawaban jujur (< 5 %; perak cukup 0,959–0,960 unik). **Murid r3** (guru OOF R6+flip + R7): `rsna-oof-r6` (unit sementara) mendorong `compact-oof-r6-f1..f3` saat slot kosong → `data/r6oof/` → label v3 → dataset label nxtirfan → `data/labels_v3_ready`; 07:05 `data/run_push_17okt.sh` memilih r3 (atau r2c) untuk nxtirfan (`data/nxt_pushed.txt`); 11:00 `data/run_after_train_17okt.sh` (urutan baru: r2a → r7v7a + g7a commit → murid nxtirfan → dataset `rsna-knee-student-<X>`). Log: `data/oof_r6_17okt.log`, `data/labels_v3_make.log`, `data/push_17okt.log`, `data/after_train_17okt.log`. CATATAN: uji DRY 02:18 sempat membuat versi dataset r2a (isi sama fold0–3) — mode DRY kini dijaga.
