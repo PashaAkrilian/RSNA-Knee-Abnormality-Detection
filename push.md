@@ -1,5 +1,6 @@
 # push.md — Arahan untuk agen/harness lain (Claude Code, OpenCode, dll.) melanjutkan misi PERAK RSNA Knee
-> Berkas mandiri. Baca juga `MEMORY.md` (aturan+fakta), `STRATEGI_PERAK.md` (rencana+gerbang) dan `HANDOFF.md` (langkah harian). Diperbarui 15 Okt 2026 ~21:10 WIB (§3b = terbaru; §3a/§3 = arsip). Bahasa kerja: **Indonesia**.
+> Status aktif 19 Okt 2026 02:33 WIB: LB **0,958 rank 467/6.187**; g6c/g12/g13 PENDING; dua kernel murid r4 masih QUEUED di alver. Baca `AGENTS.md`, `MEMORY.md`, `STRATEGI_PERAK.md` §0, dan `HANDOFF.md` §0 sebelum bertindak. Riset terbaru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Bagian status lama di bawah dipertahankan sebagai arsip.
+> Berkas mandiri. Baca juga `MEMORY.md` (aturan+fakta), `STRATEGI_PERAK.md` (rencana+gerbang) dan `HANDOFF.md` (langkah harian). Diperbarui 19 Okt 2026 02:33 WIB; bagian status bertanggal lebih lama adalah arsip. Bahasa kerja: **Indonesia**.
 
 ## 1. Misi
 - Tim `Krazy KIller` (akun utama `dimaspashaakrilian`; rekan `nxtirfan`) di `rsna-knee-abnormality-detection` (macro ROC-AUC 12 label). **Final 22 Okt 2026 23:59 UTC**; pilih maks 2 submisi final (manual).
@@ -7,23 +8,23 @@
 - Syarat user: tanpa data OAI MENTAH (ckpt publik pra-latih, termasuk nartaa/compact/OrthoFoundation, adalah "pre-trained model" yg diizinkan Rules 2.6.b). Pertahankan satu final dgn risiko berbeda (mis. bersih tanpa Raptor/OAI).
 
 ## 2. Aturan keras
-1. **Hanya akun utama** untuk komputasi dan SUBMISI. Akun 2 `alverlfarfaraway` (milik user sendiri) & akun 3 `nxtirfan` (token tersimpan di `akun_kaggle/`): CLAUDE.md menyebutnya "SAH", tetapi Rules 5.a ("disqualified if ... more than one Kaggle account") dan 5.b ("each Team member must be a single individual") + izin tertulis yg hanya satu kalimat = risiko diskualifikasi tim. Jangan dipakai tanpa konfirmasi tertulis Kaggle (draf pesan: `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`). GPU akun utama (30 j/minggu) cukup.
+1. **Keputusan user 12 Okt:** alver (`kg2.sh`) dan nxtirfan (`kg3.sh`) boleh dipakai untuk training; akun utama hanya commit-run inferensi dan submission. Risiko Rules 5.a/5.b tetap tercatat di `docs/IZIN_AKUN_KEDUA.md`; gunakan akun utama untuk semua submission. Jangan cetak kredensial.
 2. Jangan baca/cetak/salin isi `kaggle.json`; jangan `VERBOSE=true`. Jangan membuat akun/menyetujui perjanjian atas nama user. Jangan menghubungi pihak ketiga (merger = tindakan user).
 3. Commit tanpa trailer `Co-Authored-By`/`Claude-Session`; `git commit -F <berkas>`; MEMORY.md commit terpisah ("memory: …"); `git add <path>` (bukan `-A`); `git fetch` dulu; push hanya atas perintah user.
 4. Jangan sentuh kernel proyek lain (`casmi26-*`, `fase-*`, `tuning-seimbang-*`, `vlm-edge-*`). Submisi agen ≤2/hari (5/hari tim, reset 07:00 WIB); sisakan 2–3 utk user & rekan.
 5. Rules: dilarang berbagi kode/data secara PRIVAT antar-tim (5.d/6.a); berbagi publik di forum boleh. Jujur melaporkan hasil; keputusan dari skor LB nyata (emas-58: SE ≈0,01 dan terkontaminasi utk OF).
 
-## 3b. Status (15 Okt ±21:10 WIB) — TERBARU
+## 3b. Status (15 Okt ±21:10 WIB) — ARSIP
 - Terbaik **0,956, rank 398/6.040**; **garis perak publik 0,957** (≥0,957 = 327). Rencana: `STRATEGI_0960.md` §0.3; urutan kerja: `HANDOFF.md` §I.
 - Basis: R7 heliosli + r384/r224 bercermin (`r7r224m` 57198411). Tambahan: **S6F nartaa** (`build_r7murid.py s6f=`) + **murid r2a kita** (slot compact). Pending: `r7v4c40` 57231466; 16 Okt 07:01 otomatis `r7v3s` + `r7v3c40`; 17 Okt latih murid (alver/nxtirfan) otomatis.
 - Akun (keputusan user 12 Okt): alver & nxtirfan = latih; akun utama = commit-run + submisi saja. Otomasi systemd --user permanen (`systemctl --user list-timers 'rsna-*'`).
 
-## 3a. Status (12 Okt ±14:45 WIB)
+## 3a. Status (12 Okt ±14:45 WIB) — ARSIP
 - Terbaik **0,954** (57051680, klon S6), rank 466/5.809; perak & perunggu publik sama-sama 0,954 (dataran ±600 tim). Rencana aktif: **`STRATEGI_0960.md`**.
 - Perintah user 12 Okt: 2 submisi (`s6eq` = notebook publik #1 heliosli 0,5/0,5; `s6eqr` = + reader goodpjw) dari akun alver (satu-satunya kredensial di mesin Windows) lewat `scripts/submit_watch.py` (menunggu slot GPU); push ke branch + PR tanpa atribusi Claude.
 - Siap pakai: `build_s6eq.py`, `build_compact_oof.py` (guru OOF compact 4 fold), scrape lengkap (`reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`).
 
-## 3. Status (11 Okt 04:00 WIB)
+## 3. Status (11 Okt 04:00 WIB) — ARSIP
 - Terbaik: **0,950** (Apex 56943646). Dibuang: r224 0,950; fork rabari 0,950; Apex+MaVIT 0,949; klaim "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224). 57028008 (Apex+OF) Timeout; **57044355 (Apex+OF v3) = 0,950 karena OF mati OOM** (bukan vonis OF). **57051680 = salinan S6 oleh USER (PENDING; ±07:00–08:30 WIB).**
 - Koreksi: resep heliosli = Raptor + **compact** (bukan OF); bobot OF tak pernah dipakai di notebook heliosli.
 - Alat siap: `build_s6plus.py` (reader goodpjw ke perna Raptor; OF dgn supervisor v4.1 sbg tahap terakhir; blend 3 perna), `build_apexof4.py` + `of_stage_v4.py` (Apex+OF v4.1), `build_s6probe.py`, `build_ofmem.py`. Rehearsal berjalan: `s6plusr`, `apexof4r3`. Kuota GPU ±19–20 h (reset 17 Okt).

@@ -86,3 +86,6 @@ Notebook V2 (klon S5) menanamkan 7 berkas sumber heliosli (`SOURCES` dict, dapat
 - **Notebook publik baru**: "Tri-Reader 0,954" (rabari/jcgweb/sameerk) = Apex+r224 → jangan; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Eksekusi**: `build_s6plus.py` (S6 + reader goodpjw pada perna Raptor + OF terakhir dgn deadline + blend 3 perna + monitor RAM + mode lenient), sonda `s6probe`, rehearsal `s6plusr`; submit varian setelah reset jatah 07:00 WIB.
 - **Rencana**: `STRATEGI_PERAK.md` §0 (strategi berpusat S6; merger tetap tuas terbesar; final A = S6/varian terbaik, B = beda mekanisme/bersih).
+
+## Catatan status terkini — 19 Okt 2026 02:33 WIB
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; medali ditentukan split privat 70%). `g6c`, `g12`, `g13` masih PENDING; dua kernel training murid r4 di akun alver masih QUEUED. Kuota main/alver/nxtirfan: 19,87/17,81/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

@@ -38,20 +38,18 @@ The competition objective is to predict the probability of 12 abnormalities for 
 
 ---
 
-# Agent Handoff (Claude Code / OpenCode / harness lain)
+# Agent Handoff
 
-Competition status and next steps live in Indonesian-language docs at repo root — **read them in this order**:
+Status and next steps live in Indonesian-language project docs. Read in this order:
 
-1. `CLAUDE.md` / `AGENTS.md` — mission, hard rules (commit style, credentials, accounts + compliance note)
-2. `MEMORY.md` — current facts & locked decisions (<2 min read)
-3. `STRATEGI_0960.md` §0.3 (15 Oct) — **active plan**: R7 + mirrored Raptor 384/224 + S6F + own student, 2×2 tests, final A/B; `STRATEGI_PERAK.md` (+ `docs/PLAN_B.md` §0000) — silver strategy, probability model, fallbacks
-4. `HANDOFF.md` — live status + work order (quickstart in §0b)
-5. `laporan_push.md` — submission log (§2) & findings
-6. `reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md` (latest research) and `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md` — full competition scrape (overview, data, leaderboard, 182 discussion topics, 169 notebooks, datasets/models); `docs/RESEARCH_NOTES.md` §36–§46 — deep research; older reports in `reports/` and `research_notes/` are archives
+1. `AGENTS.md` / `CLAUDE.md` — project rules and concise status
+2. `MEMORY.md` — current facts and decisions
+3. `STRATEGI_PERAK.md` §0 — active silver plan; `STRATEGI_0960.md` is historical
+4. `HANDOFF.md` §0 — live status and next actions
+5. `laporan_push.md` — submission scores and evaluation history
+6. `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md` — latest research; earlier `reports/` and `research_notes/` are dated archives
 
-Status (15 Oct 2026 ~21:10 WIB): best public LB **0.956**, rank 398 of 6,040. The public silver line (rank 301) is now **0.957** (327 teams at ≥0.957; 941 teams at exactly 0.956). Every public step to 0.957 came from adding a diverse model (a private knee-centred model at 0.2; nartaa's all-data S6 ConvNeXt at 0.4 of the compact slot). Our recipe: heliosli R7 + nartaa Raptor 384/224 with anatomical mirror + **S6F** (`build_r7murid.py s6f=`) + **our own ConvNeXt-T student r2a** (pseudo-labels = report consensus + R7 out-of-fold teacher; gold-58 0.928). Pending: `r7v4c40` (flip TTA + student 0.40); scheduled 16 Oct `r7v3s` (S6F + student) and `r7v3c40`; 17 Oct student training (4 folds + 2 full-data + r2c). Silver cannot be guaranteed.
-
-Multi-account note: `docs/IZIN_AKUN_KEDUA.md` archives a one-sentence organizer reply; Rules 5.a/5.b make multi-account use risky — see `docs/DRAF_PESAN_KAGGLE_SUPPORT.md`. Credentials: `akun_kaggle/` is gitignored — never print `kaggle.json`.
+Status (19 Oct 2026, 02:33 WIB): public LB **0.958, rank 467/6,187**; the current top-5% public cutoff is rank 309, but medals use the private 70% split. Submissions 57357991 (`g6c`), 57359383 (`g12`), and 57362095 (`g13`) remain PENDING. Two private r4 student-training kernels are queued on the alver account; no new submission has been sent. The experiment uses validated OOF B-leg seed 0; seed 1 lowered gold AUC. Silver is uncertain.
 
 ---
 

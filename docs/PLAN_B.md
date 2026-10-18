@@ -1,4 +1,6 @@
-# PLAN B — bila Apex + OrthoFoundation (submisi 57044355) tidak optimal (≤0,951)
+# PLAN B — arsip cadangan historis (asal: Apex + OrthoFoundation 57044355)
+
+> Status 19 Okt 2026: dokumen ini bukan rencana aktif. Ikuti `STRATEGI_PERAK.md` §0. Saat ini LB 0,958 rank 467/6.187, tiga submission terbaru masih PENDING, dan dua kernel murid r4 menunggu alokasi GPU di alver. Detail ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
 > Disusun 10 Okt 2026 ~22:05 WIB (sesi Claude Code; hanya akun utama). Pelengkap `STRATEGI_PERAK.md`. Skor 57044355 keluar ±04:00 WIB 11 Okt; dokumen ini sudah memuat tindakan utk tiap kemungkinan hasil.
 > Papan acuan: 10 Okt 21:43 WIB (5.673 tim; ≥0,951 = 352; ≥0,952 = 221; =0,950 = 582; kita rank 551; 5 % ≈ rank 284; 10 % ≈ rank 567).
 

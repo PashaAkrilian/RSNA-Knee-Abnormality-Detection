@@ -167,3 +167,6 @@ Template kernel eval emas-58 sudah ada & terbukti (commit-run, bukan submisi; st
 - Belum dicek: apakah goodpjw mengecualikan gold-58 dari train fold0–2 (dataset punya `oof.py` tapi tak diverifikasi) — bila termasuk, Δ relatif stack tetap sah (baseline & kandidat sama-sama "melihat" emas), tapi angka absolut emas jangan dikutip.
 - Provenance tbongc/royalacecat (korpus, fold, inklusi emas) tak terdokumentasi → H5 hanya screening; LB-lah yang memutus.
 - `kaggle datasets files` untuk `nartaa/rsna-knee-oai-original384-s42-pair` tak bisa dicek (privat) — asumsi "tak ada ckpt tambahan di privat" tak bisa dipastikan.
+
+## Catatan status terkini — 19 Okt 2026 02:33 WIB
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; medali ditentukan split privat 70%). `g6c`, `g12`, `g13` masih PENDING; dua kernel training murid r4 di akun alver masih QUEUED. Kuota main/alver/nxtirfan: 19,87/17,81/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

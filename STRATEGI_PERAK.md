@@ -1,6 +1,6 @@
 # STRATEGI PERAK — RSNA Knee 2026 (rencana ditulis 15 Okt; status disegarkan 19 Okt 2026)
 > **Target user: PERAK sebelum kompetisi berakhir (final 22 Okt 23:59 UTC = 23 Okt 06:59 WIB).** Dokumen ini = RENCANA + ATURAN KEPUTUSAN yang berlaku 16–22 Okt.
-> Status harian: `HANDOFF.md` §0c/§I · hasil submisi: `laporan_push.md` §2 · bukti riset: `reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md` · simulasi: `silver_sim_cluster.py` · cadangan: `docs/PLAN_B.md` §0000. Bagian "Arsip" di bawah = rencana 10–12 Okt (era S6), hanya sejarah.
+> Status harian dan kerja aktif: `HANDOFF.md` §0/§0c · hasil submisi: `laporan_push.md` §2 · bukti riset: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md` · simulasi: `silver_sim_cluster.py` · `docs/PLAN_B.md` = arsip cadangan. Bagian "Arsip" di bawah = rencana 10–12 Okt (era S6), hanya sejarah.
 
 ## 0. RENCANA PERAK (AKTIF, diperbarui 19 Okt)
 
@@ -22,6 +22,12 @@
 - Timer `rsna-rankpoll` (5 mnt) dan `rsna-requeue` (2 mnt) aktif. Kuota GPU main/alver/nxtirfan: 19,87/17,81/4,62 jam; reset 24 Okt 07:00 WIB.
 - Tidak ada hasil baru yang mengubah pohon keputusan: tunggu skor g6c/g12/g13; jangan gunakan jatah tersisa 18 Okt; murid r4/`g14` hanya bila g13 terkonfirmasi.
 
+
+#### 0.00d Status dan keputusan 19 Okt 02:33 WIB
+- Papan publik 02:33 WIB: **0,958 rank 467/6.187**; cutoff aritmetika publik top 5% = rank 309. Medali ditentukan split privat 70%. `g6c` 57357991, `g12` 57359383, dan `g13` 57362095 masih PENDING.
+- B-leg seed0 memberi 3.325 OOF UID tanpa gold overlap; korelasi logits gold dengan pembuat ρ=0,9984. Seed1 ditolak (gold 0,92065; rerata seed0+1 0,92398 < seed0 0,92448). Engine8/9 dan label dual-teacher/Argon4 ditahan karena tidak ada validasi independen.
+- Dataset r4 privat dan dua kernel 12 epoch sudah dikirim ke alver; `student-r4-a` folds 0–1 dan `student-r4-b` folds 2–3 masih QUEUED. Kuota main/alver/nxtirfan 19,87/17,81/4,62 jam.
+- Lanjutkan r4 setelah kernel berjalan; periksa semua fold, emas dikecualikan, inferensi gold, dan waktu run. Jangan buat `g14` kecuali g13 naik pada papan dan r4 lulus. Rincian metode, aset yang ditolak, dan limitasi metrik ada di laporan riset 19 Okt.
 
 ### 0.1 Apa itu perak di kompetisi ini
 - **PEMBARUAN 17 Okt 03:00**: papan 01:51 WIB (6.103 tim): ≥0,959 = 124, **blok 0,958 = 488 (kebanyakan salinan R6+flip goodpjw/heliosli), garis perak publik = rank 305 (0,958)**; **kita 0,958 rank 317** (salinan user goodpjw 57269378). Simulasi ulang (`silver_sim_1017.py`, δ relatif thd klaster goodpjw): salinan murni 0–12 %; unik δ 0 → 25–30 %; δ +0,0003 → 40–62 %; **δ +0,0006 → 57–86 %**; δ +0,001 → 76–99 %. Kandidat unik: `r7v6a` (gold +0,0031 vs goodpjw, P 0,84), `g6a` (gold +0,0015, P 0,69). Papan publik condong ke R6+flip (0,958 vs 0,957) → dua sinyal saling tarik, keduanya dlm derau.

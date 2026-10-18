@@ -1,4 +1,6 @@
-# STRATEGI 0,960 — RSNA Knee (disusun 12 Okt 2026 ±14:15 WIB)
+# STRATEGI 0,960 — RSNA Knee (arsip, disusun 12 Okt 2026 ±14:15 WIB)
+
+> **Status aktif per 19 Okt 2026:** gunakan `STRATEGI_PERAK.md` §0 dan `HANDOFF.md` §0. LB publik 0,958 rank 467/6.187; tiga submission g6c/g12/g13 masih PENDING. Eksperimen murid r4 sudah dikirim ke antrean alver. Riset dan gerbang keputusan terbaru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Isi di bawah ini adalah rencana historis.
 
 > Dasar: scrape kompetisi 12 Okt (`reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`), kode repo (`build_s6plus.py`, `build_student_*.py`), bundel S6 (`manifest.json` compact-v1) dan kode latih compact heliosli yang tertanam di `kaggle_base/s6_heliosli_public_20261011.ipynb`.
 > Status awal: LB terbaik **0,954** (klon S6 57051680), peringkat 455/5.807. Submisi hari ini: 0/5 terpakai. Kuota GPU: alver 12,0 j (terverifikasi), main ±15,8 j dan nxtirfan ±3,5 j (catatan repo); +30 j/akun pada 17 Okt 07:00 WIB.

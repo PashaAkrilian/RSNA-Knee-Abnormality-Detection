@@ -122,3 +122,6 @@ Mayoritas penutupan kita didukung publik (metadata = bukan shortcut; encoder bes
 ### Gaps
 - Tak ada sumber yang mengevaluasi eksplisit "label lebih baik di dalam stack ≥0,949" (semua diskusi label diukur vs gold-58 atau LB solo menengah).
 - Tak ada data publik tentang "KneeNet" (nama arsitektur internal kita) → konfirmasi hanya lewat analogi backbone-alternatif.
+
+## Catatan status terkini — 19 Okt 2026 02:33 WIB
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; medali ditentukan split privat 70%). `g6c`, `g12`, `g13` masih PENDING; dua kernel training murid r4 di akun alver masih QUEUED. Kuota main/alver/nxtirfan: 19,87/17,81/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

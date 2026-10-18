@@ -43,3 +43,6 @@
 - R7 + r224 cermin + flip (setara puncak blok): ±25–35 %.
 - + model sendiri yang menambah +0,001 (mencapai 0,957): ±40–55 %.
 - Merger dgn tim ≥0,958 (tenggat 15 Okt 23:59 UTC; keputusan user, ditolak 11 Okt): lebih tinggi.
+
+## Catatan status terkini — 19 Okt 2026 02:33 WIB
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; medali ditentukan split privat 70%). `g6c`, `g12`, `g13` masih PENDING; dua kernel training murid r4 di akun alver masih QUEUED. Kuota main/alver/nxtirfan: 19,87/17,81/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

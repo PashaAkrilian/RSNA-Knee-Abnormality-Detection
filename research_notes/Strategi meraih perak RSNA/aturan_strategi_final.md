@@ -173,3 +173,6 @@ Papan publik 9 Okt (unduhan resmi 2026-10-09 14:48 UTC, 5.584 tim): garis perak 
 - Metadata & papan: Kaggle API `competitions.CompetitionService/GetCompetition`, `kaggle competitions leaderboard -d` (snapshot 2026-10-09T14:48Z)
 - Medali: https://www.kaggle.com/progression/competitions
 - Post-mortem: gregpark.io (2012), chioka.in, kaggle.com writeups (home-credit, playground-series-s6e7, rogii ×2, pengwang91, 46th ai-agent-security), alanscottencinas.com (7 & 12 Agu 2026), amontgomerie.github.io, datacamp, uselessai.in
+
+## Catatan status terkini — 19 Okt 2026 02:33 WIB
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; medali ditentukan split privat 70%). `g6c`, `g12`, `g13` masih PENDING; dua kernel training murid r4 di akun alver masih QUEUED. Kuota main/alver/nxtirfan: 19,87/17,81/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

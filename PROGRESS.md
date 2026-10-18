@@ -1707,3 +1707,12 @@ ATURAN PENULISAN:
 - Kaggle API (02:04 WIB): `g6c` 57357991, `g12` 57359383, `g13` 57362095 tetap PENDING; tidak ada skor baru. Leaderboard publik terunduh 02:08 WIB: **Krazy KIller 0,958 rank 465/6.184**, best COMPLETE tetap `g9a`/`g6a` 0,958.
 - Timer `rsna-rankpoll` (5 mnt) dan `rsna-requeue` (2 mnt) aktif. Kuota main/alver/nxtirfan = **19,87/17,81/4,62 jam**, refresh 24 Okt 07:00 WIB. Sisa 1 jatah 18 Okt tetap dibiarkan.
 - Dokumen aktif diselaraskan: `MEMORY.md`, `HANDOFF.md`, `laporan_push.md`, `STRATEGI_PERAK.md`, serta salinan ringkas `AGENTS.md`/`CLAUDE.md`. Arah eksperimen tidak berubah: tunggu skor g13; r4/g14 bersyarat.
+
+
+## 67. 19 Okt 2026 02:33 WIB — riset silver, audit aset, dan murid r4 masuk antrean
+- Papan publik yang diunduh 02:33 WIB: **Krazy KIller 0,958 rank 467/6.187**; cutoff top 5% publik rank 309. Skor final memakai split privat 70%, jadi rank publik bukan prediksi pasti medali. Tiga submission `g6c` 57357991, `g12` 57359383, `g13` 57362095 masih PENDING pada API 02:33.
+- Audit `scan_public_updates.py`: tujuh dataset dan satu notebook belum tercatat. `govind123445/knee-12` hanya audit data. Seed1 B-leg tidak membantu: gold 0,92065; blend seed0+seed1 0,92398 vs seed0 empat fold 0,92448, Spearman 0,9819. Engine8/9 belum menyertakan OOF/gold; label dual-teacher dan Argon4 beragam (ρ 0,501/0,591 terhadap r3) tanpa uji kualitas independen. Tidak dilatih.
+- Validasi B-leg seed0: empat fold memberi 3.325 UID OOF bersih dan cocok dengan hash split; AUC label konsensus 0,8860 vs R7 0,8830 hanya mengukur kesesuaian, bukan akurasi. Integrasi gold ρ 0,9984. Sweep OOF sebelumnya pada irisan 2.651 menunjukkan B-leg .24 mengganti R7 .24 +0,0033 (P=1,00); gold menetapkan g13 0,9415 sebagai bobot terbaik.
+- Dibuat label r4 = 0,5 konsensus + 0,25 OOF-R7 + 0,25 OOF-B-leg; fallback tanpa OOF-B-leg = 0,5 konsensus + 0,5 OOF-R7. Sebanyak 3.325 non-gold memakai B-leg, 1.024 fallback; semua 58 gold identik dengan v0 dan dikecualikan dari loss. Dataset label privat diunggah ke alver.
+- Kernel `rsna-knee-student-r4-a` (fold0–1) dan `...-b` (fold2–3), ConvNeXt-T, warm goodpjw, 12 epoch, didorong ke alver; masih QUEUED pada 02:33. Kuota utama/alver/nxtirfan 19,87/17,81/4,62 jam. Tidak ada training di utama, tidak memakai nxtirfan, dan tidak ada submission baru. `g14` hanya setelah g13 mengonfirmasi peningkatan dan r4 lulus gold.
+- Detail: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`; dokumen status sinkron: MEMORY, HANDOFF, STRATEGI_PERAK, laporan_push, AGENTS/CLAUDE, README.
