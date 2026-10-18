@@ -12,9 +12,9 @@
 | Tepat 0,958 | **1.089 tim** (rank 169–1.257) |
 | Tepat 0,957 | 197 tim (rank 1.258–1.454); total ≥0,957 = 1.454 |
 | Batas emas (10 + 0,2 %) | rank 22 = 0,964 |
-| **Batas perak (5 %)** | **rank 308 = 0,958** (di tengah blok 0,958) |
+| **Batas silver (5 %)** | **rank 308 = 0,958** (di tengah blok 0,958) |
 | Batas perunggu (10 %) | rank 617 = 0,958 |
-| **Krazy KIller** | **rank 448, 0,958** (139 submisi) = urutan ke-280 dari 1.089 di blok 0,958; perlu naik 140 peringkat, atau mencapai 0,959 (rank ≤168 = pasti perak) |
+| **Krazy KIller** | **rank 448, 0,958** (139 submisi) = urutan ke-280 dari 1.089 di blok 0,958; perlu naik 140 peringkat, atau mencapai 0,959 (rank ≤168 = pasti silver) |
 
 Catatan: blok 0,958 tumbuh dari 488 tim (17 Okt pagi) menjadi 1.089. Di dalam blok, urutan ditentukan skor yang tidak dibulatkan atau waktu submit, jadi menyalin resep publik tidak menaikkan rank.
 
@@ -72,4 +72,4 @@ Catatan: (a) Label omerzalman paling dekat dengan "kebenaran" gold karena memuat
 4. Label baru tidak mengubah rencana: melatih murid baru butuh 2–3 hari, dan label omerzalman ≈ label v3 kita (ρ 0,85).
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

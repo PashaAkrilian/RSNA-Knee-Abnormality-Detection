@@ -1,7 +1,7 @@
 # PLAN B — arsip cadangan historis (asal: Apex + OrthoFoundation 57044355)
 
-> Status 19 Okt 2026: dokumen ini bukan rencana aktif. Ikuti `STRATEGI_PERAK.md` §0. Saat ini LB 0,958 rank 467/6.187, tiga submission terbaru masih PENDING, dan dua kernel murid r4 menunggu alokasi GPU di alver. Detail ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
-> Disusun 10 Okt 2026 ~22:05 WIB (sesi Claude Code; hanya akun utama). Pelengkap `STRATEGI_PERAK.md`. Skor 57044355 keluar ±04:00 WIB 11 Okt; dokumen ini sudah memuat tindakan utk tiap kemungkinan hasil.
+> Status 19 Okt 2026: dokumen ini bukan rencana aktif. Ikuti `STRATEGI_SILVER.md` §0. Saat ini LB 0,958 rank 467/6.187, tiga submission terbaru masih PENDING, dan dua kernel murid r4 menunggu alokasi GPU di alver. Detail ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
+> Disusun 10 Okt 2026 ~22:05 WIB (sesi Claude Code; hanya akun utama). Pelengkap `STRATEGI_SILVER.md`. Skor 57044355 keluar ±04:00 WIB 11 Okt; dokumen ini sudah memuat tindakan utk tiap kemungkinan hasil.
 > Papan acuan: 10 Okt 21:43 WIB (5.673 tim; ≥0,951 = 352; ≥0,952 = 221; =0,950 = 582; kita rank 551; 5 % ≈ rank 284; 10 % ≈ rank 567).
 
 ## 0000. UPDATE 15 Okt malam — cadangan bila S6F/murid merugikan
@@ -17,9 +17,9 @@
 
 ## 00. UPDATE 11 Okt 03:30 WIB — S6 HIDUP LAGI: strategi kini BERPUSAT S6 (mengganti prioritas §0–§3 di bawah)
 - **Fakta**: 02:50 WIB heliosli memulihkan dataset `heliosli/rsna-knee-compact-v1` (publik; V10 = V13; semua versi V1–V13 publik) dan menerbitkan ulang notebook S6 publik (**Raptor 0,7 + compact 0,3 = 0,954 satu klik**; thread 748141 "feel free to blend my model with yours"). **User sudah men-submit salinan S6: 57051680 (02:56 WIB, PENDING)**; tahap compact GPU-bound ±25 dtk/studi/pekerja (2 pekerja) → ±4–5 j total → hasil ±07:30–08:30 WIB.
-- **Papan 02:59 WIB**: 5.699 tim; kita rank 599 (0,950) = DI BAWAH garis perunggu publik (rank 570); perak rank 285 (0,951); ≥0,954 = 141. Dataran 0,950 = 618 tim; dataran 0,954 akan membengkak.
+- **Papan 02:59 WIB**: 5.699 tim; kita rank 599 (0,950) = DI BAWAH garis perunggu publik (rank 570); silver rank 285 (0,951); ≥0,954 = 141. Dataran 0,950 = 618 tim; dataran 0,954 akan membengkak.
 - **KOREKSI PREMIS OF**: "Raptor 0,7 + OF 0,3 = 0,951–0,954" SALAH — itu Raptor + COMPACT (S5 0,951; S6 0,954); notebook heliosli hanya memakai KODE dataset OF, bukan bobot `best.pt`. Nilai LB OF fold0 tidak pernah diukur; prior kontribusi ≥+0,001 di atas S6 ≤20 % (OF validasi lemah 0,9318, epoch 7/16). Tuas OF turun peringkat (infrastruktur v4.1 tetap siap bila perlu).
-- **Model blok klon**: klon S6 berimpit (skor privat bersama, urutan dalam blok ≈ acak/waktu); varian berbeda dgn δ>0 melompati seluruh blok, δ<0 jatuh di bawahnya → pilih perna dgn prior δ>0 tertinggi (reader > OF > r224/dino-sejenis); lihat `STRATEGI_PERAK.md` §2.
+- **Model blok klon**: klon S6 berimpit (skor privat bersama, urutan dalam blok ≈ acak/waktu); varian berbeda dgn δ>0 melompati seluruh blok, δ<0 jatuh di bawahnya → pilih perna dgn prior δ>0 tertinggi (reader > OF > r224/dino-sejenis); lihat `STRATEGI_SILVER.md` §2.
 - **Pohon keputusan baru (menggantikan §2 untuk submisi berikut)**:
   | Hasil klon S6 (57051680) | Tindakan |
   |---|---|
@@ -47,7 +47,7 @@
 - **Uji bertingkat (commit-run, log terbaca; GPU akun utama, tanpa submisi)**: `rsna-knee-apexof4r` (OF dulu, pseudo-teruji 96 studi dari TRAIN, injeksi kill, daur-ulang tiap 2 potongan) dan `rsna-knee-apexof4d` (diagnostik: urutan LAMA OF sesudah Apex pada pseudo-uji 1.322 studi — mereproduksi kondisi 57044355 dgn log). Lalu **percobaan `apexof4t` (loud=1) 11 Okt setelah 07:00 WIB** (1 submisi agen); bila OF jalan ±7 j ⇒ skor = vonis nyata; bila gagal ⇒ ERROR cepat (±1,5 j) ⇒ kita tahu lingkungan penilaian berbeda.
 
 ## 1. Peta peluang (simulasi `silver_prob_sim.py`, model regresi-ke-rata-rata + noise; rentang = [s=0,3/σ=0,003 | s=0,5/σ=0,004 | s=0,7/σ=0,005])
-| Skill sejati (publik 0,950 + naik δ) | P(perak) | P(PERUNGGU) |
+| Skill sejati (publik 0,950 + naik δ) | P(silver) | P(PERUNGGU) |
 |---|---|---|
 | δ = 0 (Apex sekarang) | 13–18 % (tengah 18 %) | **25–41 % (tengah 35 %)** |
 | +0,001 | 19–27 % | 33–53 % |
@@ -55,7 +55,7 @@
 | +0,003 | 33–52 % | 50–77 % |
 | +0,004 | 42–64 % | 58–85 % |
 - **KOREKSI**: perunggu BUKAN 85–95 % lagi. Dataran 0,950 kini 582 tim dan garis perunggu (top 10 % ≈ rank 567) tepat di ujungnya (kita rank 551) → perunggu ≈ koin yg condong kalah bila tak ada perbaikan. Setiap +0,002 sejati ≈ +15–25 poin perunggu.
-- **Dua final menguntungkan bila galat privatnya TIDAK berkorelasi** (maks dari 2 tarikan): ρ=0,9 → perak 17→21 %, perunggu 34→41 %; ρ=0,8 → 22 % / 42 %; ρ=0,6 → 26 % / 48 %; ρ=0,4 → 29 % / 51 %. Murah: pilih 2 final dgn skor publik setara tetapi mekanisme berbeda.
+- **Dua final menguntungkan bila galat privatnya TIDAK berkorelasi** (maks dari 2 tarikan): ρ=0,9 → silver 17→21 %, perunggu 34→41 %; ρ=0,8 → 22 % / 42 %; ρ=0,6 → 26 % / 48 %; ρ=0,4 → 29 % / 51 %. Murah: pilih 2 final dgn skor publik setara tetapi mekanisme berbeda.
 
 ## 2. Pohon keputusan berdasar skor 57044355 (Apex 0,70 + OF fold0 0,30)
 | Hasil | Arti | Tindakan (agen) |
@@ -93,7 +93,7 @@ Tidak bisa digabung: `mattiaangeli` (282 submisi → gabungan > batas).
 
 ## 4. Jalur B2 — DUA FINAL TERDEKORELASI (biaya nol)
 - Syarat: skor publik setara (±0,001), mekanisme beda: Apex (nartaa+reader) vs Apex+OF (+ pengetahuan eksternal) vs keluarga lain (fork r224/rabari 0,950). Hindari dua titik bobot dari blend yg sama.
-- Estimasi manfaat: +4–12 poin perak, +7–17 poin perunggu (§1). Final dipilih MANUAL di UI (auto-fill §3.18.c), verifikasi via daftar submisi.
+- Estimasi manfaat: +4–12 poin silver, +7–17 poin perunggu (§1). Final dipilih MANUAL di UI (auto-fill §3.18.c), verifikasi via daftar submisi.
 
 ## 5. Jalur B3 — tuas teknis cadangan (diurut EV; semua murah-menengah)
 | # | Tuas | Bukti/EV | Status |
@@ -120,9 +120,9 @@ Tidak bisa digabung: `mattiaangeli` (282 submisi → gabungan > batas).
 | 21–22 Okt | pilih 2 final manual | dari submisi terskor; verifikasi via daftar |
 
 ## 8. Risiko Plan B
-- Mitra menolak (mayoritas) → B2 saja; peluang tetap ±17–29 % perak / 34–51 % perunggu.
+- Mitra menolak (mayoritas) → B2 saja; peluang tetap ±17–29 % silver / 34–51 % perunggu.
 - Skor publik bukan prediktor privat di dataran → jangan mengejar selisih 0,001.
 - Bundel heliosli (dan ckpt OAI nartaa) = pengetahuan eksternal tak terklarifikasi host (743416: 35 komentar, host diam). Jalur bersih 0,944 BUKAN lagi zona perunggu (6 Okt: perunggu 0,944; 8 Okt: 0,947; 10 Okt: 0,950 — rank 0,944 ≈1.387) → hanya perlindungan kepatuhan, nilai medali ≈0. Putuskan 21–22 Okt setelah cek ulang 743416; selama host diam dan OAI 'accessible' (741819), kedua final tetap dari keluarga Apex.
 
 ## Status terkini — 19 Okt 2026 02:56 WIB
-Dokumen ini arsip rencana lama. Untuk status dan keputusan aktif, lihat `MEMORY.md`, `HANDOFF.md` §0c, `STRATEGI_PERAK.md` §0, dan `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan terakhir: 0,958 rank 467/6.187; `g6c`, `g12`, `g13` masih PENDING pada cek API 02:55. Dua kernel murid r4 alver di-requeue dua kali, terakhir pukul 02:51, dan kini RUNNING pada cek 02:55–02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam.
+Dokumen ini arsip rencana lama. Untuk status dan keputusan aktif, lihat `MEMORY.md`, `HANDOFF.md` §0c, `STRATEGI_SILVER.md` §0, dan `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan terakhir: 0,958 rank 467/6.187; `g6c`, `g12`, `g13` masih PENDING pada cek API 02:55. Dua kernel murid r4 alver di-requeue dua kali, terakhir pukul 02:51, dan kini RUNNING pada cek 02:55–02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam.

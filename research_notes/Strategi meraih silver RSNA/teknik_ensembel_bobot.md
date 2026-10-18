@@ -1,9 +1,9 @@
 # Teknik Ensembling/Fusion untuk Naik dari 0,950 ke ≥0,951 (RSNA Knee 2026)
 
-> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_SILVER.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
 
 
-> Riset publik per 9 Okt 2026. Posisi: stack "Apex" (ckpt nartaa r384 + reader ConvNeXt goodpjw, rank-mean) = LB publik 0,950; perak butuh ≥0,951 (257 tim sudah ≥0,951 per papan 9 Okt — [MEMORY.md](../../MEMORY.md) §1, internal; sumber data = leaderboard publik Kaggle).
+> Riset publik per 9 Okt 2026. Posisi: stack "Apex" (ckpt nartaa r384 + reader ConvNeXt goodpjw, rank-mean) = LB publik 0,950; silver butuh ≥0,951 (257 tim sudah ≥0,951 per papan 9 Okt — [MEMORY.md](../../MEMORY.md) §1, internal; sumber data = leaderboard publik Kaggle).
 > Klaim berlabel "(internal)" berasal dari pengukuran tim di repo ini (MEMORY.md/PROGRESS.md), bukan sumber luar.
 
 ## Q1 — Teknik fusion apa yang dipakai peserta top RSNA Knee 2026, dan berapa liftnya?
@@ -87,7 +87,7 @@ Dengan 58 gold label (SE per AUC ≈0,01) dan noise LB ±0,002, optimisasi bobot
 Dengan noise ±0,002 dan maks 2 submisi final: delta <0,002 = noise; 0,002–0,003 = lemah (butuh konfirmasi OOF); ≥0,004 = sinyal. Bedakan sinyal dengan menguji DUA HIPOTESIS BERBEDA SECARA STRUKTUR (bukan dua titik bobot), plus konfirmasi arah di OOF/gold-58, dan pastikan keputusan tidak bergantung pada satu submisi.
 
 ### Cited Findings
-- **Noise empiris internal**: noise antar-latih pada LB 3 desimal ≈0,002; garis perak bergerak 0,945 (3 Okt) → 0,950 (8 Okt) → proyeksi 0,951–0,953 (22 Okt) — [MEMORY.md](../../MEMORY.md) §1–§2 (internal; data = leaderboard publik Kaggle).
+- **Noise empiris internal**: noise antar-latih pada LB 3 desimal ≈0,002; garis silver bergerak 0,945 (3 Okt) → 0,950 (8 Okt) → proyeksi 0,951–0,953 (22 Okt) — [MEMORY.md](../../MEMORY.md) §1–§2 (internal; data = leaderboard publik Kaggle).
 - **Biaya adaptif per submisi**: error LB tumbuh O(√(k/n)) — [Ladder slides](https://www.cs.columbia.edu/~djhsu/coms6998-f17/student-work/slides/leaderboards.pdf).
 - **Test kecil → publik & private lebih noisy**: [NeurIPS 2019 meta-analysis](https://papers.neurips.cc/paper_files/paper/2019/file/ee39e503b6bedf0c98c388b7e8589aca-Paper.pdf). Konteks: split publik RSNA Knee kemungkinan kecil dari ~1.322 studi test (ukuran pasti tak diketahui — internal).
 - **Era kode-kompetisi: shakeup publik→privat besar** (sumber komunitas, kualitas sedang — pakai sebagai peringatan, bukan fakta): "in the modern code-competition era, a tiny public LB means the public and private boards are close to uncorrelated (2023+ median: 0.96)" — [shakeup-radar (GitHub, kalibrasi Meta Kaggle)](https://github.com/tusharhsharma/shakeup-radar).
@@ -98,7 +98,7 @@ Dengan noise ±0,002 dan maks 2 submisi final: delta <0,002 = noise; 0,002–0,0
 1. **Ambang**: ΔLB < 0,002 → tolak / anggap noise. Δ = +0,001 → hanya dipakai jika OOF juga naik dengan arah sama. Δ ≥ +0,002 dengan arah OOF sama → terima.
 2. **Dua submisi final harus beda mekanisme**, mis.: (A) stack 0,950 + 1 arm baru independen (r224/reader) dengan bobot tetap; (B) arm baru + aturan per-label exclude (bukti internal/kerangka Q1). Bukan dua varian bobot 0,6/0,4 vs 0,7/0,3 — keduanya akan berbeda <noise.
 3. **Triangulasi sebelum submit**: setiap kandidat dinilai di (i) OOF fold, (ii) gold-58 (arah saja), (iii) prinsip literatur (Q2). Hanya kandidat yang lulus 2 dari 3 yang layak memakai kuota submisi.
-4. **Rencana jika garis perak naik ke 0,953**: butuh +0,003 → rekayasa bobot pada stack lama tidak akan cukup (lihat Q1: lift teknik ≪ arm baru); prioritaskan arm tambahan / variance reduction (TTA/EMA/seed-avg, terbukti +0,001–0,003 di writeup juara — [DungNB](https://www.kaggle.com/competitions/siim-covid19-detection/writeups/dungnb-1st-place-solution)).
+4. **Rencana jika garis silver naik ke 0,953**: butuh +0,003 → rekayasa bobot pada stack lama tidak akan cukup (lihat Q1: lift teknik ≪ arm baru); prioritaskan arm tambahan / variance reduction (TTA/EMA/seed-avg, terbukti +0,001–0,003 di writeup juara — [DungNB](https://www.kaggle.com/competitions/siim-covid19-detection/writeups/dungnb-1st-place-solution)).
 5. **Jangan re-submit varian identik** untuk "mengukur noise" — kuota 5/hari terlalu berharga dan setiap probe menambah risiko adaptif (Ladder).
 
 ### Gaps
@@ -117,4 +117,4 @@ Dengan noise ±0,002 dan maks 2 submisi final: delta <0,002 = noise; 0,002–0,0
 | ✗ | Backbone lebih besar, model sekeluarga tambahan, label smoothing | +0,001 = noise / tak menambah / lebih buruk | [research-report.md](https://github.com/ahmed-hesham07/RSNA-Knee-Abnormality-Detection/blob/main/research-report.md); [hengck23](https://github.com/hengck23/solution-rsna-2024-lumbar-spine); [siwooyong](https://github.com/siwooyong/RSNA-2024-Lumbar-Spine-Degenerative-Classification) |
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

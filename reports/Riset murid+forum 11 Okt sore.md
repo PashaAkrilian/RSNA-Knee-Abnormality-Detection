@@ -3,7 +3,7 @@
 
 ## A. Papan (11 Okt 17:05, 5.734 tim)
 - Kita **rank 289 @ 0,954**; dataran 0,954 = **244 tim** (pagi 49 → sore 244, klon S6 menyebar).
-- Garis perak top 5 % = **rank 286** — jatuh DI DALAM dataran. **Perak aman = ≥0,955 (rank 95); ideal 0,957+ (rank 61).**
+- Garis silver top 5 % = **rank 286** — jatuh DI DALAM dataran. **Silver aman = ≥0,955 (rank 95); ideal 0,957+ (rank 61).**
 - ≥0,960 = 33 tim (rank 25). hengck23 (0,949) bilang tim 0,960 pakai "one-shot learning" — tanpa detail. **0,960 tidak dijanjikan**; realistis dari jalur murid = **0,956–0,959**.
 
 ## B. Metode >0,954 yang kredibel
@@ -43,4 +43,4 @@
 - LB snapshot: forum subagen (11 Okt 10:05 UTC).
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

@@ -1,6 +1,6 @@
-# Strategi Meraih Perak RSNA Knee Abnormality Detection — Status Aturan & Pemilihan 2 Submisi Final
+# Strategi Meraih Silver RSNA Knee Abnormality Detection — Status Aturan & Pemilihan 2 Submisi Final
 
-> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_SILVER.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
 
 
 Konteks: 9 Okt 2026. Tim posisi 0,950 (rank 563/5.584). Deadline final 22 Okt 2026 23:59 UTC.
@@ -139,10 +139,10 @@ Merger (tenggat 15 Okt 23:59 UTC, bersamaan Entry Deadline) **tidak menambah kuo
 
 ---
 
-## 5. Proyeksi garis perak dari papan publik (9 Okt 2026)
+## 5. Proyeksi garis silver dari papan publik (9 Okt 2026)
 
 ### Takeaway
-Papan publik 9 Okt (unduhan resmi 2026-10-09 14:48 UTC, 5.584 tim): garis perak (top 5%) hari ini berada di **0,950 (rank 279)**; untuk naik ke 0,951 hanya perlu +15 tim di atas 0,951 (kini 264), ke 0,952 perlu +108 (kini 171), ke 0,953 perlu +150 (kini 129). Rentang proyeksi 0,951–0,953 masuk akal mengingat 455 tim menumpuk persis di 0,950 dan sisa 13 hari.
+Papan publik 9 Okt (unduhan resmi 2026-10-09 14:48 UTC, 5.584 tim): garis silver (top 5%) hari ini berada di **0,950 (rank 279)**; untuk naik ke 0,951 hanya perlu +15 tim di atas 0,951 (kini 264), ke 0,952 perlu +108 (kini 171), ke 0,953 perlu +150 (kini 129). Rentang proyeksi 0,951–0,953 masuk akal mengingat 455 tim menumpuk persis di 0,950 dan sisa 13 hari.
 
 ### Cited Findings
 - Ambang medali Kaggle untuk kompetisi 1.000+ tim: **Bronze = top 10%, Silver = top 5%, Gold = top 10 + 0,2%** (semakin banyak tim, makin banyak gold). — [Kaggle Progression (Competitions)](https://www.kaggle.com/progression/competitions)
@@ -156,12 +156,12 @@ Papan publik 9 Okt (unduhan resmi 2026-10-09 14:48 UTC, 5.584 tim): garis perak 
 - Konteks kepadatan: public LB hanya 30% test set (`leaderboardPercentage=30`), skor ditampilkan 3 desimal (`scoreTruncationNumDecimals=3`), sehingga ratusan tim bisa berbagi skor identik.
 
 ### Inferences
-- Butuh kenaikan nyata untuk masuk silver: dengan asumsi jumlah tim akhir ±5.600–6.000, garis perak akhir ≈ rank 280–300. Agar garis itu berada di 0,952, minimal ~110–130 tim harus melewati 0,951→0,952 dalam 13 hari; wajar karena 455 tim cuma butuh +0,002–0,003.
+- Butuh kenaikan nyata untuk masuk silver: dengan asumsi jumlah tim akhir ±5.600–6.000, garis silver akhir ≈ rank 280–300. Agar garis itu berada di 0,952, minimal ~110–130 tim harus melewati 0,951→0,952 dalam 13 hari; wajar karena 455 tim cuma butuh +0,002–0,003.
 - Satu kenaikan +0,001 hingga 0,951 memindahkan tim dari rank 563 ke dalam blok ≥0,951 (rank 1–264) di papan publik — tetapi kualifikasi medali dihitung di **private** leaderboard dengan jumlah tim saat deadline, jadi yang harus dioptimalkan adalah selisih CV/OOF vs kandidat lain, bukan rank publik harian.
-- Risiko terbesar proyeksi: overfitting public (lihat §3) — tim yang mengejar +0.001–0.002 di public 30% bisa turun di private 70%, menurunkan garis perak bagi yang konservatif dan menaikkannya bagi yang overfit.
+- Risiko terbesar proyeksi: overfitting public (lihat §3) — tim yang mengejar +0.001–0.002 di public 30% bisa turun di private 70%, menurunkan garis silver bagi yang konservatif dan menaikkannya bagi yang overfit.
 
 ### Gaps
-- Garis perak final hanya bisa diketahui setelah private leaderboard dibuka (22 Okt+); perhitungan di atas berbasis jumlah tim hari ini, sedangkan Kaggle menghitung medali dengan jumlah tim pada deadline (bisa berbeda beberapa posisi — lihat dataset Meta Kaggle "Kaggle Shakeup Atlas").
+- Garis silver final hanya bisa diketahui setelah private leaderboard dibuka (22 Okt+); perhitungan di atas berbasis jumlah tim hari ini, sedangkan Kaggle menghitung medali dengan jumlah tim pada deadline (bisa berbeda beberapa posisi — lihat dataset Meta Kaggle "Kaggle Shakeup Atlas").
 - Tidak tersedia data historis harian resmi untuk mengukur laju harian perpindahan garis (hanya snapshot 9 Okt; snapshot lb/ 14:32 UTC vs lb2/ 14:47 UTC menunjukkan perubahan minimal dalam 15 menit).
 
 ---
@@ -175,4 +175,4 @@ Papan publik 9 Okt (unduhan resmi 2026-10-09 14:48 UTC, 5.584 tim): garis perak 
 - Post-mortem: gregpark.io (2012), chioka.in, kaggle.com writeups (home-credit, playground-series-s6e7, rogii ×2, pengwang91, 46th ai-agent-security), alanscottencinas.com (7 & 12 Agu 2026), amontgomerie.github.io, datacamp, uselessai.in
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

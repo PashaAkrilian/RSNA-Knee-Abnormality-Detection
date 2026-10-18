@@ -1,4 +1,4 @@
-# Riset 15 Okt 2026 malam — komponen 0,957 dan jalan ke perak (sesi Claude Code)
+# Riset 15 Okt 2026 malam — komponen 0,957 dan jalan ke silver (sesi Claude Code)
 
 > Permintaan user: "coba riset dengan mendalam lagi saya mau silver dan riset ini juga
 > https://www.kaggle.com/code/bliverrigpdoge/r7-raptor-knee-centred-convnext".
@@ -10,7 +10,7 @@
 |---|---|
 | Tim | 6.040 |
 | ≥0,958 | 132 |
-| ≥0,957 | **327** → garis perak (rank 301) = **0,957** |
+| ≥0,957 | **327** → garis silver (rank 301) = **0,957** |
 | Tepat 0,956 | 941 (rank 328–1.268) |
 | Kita | **rank 398** (0,956) ≈ ke-71 di blok 0,956 |
 
@@ -52,12 +52,12 @@
 - **Rencana 16 Okt 07:01**: `r7v3s` + `r7v3c40` (keduanya tanpa flip) → `r7v3s` vs `r7v3c40` = efek S6F; `r7v4c40` vs `r7v3c40` = efek flip. Varian tanpa flip dipilih agar S6F pasti sempat jalan (log run penilaian tak terbaca).
 
 ## 7. Riset kuantitatif (15 Okt 21:30–22:10)
-### 7.1 Simulasi perak sadar-klaster (`silver_sim_cluster.py`, papan nyata 15 Okt)
-Blok 0,956–0,957 = keluarga resep (salinan byte-identik → satu skor privat per keluarga, seri dipecah waktu submit). Proyeksi akhir 6.150 tim, perak = rank ≤308; keluarga: R7 dasar 380, R7+r224 520, R7+r224 cermin 230, R6+flip 180, r224 cermin + S6F 140, variasi kecil 150; tim kuat ≥0,958 200–300.
+### 7.1 Simulasi silver sadar-klaster (`silver_sim_cluster.py`, papan nyata 15 Okt)
+Blok 0,956–0,957 = keluarga resep (salinan byte-identik → satu skor privat per keluarga, seri dipecah waktu submit). Proyeksi akhir 6.150 tim, silver = rank ≤308; keluarga: R7 dasar 380, R7+r224 520, R7+r224 cermin 230, R6+flip 180, r224 cermin + S6F 140, variasi kecil 150; tim kuat ≥0,958 200–300.
 
 | δ privat vs R7 dasar | 0 | +0,0003 | +0,0006 | +0,0010 | +0,0015 | +0,0020 |
 |---|---|---|---|---|---|---|
-| P(perak), 12 skenario | 2–10 % | 13–19 % | 27–47 % | 49–86 % | 76–99 % | 91–100 % |
+| P(silver), 12 skenario | 2–10 % | 13–19 % | 27–47 % | 49–86 % | 76–99 % | 91–100 % |
 
 → salinan publik ≈ gagal; target δ ≥ +0,001 (di atas keluarga S6F publik).
 
@@ -69,7 +69,7 @@ Blok 0,956–0,957 = keluarga resep (salinan byte-identik → satu skor privat p
 - Kesimpulan: S6F = model setara R7 yang beragam (+0,001 pasti arah); murid kita paling berguna BERSAMA S6F.
 
 ## 8. 16 Okt — papan, ketentuan host, evaluasi gold SETIA
-- **Papan**: `r7v3s` (S6F compact) = 0,957 rank 478; **`r7v3sr` (S6F separuh Raptor) = 0,957, rank 495→317**. 13:40: 6.066 tim, ≥0,958 = 213 (naik cepat; salinan heliosli 0,958 = R6+flip+bobot per-temuan Syn .8/LatOA .2/PFOA .6/Baker .35), perak rank 303 = 0,957, kita 337.
+- **Papan**: `r7v3s` (S6F compact) = 0,957 rank 478; **`r7v3sr` (S6F separuh Raptor) = 0,957, rank 495→317**. 13:40: 6.066 tim, ≥0,958 = 213 (naik cepat; salinan heliosli 0,958 = R6+flip+bobot per-temuan Syn .8/LatOA .2/PFOA .6/Baker .35), silver rank 303 = 0,957, kita 337.
 - **Ketentuan host** (Chris Carr, Director of Informatics RSNA, 14 Okt, 743416): data eksternal yg hanya butuh registrasi + persetujuan lisensi = sah; butuh perjanjian institusi = tidak; minta transparansi pengungkapan dataset. OAI & fastMRI → sah.
 - **Evaluasi gold setia** (`build_gold_full.py`: pipeline submisi persis dijalankan pd 58 gold sbg "test"; rekonstruksi `r7v3sr` = submission.csv-nya, selisih 6e-08; `gold_eval_full.py`): komponen r384m 0,9228 · r224m 0,9160 · R7 0,9312 · S6F 0,9314 · murid 0,9282.
   | Varian | AUC gold | vs r7v3sr |
@@ -85,10 +85,10 @@ Blok 0,956–0,957 = keluarga resep (salinan byte-identik → satu skor privat p
 - **Flip-TTA R7 (run `gold-f`)**: R7flip AUC 0,9317 vs R7 0,9312, Spearman 0,9976 (hampir identik); di blend efek flip −0,0004…−0,0007 (P>0 0,28–0,34); tahap R7 +40 % waktu (1.036 vs 731 dtk / 58 studi). Papan: `r7v4c40` (flip) = 0,956. → **FLIP DIBUANG** dari semua varian final.
 
 ## 9. 16 Okt malam — papan 0,958, murid 4 fold, R6+flip
-- Papan 19:48: 6.085 tim; ≥0,958 = 446 → **garis perak publik (rank 304) = 0,958**; =0,957 = 345; kita rank 461 = ke-15 di blok 0,957 (skor tak-dibulatkan dekat 0,9575). heliosli & varshitha 0,958.
+- Papan 19:48: 6.085 tim; ≥0,958 = 446 → **garis silver publik (rank 304) = 0,958**; =0,957 = 345; kita rank 461 = ke-15 di blok 0,957 (skor tak-dibulatkan dekat 0,9575). heliosli & varshitha 0,958.
 - Murid r2a fold 2–3 (akun utama): gold 0,9311 / 0,9326 → ensembel 4 fold gold **0,9334**.
 - Gold setia `gold-h958` (notebook heliosli 0,958): R6+flip **0,9366** (ρ~R7 0,979); resep heliosli direkonstruksi 0,9382 (selisih rekonstruksi 5,6e-3).
 - Resep: `r7v6sr` (r7v3sr + murid4) 0,9399; **`r7v6a` (S6F .5 Raptor + murid4 .3 + wc) 0,9414** (+0,0027 vs r7v3sr, P 0,90); + R6flip di compact (0,3–1,0) = −0,0017…+0,0002 → tidak dipakai.
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

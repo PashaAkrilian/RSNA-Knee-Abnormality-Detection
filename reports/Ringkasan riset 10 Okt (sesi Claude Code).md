@@ -1,11 +1,11 @@
 # Ringkasan riset mendalam — 10 Okt 2026 (sesi Claude Code, hanya akun utama)
 
-> Tujuan: perak (≥0,951; aman ≥0,952). Dokumen ini merangkum SEMUA yang ditemukan/dicoba pada 10 Okt, termasuk bedah kode notebook
-> ber-skor terbaik. Fakta lain: `MEMORY.md`, `HANDOFF.md` §0c, `laporan_push.md`, `reports/Cara menembus 0951 perak.md` (OpenCode).
+> Tujuan: silver (≥0,951; aman ≥0,952). Dokumen ini merangkum SEMUA yang ditemukan/dicoba pada 10 Okt, termasuk bedah kode notebook
+> ber-skor terbaik. Fakta lain: `MEMORY.md`, `HANDOFF.md` §0c, `laporan_push.md`, `reports/Cara menembus 0951 silver.md` (OpenCode).
 
 ## 1. Posisi dan papan
 - Papan 10 Okt 06:57 WIB (5.625 tim): kita **0,950, rank 414** (482 tim sama-sama 0,950). ≥0,951 = 309 (tadi malam 296, +13 dalam 5,5 jam),
-  ≥0,952 = 197, ≥0,953 = 145, ≥0,960 = 28. Garis perak = 5 % ≈ rank 281 → **0,951 lotre, 0,952 target aman**. Emas ≥ ~0,960 (di luar jangkauan).
+  ≥0,952 = 197, ≥0,953 = 145, ≥0,960 = 28. Garis silver = 5 % ≈ rank 281 → **0,951 lotre, 0,952 target aman**. Emas ≥ ~0,960 (di luar jangkauan).
 - Skor tim kita seluruhnya dari notebook publik Apex (nartaa r384 OAI-bobot + reader goodpjw); model bersih tanpa OAI mentok 0,944.
 
 ## 2. Peta percobaan (hasil bertanggal)
@@ -63,21 +63,21 @@ Notebook V2 (klon S5) menanamkan 7 berkas sumber heliosli (`SOURCES` dict, dapat
 - OAI/data eksternal: ckpt nartaa & OrthoFoundation membawa pengetahuan eksternal; host belum menjawab thread 743416 → 2 final harus beda mekanisme (satu cadangan bersih 0,944).
 
 ## 8. Peluang jujur & rencana
-- Perak ±25–35 % tanpa perbaikan nyata; OF yang berhasil menambah +0,001–0,003 → ±45–55 %; merger dgn tim ≥0,955 → ≥80 % (126 kandidat muat batas; `docs/KANDIDAT_MERGER.md`). Emas ≈0–2 %.
+- Silver ±25–35 % tanpa perbaikan nyata; OF yang berhasil menambah +0,001–0,003 → ±45–55 %; merger dgn tim ≥0,955 → ≥80 % (126 kandidat muat batas; `docs/KANDIDAT_MERGER.md`). Emas ≈0–2 %.
 - Rencana teknis: (1) selesaikan uji skala OF → konfigurasi terbukti (akar per-potongan, batas thread, pengurutan biaya, pembunuhan proses, keluaran bertahap, fallback rank Apex);
   (2) submit ulang Apex+OF dengan batas total ≤7,5 jam; (3) bila ≥0,951 → kandidat final; bila ≤0,950 → tutup OF dan fokus finals + merger.
 - Tugas pengguna: merger sebelum 15 Okt 23:59 UTC; pesan ke Kaggle support; pastikan `nxtirfan` setuju soal token.
 
 ## 9. Pembaruan malam 10 Okt (19:30–21:30 WIB)
-- **Papan 19:37 WIB (5.666 tim)**: ≥0,951 = 348, ≥0,952 = 217, ≥0,953 = 162, ≥0,954 = 132, ≥0,960 = 30; =0,950 = 564 (kita rank 530). Garis perak ≈ rank 283 → kandidat final publik ≥0,952–0,954.
+- **Papan 19:37 WIB (5.666 tim)**: ≥0,951 = 348, ≥0,952 = 217, ≥0,953 = 162, ≥0,954 = 132, ≥0,960 = 30; =0,950 = 564 (kita rank 530). Garis silver ≈ rank 283 → kandidat final publik ≥0,952–0,954.
 - **Scan publik** (`scan_public_updates.py`): klaim "0,954" (rabari9999, emresariduman, sameerk d5h) = kode Apex (dataset goodpjw+nartaa; skor 0,950); `jenillangaliya/dual-stage-sota-ensemble` 0,951 memakai dataset privat (bundel heliosli yg ditarik). Dataset baru (`shishyan/finetuned-weights`, `sergiomc12/unifiis-modelo`, `kunalinfinite/qwen3-8b-...`) tanpa deskripsi/klaim skor; tak dievaluasi (EV rendah). **Tak ada jalan pintas publik ≥0,951.**
 - **Rules resmi** (`kaggle competitions pages rsna-knee-abnormality-detection list --page-name rules --content`): 5.a akun tunggal (diskualifikasi bila >1 akun), 5.b anggota tim = individu terpisah, 5.c merger (gabungan ≤5; submisi gabungan ≤ jatah satu tim saat permintaan; sebelum batas), 5.d/6.a dilarang berbagi kode/data privat antar-tim (publik boleh).
-- **Simulasi peluang perak** (`silver_prob_sim.py`; `docs/RESEARCH_NOTES.md` §40): Apex 14–20 %; +0,002 → 26–39 %; +0,004 → 40–67 %; tim publik 0,956–0,958 → 23–82 %. 100 % mustahil.
+- **Simulasi peluang silver** (`silver_prob_sim.py`; `docs/RESEARCH_NOTES.md` §40): Apex 14–20 %; +0,002 → 26–39 %; +0,004 → 40–67 %; tim publik 0,956–0,958 → 23–82 %. 100 % mustahil.
 - **Uji skala OF** (v1): disk 330 MB/studi + CPU hambatan + 2 proses lambat → penyebab timeout; v2 (`of_stage.py`) diuji (`ofscale3/4`); `apexof2` lulus stub.
-- **Rencana lengkap & gerbang keputusan: `STRATEGI_PERAK.md`.**
+- **Rencana lengkap & gerbang keputusan: `STRATEGI_SILVER.md`.**
 
 ## 10. Pembaruan 11 Okt dini hari (02:30–04:00 WIB) — S6 hidup lagi; koreksi premis OF; riset "best score"
-- **Peristiwa**: heliosli memulihkan `heliosli/rsna-knee-compact-v1` (02:50 WIB; V1–V13 publik) dan menerbitkan ulang notebook S6 (**Raptor 0,7 + compact 0,3 = 0,954 satu klik**; thread 748141 "blend my model with yours"). User men-submit salinan (57051680, 02:56 WIB, PENDING). Papan 02:59: 5.699 tim; kita rank 599 (0,950) — di bawah garis perunggu publik (rank 570); perak rank 285 (0,951); ≥0,954 = 141; ≥0,960 = 31.
+- **Peristiwa**: heliosli memulihkan `heliosli/rsna-knee-compact-v1` (02:50 WIB; V1–V13 publik) dan menerbitkan ulang notebook S6 (**Raptor 0,7 + compact 0,3 = 0,954 satu klik**; thread 748141 "blend my model with yours"). User men-submit salinan (57051680, 02:56 WIB, PENDING). Papan 02:59: 5.699 tim; kita rank 599 (0,950) — di bawah garis perunggu publik (rank 570); silver rank 285 (0,951); ≥0,954 = 141; ≥0,960 = 31.
 - **KOREKSI (bagian 5 dan 8 di atas keliru)**: resep heliosli = Raptor + **compact ConvNeXt-Small** (bundel S5 `c7ebab1e` = 0,951 di blend-gold; S6 `209a32c8` = 0,954); bobot OrthoFoundation fold0 TIDAK dipakai di notebook heliosli mana pun (hanya kode `cloud_code`/`anatomy.pt` dari dataset OF). Nilai LB OF belum pernah diukur; prior ≥+0,001 di atas S6 ≤20 %.
 - **Penyebab 57044355 = 0,950**: kaki OF mati OOM di run penilaian (induk Apex memegang 18 GB RSS + pekerja OF 8–10 GB, mesin 31 GB/4 vCPU) — terkonfirmasi lewat diagnostik `apexof4d` (urutan lama, 1.322 studi pseudo-uji) dan profil memori (`ofmem1/3`); perbaikan v4.1 (OF dulu/terakhir, supervisor klaim/restart/daur-ulang, `pin_memory=False`, `torch.load(mmap=True)`) lulus rehearsal (`apexof4r2`: 194 studi/jam dgn 3 pekerja, MemAvail min 19 GB). Rinci: `PROGRESS.md` §54, `docs/PLAN_B.md` §0.
 - **S6 teknis**: tahap compact = `probe_dual.py` 2 pekerja (1/GPU) memakai decode `native_cache` yg sama dgn OF; GPU-bound ±18–20 dtk/studi/pekerja (decode ±8, render ±3, GPU ±18 per studi; ±600 jendela × 4 fold) → 1.322 studi ±3,5 j; Raptor ±0,5 j; total ±4–4,5 j; kontroler menolak bila >3 % fallback (ERROR tanpa skor).
@@ -85,7 +85,7 @@ Notebook V2 (klon S5) menanamkan 7 berkas sumber heliosli (`SOURCES` dict, dapat
 - **Forum "best score"** (735304 dan terkait): model tunggal 5-fold ConvNeXt-T 0,953–0,959 dgn pseudo-label (azamat1ch/MURAD rank 10; colum2131); "model is not the key. it is your labels" (hengck23); Chris Deotte: pseudo-label meratakan model tunggal ke level ensembel; validasi: AUC OOF label-LLM berkorelasi r=0,87 dgn LB publik (emas-58 r=0,66); trik "kirim 1−p" (tim kuat tersembunyi); kepatuhan (744056/747455/743416) tanpa jawaban host; Rules 2.6.b mengizinkan model/data eksternal.
 - **Notebook publik baru**: "Tri-Reader 0,954" (rabari/jcgweb/sameerk) = Apex+r224 → jangan; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Eksekusi**: `build_s6plus.py` (S6 + reader goodpjw pada perna Raptor + OF terakhir dgn deadline + blend 3 perna + monitor RAM + mode lenient), sonda `s6probe`, rehearsal `s6plusr`; submit varian setelah reset jatah 07:00 WIB.
-- **Rencana**: `STRATEGI_PERAK.md` §0 (strategi berpusat S6; merger tetap tuas terbesar; final A = S6/varian terbaik, B = beda mekanisme/bersih).
+- **Rencana**: `STRATEGI_SILVER.md` §0 (strategi berpusat S6; merger tetap tuas terbesar; final A = S6/varian terbaik, B = beda mekanisme/bersih).
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

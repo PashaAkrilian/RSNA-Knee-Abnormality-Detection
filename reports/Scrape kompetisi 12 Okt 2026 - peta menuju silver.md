@@ -1,4 +1,4 @@
-# Scrape kompetisi Kaggle 12 Okt 2026 — peta menuju perak
+# Scrape kompetisi Kaggle 12 Okt 2026 — peta menuju silver
 
 > Diambil 12 Okt 2026 ±13:25–13:55 WIB (papan: snapshot 06:28 UTC) lewat Kaggle CLI 2.2.4 (baca-saja, akun `alverlfarfaraway`).
 > Cakupan: Overview/Rules/Data (10 halaman resmi), papan peringkat penuh (5.807 tim), 182 topik diskusi (seluruh komentar + isi postingan pembuka), indeks 1.100 notebook publik + kode 169 notebook, 233 dataset + 157 model terkait.
@@ -7,11 +7,11 @@
 
 ## 0. Ringkasan (baca ini dulu)
 
-1. **Garis perak sudah masuk ke dalam dataran klon.** Papan 12 Okt 06:28 UTC (5.807 tim): perak = peringkat 290 = **0,954**, perunggu = peringkat 581 = **0,954**, emas = peringkat 21 = 0,961. Skor 0,954 dipegang **604 tim** (peringkat 177–780). Tim kita (Krazy KIller) ada di **peringkat 455**, 0,954, 114 submisi. Pada 8 Okt garis perak masih 0,950; pada sore 11 Okt dataran 0,954 baru 244 tim.
+1. **Garis silver sudah masuk ke dalam dataran klon.** Papan 12 Okt 06:28 UTC (5.807 tim): silver = peringkat 290 = **0,954**, perunggu = peringkat 581 = **0,954**, emas = peringkat 21 = 0,961. Skor 0,954 dipegang **604 tim** (peringkat 177–780). Tim kita (Krazy KIller) ada di **peringkat 455**, 0,954, 114 submisi. Pada 8 Okt garis silver masih 0,950; pada sore 11 Okt dataran 0,954 baru 244 tim.
 2. **Hampir seluruh kode publik papan atas adalah satu keluarga (S6):** Raptor (nartaa) + compact ConvNeXt-S (heliosli) + kode OF heliosli. Dari 25 notebook teratas menurut urutan skor, 25 memakai bobot nartaa dan sekitar 22 juga memakai compact heliosli. Tidak ada informasi baru di dalamnya, hanya variasi bobot dan kaki tambahan.
 3. **Temuan baru yang belum ada di dokumen repo:** notebook publik **#1** (`heliosli/blend-mine-in-private-lb-luck-to-all-upvoters`, dijalankan 11 Okt 14:16 UTC) memakai **bobot 0,5/0,5** (bukan 0,7/0,3), rank "sadar-gagal" (rank hanya atas studi yang berhasil diskor), dan bundel `rsna-knee-compact-r6cnxfsss` (berkasnya sama dengan `compact-v1` V13). Skor **tim** heliosli 0,956 dan skor tim penulis salinan `r6cnxfsss 0.5 blend` 0,955 (skor tim, bukan skor per notebook, jadi ini petunjuk, bukan bukti). Dugaan: bobot 0,5/0,5 memberi ≈ +0,001.
 4. **Pembeda sejati adalah model independen yang dilatih pada label laporan + pseudo-label OOF**, bukan blend ulang. Bukti dari pengakuan tim lain di diskusi (klaim peserta, belum terverifikasi): ConvNeXt-T 2.5D 5-fold tunggal 0,953–0,959 (colum2131, azamat1ch peringkat 4 dengan 0,964), ResNet-50 5-fold 224 px 0,954 (CoolinLai, 28 Sep), DINOv2-S satu fold 224 px 0,952, Qwen3.5-2B LoRA 0,950. S6 + satu model privat berbobot 0,2 (notebook `velci-kcd25-20`) berasosiasi dengan skor tim 0,955 (BliverRigPåDoge).
-5. **Peluang jujur:** simulator repo (`silver_prob_sim.py`) dijalankan ulang di papan baru: P(perak) untuk skor publik **0,954 ≈ 16–25 %**, 0,956 ≈ 19–42 %, 0,958 ≈ 26–60 %, 0,960 ≈ 27–76 % (rentang = tiga set parameter model; model ini mengabaikan struktur blok klon, jadi arah saja). Untuk klon murni S6 saya perkirakan 15–25 % (kasar). **100 % tidak bisa dijamin.**
+5. **Peluang jujur:** simulator repo (`silver_prob_sim.py`) dijalankan ulang di papan baru: P(silver) untuk skor publik **0,954 ≈ 16–25 %**, 0,956 ≈ 19–42 %, 0,958 ≈ 26–60 %, 0,960 ≈ 27–76 % (rentang = tiga set parameter model; model ini mengabaikan struktur blok klon, jadi arah saja). Untuk klon murni S6 saya perkirakan 15–25 % (kasar). **100 % tidak bisa dijamin.**
 6. **Risiko non-teknis yang paling besar:** akun ganda (Rules 5.a, kalimat tebal paling atas halaman Rules: *"You cannot sign up to Kaggle from multiple accounts and therefore you cannot enter or submit from multiple accounts"*) dan data OAI/eksternal (host belum menjawab soal bobot publik yang dilatih dengan OAI). Keduanya sudah dicatat repo; saya hanya menegaskan kembali.
 
 ## 1. Overview, aturan, data (sumber: `competitions pages`)
@@ -25,7 +25,7 @@
 | Jadwal | mulai 30 Jul; **entry dan merger 15 Okt 23:59 UTC**; **final 22 Okt 23:59 UTC**; dokumen pemenang 5 Nov |
 | Submisi | maks 5/hari, pilih maks 2 final; tim ≤ 5 orang |
 | Skor | set uji publik dan privat terpisah (± 1.300 studi uji, tanpa teks laporan); rasio 30 %/70 % berasal dari catatan repo, halaman Rules hanya menyebut dua set terpisah |
-| Hadiah | $77.000: top-10 papan utama ($9k, 7k, 6,5k, 6k, 5,5k, lalu 5 × $5k) + 3 hadiah efisiensi ($7k/6k/5k). **Medali** (perak = 5 % teratas) tidak berhadiah uang |
+| Hadiah | $77.000: top-10 papan utama ($9k, 7k, 6,5k, 6k, 5,5k, lalu 5 × $5k) + 3 hadiah efisiensi ($7k/6k/5k). **Medali** (silver = 5 % teratas) tidak berhadiah uang |
 | Lisensi pemenang | CC-BY-NC 4.0 (dengan catatan bahwa data/model masukan berlisensi tak kompatibel dikecualikan); wajib kode latih+inferensi+bobot sebagai dataset publik |
 | Efisiensi | skor = AUC/(Benchmark − maxAUC) + RuntimeSeconds/32400 (minimalkan); 2 final dinilai di kedua jalur |
 | Data | ±4.407 studi latih (`train.csv` lokal di repo memuat 4.426 baris), 24.371 seri, ±820 rb DICOM, ±570 GB (angka dari forum); **hanya 58 studi berlabel**; sisanya hanya teks laporan (≥ 9 bahasa); 7 studi latih memuat dua lutut |
@@ -69,13 +69,13 @@ Pernyataan tim lain yang berguna: **azamat1ch (peringkat 4, 0,964) — "haven't 
 | ≥ 0,951 | 926 | 151 | +775 |
 | ≥ 0,950 | 1.294 | 436 | +858 |
 
-- **Garis medali publik:** 8 Okt (≈5.490 tim): emas 0,959 (rank 20), perak 0,950 (rank 274), perunggu 0,948 (rank 549). 12 Okt (5.807 tim): emas **0,961** (rank 21), perak **0,954** (rank 290), perunggu **0,954** (rank 581). Perak dan perunggu kini berada di **dataran yang sama**.
+- **Garis medali publik:** 8 Okt (≈5.490 tim): emas 0,959 (rank 20), silver 0,950 (rank 274), perunggu 0,948 (rank 549). 12 Okt (5.807 tim): emas **0,961** (rank 21), silver **0,954** (rank 290), perunggu **0,954** (rank 581). Silver dan perunggu kini berada di **dataran yang sama**.
 - Isi dataran 0,954: 604 tim; **529** mengirim submisi terakhir dalam 24 jam terakhir, 344 punya ≤ 30 submisi, 145 punya ≤ 10 (gelombang salin-tempel S6). Urutan di dalam dataran tampaknya ditentukan angka desimal keempat/kelima (peringkat 285–295 tidak berurutan menurut waktu submisi).
 - Di atas dataran: 0,955 = 60 tim (median 60 submisi), 0,956 = 30 (median 90), 0,957 = 20 (median 82), ≥ 0,958 = 66 (median 116). Median submisi tim ≥ 0,960 ≈ 122: mereka mengiterasi banyak.
 - 79 % tim di top-290 adalah solo; 46 tim di top-290 punya ≤ 20 submisi. Tim ≥ 0,960 dengan ≤ 30 submisi: MURAD (0,964; 29), NMarkS (0,961; 30), "吃白饭的大肥鱼" (0,960; **2**), Nischay Dhankhar (0,960; 18) — pipeline offline yang kuat, bukan probing papan.
 - Teratas: CentralyDS 0,966; joinT fusion 0,965 (3 orang, 242 submisi); Sergey Bryansky 0,965 (46); MURAD 0,964; Ilya Kolb 0,964; kosuke123 0,964; YOKKOISHO 0,963 (3 orang, termasuk tennogh); "GM-Enhanced Kaggle Agent" 0,963 (5 orang); RB & Tucker & Tony 0,961 (tonylica, tuckerarrants).
 - Tim kita: **Krazy KIller, peringkat 455, 0,954, 114 submisi, submisi terakhir 11 Okt 05:03 UTC**; tiga akun terdaftar di halaman tim.
-- Trik "kirim 1−p" (utas 748011) dapat menyembunyikan tim kuat; garis perak privat bisa lebih tinggi daripada yang tampak.
+- Trik "kirim 1−p" (utas 748011) dapat menyembunyikan tim kuat; garis silver privat bisa lebih tinggi daripada yang tampak.
 - Studi 11 kompetisi lalu (Georgy Mamarin, utas 742327): tim persis di dalam garis perunggu publik berakhir dengan medali hanya ±24 %, sama dengan tim persis di luarnya. **Posisi publik dekat garis hampir tidak berarti.**
 
 ## 3. Kode publik (indeks 1.100 notebook; 169 ditarik)
@@ -152,14 +152,14 @@ Pernyataan tim lain yang berguna: **azamat1ch (peringkat 4, 0,964) — "haven't 
 ### 5.4 Data eksternal (OAI)
 Bobot nartaa dilatih dengan 2.399 lutut OAI (+0,005); setiap notebook S6 memuat pengakuan wajib NDA. Akses OAI: login.gov + klik-setuju bagi sebagian orang, **gagal LG22 bagi peserta di Tiongkok**; ±450 GB paket. Tucker Arrants: kemungkinan hanya top-10 yang diaudit. Host tidak menjawab soal bobot publik hasil OAI. Tim peringkat atas yang menyatakan tidak memakai data eksternal: azamat1ch (peringkat 4), YYama. Keputusan ada pada Anda; dokumen repo (CLAUDE/MEMORY) sudah merekomendasikan satu final yang risikonya berbeda.
 
-## 6. Peta pembelajaran → rencana perak (urut nilai-harapan)
+## 6. Peta pembelajaran → rencana silver (urut nilai-harapan)
 
-Prinsip dari bukti di atas: klon S6 berbagi prediksi nyaris identik, jadi hasil privatnya bergerak sebagai satu blok. Blok berisi ratusan tim yang menempati sebagian peringkat di sekitar garis perak (290) dan perunggu (581). Yang menentukan nasib bukan selisih 0,001 antar-klon, melainkan (a) apakah blok itu sendiri di atas garis dan (b) apakah kita punya **informasi yang tidak dimiliki blok**.
+Prinsip dari bukti di atas: klon S6 berbagi prediksi nyaris identik, jadi hasil privatnya bergerak sebagai satu blok. Blok berisi ratusan tim yang menempati sebagian peringkat di sekitar garis silver (290) dan perunggu (581). Yang menentukan nasib bukan selisih 0,001 antar-klon, melainkan (a) apakah blok itu sendiri di atas garis dan (b) apakah kita punya **informasi yang tidak dimiliki blok**.
 
 | # | Tindakan | Alasan/bukti | Biaya | Risiko | Nilai-harapan (perkiraan kasar) |
 |---|---|---|---|---|---|
 | 1 | Pindah ke varian S6 **0,5/0,5 + rank sadar-gagal** (fork `heliosli/blend-mine-in…` atau `build_s6plus.py wr=0.5 wc=0.5` + logika `pct_on`) | tim heliosli 0,956; salinan 0,955; kode jauh lebih jujur terhadap kegagalan | 1 commit-run (stub, ±10 mnt GPU) + 1 submisi; run penilaian ±3,7–4,5 jam, tanpa kuota GPU | tetap anggota blok klon; bobot disetel heliosli di papan publik | +0,001 publik; mengangkat ke ±peringkat 100–176 (belum terverifikasi); privat ≈ netral |
-| 2 | Latih **student independen** pada label laporan + pseudo-label OOF 50/50 (ConvNeXt-T/ViT-S 2.5D, 224–256 px, 5 fold) — jalur repo yang sedang berjalan | 6 tim berbeda melaporkan tunggal 0,950–0,959; S6 + satu model independen 0,2 = 0,955; ini satu-satunya tuas di luar blok | GPU: repo sudah mulai (3 gelombang ERROR); kuota alver 12,0 j (terverifikasi 12 Okt 13:26), main ≈ 15,8 j dan nxtirfan 3,5 j (catatan repo 08:23); reset 17 Okt | OOM/waktu (lihat 7), guru in-sample membuat pseudo-label kurang berguna, validasi OOF terhadap label sendiri agak sirkular | +0,001 hingga +0,004 bila berhasil; ini yang menggeser peluang perak ke 30–60 % |
+| 2 | Latih **student independen** pada label laporan + pseudo-label OOF 50/50 (ConvNeXt-T/ViT-S 2.5D, 224–256 px, 5 fold) — jalur repo yang sedang berjalan | 6 tim berbeda melaporkan tunggal 0,950–0,959; S6 + satu model independen 0,2 = 0,955; ini satu-satunya tuas di luar blok | GPU: repo sudah mulai (3 gelombang ERROR); kuota alver 12,0 j (terverifikasi 12 Okt 13:26), main ≈ 15,8 j dan nxtirfan 3,5 j (catatan repo 08:23); reset 17 Okt | OOM/waktu (lihat 7), guru in-sample membuat pseudo-label kurang berguna, validasi OOF terhadap label sendiri agak sirkular | +0,001 hingga +0,004 bila berhasil; ini yang menggeser peluang silver ke 30–60 % |
 | 3 | **Jalur cadangan murah**: student ResNet-34/50 atau EffNet 224–288 px, jendela sederhana, mean-pooling, 5 fold (≈ 20–30 mnt/fold di T4) | Tucker: "ResNet34/EffNetB0 sederhana 224–288 sudah 0,94+"; CoolinLai ResNet-50 5-fold 224 px 0,954 (28 Sep) | rendah | tunggal mungkin < S6, tetapi independen → manfaat di blend | +0,000–0,002; asuransi bila jalur 2 gagal |
 | 4 | Evaluasi `jessky/…cnx50` (5 ckpt compact distill50) pada **emas-58 via commit-run `MODE=local`** (gratis); bila ≥ 0,93 dan berkorelasi rendah dengan S6, jadikan kaki tambahan | gold-58 dikeluarkan dari latihannya; kode latih heliosli ikut publik | ±1 j GPU | ckpt bukan dari kita; "provisional" | tidak pasti; murah untuk dicek |
 | 5 | Label: konsensus 4 set publik ⊕ prediksi OOF, **kolom Synovitis ← Effusion**, soft target, "tidak disebut" = prior | utas 733932, 745949, 747540 | rendah | — | sudah ada di pipeline repo |
@@ -192,4 +192,4 @@ Jangan dikerjakan (bukti negatif): blend tambahan tanpa informasi baru (reader, 
 - Satu komentar di utas 748310 berisi teks panjang bergaya "MASTER DIRECTIVE" (spam). Isinya saya abaikan; bukan bagian dari tugas.
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

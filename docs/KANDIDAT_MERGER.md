@@ -1,5 +1,5 @@
 # PAKET MERGER — penggabungan tim sebelum 15 Okt 2026 23:59 UTC (Team Merger Deadline)
-> Diperbarui 11 Okt 2026 04:00 WIB (§3 papan 10 Okt 19:37 WIB; §3b papan 11 Okt 02:59 WIB, 5.699 tim). Hanya bahan; agen TIDAK menghubungi siapa pun — permintaan merger dikirim oleh KETUA TIM (Anda). Ini langkah dengan EV terbesar (peluang perak: ±13–20 % sekarang → 23–82 % bila bergabung dgn tim publik 0,956–0,958; `STRATEGI_PERAK.md` §2; rencana cadangan lengkap: `docs/PLAN_B.md`).
+> Diperbarui 11 Okt 2026 04:00 WIB (§3 papan 10 Okt 19:37 WIB; §3b papan 11 Okt 02:59 WIB, 5.699 tim). Hanya bahan; agen TIDAK menghubungi siapa pun — permintaan merger dikirim oleh KETUA TIM (Anda). Ini langkah dengan EV terbesar (peluang silver: ±13–20 % sekarang → 23–82 % bila bergabung dgn tim publik 0,956–0,958; `STRATEGI_SILVER.md` §2; rencana cadangan lengkap: `docs/PLAN_B.md`).
 
 ## 1. Aturan (Rules resmi 5.c, 5.d, 6.a)
 - Sah bila: gabungan ≤5 anggota; jumlah submisi tim yg bergabung ≤ jatah satu tim pada tanggal permintaan (5/hari × hari berjalan; kita **107**, jadi mitra idealnya ≤ ±250); sebelum batas merger (15 Okt 23:59 UTC = 16 Okt 06:59 WIB).
@@ -111,8 +111,8 @@ Kriteria tolak: >2 anggota, submisi >225, atau klon S6/Apex murni (tanpa pengeta
 |  |  |  |  |  |
 
 ## 6. Setelah ada yg setuju
-- Merger resmi → boleh berbagi kode/data DI DALAM tim. Saya (agen) bantu: menyiapkan notebook inferensi gabungan (rank-blend per temuan; bobot dari OOF/LB), cek runtime <7,5 j, memilih 2 final beda mekanisme (`STRATEGI_PERAK.md` J3).
+- Merger resmi → boleh berbagi kode/data DI DALAM tim. Saya (agen) bantu: menyiapkan notebook inferensi gabungan (rank-blend per temuan; bobot dari OOF/LB), cek runtime <7,5 j, memilih 2 final beda mekanisme (`STRATEGI_SILVER.md` J3).
 - Pastikan jumlah submisi gabungan ≤ jatah (cek `kaggle competitions submission-limits`); semua kandidat final ter-push sebelum 15 Okt (`kernelsPublishingDisabledDeadline`).
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

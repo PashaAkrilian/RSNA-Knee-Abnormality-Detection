@@ -1,6 +1,6 @@
-# Riset 19 Okt 2026 dini hari — posisi perak, aset publik, dan murid r4
+# Riset 19 Okt 2026 dini hari — posisi silver, aset publik, dan murid r4
 
-> Audit riset dan antrean 19 Okt 2026 02:30 WIB; papan diperiksa ulang 02:33 WIB, API dan training 02:40–02:56 WIB. Data papan/submisi/kuota dibaca ulang lewat Kaggle CLI; dataset publik dan prediksi gold diperiksa lokal. Rencana aktif: `STRATEGI_PERAK.md` §0. Rincian operasi: `HANDOFF.md` §0c.
+> Audit riset dan antrean 19 Okt 2026 02:30 WIB; papan diperiksa ulang 02:33 WIB, API dan training 02:40–02:56 WIB. Data papan/submisi/kuota dibaca ulang lewat Kaggle CLI; dataset publik dan prediksi gold diperiksa lokal. Rencana aktif: `STRATEGI_SILVER.md` §0. Rincian operasi: `HANDOFF.md` §0c.
 
 ## Ringkasan keputusan
 
@@ -8,11 +8,11 @@
 - `g6c` 57357991, `g12` 57359383, dan `g13` 57362095 masih `PENDING`; kernel inferensi mereka sudah `COMPLETE`. Belum ada submission baru sejak 18 Okt.
 - Aset baru tidak memberi alasan mengganti R6/B-leg yang sudah diuji. **B-leg seed 1 tidak menambah gold**; Engine 8/9 belum punya bukti validasi; dua sumber label yang baru ditemukan berbeda dari target kita, tetapi tidak menyertakan OOF/gold yang bisa membuktikan kualitasnya.
 - Jalur yang paling terdukung tetap melatih murid **r4** dari setengah konsensus laporan, seperempat OOF-R7, dan seperempat OOF-B-leg; baris tanpa OOF-B-leg memakai setengah konsensus + setengah OOF-R7. Empat fold sudah disiapkan dan dikirim sebagai dua kernel di akun alver. `g14` baru layak dibuat/submisi jika `g13` menunjukkan kenaikan pada papan.
-- Estimasi kerja perak tetap **20–40%** untuk resep unik pada bukti sekarang. Angka ini simulasi berbasis posisi/klaster dan bukan probabilitas resmi atau jaminan.
+- Estimasi kerja silver tetap **20–40%** untuk resep unik pada bukti sekarang. Angka ini simulasi berbasis posisi/klaster dan bukan probabilitas resmi atau jaminan.
 
 ## Papan, batas medali, dan risiko publik
 
-Kaggle menyatakan kompetisi dengan lebih dari 1.000 tim memberi medali perak kepada 5% teratas; hitungan medali dibulatkan ke bawah. Dengan 6.187 tim sekarang, cutoff aritmetika publik = `floor(6187 × 0,05) = 309`. [Kaggle Progression](https://www.kaggle.com/progression/competitions)
+Kaggle menyatakan kompetisi dengan lebih dari 1.000 tim memberi medali silver kepada 5% teratas; hitungan medali dibulatkan ke bawah. Dengan 6.187 tim sekarang, cutoff aritmetika publik = `floor(6187 × 0,05) = 309`. [Kaggle Progression](https://www.kaggle.com/progression/competitions)
 
 Halaman resmi RSNA Knee menetapkan macro-average ROC AUC atas 12 label dan deadline final 22 Okt 2026 23:59 UTC. Papan kompetisi memakai 30% test untuk publik dan 70% untuk privat. Karena itu rank 467/6.187 dan cutoff publik 309 adalah penunjuk sementara; keputusan final harus mengutamakan gold/OOF yang tidak dipakai melatih serta ketahanan resep. [Overview kompetisi](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection/)
 
@@ -45,7 +45,7 @@ Spearman rerata per label antara seed 0 dan seed 1 = **0,9819**. Jadi seed 1 san
 
 OOF seed 0 direkonstruksi dari `partial_oof_E_prior_s0.npy` dan `pool_uids.json`. Untuk tiap fold, tepat baris yang jatuh pada `int(sha1(uid)[:8], 16) % 4` berisi logits nonnol; empat file memberi **3.325 UID OOF unik**, tanpa baris gold. Setelah sigmoid, formatnya disamakan dengan keluaran `build_compact_oof.py` dan dipadankan ke OOF-R7.
 
-Pada 3.325 baris B-leg, AUC terhadap label konsensus biner internal ialah **0,8860** untuk B-leg dan **0,8830** untuk R7. Ini ukuran kesesuaian terhadap konsensus, bukan AUC kebenaran. Sweep gabungan tersimpan sebelumnya pada irisan 2.651 studi menunjukkan B-leg .24 mengganti R7 .24 pada compact sebesar **+0,0033 (P=1,00)**; sweep gold terpisah menetapkan `g13` sebagai bobot terbaik. Uji integrasi gold B-leg lulus (`ρ=0,9984` terhadap logits penulis), sehingga bukti cukup untuk melatih murid r4, bukan untuk mengklaim perak.
+Pada 3.325 baris B-leg, AUC terhadap label konsensus biner internal ialah **0,8860** untuk B-leg dan **0,8830** untuk R7. Ini ukuran kesesuaian terhadap konsensus, bukan AUC kebenaran. Sweep gabungan tersimpan sebelumnya pada irisan 2.651 studi menunjukkan B-leg .24 mengganti R7 .24 pada compact sebesar **+0,0033 (P=1,00)**; sweep gold terpisah menetapkan `g13` sebagai bobot terbaik. Uji integrasi gold B-leg lulus (`ρ=0,9984` terhadap logits penulis), sehingga bukti cukup untuk melatih murid r4, bukan untuk mengklaim silver.
 
 ## Murid r4: data, validasi, dan status eksekusi
 

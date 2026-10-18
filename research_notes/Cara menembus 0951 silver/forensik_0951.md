@@ -1,6 +1,6 @@
-# Forensik 0,951+ — Siapa/Yang Apa yang membedakan tim perak (per 10 Okt 2026, 01:40 WIB)
+# Forensik 0,951+ — Siapa/Yang Apa yang membedakan tim silver (per 10 Okt 2026, 01:40 WIB)
 
-> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_SILVER.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
 
 
 > Sumber utama: Kaggle CLI (akun utama, read-only). Snapshot papan: unduhan leaderboard `kaggle competitions leaderboard --download` **2026-10-09 18:25:41 UTC** (5.606 tim) — file CSV di `/tmp/opencode/lb/`. Riset forums/kernels via `kaggle forums topics show/list`, `kaggle kernels list/pull`, `kaggle datasets list/metadata/files`. Semua klaim skor disertai tanggal. **READ-ONLY**: tidak ada submit/push/edit kernel; satu file sengaja terbentuk lalu dihapus (`dataset-metadata.json` di root repo akibat `kaggle datasets metadata` tanpa `-p`; sudah dihapus, `git status` bersih).
@@ -8,7 +8,7 @@
 ## Q1 — Papan: siapa di band 0,9505–0,954 dan siapa yang punya artefak publik?
 
 ### Takeaway
-Snapshot 9 Okt 18:25 UTC: ≥0,951 = **296 tim**, ≥0,952 = 183, ≥0,953 = 135, ≥0,954 = 105, ≥0,960 = 27; tim di **tepat 0,950 = 466** (rank 297–762). Blok 0,951 (113 tim, rank 184–296) **tidak lagi otomatis perak** (garis perak ~rank 279) → target aman = **0,952**. Di seluruh band 0,951–0,954 hanya ada SATU kernel publik ber-artefak 0,951+ yang dulu runnable (heliosli), dan itu sudah **mati sejak 9 Okt 13:50 UTC**; semua pemilik skor ≥0,951 lain di band ini TIDAK punya kernel/writeup publik yang bisa dijalankan.
+Snapshot 9 Okt 18:25 UTC: ≥0,951 = **296 tim**, ≥0,952 = 183, ≥0,953 = 135, ≥0,954 = 105, ≥0,960 = 27; tim di **tepat 0,950 = 466** (rank 297–762). Blok 0,951 (113 tim, rank 184–296) **tidak lagi otomatis silver** (garis silver ~rank 279) → target aman = **0,952**. Di seluruh band 0,951–0,954 hanya ada SATU kernel publik ber-artefak 0,951+ yang dulu runnable (heliosli), dan itu sudah **mati sejak 9 Okt 13:50 UTC**; semua pemilik skor ≥0,951 lain di band ini TIDAK punya kernel/writeup publik yang bisa dijalankan.
 
 ### Cited Findings
 - Papan 9 Okt 18:25 UTC (5.606 tim): #1 0,964; ≥0,951=296, ≥0,952=183, ≥0,953=135, ≥0,954=105, ≥0,955=87, ≥0,960=27; 0,950-persis=466. — [leaderboard CSV resmi, unduhan CLI 2026-10-09T18:25:41Z](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection/leaderboard)
@@ -21,7 +21,7 @@ Snapshot 9 Okt 18:25 UTC: ≥0,951 = **296 tim**, ≥0,952 = 183, ≥0,953 = 135
 ### Inferences
 - Tidak ada tim band 0,951–0,954 yang membocorkan jalur runnable: satu-satunya artefak (heliosli compact) sengaja ditarik — konsisten dengan tekanan thread 743416 (lihat Q2).
 - Kelompok 0,955–0,960 (Murad/azamat1ch, colum2131, tanuki, CoolinLai) hampir semuanya **solo/kecil dengan jumlah submisi wajar** → bukan hasil ribuan probe, melainkan satu resep kuat (lihat Q2: pseudo-label).
-- Garis perak yang bergerak cepat (257→296 tim ≥0,951 dalam ~1 hari) berarti 0,951 makin berisiko; perhitungan blok: 113 tim di 0,951-persis vs sisa ~17 slot di bawah rank 279 → **0,951 = lotre, 0,952 = aman** (konsisten dengan `laporan_push.md` §1).
+- Garis silver yang bergerak cepat (257→296 tim ≥0,951 dalam ~1 hari) berarti 0,951 makin berisiko; perhitungan blok: 113 tim di 0,951-persis vs sisa ~17 slot di bawah rank 279 → **0,951 = lotre, 0,952 = aman** (konsisten dengan `laporan_push.md` §1).
 
 ### Gaps
 - Skor privat/insang para pemimpin band 0,954–0,960 tak terlihat; banyak dari mereka (Tucker, YYama/knee-deep, dalab) menyatakan di forum tidak pakai data eksternal (YYama 7 Okt: "I haven't used any of them") — tapi itu klaim verbal, tak terverifikasi.
@@ -105,7 +105,7 @@ Satu-satunya jalur dengan bukti kuat yang **runnable untuk kita dan bebas masala
 3. **Backbone-family baru 2.5D (ConvNeXt-T, DINOv2-S, EffNetV2-S)** — angka single ≥0,951–0,959 semua dari keluarga ini + pseudo-label (colum2131, azamat1ch, Musa 224px, CoolinLai ResNet 224). — [discussion/735304](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection/discussion/735304). **Setengah runnable**: masuk akal sbg murid/backbone alternatif DALAM resep pseudo-label, tapi melatih keluarga baru dari nol di T4×2 <5 hari = mahal; mulai dari fine-tune r384 yang sudah ada dulu.
 4. **TTA/varian-reduksi & optimisasi bobot** — TIDAK lagi terlihat sebagai pemisah (tidak ada klaim baru Okt yang menyebut TTA sbg penyebab ≥0,951; rabari pakai MIRROR_TTA tapi tetap 0,950). Sudah tutup per `laporan_push.md` §3a.
 5. **Yang TIDAK runnable/dilarang**: arm heliosli compact (retired/403); MaVIT (gold-58 0,9202, ditolak); KneeCoT (dilarang host); label-LLM baru tanpa pseudo-label (karttik: 11/12 finding tak beda; resep d5f/placebo; forum 745861: Claude solo 0,942).
-6. **Matematika papan (9 Okt 18:25 UTC)**: perak ~rank 279; tim ≥0,951 = 296 → 0,951-persis berisiko gugur; **0,952 = rank ≤183 = aman**. Target internal: 0,952.
+6. **Matematika papan (9 Okt 18:25 UTC)**: silver ~rank 279; tim ≥0,951 = 296 → 0,951-persis berisiko gugur; **0,952 = rank ≤183 = aman**. Target internal: 0,952.
 
 ### Inferences / rekomendasi (untuk sintesis laporan)
 - Urutan aksi paling masuk akal: (1) bangun jalur pseudo-label di atas cache volcache-z + ckpt induk (eval GRATIS via commit-run `MODE=local` dulu, seperti protokol MaVIT); (2) kalau OOF/gold naik ≥+0,002 konsisten → 1 submisi gate; (3) backup tetap jalur bersih 0,944 + keputusan OAI 21–22 Okt.
@@ -118,4 +118,4 @@ Satu-satunya jalur dengan bukti kuat yang **runnable untuk kita dan bebas masala
 *Metode: `kaggle competitions leaderboard --download` (snapshot 2026-10-09T18:25:41Z), `kaggle forums topics show 743416/741819/733965/744519/745214/745861/735304/747455/747613/747658/747660/746792`, `kaggle forums topics list --category competitions -s ...`, `kaggle kernels list --competition ...` (dateCreated & voteCount), `kaggle kernels pull` (blend-gold, d5d-compact0951, h05, fast-parent-0957 → metadata+MD), `kaggle datasets list -s "rsna knee"`, `kaggle datasets metadata/files`, webfetch writeups, websearch. CLI akun utama, tanpa submit/push.*
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

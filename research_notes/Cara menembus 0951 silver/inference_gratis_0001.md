@@ -1,9 +1,9 @@
 # Inference/Variance-Reduction GRATIS: Hipotesis +0,001 menuju LB 0,951 (RSNA Knee 2026)
 
-> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_SILVER.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
 
 
-> Riset 10 Okt 2026 (READ-ONLY di Kaggle; tidak ada push/submit/ubah kernel). Posisi: stack Apex 0,950 (r384 SWA nartaa ⊕ reader ConvNeXt goodpjw [fold0–2] ⊕ r224 sibling, rank-blend, mirror plane-aware, native crop 320, K94). Perak = ≥0,951 (rank ≤257 dari 5.584 tim per papan 9 Okt) — [MEMORY.md](../../MEMORY.md) §1.
+> Riset 10 Okt 2026 (READ-ONLY di Kaggle; tidak ada push/submit/ubah kernel). Posisi: stack Apex 0,950 (r384 SWA nartaa ⊕ reader ConvNeXt goodpjw [fold0–2] ⊕ r224 sibling, rank-blend, mirror plane-aware, native crop 320, K94). Silver = ≥0,951 (rank ≤257 dari 5.584 tim per papan 9 Okt) — [MEMORY.md](../../MEMORY.md) §1.
 > Sumber utama: MEMORY.md/laporan_push.md/reports (internal), forum 746792 (Danial Zakaria/nartaa, via `kaggle forums topics show`), daftar file dataset via `kaggle datasets files` (akun2, read-only), notebook `/tmp/opencode/nartaa0949/rsna-knee-0949-anatomical-mirror.ipynb`, `kaggle_base/apex_grandmaster_stack_20261008.ipynb`, `kaggle_kernel_hengck_gold_a2/mavit-288-gold58-eval.ipynb`.
 
 ## Q1 — Inventaris dataset `nartaa/rsna-knee-publication-swa-weights-20261007`: ada arm tambahan?
@@ -54,7 +54,7 @@ Stack kita SUDAH memakai rank-blend + **bobot per-finding** (TARGET_WEIGHTS 0,03
 
 ### Cited Findings
 - TARGET_WEIGHTS Apex (sudah aktif di stack 0,950): Baker's 0,35 · Contusion 0,30 · Medial OA 0,25 · ACL 0,25 · Medial Meniscus 0,20 · MCL 0,20 · Lateral Meniscus/Fracture/Lateral OA/PF OA 0,08 · Effusion 0,04 · Synovitis 0,03; blend `fused = (1−w)·rank_sota + w·rank_own` lalu rankpct akhir — [kaggle_base/apex_grandmaster_stack_20261008.ipynb](../../kaggle_base/apex_grandmaster_stack_20261008.ipynb) sel §Fusion (internal)
-- Optimisasi bobot = placebo: hill-climb 50×2000 iter vs ridge +0,0002 — [writeup PS-S5E12](https://www.kaggle.com/competitions/playground-series-s5e12/writeups/2nd-place-solution-winning-based-on-id-shift-an); sintesis internal: "optimisasi bobot halus +0,0002; ambang Δ<0,002 = noise" — [teknik_ensembel_bobot.md](../Strategi%20meraih%20perak%20RSNA/teknik_ensembel_bobot.md) Q3–Q4
+- Optimisasi bobot = placebo: hill-climb 50×2000 iter vs ridge +0,0002 — [writeup PS-S5E12](https://www.kaggle.com/competitions/playground-series-s5e12/writeups/2nd-place-solution-winning-based-on-id-shift-an); sintesis internal: "optimisasi bobot halus +0,0002; ambang Δ<0,002 = noise" — [teknik_ensembel_bobot.md](../Strategi%20meraih%20silver%20RSNA/teknik_ensembel_bobot.md) Q3–Q4
 - Rank-mean = standar semua notebook top ("averaging percentile ranks, never raw probabilities") — [research-report.md (ahmed-hesham07)](https://github.com/ahmed-hesham07/RSNA-Knee-Abnormality-Detection/blob/main/research-report.md); literatur: weighted Borda (SUMMA) ≥ rank seragam — [JMLR v20](http://jmlr.org/papers/volume20/18-094/18-094.pdf)
 - Per-finding include/exclude: konvergen 2 notebook independen (RadImageNet dibuang di Baker's/Fracture), **tanpa angka lift** — [research-report.md](https://github.com/ahmed-hesham07/RSNA-Knee-Abnormality-Detection/blob/main/research-report.md)
 - Kalibrasi emas internal (Colab 9 Okt, SE≈0,01): induk r384 plain 0,9214 → +mirror 0,9221 → crop320 0,9219 → +mirror 0,9225; r224 solo 0,9150; rank-blend r384(320+mirror)+r224 @0,2/0,35/0,5 = **0,9239/0,9238/0,9223** — [MEMORY.md](../../MEMORY.md) §3 (internal). Blend emas 0,9225→0,9239 (Δ +0,0014) TETAP berujung LB 0,950 (sub 57012143) → **bukti langsung: Δ gold <0,002 = noise di LB**.
@@ -63,7 +63,7 @@ Stack kita SUDAH memakai rank-blend + **bobot per-finding** (TARGET_WEIGHTS 0,03
 
 ### Inferences
 - Yang BELUM diuji & masih waras: (a) prob-mean antar ARM (bukan antar view) vs rank-mean di stack 3-leg; (b) bobot per-finding utk r224 (bukan cuma reader); (c) mirror diperlakukan sbg arm rank terpisah (bukan prob-mean dalam arm).
-- Yang TIDAK layak: sweep grid halus 0,05 langkah utk 12 bobot (12 parameter × emas 58 = pasti overfit — [teknik_ensembel_bobot.md](../Strategi%20meraih%20perak%20RSNA/teknik_ensembel_bobot.md) Q3); "gating routing di-fit di emas" (rabari = contoh gagal).
+- Yang TIDAK layak: sweep grid halus 0,05 langkah utk 12 bobot (12 parameter × emas 58 = pasti overfit — [teknik_ensembel_bobot.md](../Strategi%20meraih%20silver%20RSNA/teknik_ensembel_bobot.md) Q3); "gating routing di-fit di emas" (rabari = contoh gagal).
 
 ### Gaps
 - Tidak ada A/B publik berskor-LB "rank vs prob" di kompetisi imaging (klaimnya konsensus + teori AUC, bukan satu eksperimen).
@@ -169,4 +169,4 @@ Template kernel eval emas-58 sudah ada & terbukti (commit-run, bukan submisi; st
 - `kaggle datasets files` untuk `nartaa/rsna-knee-oai-original384-s42-pair` tak bisa dicek (privat) — asumsi "tak ada ckpt tambahan di privat" tak bisa dipastikan.
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

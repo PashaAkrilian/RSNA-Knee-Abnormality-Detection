@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Simulasi perak 17 Okt (lanjutan silver_sim_cluster.py): blok publik 0,958 = klaster salinan R6+flip; delta privat relatif thd klaster goodpjw.
+"""Simulasi silver 17 Okt (lanjutan silver_sim_cluster.py): blok publik 0,958 = klaster salinan R6+flip; delta privat relatif thd klaster goodpjw.
 Pakai: python3 silver_sim_1017.py <folder berisi csv papan publik (kaggle competitions leaderboard -d)>"""
 import numpy as np, pandas as pd, glob, sys
 rng = np.random.default_rng(11)
@@ -27,7 +27,7 @@ def p_silver(delta, n_g1=200, g1_edge=0.002, s=0.5, sig_ind=0.002, sig_fam=0.000
         above += int(((g0 - 0.958) + 0.001 * rng.standard_normal(len(g0)) > ours).sum())
         w += (above + 1) <= K
     return w / trials
-print(f'N {N_END} perak rank <= {K} | G0 {len(g0)}')
+print(f'N {N_END} silver rank <= {K} | G0 {len(g0)}')
 ds = (0.0, 0.0003, 0.0006, 0.001, 0.0015, 0.002)
 print('skenario                         salinan(q=.4)  ' + '  '.join(f'd={d:.4f}' for d in ds))
 for n_g1 in (150, 200, 260):

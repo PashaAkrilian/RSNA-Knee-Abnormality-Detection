@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Simulasi PERAK sadar-klaster (15 Okt): papan privat saat blok publik 0,956–0,957 berisi SALINAN resep.
+"""Simulasi SILVER sadar-klaster (15 Okt): papan privat saat blok publik 0,956–0,957 berisi SALINAN resep.
 
 Model (semua angka relatif thd keluarga "R7 dasar" di privat; arah, bukan ramalan):
 - G1 = tim publik >=0,958 (tumbuh ke N_G1 di akhir): privat = keunggulan publik dikerutkan (s) + derau independen sig_ind.
 - Klaster = keluarga resep publik (ukuran, delta_f): SATU skor privat per keluarga (salinan byte-identik) = delta_f + e_f,
   e_f ~ N(0, sig_fam) = cara split privat memperlakukan galat khas resep itu; + keluarga kecil (variasi sendiri) acak.
 - G0 = tim publik <=0,955: privat = (pub - 0,9563) + N(0, sig_g0); sig_g0 kecil krn mayoritas varian keluarga yg sama.
-- Kita = keluarga unik: delta_kita + e_kita. Rank privat = jumlah tim di atas kita + 1; perak bila rank <= 5 % x N.
+- Kita = keluarga unik: delta_kita + e_kita. Rank privat = jumlah tim di atas kita + 1; silver bila rank <= 5 % x N.
 Pakai: python3 silver_sim_cluster.py   (opsional: python3 silver_sim_cluster.py <csv papan publik> utk G0 dari papan nyata)
 """
 import csv
@@ -48,7 +48,7 @@ def p_silver(delta, n_g1=250, g1_edge=0.0025, s=0.5, sig_ind=0.002, sig_fam=0.00
 
 
 if __name__ == "__main__":
-    print(f"N akhir {N_END} | perak = rank <= {K} | klaster {sum(f[1] for f in FAM) + N_SMALL} tim | G0 {len(g0_pub)} tim")
+    print(f"N akhir {N_END} | silver = rank <= {K} | klaster {sum(f[1] for f in FAM) + N_SMALL} tim | G0 {len(g0_pub)} tim")
     deltas = (0.0, 0.0003, 0.0006, 0.0010, 0.0015, 0.0020)
     print("skenario (n_G1, sig_fam, sig_ind)        " + "  ".join(f"d={d:.4f}" for d in deltas))
     for n_g1 in (200, 250, 300):

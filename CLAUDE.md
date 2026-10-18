@@ -1,13 +1,13 @@
 # RSNA Knee — Claude Code (misi & aturan proyek)
 
-> File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana PERAK aktif = **STRATEGI_PERAK.md §0**; riset terbaru = `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
+> File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana SILVER aktif = **STRATEGI_SILVER.md §0**; riset terbaru = `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
 
 ## Misi
-Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, **rank 467/6.187** (papan publik 19 Okt 02:33 WIB); terbaik COMPLETE `g9a`/`g6a` = 0,958. Cutoff publik top 5% saat itu rank 309, masih di dalam blok 0,958; hasil privat 70% yang menentukan medali. `g6c`, `g12`, dan `g13` masih PENDING (cek API 02:55 WIB); dua kernel murid r4 alver sudah dua kali di-requeue, terakhir 02:51, dan RUNNING pada cek 02:56; timer memantau. Bukti terbaru mendukung B-leg seed 0; seed 1 tidak menambah gold. Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry sudah ditutup. Target user: **PERAK** — tidak ada jaminan.
+Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, **rank 467/6.187** (papan publik 19 Okt 02:33 WIB); terbaik COMPLETE `g9a`/`g6a` = 0,958. Cutoff publik top 5% saat itu rank 309, masih di dalam blok 0,958; hasil privat 70% yang menentukan medali. `g6c`, `g12`, dan `g13` masih PENDING (cek API 02:55 WIB); dua kernel murid r4 alver sudah dua kali di-requeue, terakhir 02:51, dan RUNNING pada cek 02:56; timer memantau. Bukti terbaru mendukung B-leg seed 0; seed 1 tidak menambah gold. Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry sudah ditutup. Target user: **SILVER** — tidak ada jaminan.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
-2. **STRATEGI_PERAK.md §0** (rencana aktif 19–22 Okt); `STRATEGI_0960.md` = arsip 12 Okt; **docs/PLAN_B.md** = cadangan.
+2. **STRATEGI_SILVER.md §0** (rencana aktif 19–22 Okt); `STRATEGI_0960.md` = arsip 12 Okt; **docs/PLAN_B.md** = cadangan.
 3. **HANDOFF.md** — §0/§0c untuk status dan urutan kerja yang sedang berlaku.
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md**; lalu riset 18 Okt dan 15 Okt. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md (§67–§71), docs/RESEARCH_NOTES.md.
@@ -16,10 +16,10 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, 
 Tim **0,958 rank 467/6.187** (papan 02:33 WIB; cutoff publik top 5% = 309); `g6c` (57357991), `g12` (57359383), `g13` (57362095) masih **PENDING**. Terbaik COMPLETE `g9a`/`g6a` = 0,958. Jatah 18 Okt tersisa satu dan dibiarkan. Uji gold B-leg LULUS (ρ 0,9984; g13 gold 0,9415); seed 1 menurunkan gold. Dua kernel murid r4 (fold0–1 dan 2–3) di-requeue dua kali, terakhir pukul 02:51, lalu RUNNING pada cek 02:54:59 dan 02:55; kuota alver mulai terpakai, belum ada submisi baru. Timer rankpoll 5 mnt dan requeue 2 mnt aktif. Kuota main/alver/nxtirfan = 19,87/17,75/4,62 jam; reset 24 Okt 07:00 WIB.
 
 ## Status 17 Okt ±03:00 WIB (arsip)
-Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; perak publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % perak); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.
+Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; silver publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % silver); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.
 
 ## Status 16 Okt ±20:40 WIB (arsip)
-Garis perak publik **0,958**; kita **0,957 rank 461 (ke-15 di blok 0,957)**; terbaik papan `r7v3sr`; **17 Okt 07:01 `r7v6a`** (S6F .5 separuh Raptor + murid 4 fold .3 + bobot heliosli; gold setia 0,9414) + **±14:30 `r7v7a`** (murid 8 model, otomatis bergerbang).
+Garis silver publik **0,958**; kita **0,957 rank 461 (ke-15 di blok 0,957)**; terbaik papan `r7v3sr`; **17 Okt 07:01 `r7v6a`** (S6F .5 separuh Raptor + murid 4 fold .3 + bobot heliosli; gold setia 0,9414) + **±14:30 `r7v7a`** (murid 8 model, otomatis bergerbang).
 
 ## Status 15 Okt ±21:10 WIB (arsip)
 Terbaik **0,956, rank 398** (`r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271); **57231466 `r7v4c40`** (flip stride 1 + murid r2a 0,40) PENDING ±01:00; **jadwal otomatis permanen** (systemd --user, linger): **16 Okt 07:01** submit **`r7v3s`** (S6F 0,35 di slot compact + murid 0,30) & **±08:30 `r7v3sr`** (S6F di separuh Raptor; gold-58 +0,0034 vs +0,0015); **17 Okt 07:05** latih murid r2a fold 2–3 + 2 model full-data (alver) + r2c fold 0–3 (nxtirfan); **17 Okt 11:00** unduh fold → dataset murid baru (tanpa submit); poller rank tiap 5 mnt → `data/rank_watch.log`; kuota: main ±9,5 j (inferensi/submisi saja), alver 0, nxtirfan ±0,5 j → +30 j/akun 17 Okt 07:00 WIB; **keputusan user: TANPA merger & TANPA pesan support (11 Okt); 12 Okt: ketiga akun boleh, akun utama jangan untuk train; 15 Okt: izin 1 jatah ekstra malam itu**.
@@ -44,7 +44,7 @@ Mesin Windows (`C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection`, Git Ba
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
 cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection
-cat MEMORY.md STRATEGI_PERAK.md HANDOFF.md       # baca konteks aktif
+cat MEMORY.md STRATEGI_SILVER.md HANDOFF.md       # baca konteks aktif
 systemctl --user list-timers 'rsna-*'; tail -5 data/rank_watch.log   # jadwal otomatis + rank terakhir
 kaggle quota                                       # kuota akun utama
 kaggle competitions submissions rsna-knee-abnormality-detection -v | head

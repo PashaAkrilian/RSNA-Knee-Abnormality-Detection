@@ -1,29 +1,30 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
-> Konteks aturan: `MEMORY.md` · rencana aktif: **`STRATEGI_PERAK.md` §0** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset/riwayat terdahulu ada di `reports/`, `research_notes/`, dan `PROGRESS.md`.
-> Diperbarui 19 Okt 2026 02:56 WIB. Rencana aktif: `STRATEGI_PERAK.md` §0; status lengkap: `MEMORY.md` §3 dan `HANDOFF.md` §0c. Riset baru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
+> Konteks aturan: `MEMORY.md` · rencana aktif: **`STRATEGI_SILVER.md` §0** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset/riwayat terdahulu ada di `reports/`, `research_notes/`, dan `PROGRESS.md`.
+> Diperbarui 19 Okt 2026 03:02 WIB; status operasional terakhir diperiksa 02:56 WIB. Rencana aktif: `STRATEGI_SILVER.md` §0; status lengkap: `MEMORY.md` §3 dan `HANDOFF.md` §0c. Riset baru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
 
 > Papan publik 02:33 WIB: 6.187 tim, Krazy KIller **0,958 rank 467** (cutoff publik top 5% = 309). Kaggle API 02:55 WIB: g6c/g12/g13 PENDING. Dua kernel r4 di alver sudah RUNNING setelah push ulang kedua; kuota main/alver/nxtirfan 19,87/17,75/4,62 jam. Tidak ada submission baru; eksperimen dicatat terpisah dari skor.
 
-## 1. Posisi vs garis perak (baris pertama = status terbaru; baris berikut arsip)
+## 1. Posisi vs garis silver (baris pertama = status terbaru; baris berikut arsip)
 | Hal | Nilai |
 |---|---|
 | Tim — 19 Okt 02:33 WIB | `Krazy KIller`: **0,958 rank 467/6.187**, 139 submisi; cutoff top 5% publik rank 309, di dalam blok 0,958. |
 | Submisi pending — API 19 Okt 02:33 WIB | **57357991 `g6c`, 57359383 `g12`, 57362095 `g13` = PENDING**. Jatah 18 Okt yang tersisa satu dibiarkan. |
 | Timer/kuota — 19 Okt 02:56 WIB | rankpoll tiap 5 mnt, requeue tiap 2 mnt; kuota GPU main/alver/nxtirfan = **19,87/17,75/4,62 jam**, reset 24 Okt 07:00 WIB. Dua kernel r4 di alver di-requeue ulang pada 02:51 lalu RUNNING pada cek 02:55; dipantau timer rsna-requeue. |
-| Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
+| Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_SILVER.md` J4) |
 | LB kita | **0,956 — rank 398/6.040** (15 Okt 19:49; skor terbaik dari `r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271). Riwayat: rank 403 (15 Okt pagi), 447 (r7r224), 558 (R7, 14 Okt), 0,954 rank 466 (12 Okt) |
-| Peta blok (15 Okt 19:49 WIB) | ≥0,958 = 132 · **≥0,957 = 327** · tepat 0,956 = 941 · **garis perak (rank 301) = 0,957** · perunggu (rank 603) = 0,956 → perak publik menuntut tampil 0,957 |
-| Peta blok (14 Okt 07:44 UTC) | ≥0,966 = 4 · ≥0,965 = 7 · ≥0,964 = 12 · ≥0,962 = 27 · ≥0,960 = 55 · ≥0,958 = 108 · ≥0,957 = 201 · **≥0,956 = 951 (±750 tepat 0,956 = dataran R7)** · garis perak (rank 297) = **0,956**, perunggu (rank 595) = **0,956**, emas (±rank 22) ≈ 0,962. **0,965 = 7 tim teratas** |
-| Peta blok (12 Okt 07:29 UTC) | ≥0,954 = **803** (±600 tepat 0,954) · ≥0,955 = 182 · ≥0,956 = 119 · ≥0,957 = 86 · ≥0,958 = 66 · ≥0,960 = 38 · garis perak (rank 290) = **0,954**, perunggu (rank 581) = **0,954**, emas (rank 21) = 0,962 |
-| Dinamika | garis perak 0,950 (8 Okt) → 0,954 (12 Okt); ≥0,955 naik 73 → 182 dalam 4 hari; 529 dari 604 tim di dataran 0,954 submit dalam 24 j terakhir (gelombang klon S6); trik "kirim 1−p" membuat tim kuat tersembunyi |
-| Peluang (simulasi) | Apex 0,950: perak 13–20 %, perunggu 25–41 %; klon S6 (0,954) di klaster ratusan tim: perak ±25–45 %, perunggu ±45–70 %; varian dgn informasi baru/merger lebih tinggi; **100 % mustahil** (`silver_prob_sim.py`) |
+| Peta blok (15 Okt 19:49 WIB) | ≥0,958 = 132 · **≥0,957 = 327** · tepat 0,956 = 941 · **garis silver (rank 301) = 0,957** · perunggu (rank 603) = 0,956 → silver publik menuntut tampil 0,957 |
+| Peta blok (14 Okt 07:44 UTC) | ≥0,966 = 4 · ≥0,965 = 7 · ≥0,964 = 12 · ≥0,962 = 27 · ≥0,960 = 55 · ≥0,958 = 108 · ≥0,957 = 201 · **≥0,956 = 951 (±750 tepat 0,956 = dataran R7)** · garis silver (rank 297) = **0,956**, perunggu (rank 595) = **0,956**, emas (±rank 22) ≈ 0,962. **0,965 = 7 tim teratas** |
+| Peta blok (12 Okt 07:29 UTC) | ≥0,954 = **803** (±600 tepat 0,954) · ≥0,955 = 182 · ≥0,956 = 119 · ≥0,957 = 86 · ≥0,958 = 66 · ≥0,960 = 38 · garis silver (rank 290) = **0,954**, perunggu (rank 581) = **0,954**, emas (rank 21) = 0,962 |
+| Dinamika | garis silver 0,950 (8 Okt) → 0,954 (12 Okt); ≥0,955 naik 73 → 182 dalam 4 hari; 529 dari 604 tim di dataran 0,954 submit dalam 24 j terakhir (gelombang klon S6); trik "kirim 1−p" membuat tim kuat tersembunyi |
+| Peluang (simulasi) | Apex 0,950: silver 13–20 %, perunggu 25–41 %; klon S6 (0,954) di klaster ratusan tim: silver ±25–45 %, perunggu ±45–70 %; varian dgn informasi baru/merger lebih tinggi; **100 % mustahil** (`silver_prob_sim.py`) |
 | Deadline | merger/entry **15 Okt 23:59 UTC**; final **22 Okt 23:59 UTC**; maks 2 final (PILIH MANUAL); publik 30 % / privat 70 % |
 | Aturan terima uji | varian dibandingkan dgn klon S6 (≈0,954); LB resolusi 0,001 → hanya selisih ≥0,002 yg jelas; Δ<0,002 = noise |
 
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
 |---|---|---|---|---|---|---|---|
+| — | 19 Okt 03:02 | **normalisasi dokumentasi (tanpa submission)** | Semua rujukan medali di 35 Markdown diseragamkan menjadi silver; nama rencana aktif dan arsip diperbarui | — | — | tanpa perubahan skor atau kernel | `STRATEGI_SILVER.md` menggantikan nama rencana lama; status eksperimen tetap sesuai cek 02:56 WIB |
 | — | 19 Okt 02:30 | riset aset publik + persiapan murid r4 (tanpa submission) | Evaluasi seed1/Engine8/Engine9/dual-teacher/Argon4; label konsensus + OOF-R7 + OOF-B-leg; dua kernel training alver dikirim | — | — | lanjutkan setelah r4 selesai; `g14` tetap bersyarat pada kenaikan g13 dan gerbang gold | rincian dan angka di laporan riset 19 Okt; requeue v1 dilakukan 02:42, watcher aktif; push kedua selesai 02:51; kedua kernel RUNNING pada cek 02:55 dan kuota alver mulai berkurang; sisa jatah 18 Okt tidak digunakan |
 | 1 | 13 Sep | 56196772 | v3 hybrid (fork + arm v3 α=0,15) | 0,941 | −0,009 | BUANG | byte-identik dgn base; arm tak terbaca |
 | 2 | 4 Okt | 55795592 | c5 sendirian (CoAtNet5, label fusi) | 0,927 | −0,023 | BUANG sbg stack | solo ≠ stack; CV lokal tak pindah ke LB |
@@ -73,8 +74,8 @@
 | 32 | 16 Okt 07:01 | **57247278 `r7v3s` v1** (timer) | r7r224m + S6F 0,35 + murid r2a 0,30 di slot compact | **0,957** (pertama kali!) — rank saat selesai 478 (≥0,957 = 558) | +0,001 tampil | S6F + murid TERBUKTI menaikkan tampilan | kandidat final A |
 | 33 | 16 Okt 08:30 | **57250390 `r7v3sr` v1** (timer) | S6F 0,35 di separuh Raptor + murid 0,30 | **0,957 — rank 495→317** (13:00) | lompatan terbesar | gold setia +0,0033 vs dasar; struktur separuh Raptor > compact | **TERBAIK** |
 | 34 | 16 Okt 12:25 | **57256349 `r7v3sw` v1** (izin user) | r7v3s + bobot Raptor per-temuan heliosli | **0,957** | — | rank saat submit 495 | selesai bersamaan dgn r7v5a (19:40) |
-| 35 | 16 Okt 14:37 | **57260183 `r7v5a` v1** (izin user) | separuh Raptor = 0,5 Raptor + 0,5 S6F; compact = 0,7 R7 + 0,3 murid; bobot per-temuan heliosli; tanpa flip | **0,957** | — | gold setia 0,9410 | papan 19:48: kita rank 461 = **ke-15 dari 345 di blok 0,957**; ≥0,958 = 446 → **garis perak publik 0,958** |
-| 36 | 16 Okt 19:45 | **57269378 (user/rekan)** | salinan notebook publik goodpjw2008 v27 "CoAtNet + R6 + 2.5D MIL": Raptor 384m + 224m, R6+flip, wc heliosli, pembaca 1/10 | **0,958 — rank 459→317** (selesai ±01:45, ±6 j) | +0,001 tampil | perak publik = rank 305; klaster salinan besar (230 vote) | cadangan final saja (salinan murni) |
+| 35 | 16 Okt 14:37 | **57260183 `r7v5a` v1** (izin user) | separuh Raptor = 0,5 Raptor + 0,5 S6F; compact = 0,7 R7 + 0,3 murid; bobot per-temuan heliosli; tanpa flip | **0,957** | — | gold setia 0,9410 | papan 19:48: kita rank 461 = **ke-15 dari 345 di blok 0,957**; ≥0,958 = 446 → **garis silver publik 0,958** |
+| 36 | 16 Okt 19:45 | **57269378 (user/rekan)** | salinan notebook publik goodpjw2008 v27 "CoAtNet + R6 + 2.5D MIL": Raptor 384m + 224m, R6+flip, wc heliosli, pembaca 1/10 | **0,958 — rank 459→317** (selesai ±01:45, ±6 j) | +0,001 tampil | silver publik = rank 305; klaster salinan besar (230 vote) | cadangan final saja (salinan murni) |
 | 37 | 17 Okt 12:11 | **57296298 `r7v6a` v1** (timer, telat krn PC mati) | R7 + S6F .5 separuh Raptor + murid4 .3 + wc=h | **0,957** (rank tim 557) | di bawah salinan goodpjw | gold 0,9414 tak terlihat di papan | keluarga R7 kalah di papan |
 | 38 | 17 Okt 12:11 | **57296301 `g6a` v1** | goodpjw + S6F .5 + murid4 .3 | **0,958 — rank 569→323** | > salinan goodpjw | gold setia 0,9400 | S6F + murid terbukti di keluarga R6 |
 | 39 | 17 Okt 21:52 | **57315276 `g8a` v1** | g6a + bobot V2 heliosli + murid 8 model | **0,958** (tak melampaui g6a) | — | commit gold murid 0,9325 | bobot V2/murid 8 tak menambah |
@@ -95,11 +96,11 @@
 | — | 16 Okt 13:54–14:22 | **gold SETIA** (`gold-nf`, `gold-f`: pipeline submisi pd 58 gold) | r384m .9228 · r224m .9160 · R7 .9312 · R7flip .9317 · S6F .9314 · murid .9282 | flip −0,0005 di blend → DIBUANG | — | S6F 0,5–0,55 di separuh Raptor terbaik; murid +0,0011–0,0014 | `gold_eval_full.py` |
 
 | — | 15 Okt ±21:30 | **57231466 `r7v4c40`** | flip stride 1 + murid 0,40 | **0,956** | — | tanpa S6F tidak naik tampilan | flip belum terbukti |
-| — | 16 Okt 11:50 | latih **student-r2a-m** (akun UTAMA, izin user "gunakan semua gpu" sebelum reset) fold 2–3; varian **`r7v3sw`** = r7v3s + bobot Raptor per-temuan heliosli (0,958 notebook 15 Okt; gold: Lateral OA cocok, PF OA/Baker's tidak; +0,0020 vs +0,0015) | — | — | papan 11:48: perak rank 303 = 0,957; kita 483 (ke-323 dari 403 di blok 0,957) | 17 Okt: alver sesi r2a-n2 dihapus (fold 2–3 dari akun utama) |
-| — | 15 Okt 22:02 | **S6F pada gold-58** (kernel `rsna-knee-s6f-gold`, inferensi akun utama) | 58/58, 0 fallback, 7,3 dtk/studi/GPU (→ tahap test ±1,4 j); **AUC S6F 0,9314** (R7 0,9312, murid 0,9282, Raptor384* 0,9229); ρ S6F~R7 0,871 | blend gold vs dasar: +S6F compact .35 **+0,0010**; +S6F .35 + murid .30 **+0,0014**; **S6F di separuh Raptor + murid +0,0034 (P 0,92)**; murid saja +0,0003 | — | simulasi sadar-klaster (`silver_sim_cluster.py`): δ +0,001 → P(perak) 49–86 % | 16 Okt: `r7v3s` (07:01) vs `r7v3sr` (±08:30, commit dicek) |
+| — | 16 Okt 11:50 | latih **student-r2a-m** (akun UTAMA, izin user "gunakan semua gpu" sebelum reset) fold 2–3; varian **`r7v3sw`** = r7v3s + bobot Raptor per-temuan heliosli (0,958 notebook 15 Okt; gold: Lateral OA cocok, PF OA/Baker's tidak; +0,0020 vs +0,0015) | — | — | papan 11:48: silver rank 303 = 0,957; kita 483 (ke-323 dari 403 di blok 0,957) | 17 Okt: alver sesi r2a-n2 dihapus (fold 2–3 dari akun utama) |
+| — | 15 Okt 22:02 | **S6F pada gold-58** (kernel `rsna-knee-s6f-gold`, inferensi akun utama) | 58/58, 0 fallback, 7,3 dtk/studi/GPU (→ tahap test ±1,4 j); **AUC S6F 0,9314** (R7 0,9312, murid 0,9282, Raptor384* 0,9229); ρ S6F~R7 0,871 | blend gold vs dasar: +S6F compact .35 **+0,0010**; +S6F .35 + murid .30 **+0,0014**; **S6F di separuh Raptor + murid +0,0034 (P 0,92)**; murid saja +0,0003 | — | simulasi sadar-klaster (`silver_sim_cluster.py`): δ +0,001 → P(silver) 49–86 % | 16 Okt: `r7v3s` (07:01) vs `r7v3sr` (±08:30, commit dicek) |
 | 31 | 15 Okt 20:08 | **57231466 `r7v4c40` v1** (izin user: "gunakan 1 submission saja") | r7r224m + flip-TTA compact **stride 1** + murid r2a (2 fold) **slot compact 0,40** (commit: GOLD58 0,9282, GPU compact 18,8 dtk/studi) | PENDING (±00:30–01:00) | — | rank saat submit 403 (≥0,957 = 331) | vs `r7v3c40` (16 Okt) = efek flip; jatah tim 15 Okt 4/5 |
 | — | 15 Okt 20:30 | **S6F terintegrasi** (`build_r7murid.py s6f=`) — commit LULUS `r7v6` (flip + S6F 0,35 + murid 0,30) & **`r7v3s`** (tanpa flip + S6F 0,35 + murid 0,30): `[B] ok` 3 studi ±60 dtk, `S6F_LEG used` (ρ~R7 0,71–0,79 pd 3 studi), `MURID_LEG used` | skrip publik nartaa (S6 ConvNeXt all-data, solo 0,950) hanya komponen B; guard = sisa run (≤ NB_T0+8,0 j) | — | — | bukti publik: leoprovorov r224m + S6F 0,4 compact = 0,957 (rank 212, 4 submisi) | jadwal 16 Okt 07:01: `r7v3s` + `r7v3c40` |
-| 30 | 15 Okt 15:37 | **57223271** (USER/rekan; bukan agen) | salinan notebook publik heliosli "=0.9573 Latest public dataset score in one click!" v1 = R7 + r224 (A224 0,35), tanpa cermin/flip = resep sama dgn `r7r224` | **0,956** | — | papan 19:49: **rank 398**/6.040; ≥0,957 = **327** → **garis perak (rank 301) kini 0,957**; perunggu (603) 0,956 | jatah tim 15 Okt: 3/5 terpakai |
+| 30 | 15 Okt 15:37 | **57223271** (USER/rekan; bukan agen) | salinan notebook publik heliosli "=0.9573 Latest public dataset score in one click!" v1 = R7 + r224 (A224 0,35), tanpa cermin/flip = resep sama dgn `r7r224` | **0,956** | — | papan 19:49: **rank 398**/6.040; ≥0,957 = **327** → **garis silver (rank 301) kini 0,957**; perunggu (603) 0,956 | jatah tim 15 Okt: 3/5 terpakai |
 | — | 15 Okt 10:45–19:55 | kandidat 16 Okt (commit LULUS semua, GOLD58 0,9282) | **`r7v4c`** (v224m + flip-TTA compact stride 1 + r2a compact 0,25; GPU compact 18 dtk/studi ≈2×) · **`r7v3c40`** (r2a compact 0,40) · `r7v3t` (r2a kaki ke-3 0,2) | — | — | timer permanen **16 Okt 07:01** `rsna-submit-16okt`: r7v4c + r7v3c40 | rank dicatat poller `rsna-rankpoll` |
 | — | 15 Okt 08:20 | **murid r2a-n SELESAI** (nxtirfan, 5,2 j) | fold0 gold 0,9285 · fold1 0,9261 · **ensembel 2 fold gold-58 0,9282** (r1 0,9240, R7 0,9312, Raptor 0,9229); Spearman r2a~R7 0,911, r2a~Raptor 0,892 (r1~Raptor 0,930) | — | — | lebih kuat & lebih mirip R7 sesuai rancangan | dataset main `dimaspashaakrilian/rsna-knee-student-r2a` (fold0–1) |
 | 29 | 15 Okt 08:35 | **57201659 `r7v3c` v1** | `r7r224m` + murid **r2a** (2 fold) di **slot compact 0,25** (commit: GOLD58 0,9282, MURID_LEG compact used) | **0,956** — rank saat selesai TIDAK tercatat (PC mati ±11:00; pemantau systemd hilang) | — | rank saat submit 506 (≥0,957 = 247 tim) | 19:49: rank **398** walau ≥0,957 naik 253→327 → skor terbaik tim NAIK (r7v3c ATAU 57223271; tak bisa dipisahkan). Pelajaran: poller rank permanen `rsna-rankpoll` (tiap 5 mnt, tahan reboot) |
@@ -108,10 +109,10 @@
 | — | 14 Okt 21:30 | varian siap (belum submit) | **`r7m224s`** (R7+r224 + murid r1 DI DALAM slot Raptor 0,25) · **`r7r224f`** (R7+r224, compact flip-TTA anatomis heliosli v4c + eval-stride 2; commit-run berjalan) | — | — | kandidat jatah 15 Okt | pelajaran: tambah anggota DI DALAM slot keluarganya (seperti r224), jangan menggeser keseimbangan 0,5/0,5 |
 | — | 14 Okt 21:20 | guru OOF R7 f0/f1 COMPLETE | f0 1.029 + f1 1.135 studi, 0 fallback, ±57–62 mnt/fold (bukan 1,6 j), keluaran probabilitas; f2/f3 RUNNING | — | — | validator label-lemah BIAS ke model berlabel konsensus (murid r1 0,907 vs OOF-R7 0,876) → tak dipakai utk menilai R7 | — |
 
-## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih perak RSNA.md`)
+## 3. Temuan riset (sumber lengkap: `reports/Strategi meraih silver RSNA.md`)
 ### 3a. Sudah TERBUKTI (jangan diulang sia-sia)
 - Keunggulan = **pengetahuan/data**, bukan varian: bagging tanpa OAI ≠ menolong; leg lemah MENURUNKAN; DITUTUP: KneeNet, soup init sama, metadata DICOM, resolusi 288, backbone besar (DINOv2-base +0,001 = noise; DINOv3 lebih buruk), label smoothing.
-- **Bukti berhenti di 0,949**: TIDAK ADA sumber publik (label/preprocessing/bobot) yang melaporkan gain di atas stack 0,949 → relabeling/resep bukan jalur perak.
+- **Bukti berhenti di 0,949**: TIDAK ADA sumber publik (label/preprocessing/bobot) yang melaporkan gain di atas stack 0,949 → relabeling/resep bukan jalur silver.
 - **Optimisasi bobot halus = placebo** (+0,0002 bahkan hill-climb penuh); model sekeluarga & klon tak menambah.
 - **PEMISAH 0,950 vs ≥0,951 (riset 10 Okt, thread 735304, 9 Okt) = PSEUDO-LABELING** — bukan arsitektur/TTA/bobot: **colum2131** (LB 0,958; single ConvNeXt-T 0,953 dgn pseudo labels, "no external data used yet"), **azamat1ch** (LB 0,960, rank 20, cuma 12 submisi; single 5-fold ConvNeXt-T 0,959), **hengck** +5: "model is not the key. it is your labels", **Raymond Yuen**: pseudo+blend label 0,949 → tim 0,958.
 - Yang berangka & terbukti: **arm baru** (internal: 30% independen → 0,943→0,944; publik: blend-gold), **TTA/seed-avg +0,001–0,003** (writeup juara SIIM), per-label include/exclude (konvergen 2 notebook, TANPA angka → wajib triangulasi dulu).
@@ -128,7 +129,7 @@
 | `sameerk2004/rsna-knee-sil-d5f-ft7030`, `rainycloudss/...v6` | d5f = fine-tune dgn 5 dataset label LLM (resep placebo per riset); v6 = fork Apex kita (input sama) | pantau; jangan submisi dulu |
 | `hengck23/mavit-288-baseline` (MaVIT) | **SUDAH DIEVALUASI 10 Okt 00:56** via commit-run `MODE=local` (GRATIS; `alverlfarfaraway/mavit-288-gold58-eval`): **gold-58 MEAN AUC 0,9202** (ACL .962 / Effusion .980, tapi Lateral OA .826 / Synovitis .823) — di bawah induk nartaa (.9214) & reader (.93) = di bawah ambang leg penambah | **DITOLAK** (tak buang submisi); `lixin73/...mavit-336px` = tanpa kernel publik → tak bisa disubmit |
 
-### 3c. Aksi layak (REVISI 10 Okt 03:00, sumber: `reports/Cara menembus 0951 perak.md`)
+### 3c. Aksi layak (REVISI 10 Okt 03:00, sumber: `reports/Cara menembus 0951 silver.md`)
 1. **Fase A — harvest mirror GRATIS** (commit-run `MODE=local`, ~0,5 GPU-jam): H1 = r224+mirror, H2 = reader+mirror, H3 = mirror sbg arm rank terpisah. Protokol: tarik prob per-studi gold-58 → sweep bobot CPU → **sah bila Δ ≥+0,005 vs incumbent & paired-bootstrap CI95>0** (tuned >5 iter → ambang +0,007); <0,003 = noise.
 2. **Fase B — PSEUDO-LABEL SELF-TRAINING** (jalur berbukti ke ≥0,951; 10–25 GPU-jam; muat sblm 15 Okt): pseudo-label 4.407 train pake stack incumbent → fine-tune/rerank → OOF gate → submit bila lulus gate. Bahan: cache `rsna-knee-volcache-z{0,1,2}`, ckpt induk, OOF machinery.
 3. Fast-follower scan harian: `python3 scan_public_updates.py` — syarat arm baru: bukti skor ≥0,951 **dan input publik runnable**. Arm menengah (eval gratis dulu): `tbongc` v8/v10geo, `royalacecat` coatnet384.
@@ -156,15 +157,15 @@
 - **Forum best-score**: model tunggal ConvNeXt-T 5-fold 0,953–0,959 dgn pseudo-label (MURAD rank 10, colum2131); "model is not the key. it is your labels"; validasi: AUC OOF label LLM r=0,87 vs LB (emas-58 r=0,66); trik 1−p; host diam soal OAI/eksternal (743416/744056/747455).
 - **Notebook publik baru**: klaim "Tri-Reader 0,954" (rabari/jcgweb/sameerk) = Apex+r224 (0,950, jangan); tri-hybrid jenillangaliya 0,952 (Raptor+compact+r224 < S6).
 
-### 3g. Temuan 12 Okt (scrape mendalam; detail `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`, rencana `STRATEGI_0960.md`)
+### 3g. Temuan 12 Okt (scrape mendalam; detail `reports/Scrape kompetisi 12 Okt 2026 - peta menuju silver.md`, rencana `STRATEGI_0960.md`)
 - **Notebook publik #1** = S6 dengan bobot **0,5/0,5** + rank sadar-gagal (heliosli, 11 Okt 14:16 UTC); 25/25 notebook teratas memakai bobot nartaa dan ±22/25 compact heliosli → papan publik atas = satu keluarga klon.
 - **velci-kcd25-20** (BliverRigPåDoge, tim 0,955) = S6 0,7/0,3 tak berubah + model privat (5 anggota ImageNet, target lunak laporan) berbobot 0,20 → pola "+1 kaki independen = +0,001".
 - **Pembeda papan atas** (klaim peserta): murid 2.5D sendiri + pseudo-label OOF (ConvNeXt-T tunggal 0,953–0,959; MURAD rank 4 = 0,964 tanpa data eksternal). Validator OOF-vs-label-lemah r=0,87 vs LB, emas-58 r=0,66.
 - **Kode compact heliosli**: 4 fold hash `sha1(uid)[:8] % 4` atas 4.344 non-gold, `gold_in_training 0` → **guru OOF compact bisa direkonstruksi** (`build_compact_oof.py`).
 - Host: LLM API untuk label = boleh; KneeCoT = dilarang; OAI = boleh bila akses terbuka & gratis; bobot publik hasil OAI = belum dijawab.
-- Simulator repo pada papan baru: P(perak) publik 0,954 ≈ 16–25 %, 0,956 ≈ 19–42 %, 0,958 ≈ 26–60 %, 0,960 ≈ 27–76 %.
+- Simulator repo pada papan baru: P(silver) publik 0,954 ≈ 16–25 %, 0,956 ≈ 19–42 %, 0,958 ≈ 26–60 %, 0,960 ≈ 27–76 %.
 
-## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_PERAK.md`)
+## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_SILVER.md`)
 - [ ] 12 Okt: 2 submisi S6-eq (`s6eq`, `s6eqr`) via watcher; scrape lanjutan; PR untuk evaluasi rekan; lalu jalur 0,960 (`STRATEGI_0960.md`: guru OOF compact → murid A/B → notebook final).
 - [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) ditutup; 57028008 Timeout; 57044355 = 0,950 (OF tak jalan → OOM terkonfirmasi); v4.1 dibangun/diuji.
 - [x] 11 Okt dini hari: S6 publik lagi → user men-submit 57051680; sonda `s6probe` (compact ±3,5 j); `build_s6plus.py` (reader/OF opsional); riset forum & zoologi bundel; dokumen diperbarui.
@@ -191,5 +192,5 @@
 - **Diskualifikasi akun ganda**: Rules 5.a/5.b; satu kalimat izin ≠ cukup → pesan ke Kaggle; semua submisi dari akun utama.
 - **OAI/eksternal**: host diam; satu final dgn risiko berbeda. KOREKSI 10 Okt: jalur bersih 0,944 BUKAN lagi zona perunggu (garis perunggu naik 0,944 → 0,947 → 0,950 dlm 4 hari krn notebook Apex viral; 0,944 = rank ≈1.387) → hanya perlindungan kepatuhan.
 - **Noise & papan privat**: Δ<0,002 = noise; jangan menyetel ke papan publik; 2 final beda mekanisme.
-- **Garis perak naik**: target publik ≥0,952; merger = satu-satunya lompatan besar.
+- **Garis silver naik**: target publik ≥0,952; merger = satu-satunya lompatan besar.
 - **Jangan**: cetak kredensial / `VERBOSE=true`, `git add -A`, sentuh kernel proyek lain, `pkill -f` pola sendiri, submit varian identik utk "mengukur noise", `kernels output` OF tanpa `--file-pattern`.

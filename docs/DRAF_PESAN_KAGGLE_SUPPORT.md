@@ -1,7 +1,7 @@
 # Draf: minta kepastian tertulis ke Kaggle/panitia soal akun kedua (UNTUK DIKIRIM USER — agen tidak mengirim apa pun)
 
 > Dibuat 10 Okt 2026 oleh sesi Claude Code. Tujuan: "aman" = kepemilikan medali tidak bisa digugat. Rules (dikutip di
-> `research_notes/Strategi meraih perak RSNA/aturan_strategi_final.md` §2): 3.5.a *"You will be disqualified if you make
+> `research_notes/Strategi meraih silver RSNA/aturan_strategi_final.md` §2): 3.5.a *"You will be disqualified if you make
 > Submissions through more than one Kaggle account"*; 3.5.b *"Each Team member must be a single individual with a separate
 > Kaggle account"*. Teks izin yg tersimpan (`docs/IZIN_AKUN_KEDUA.md`) hanya satu kalimat tanpa pertanyaan/pengirim/tanggal,
 > sehingga tidak cukup sbg dasar bila ada audit. Cara paling aman = laporkan sendiri secara terbuka dan minta keputusan tertulis.
@@ -39,4 +39,4 @@ Best regards,
 - Merger: tim mitra melihat tiga akun di halaman tim kita; jelaskan jujur bila ditanya. Idealnya selesaikan jawaban Kaggle dulu.
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

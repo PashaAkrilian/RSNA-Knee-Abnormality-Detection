@@ -44,7 +44,7 @@ Status and next steps live in Indonesian-language project docs. Read in this ord
 
 1. `AGENTS.md` / `CLAUDE.md` — project rules and concise status
 2. `MEMORY.md` — current facts and decisions
-3. `STRATEGI_PERAK.md` §0 — active silver plan; `STRATEGI_0960.md` is historical
+3. `STRATEGI_SILVER.md` §0 — active silver plan; `STRATEGI_0960.md` is historical
 4. `HANDOFF.md` §0 — live status and next actions
 5. `laporan_push.md` — submission scores and evaluation history
 6. `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md` — latest research; earlier `reports/` and `research_notes/` are dated archives

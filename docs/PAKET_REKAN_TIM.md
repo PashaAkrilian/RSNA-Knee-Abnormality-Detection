@@ -3,7 +3,7 @@
 > (token di `akun_kaggle/` = akses penuh ke akunnya; pastikan ia setuju atau hapus). Berbagi kode di dalam tim boleh (Rules 5.d); notebook di bawah hanya memakai dataset publik + data kompetisi.
 > Run scoring TIDAK memakai kuota GPU; kuota GPU hanya dipakai commit-run (stub 3 studi, ±10 menit) — jadi bantuan komputasi terbesar rekan = menjalankan job latih/probe, bukan submisi.
 
-> **Pembaruan 12 Okt (sesi Claude Code):** kandidat terbaru di bawah (S6-eq dan guru OOF compact). Evaluasi rencana: `STRATEGI_0960.md`; bukti: `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
+> **Pembaruan 12 Okt (sesi Claude Code):** kandidat terbaru di bawah (S6-eq dan guru OOF compact). Evaluasi rencana: `STRATEGI_0960.md`; bukti: `reports/Scrape kompetisi 12 Okt 2026 - peta menuju silver.md`.
 
 > **Pembaruan 15 Okt malam (sesi Claude Code):** akun `nxtirfan` dipakai OTOMATIS utk latih murid r2c pada **17 Okt 07:05 WIB** (2 sesi GPU paralel ±5,5 j; kernel `nxtirfan/rsna-knee-student-r2c-a|b`) — mohon **jangan menjalankan sesi GPU di akun nxtirfan 17 Okt 07:00–13:00** (maks 2 sesi/akun). Submisi tetap dari akun utama; jatah tim 5/hari (agen ≤2). Varian terbaru: `kaggle_kernel_r7v3s` (R7 + r224 cermin + S6F + murid), `kaggle_kernel_r7v4c40`; tabel lama di bawah = arsip.
 
@@ -30,4 +30,4 @@
 - Jangan bagikan kode/data ke tim LAIN sebelum merger resmi (Rules 5.d/6.a).
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.

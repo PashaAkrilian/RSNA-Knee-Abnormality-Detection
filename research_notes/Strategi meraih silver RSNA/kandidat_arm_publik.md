@@ -1,6 +1,6 @@
 # Kandidat Arm Publik untuk Ensemble (riset 9 Okt 2026)
 
-> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_PERAK.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
+> **ARSIP/STATUS 10 Okt 21:30 WIB (sesi Claude Code)**: dokumen riset 9–10 Okt (OpenCode). Rencana Fase A/B (mirror/pseudo-label) DIGANTI oleh `STRATEGI_SILVER.md` (merger + Apex+OrthoFoundation + finals + kepatuhan). Fakta terbaru: `MEMORY.md`; riset terbaru: `reports/Ringkasan riset 10 Okt (sesi Claude Code).md`.
 
 
 Sumber metode: `kaggle kernels list/pull` (baca saja, jeda 3 s, tanpa VERBOSE), dump LB resmi
@@ -8,7 +8,7 @@ Sumber metode: `kaggle kernels list/pull` (baca saja, jeda 3 s, tanpa VERBOSE), 
 + `~/.cache/rsna_scan_log.txt`, dan kode notebook yang ditarik ke `/tmp/opencode/kernels_scan/` (bukan repo).
 Tidak ada kernel yang di-push/run/di-submit.
 
-**Konteks LB (dump resmi 9 Okt 14:47 UTC, 5.584 tim):** ≥0,950 = 719 tim · **≥0,951 = 264 tim (batas perak)** ·
+**Konteks LB (dump resmi 9 Okt 14:47 UTC, 5.584 tim):** ≥0,950 = 719 tim · **≥0,951 = 264 tim (batas silver)** ·
 ≥0,952 = 171 · ≥0,953 = 129 · ≥0,960 = 26. Tim `Krazy KIller` = **rank 571 @0,950** (103 submisi).
 → Naik 1 desimal (0,950→0,951) = menyalip 148 tim.
 
@@ -71,7 +71,7 @@ tidak bisa dinilai. Yang benar-benar independen justru muncul di Q3: leg **Ortho
 Ketiga kandidat yang tersedia **tidak layak ditambahkan** (korelasi ~1, lift ~0); kandidat yang layak
 justru **gabungan dengan leg OrthoFoundation heliosli** (0,951), yang menghasilkan arm baru yang setengahnya
 independen. Perkiraan kasar keunggulan kita bila arm itu dipasang: **+0,001 → 0,951–0,952** (tepat di/lewat
-garis perak), dengan risiko utama = runtime & korelasi kaki nartaa yang masih sama.
+garis silver), dengan risiko utama = runtime & korelasi kaki nartaa yang masih sama.
 
 ### Cited Findings
 | Kandidat | Bukti skor | Komponen | Estimasi lift di atas Apex 0,950 | Risiko |
@@ -143,7 +143,7 @@ Sumber seluruh baris: CLI `kaggle kernels list` (dua kali: `scoreDescending` & `
 - `shikhageekachad/rsna-knee-native384-chunk-000…004` (8–9 Okt; chunk-003 = 14.712.034.073 B) → cache volume 384 px, menarik utk speed tetapi bukan bobot.
 - (Di luar jendela, 6 Okt): `tunminhhunh/rsna-knee-dinov2-labels` 82 MB; `codeandodev/rsna-knee-run-bases`; `prvsiyan/rsna-knee-*-student` & `orthodiffusion-official-knee-mri-foundation`.
 
-**Leaderboard publik snapshot** (sumber: dump resmi `rsna-knee-abnormality-detection-publicleaderboard-2026-10-09T14:47:05.csv`): 5.584 tim; distribusi 0,951 = 93 tim, 0,950 = 455 tim, 0,949 = 129; garis perak = rank ≤264.
+**Leaderboard publik snapshot** (sumber: dump resmi `rsna-knee-abnormality-detection-publicleaderboard-2026-10-09T14:47:05.csv`): 5.584 tim; distribusi 0,951 = 93 tim, 0,950 = 455 tim, 0,949 = 129; garis silver = rank ≤264.
 
 ### Inferences
 - **Arm publik terbaik & termurah saat ini = `heliosli/rsna-knee-blend-gold` (0,951)** — satu-satunya klaim ≥0,951 yang didukung dua notebook independen + menempati #1/#3 daftar skor. Ambil sebagai arm, jangan mengejar d5b/d5c/rabari.
@@ -156,4 +156,4 @@ Sumber seluruh baris: CLI `kaggle kernels list` (dua kali: `scoreDescending` & `
 - `kiyoshiohno/rsna-knee-template` (#2) bergantung pada *dataset* logikanya yang tidak ditarik — perlu `kaggle datasets list --user kiyoc` bila ingin tahu isi pipeline-nya.
 
 ## Catatan status terkini — 19 Okt 2026 02:56 WIB
-Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_PERAK.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
+Status operasional pusat ada di `MEMORY.md`, `HANDOFF.md` §0, dan rencana aktif di `STRATEGI_SILVER.md` §0; riset lengkap ada di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan publik terakhir: 0,958 rank 467/6.187 (cutoff top 5% publik rank 309; cutoff ini sementara karena medali memakai split privat 70%). Pada cek API 02:55, `g6c`, `g12`, `g13` masih PENDING. Dua kernel murid r4 di alver sudah dua kali di-requeue dan kini RUNNING pada cek 02:56. Kuota main/alver/nxtirfan: 19,87/17,75/4,62 jam. Catatan historis di dokumen ini tetap sesuai tanggal asal; gunakan dokumen aktif untuk keputusan sekarang.
