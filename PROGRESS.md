@@ -1716,3 +1716,14 @@ ATURAN PENULISAN:
 - Dibuat label r4 = 0,5 konsensus + 0,25 OOF-R7 + 0,25 OOF-B-leg; fallback tanpa OOF-B-leg = 0,5 konsensus + 0,5 OOF-R7. Sebanyak 3.325 non-gold memakai B-leg, 1.024 fallback; semua 58 gold identik dengan v0 dan dikecualikan dari loss. Dataset label privat diunggah ke alver.
 - Kernel `rsna-knee-student-r4-a` (fold0–1) dan `...-b` (fold2–3), ConvNeXt-T, warm goodpjw, 12 epoch, didorong ke alver; masih QUEUED pada 02:33. Kuota utama/alver/nxtirfan 19,87/17,81/4,62 jam. Tidak ada training di utama, tidak memakai nxtirfan, dan tidak ada submission baru. `g14` hanya setelah g13 mengonfirmasi peningkatan dan r4 lulus gold.
 - Detail: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`; dokumen status sinkron: MEMORY, HANDOFF, STRATEGI_PERAK, laporan_push, AGENTS/CLAUDE, README.
+
+
+## 68. 19 Okt 2026 02:43 WIB — watchdog requeue untuk training murid r4
+- Dua kernel training r4 di alver (`rsna-knee-student-r4-a/b`) tetap QUEUED pada 02:40; kuota alver belum terpakai (17,81 jam tersisa). Kaggle API 02:40: g6c/g12/g13 masih PENDING.
+- Mengaktifkan kedua kernel pada WATCH lokal `data/requeue.py`, lalu timer `rsna-requeue` menjalankan aturan user QUEUED ≥5 menit: delete + push ulang. v1 keduanya berhasil dikirim ulang pada 02:42; status 02:43 masih QUEUED. WATCH tetap aktif untuk requeue berikutnya bila perlu.
+- Tidak ada training di akun utama/nxtirfan dan tidak ada submission baru.
+
+## 69. 19 Okt 2026 02:45 WIB — status setelah requeue
+- API 02:44 mengonfirmasi g6c (57357991), g12 (57359383), dan g13 (57362095) masih PENDING. Rankpoll timer selesai sukses pada 02:45 tanpa perubahan baru; papan terakhir yang diunduh tetap 0,958 rank 467/6.187.
+- Kedua kernel r4 alver masih QUEUED pada cek 02:44. Kuota main/alver/nxtirfan tidak berubah: 19,87/17,81/4,62 jam. Timer `rsna-requeue` aktif dan state WATCH menghitung antrean dari 02:44:35; belum ada GPU training berjalan.
+- Tidak ada submission baru. Tunggu antrean r4 berjalan sebelum menilai fold/gold atau menyiapkan g14.

@@ -1,6 +1,6 @@
 # Riset 19 Okt 2026 dini hari — posisi perak, aset publik, dan murid r4
 
-> Audit riset dan antrean 19 Okt 2026 02:30 WIB; papan/API diperiksa ulang 02:33 WIB. Data papan/submisi/kuota dibaca ulang lewat Kaggle CLI; dataset publik dan prediksi gold diperiksa lokal. Rencana aktif: `STRATEGI_PERAK.md` §0. Rincian operasi: `HANDOFF.md` §0c.
+> Audit riset dan antrean 19 Okt 2026 02:30 WIB; papan diperiksa ulang 02:33 WIB, API dan training 02:40–02:44 WIB. Data papan/submisi/kuota dibaca ulang lewat Kaggle CLI; dataset publik dan prediksi gold diperiksa lokal. Rencana aktif: `STRATEGI_PERAK.md` §0. Rincian operasi: `HANDOFF.md` §0c.
 
 ## Ringkasan keputusan
 
@@ -61,7 +61,7 @@ Pada 1.024 baris tanpa OOF-B-leg, guru menjadi OOF-R7 saja sehingga target = 0,5
 
 Artefak lokal (tidak ditambahkan ke Git): `data/bleg_oof/compact_oof_f*.csv`, `data/labels/labels_student_v4.csv`, dan paket dataset. Dataset privat alver `alverlfarfaraway/rsna-knee-student-labels-r4` sudah diunggah agar label tidak diumumkan selama eksperimen.
 
-| Kernel alver | Fold | Resep | Status pada 19 Okt 02:33 WIB |
+| Kernel alver | Fold | Resep | Status pada 19 Okt 02:33 WIB (cek awal) |
 |---|---|---|---|
 | `rsna-knee-student-r4-a` | 0–1 | ConvNeXt-T, 12 epoch, init goodpjw, 2 fold paralel | QUEUED |
 | `rsna-knee-student-r4-b` | 2–3 | Resep yang sama | QUEUED |
@@ -80,3 +80,6 @@ Gerbang setelah selesai:
 - Pipeline dan label: `build_student_train.py`, `make_labels_v1.py`, `build_r7murid.py`.
 - Ringkasan operasional: `MEMORY.md` §2–§5, `HANDOFF.md` §0c, `laporan_push.md` §1–§2.
 - Metadata publik: [B-leg seed 1](https://www.kaggle.com/datasets/xhaitanya/rsna-knee-bleg-s1-f01), [dual-teacher labels](https://www.kaggle.com/datasets/srinath2495/rsna-knee-dual-teacher-consensus-4407), [Argon4 labels](https://www.kaggle.com/datasets/abdullahmathar/rsna-knee-argon4-soft-labels), [Engine 9 weights](https://www.kaggle.com/datasets/cyruspinto/rsna-knee-engine9-384-weights).
+
+## Tindak lanjut antrean — 19 Okt 2026 02:45 WIB
+Papan terakhir yang diunduh tetap menunjukkan 0,958 rank 467/6.187; API pada 02:40 masih mencatat g6c/g12/g13 sebagai PENDING. Dua kernel r4 masih QUEUED pada 02:40 dan kuota alver tetap 17,81 jam. Sesuai aturan proyek, `rsna-requeue.timer` memasukkan r4-a/r4-b ke WATCH; keduanya dihapus dan dikirim ulang sebagai version 1 pada 02:42. Pengecekan ulang 02:44 mengonfirmasi kedua kernel masih QUEUED; kuota alver 17,81 jam dan kuota main/nxtirfan 19,87/4,62 jam. API masih mencatat tiga submission PENDING. Poll rank 02:45 selesai tanpa catatan perubahan baru. Timer tetap memantau keduanya dengan ambang lima menit. Tidak ada submission kompetisi baru.

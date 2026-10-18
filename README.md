@@ -49,7 +49,7 @@ Status and next steps live in Indonesian-language project docs. Read in this ord
 5. `laporan_push.md` — submission scores and evaluation history
 6. `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md` — latest research; earlier `reports/` and `research_notes/` are dated archives
 
-Status (19 Oct 2026, 02:33 WIB): public LB **0.958, rank 467/6,187**; the current top-5% public cutoff is rank 309, but medals use the private 70% split. Submissions 57357991 (`g6c`), 57359383 (`g12`), and 57362095 (`g13`) remain PENDING. Two private r4 student-training kernels are queued on the alver account; no new submission has been sent. The experiment uses validated OOF B-leg seed 0; seed 1 lowered gold AUC. Silver is uncertain.
+Status (19 Oct 2026, 02:45 WIB): public LB **0.958, rank 467/6,187**; the current top-5% public cutoff is rank 309, but medals use the private 70% split. Submissions 57357991 (`g6c`), 57359383 (`g12`), and 57362095 (`g13`) remain PENDING. The two private r4 kernels were requeued as v1 at 02:42 WIB and remain QUEUED at the 02:44 WIB check; the project watcher monitors them. No new submission has been sent. The experiment uses validated OOF B-leg seed 0; seed 1 lowered gold AUC. Silver is uncertain.
 
 ---
 

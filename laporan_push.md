@@ -1,16 +1,16 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
 > Konteks aturan: `MEMORY.md` · rencana aktif: **`STRATEGI_PERAK.md` §0** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset/riwayat terdahulu ada di `reports/`, `research_notes/`, dan `PROGRESS.md`.
-> Diperbarui 19 Okt 2026 02:33 WIB. Rencana aktif: `STRATEGI_PERAK.md` §0; status lengkap: `MEMORY.md` §3 dan `HANDOFF.md` §0c. Riset baru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
+> Diperbarui 19 Okt 2026 02:45 WIB. Rencana aktif: `STRATEGI_PERAK.md` §0; status lengkap: `MEMORY.md` §3 dan `HANDOFF.md` §0c. Riset baru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
 
-> Papan publik 02:33 WIB: 6.187 tim, Krazy KIller **0,958 rank 467** (cutoff publik top 5% = 309). Kaggle API 02:33 WIB: g6c/g12/g13 PENDING. Dua kernel murid r4 di alver QUEUED; kuota main/alver/nxtirfan 19,87/17,81/4,62 jam. Tidak ada submission baru; eksperimen dicatat terpisah dari skor.
+> Papan publik 02:33 WIB: 6.187 tim, Krazy KIller **0,958 rank 467** (cutoff publik top 5% = 309). Kaggle API 02:44 WIB: g6c/g12/g13 PENDING. Dua kernel murid r4 di alver di-requeue pada 02:42 dan masih QUEUED; kuota main/alver/nxtirfan 19,87/17,81/4,62 jam. Tidak ada submission baru; eksperimen dicatat terpisah dari skor.
 
 ## 1. Posisi vs garis perak (baris pertama = status terbaru; baris berikut arsip)
 | Hal | Nilai |
 |---|---|
 | Tim — 19 Okt 02:33 WIB | `Krazy KIller`: **0,958 rank 467/6.187**, 139 submisi; cutoff top 5% publik rank 309, di dalam blok 0,958. |
 | Submisi pending — API 19 Okt 02:33 WIB | **57357991 `g6c`, 57359383 `g12`, 57362095 `g13` = PENDING**. Jatah 18 Okt yang tersisa satu dibiarkan. |
-| Timer/kuota — 19 Okt 02:33 WIB | rankpoll tiap 5 mnt, requeue tiap 2 mnt; kuota GPU main/alver/nxtirfan = **19,87/17,81/4,62 jam**, reset 24 Okt 07:00 WIB. Dua kernel r4 di alver masih QUEUED. |
+| Timer/kuota — 19 Okt 02:45 WIB | rankpoll tiap 5 mnt, requeue tiap 2 mnt; kuota GPU main/alver/nxtirfan = **19,87/17,81/4,62 jam**, reset 24 Okt 07:00 WIB. Dua kernel r4 di alver tetap QUEUED pada cek 02:44 dan diawasi oleh rsna-requeue. |
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
 | LB kita | **0,956 — rank 398/6.040** (15 Okt 19:49; skor terbaik dari `r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271). Riwayat: rank 403 (15 Okt pagi), 447 (r7r224), 558 (R7, 14 Okt), 0,954 rank 466 (12 Okt) |
 | Peta blok (15 Okt 19:49 WIB) | ≥0,958 = 132 · **≥0,957 = 327** · tepat 0,956 = 941 · **garis perak (rank 301) = 0,957** · perunggu (rank 603) = 0,956 → perak publik menuntut tampil 0,957 |
@@ -24,7 +24,7 @@
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
 |---|---|---|---|---|---|---|---|
-| — | 19 Okt 02:30 | riset aset publik + persiapan murid r4 (tanpa submission) | Evaluasi seed1/Engine8/Engine9/dual-teacher/Argon4; label konsensus + OOF-R7 + OOF-B-leg; dua kernel training alver dikirim | — | — | lanjutkan setelah r4 selesai; `g14` tetap bersyarat pada kenaikan g13 dan gerbang gold | rincian dan angka di laporan riset 19 Okt; sisa jatah 18 Okt tidak digunakan |
+| — | 19 Okt 02:30 | riset aset publik + persiapan murid r4 (tanpa submission) | Evaluasi seed1/Engine8/Engine9/dual-teacher/Argon4; label konsensus + OOF-R7 + OOF-B-leg; dua kernel training alver dikirim | — | — | lanjutkan setelah r4 selesai; `g14` tetap bersyarat pada kenaikan g13 dan gerbang gold | rincian dan angka di laporan riset 19 Okt; requeue v1 dilakukan 02:42, watcher aktif; pada cek 02:44 kedua kernel tetap QUEUED dan kuota belum berkurang; sisa jatah 18 Okt tidak digunakan |
 | 1 | 13 Sep | 56196772 | v3 hybrid (fork + arm v3 α=0,15) | 0,941 | −0,009 | BUANG | byte-identik dgn base; arm tak terbaca |
 | 2 | 4 Okt | 55795592 | c5 sendirian (CoAtNet5, label fusi) | 0,927 | −0,023 | BUANG sbg stack | solo ≠ stack; CV lokal tak pindah ke LB |
 | 3 | 7 Okt | 56897590 | d4-blend (in-arm r2c5) | 0,943 | −0,007 | cadangan bersih | jalur tanpa OAI |
