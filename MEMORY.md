@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_SILVER.md §0**; `STRATEGI_0960.md` (12 Okt) = arsip rencana; arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju silver.md`.
 > Riset terbaru → `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`; riset dasar → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-19T03:02:00+07:00 (normalisasi istilah silver di dokumentasi; status operasional terakhir dicek 02:56 WIB).
+> Last updated: 2026-10-19T04:18:00+07:00 (satu submission terakhir hari ini dipakai; status Kaggle dan papan dicek 04:17 WIB).
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal silver) sebelum **22 Okt 2026 23:59 UTC**.
@@ -11,12 +11,13 @@
 - Data: OAI/pra-latih publik boleh (Rules 2.6.b; host diam 741819/743416/744056/747455); agen TIDAK membuat akun/menyetujui perjanjian atas nama user. Terima varian bila ≥ klon S6 (≈0,954) dlm noise ATAU menambah diversitas murah; Δ<0,002 = noise.
 
 ## 1. Fakta
-- Code competition; **6.187 tim** pada papan publik 19 Okt 02:25 WIB; tim **Krazy KIller** memiliki tiga anggota. Metrik macro ROC-AUC 12 label; publik 30% / privat 70%. Entry/merger tutup 15 Okt; final **22 Okt 23:59 UTC**; maksimal 2 final dipilih manual. Run ≤9 jam, internet mati.
+- Code competition; **6.190 tim** pada papan publik 19 Okt 04:17 WIB; tim **Krazy KIller** memiliki tiga anggota. Metrik macro ROC-AUC 12 label; publik 30% / privat 70%. Entry/merger tutup 15 Okt; final **22 Okt 23:59 UTC**; maksimal 2 final dipilih manual. Run ≤9 jam, internet mati.
 - Data: 4.407 studi lemah + 58 studi gold; test tersembunyi ≈1.322 studi. Kaggle runner: T4×2, 4 vCPU, RAM ±31 GB, `/kaggle/working` 20 GB.
-- Status terbaru di §3: **0,958 rank 467/6.187**. Top 5% saat ini = rank ≤309; garis silver publik berada di dalam blok skor 0,958.
+- Status terbaru di §3: **0,958 rank 473/6.190** (papan 04:17 WIB). Batas aritmetika top 5% sekitar rank 310; garis silver publik berada di dalam blok skor 0,958.
 - **Rules**: 5.a melarang submission dari lebih dari satu akun; 5.b tiap anggota harus individu terpisah; 5.d/6.a melarang berbagi privat antar-tim; 2.6.b mengatur data/model eksternal. Risiko multi-akun tetap ada dan dicatat sesuai keputusan user; merger/entry sudah tutup.
 
 ## 2. Temuan terkunci
+- **19 Okt 04:17 — submission terakhir hari ini digunakan atas izin user**: `g10a` v1 (`57369237`) dikirim dari akun utama pukul 04:16:44 WIB setelah commit-run COMPLETE dan keluaran pseudo 3 baris lolos validasi. Resep: goodpjw v27 tanpa Part B, R6 stride 2 + S6F + murid r2a 8-model bobot 0,4. API masih **PENDING**; jatah harian **5/5, tersisa 0** sampai reset 07:00 WIB. Gold g10a 0,9403, di bawah g6c 0,9408 dan g13 0,9415 (indikasi terbatas, bukan vonis skor publik). `g6c` 57357991 sudah COMPLETE 0,958; `g12` 57359383 dan `g13` 57362095 masih PENDING. `g14` belum lolos gerbang: g13 belum terkonfirmasi naik dan r4 belum selesai divalidasi.
 - **19 Okt 03:02 — normalisasi istilah**: seluruh rujukan medali di Markdown kini memakai istilah silver; rencana aktif bernama `STRATEGI_SILVER.md`. Tidak ada perubahan skor atau status eksperimen.
 - **19 Okt 02:30 — riset mendalam & keputusan r4** (`reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`): papan 6.187, rank 467, cutoff publik top 5% = 309; tiga submission masih PENDING. Scan publik tak menemukan model baru tervalidasi. B-leg seed 1 gold 0,92065; gabungan seed 0+1 0,92398 vs seed 0 empat fold 0,92448 (ρ=0,9819) → jangan dipakai. OOF seed 0 meliputi 3.325 UID, cocok hash-fold, tanpa gold; dataset label dual-teacher/Argon4 beragam (ρ ke r3 0,50/0,59) tapi tanpa OOF/gold → belum dilatih. **Eksperimen r4 dikirim ke antrean alver saja**: 0,5 konsensus + 0,25 OOF-R7 + 0,25 OOF-B-leg; fallback 0,5 konsensus + 0,5 OOF-R7. Label v4 lolos pemeriksaan bentuk, gold identik, dan `is_gold` dikecualikan dari loss. Dataset private alver dibuat; `student-r4-a` fold0–1 dan `student-r4-b` fold2–3 (12 epoch) dikirim, status QUEUED pada cek 02:33; di-requeue pada 02:42 dan 02:51 (setiap push kembali v1); tetap QUEUED pada cek 02:52 setelah requeue kedua; keduanya RUNNING pada cek 02:55. Kuota terbaru alver 17,75j, nxtirfan 4,62j. `g14`/submisi hanya setelah g13 terkonfirmasi dan r4 lulus gerbang.
 - **19 Okt 00:35 — sweep OOF & pohon keputusan** (perintah user: sisa 1 jatah 18 Okt dibiarkan): irisan 2.651 studi menunjukkan **B-leg .24 mengganti R7 .24 = +0,0033 (P 1,00)**; bobot .3/.36 hanya +0,0003 dan gold menurun (g13 0,9415 tetap optimum). Keputusan 02:30: jangan tunggu hasil leaderboard untuk melatih r4 karena OOF + gold mendukung eksperimen; `g14 = g13 + r4 .4` tetap hanya bila g13 naik. Final A = resep unik terbaik terskor, B = mekanisme berbeda; submission terakhir aman ≤22 Okt 15:00 UTC.
@@ -57,23 +58,24 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → silver 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → silver ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → silver 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (operasional terakhir dicek 19 Okt 02:56 WIB; dokumentasi diperbarui 03:02 WIB)
+## 3. Status (operasional terakhir dicek 19 Okt 04:17 WIB)
 | Hal | Keadaan |
 |---|---|
-| Papan/submisi | Papan publik 19 Okt 02:33 WIB: **rank 467/6.187, 0,958**; top 5% publik saat ini rank ≤309. Terbaik COMPLETE `g9a`/`g6a` tetap 0,958. `g6c` 57357991, `g12` 57359383, `g13` 57362095 masih PENDING pada cek API 02:55. |
-| Jatah | 18 Okt terpakai 4/5; sisa 1 dibiarkan. Tidak ada submission baru 19 Okt. Final 22 Okt 23:59 UTC, maksimal 2 pilihan manual. |
-| Kuota GPU | main **19,87 j** · alver **17,75 j** · nxtirfan **4,62 j**; reset **24 Okt 07:00 WIB**. Pemakaian alver sudah mulai tercatat setelah kedua kernel r4 RUNNING (17,75 jam tersisa pada cek 02:56). |
+| Papan/submisi | Papan publik 19 Okt 04:17 WIB: **rank 473/6.190, 0,958**; top 5% aritmetika sekitar rank 310. Terbaik COMPLETE termasuk `g6c` = 0,958. `g6c` 57357991 COMPLETE 0,958; `g10a` 57369237, `g12` 57359383, `g13` 57362095 PENDING pada cek API 04:17. |
+| Jatah | 19 Okt terpakai **5/5** setelah user mengizinkan penggunaan jatah terakhir; tersisa **0** sampai reset harian 07:00 WIB. Lifetime submissions API 143. Final 22 Okt 23:59 UTC, maksimal 2 pilihan manual. |
+| Kuota GPU | main **19,87 j** · alver **15,03 j** · nxtirfan **4,62 j**; reset **24 Okt 07:00 WIB**. |
 | Timer | `rsna-rankpoll.timer` aktif (tiap 5 mnt); `rsna-requeue.timer` aktif (tiap 2 mnt), WATCH mencakup r4-a/r4-b. Timer kerja 17 Okt nonaktif/selesai. |
-| Kernel GPU | Kernel g13/g12/g6c dan gold terdahulu COMPLETE; r4-a/r4-b di-requeue pukul 02:42 dan 02:51 (kembali v1), lalu RUNNING pada cek 02:54:59 dan 02:55; watcher aktif. Nxtirfan tidak dipakai. Submission g6c/g12/g13 terpisah dari status kernel dan masih PENDING. |
+| Kernel GPU | Commit-run `g10a` v1 COMPLETE; pseudo-output tervalidasi. Kernel r4-a/r4-b terakhir terpantau **RUNNING pada 04:17 WIB** (akun alver); API kernel privat menolak akses pada pemeriksaan lanjutan. Watcher aktif. Nxtirfan tidak dipakai. Status submission berbeda dari status kernel. |
 | Bukti arah | OOF B-leg seed 0 = 3.325 UID; gold B-leg reproduksi lulus. Sweep compact +0,0033; gold g13 0,9415. B-leg seed1/Engine8/9/dual-teacher/Argon4 tidak memberi alasan mengganti resep. |
 | P(silver) jujur | estimasi kerja **20–40%**, simulasi posisi klaster; bukan jaminan. |
 | Git | runner `data/run_*.sh`, `data/requeue.py`, `data/rank_poll.py` tidak di-commit. |
-| Langkah berikut | Pantau status r4 dan skor g6c/g12/g13; build `g14` hanya jika g13 naik dan r4 lolos gold. Pilih maksimal 2 final secara manual sebelum deadline. |
-| Dokumentasi | Istilah target diseragamkan menjadi silver pada 03:02 WIB; status operasional di atas tetap berdasarkan cek 02:56 WIB. |
+| Langkah berikut | Pantau skor g10a/g12/g13 dan status r4; jatah submission hari ini habis. Build `g14` hanya jika g13 naik dan r4 lolos gold. Pilih maksimal 2 final secara manual sebelum deadline. |
+| Dokumentasi | Status ini diperbarui 19 Okt 04:18 WIB; papan dan API diperiksa 04:17 WIB. |
 
-### Pemeriksaan sesi Codex (19 Okt 02:56 WIB)
-- Papan terakhir 02:33 = rank 467/6.187, 0,958; API 02:55 masih menunjukkan tiga submission pending; kuota main/alver/nxtirfan = 19,87/17,75/4,62 j.
-- Dataset label r4 privat di alver; dua kernel 12 epoch di-requeue sebagai v1 pukul 02:42 dan di-requeue kedua kalinya pada 02:51; kedua kernel RUNNING pada cek 02:55. Kuota alver mulai terpakai (17,75 j tersisa); akun utama dan nxtirfan tidak dipakai untuk training. Tidak ada training di akun utama atau nxtirfan.
+### Pemeriksaan sesi Codex (19 Okt 04:17 WIB)
+- Papan publik terbaru: rank 473/6.190, 0,958. API: g6c COMPLETE 0,958; g10a/g12/g13 PENDING. Submission `57369237` adalah pemakaian jatah 19 Okt yang terakhir (5/5); lifetime 143.
+- Kuota main/alver/nxtirfan = 19,87/15,03/4,62 j. Kernel r4-a/r4-b terakhir RUNNING pada 04:17; pemeriksaan CLI berikutnya atas endpoint privat akun alver ditolak, sehingga status baru menunggu akses/daftar pemilik.
+- Akun utama hanya digunakan untuk commit-run/submisi; tidak ada training baru. `g14` tetap terkunci sampai g13 memberi sinyal kenaikan dan r4 lulus gold.
 - Rincian riset dan gate eksperimen di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`; urutan operasi di `HANDOFF.md` §0c.
 
 ## 4. Operasional
@@ -82,11 +84,11 @@
 - Kaggle CLI: PATH `~/.local/bin`; 429 → jeda. **Submisi kode**: `kaggle competitions submit <comp> -k <owner/slug> -v <ver> -f submission.csv -m "msg"` (`-m` juga wajib; tanpa `-f` → 400). **400 "non-versioned datasets" = setting "All Versions Accessible" di halaman DATASET (milik pemiliknya)** — pin `owner/slug/N` di kernel-metadata TIDAK menolong (server strip); kalau dataset orang lain bermasalah → mirror ke akun kita (lihat `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss`). **Log lewat Chrome**: `/code/<owner>/<slug>/log` (log langsung terlambat ±5 mnt; lengkap setelah selesai) + JS tarik baris `^\d+(\.\d+)?s\s+\d+\s+`, hapus `? & =`; atau `kernels output --file-pattern '<regex>'` (JANGAN tanpa pola pada kernel OF/S6). Forum: `kaggle forums topics show <id> --page-size 200` (daftar topik CLI 403 → Chrome). Versi dataset lama: venv kagglehub di scratchpad.
 - **RAM**: proses induk notebook memegang ±18 GB setelah Raptor (Apex); pekerja OF 5–10 GB; headroom cgroup menyertakan page-cache (pakai MemAvailable). OF hanya via supervisor `nopin+mmap` dan di luar induk besar. Pseudo-uji: `sample_submission.csv` WAJIB berisi id pseudo.
 - **Otomasi (15 Okt)**: unit systemd --user permanen `~/.config/systemd/user/rsna-*.{service,timer}` (linger=yes, Persistent=true): `rsna-rankpoll` (tiap 5 mnt, `data/rank_poll.py` → `data/rank_watch.log`, state `data/rank_poll_seen.json`), `rsna-submit-16okt`, `rsna-push-17okt`, `rsna-after-train-17okt`. `systemd-run` sementara HILANG saat reboot (pelajaran 15 Okt).
-- **R4 (19 Okt)**: dataset label privat `alverlfarfaraway/rsna-knee-student-labels-r4`; kernels `rsna-knee-student-r4-a/b` (fold0–1/fold2–3) ada di alver saja. Di-requeue pada 02:42 dan 02:51 (kembali v1); keduanya RUNNING pada cek 02:55. Akun utama tidak untuk training dan nxtirfan belum dipakai. Periksa status sebelum mengirim ulang; batas maksimal dua sesi GPU per akun.
+- **R4 (19 Okt)**: dataset label privat `alverlfarfaraway/rsna-knee-student-labels-r4`; kernels `rsna-knee-student-r4-a/b` (fold0–1/fold2–3) ada di alver saja. Di-requeue pada 02:42 dan 02:51 (kembali v1); keduanya terakhir RUNNING pada cek 04:17. Akun utama tidak untuk training dan nxtirfan belum dipakai. Periksa status sebelum mengirim ulang; batas maksimal dua sesi GPU per akun.
 - JANGAN `pkill -f` pola yg ada di perintah sendiri; JANGAN `VERBOSE=true`; JANGAN cetak kaggle.json. Scratchpad sesi hilang saat restart (simpan di repo). Run scoring tak memakai kuota GPU; log run scoring tak terbaca → uji di commit-run pseudo-uji.
 
 ## 5. Gerbang berikutnya
-1. Pantau sampai g6c/g12/g13 mendapat skor dan kernel r4 selesai. Bandingkan g13 dengan g12; tanpa kenaikan yang meyakinkan, jangan lanjut ke g14.
+1. Pantau sampai g10a/g12/g13 mendapat skor dan kernel r4 selesai. Bandingkan g13 dengan g12; jatah 19 Okt sudah habis. Tanpa kenaikan yang meyakinkan, jangan lanjut ke g14.
 2. Jika g13 naik dan r4 lulus pemeriksaan gold, siapkan `g14` lewat akun utama untuk commit-run/inferensi; training tetap di alver.
 3. Sebelum deadline, rekomendasikan dua submission terskor dengan mekanisme berbeda; user memilih final secara manual di UI pada 21–22 Okt.
 
