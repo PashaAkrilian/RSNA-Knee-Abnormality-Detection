@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-18T22:40:00+07:00
+> Last updated: 2026-10-18T21:55:00+07:00
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -18,7 +18,7 @@
 - **Rules**: 5.a "disqualified if Submissions through more than one Kaggle account"; 5.b anggota = individu terpisah; 5.c merger sah bila gabungan ≤5, submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤±225), sebelum batas; 5.d/6.a dilarang berbagi privat antar-tim; 2.6.b model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a menyangkut kelayakan hadiah (belum dijawab host).
 
 ## 2. Temuan terkunci
-- **18 Okt 22:40 — eksekusi malam (perintah user: latih hanya akun 2/3, sisakan 1 jatah)**: gerbang lama SALAH menolak `g6c` (cek kaku `"w": 0.3`; log g6c lengkap: murid .4 used, S6F used, flip True) → **`g6c` tersubmit manual 22:05** (sisa jatah 3). `g10a` v1 salah dataset murid (r1 `student-folds`, bukan r2a) → dibangun ulang v2 (r2a 8 model, murid .4, S6F .5, wc=h2, R6 stride 2, budget 6000). **OOF lokal 3.480 studi: + R7 di compact +0,0016–0,0020 (P 1,00)** di atas R6+murid (R6~R7 ρ 0,889 lokal vs 0,98 di gold; murid r2a~r3 ρ 0,970 → ganti guru hampir tak mengubah murid). Gold-58: semua kandidat dlm ±0,001 (tak membedakan). Kernel **`g12`** = g9a dgn R6 .36 / R7 .24 / murid8 .4 (wc=h). Runner gerbang generik **`data/run_submit_gate.sh`** (SPECS `nama:versi:flip:s6f:r7`, regex bobot) → g10a v2 & g12 v1 tersubmit otomatis bila lulus & sisa ≥2.
+- **18 Okt 21:55 — eksekusi malam (perintah user: latih hanya akun 2/3, sisakan 1 jatah)**: gerbang lama SALAH menolak `g6c` (cek kaku `"w": 0.3`; log g6c lengkap: murid .4 used, S6F used, flip True) → **`g6c` tersubmit manual 21:36 WIB** (57357991; sisa jatah 3). `g10a` v1 salah dataset murid (r1 `student-folds`, bukan r2a) → dibangun ulang v2 (r2a 8 model, murid .4, S6F .5, wc=h2, R6 stride 2, budget 6000). **OOF lokal 3.480 studi: + R7 di compact +0,0016–0,0020 (P 1,00)** di atas R6+murid (R6~R7 ρ 0,889 lokal vs 0,98 di gold; murid r2a~r3 ρ 0,970 → ganti guru hampir tak mengubah murid). Gold-58: semua kandidat dlm ±0,001 (tak membedakan). Kernel **`g12`** = g9a dgn R6 .36 / R7 .24 / murid8 .4 (wc=h). Runner gerbang generik **`data/run_submit_gate2.sh`** (SPECS `nama:versi:flip:s6f:r7`, regex bobot, versi gagal → v1) → g10a & g12 tersubmit otomatis bila lulus & sisa ≥2. **Perintah user 21:50: kernel QUEUED ≥5 mnt → hapus + push ulang** (`data/requeue.py` ambang 300 dtk; WATCH hanya kernel belum tersubmit).
 - **18 Okt 19:55 — ANALISIS REALISTIS**: **g9a = 0,958 rank 424** (turun dari 387 saat submit); g6c GAGAL gerbang gold 0,9325. **STUCK DI CLUSTER 0,958** (1.408 tim salinan goodpjw R6+flip). Simulasi: **P(silver) resep kita ≈15–35%** (δ +0,0003–0,0006 dari korelasi ρ S6F~R7 = 0,879 terlalu tinggi, target ≤0,86). Model baru butuh 2–3 hari (tak sempat validasi). **KEPUTUSAN: maximalkan peluang existing** — local OOF eval besok (R6+R7 blend grid), submit 1 best/hari (19–21 Okt), reserve 2 final 21–22 Okt (A = best OOF, B = hedge). Harapan realistis: silver 15–35% (bukan 100%), bronze 60–75%. Sisakan 3 jatah (1 user + 2 eksekusi).
 - **18 Okt 10:50 — user "sisakan 1 submission"** → agen s/d 4 jatah hari ini. **R6flip stride 2 = gold 0,9377 (≥ stride 1 0,9366; ρ 0,998), kontroler 774 dtk vs 1.076–1.171 dtk** → aman & ±35 % lebih cepat. Gold: g6a 0,9398 · g6a+R6 s2 0,9405 · **g9a 0,9408**. Commit `g9a` & **`g6c`** (g6a + murid .4, r2a 8 model) jalan di akun utama; unit `rsna-submit-18okt` (`data/run_submit_18okt.sh`, log `data/submit_18okt.log`, SPECS="g9a:1:1:1 g6c:1:1:0") → gerbang (g9a wajib R7_LEG used) → submit bila sisa jatah ≥2.
 - **18 Okt 10:40 — hasil malam**: `g8a` (V2 + murid 8) = 0,958 tapi **tak melampaui g6a** (rank tim tak naik); `g8b` (tanpa S6F) = **0,957** → S6F terbukti; user 57322996 = 0,958. Papan 18 Okt 10:13: 6.161 tim, ≥0,959 = ±137→?, perak rank 308 = 0,958, **kita rank 385**. Gold + lokal OOF SEPAKAT: **R7 ke-2 di compact** (gold +0,0009…0,0016 P 0,82–0,89; lokal +0,003 P 1,00). `build_r7murid.py` opsi baru `r7add=<w>` (R7 setelah S6F, sel R7 heliosli utuh di temp `probe_r7`, gagal/<97 % → R6 saja; uji mandiri `check_r7merge`) & `r6stride=` (R6 eval-stride, manifest 1). Kernel **`g9a`** = g6a + R7 0,286 (≈R6 .5/R7 .2/murid .3) + R6 stride 2 → commit di akun utama. Uji gold R6flip stride 2 di **alver** (`compact-gold-r6s2`). Penjaga antrean juga memantau g9a & gold-r6s2.
@@ -53,16 +53,17 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (18 Okt 19:55 WIB)
+## 3. Status (18 Okt 21:55 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **0,958, rank 424/6.168** (papan 18 Okt 17:45 WIB) = **g9a** 57336879; perak publik = rank ±308 (≥0,958). Cluster 0,958 = **1.408 tim** salinan goodpjw R6+flip. Resep kita: g9a (R6+R7 dual), g8a (V2+murid8+S6F), g6a (R6+S6F+murid4) semua 0,957–0,958. |
-| Rencana 19–22 Okt | **19 Okt**: local OOF eval (R6+R7 blend grid, `local_eval_oof.py`), pilih 1 best recipe → submit sore. **20–21 Okt**: 1 submit/hari best variant. **22 Okt pagi**: user pilih 2 final dari {g9a, g6a, best OOF} + hedge (A = best, B = alt family). |
-| Gold setia (58) | g9a (R6+R7 dual) 0,9408 · g6a (R6+S6F+murid4) 0,9398 · goodpjw 0,9384 · r7v3sr 0,9387 · r7v6a 0,9414. |
-| Kuota GPU | main 21,2 j; alver 18,4 j; nxtirfan 23,9 j → reset **24 Okt 07:00 WIB**. |
-| P(silver) estimasi | **15–35%** (δ +0,0003–0,0006 dari cluster; ρ=0,879 vs target ≤0,86). Bronze 60–75%. Bukan jaminan. |
-| Git | runner `data/run_*.sh`, `data/rank_poll.py` tidak di-commit. |
-| Menunggu user | Pilih 2 final 22 Okt (rekomendasi agen 21 Okt dari hasil OOF + papan). |
+| Submisi | **0,958, rank 424/6.168** (papan 18 Okt 17:45 WIB); terbaik publik = **`g6a`** (57296301; rank 569→323 saat skor keluar). `g8a`/`g9a` 0,958 tak melampaui g6a; `g8b` (tanpa S6F) 0,957. **`g6c` 57357991 PENDING** (submit 21:36 WIB). Blok 0,958 dipenuhi salinan goodpjw v27 & heliosli "0,9586". |
+| Bergerbang malam ini | `g10a` v2 (g6c + wc=h2 + R6 stride 2) & **`g12`** (R6s2 .36/R7 .24/murid8 .4 + S6F .5) → `data/run_submit_gate2.sh` → submit bila lulus & sisa ≥2 (sisa 1 utk user). Penjaga antrean 5 mnt. |
+| Gold setia (58) | g6a 0,9398 · g6c 0,9408 · g9a 0,9408 · g10a 0,9403 · g12 0,9404 · r7v6a 0,9414 — semua dalam derau (SE beda ±0,003). |
+| OOF lokal (3.480) | compact: R6flip 0,8829 · R7 0,8791 · +R7 ke R6+murid **+0,002 (P 1,00)** · murid .4 vs .3 +0,003 (bias: murid dilatih ke konsensus). |
+| Kuota GPU | main 21,2 j · alver 18,2 j · nxtirfan 10,3 j → reset **24 Okt 07:00 WIB** (setelah final). |
+| P(perak) jujur | kasar **20–40 %** (resep unik S6F + murid; bergantung δ privat vs klaster salinan); bukan jaminan. |
+| Git | runner `data/run_*.sh`, `data/requeue.py`, `data/rank_poll.py` tidak di-commit. |
+| Menunggu user | pilih 2 final 22 Okt (rekomendasi agen 21 Okt). |
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
