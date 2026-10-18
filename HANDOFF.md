@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 19 Okt 2026 02:10 WIB (Kaggle API, papan, timer, dan kuota terverifikasi). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_PERAK.md` (§0 rencana aktif 19–22 Okt)** → `STRATEGI_0960.md` (arsip rencana 12 Okt) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 19 Okt 2026 02:14 WIB (kernel RSNA terbaru pada tiga akun dicek langsung). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_PERAK.md` (§0 rencana aktif 19–22 Okt)** → `STRATEGI_0960.md` (arsip rencana 12 Okt) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Prioritas operasional (19 Okt 02:10 WIB)
@@ -26,6 +26,7 @@
 | **Kuota GPU** | main 19,87 j · alver 17,81 j · nxtirfan 4,62 j; reset 24 Okt 07:00 WIB. |
 | **Riset** | agen latar menulis `reports/Riset 18 Okt malam - model publik baru.md` (papan, notebook ≥0,958 baru, dataset model/label baru: Mycelis 4-fold ConvNeXt 384px, DINO 5-fold, label omerzalman/haungjiawei). |
 | **Timer** | `rsna-rankpoll.timer` aktif tiap 5 mnt; `rsna-requeue.timer` aktif tiap 2 mnt. Timer kerja 17 Okt selesai/nonaktif. |
+| **Kernel GPU** | Tidak ada kernel RSNA terbaru yang masih berjalan. Utama: g13/g12/g6c dan pekerjaan terbaru COMPLETE; alver: gold-bleg, gold-r6s2, student-r2a-full/full2 COMPLETE; nxtirfan: student-r3-a/r2a-n COMPLETE. Ini berbeda dari submission g6c/g12/g13 yang tetap PENDING. |
 | **Menunggu** | Skor g6c/g12/g13; ikuti pohon keputusan MEMORY §2 / STRATEGI_PERAK §0. Jika g13 mengonfirmasi kenaikan, jalur berikut murid r4 → `g14` dengan gerbang sebelum submit. Pilih 2 final manual 22 Okt. |
 
 ## 1. Urutan kerja
