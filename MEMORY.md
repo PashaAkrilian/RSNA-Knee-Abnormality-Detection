@@ -18,6 +18,7 @@
 - **Rules**: 5.a "disqualified if Submissions through more than one Kaggle account"; 5.b anggota = individu terpisah; 5.c merger sah bila gabungan ≤5, submisi gabungan ≤ jatah satu tim saat permintaan (11 Okt = 335; kita 109 → mitra ≤±225), sebelum batas; 5.d/6.a dilarang berbagi privat antar-tim; 2.6.b model/data eksternal boleh kecuali dilarang host; 2.8/3.14.a menyangkut kelayakan hadiah (belum dijawab host).
 
 ## 2. Temuan terkunci
+- **18 Okt 19:55 — ANALISIS REALISTIS**: **g9a = 0,958 rank 424** (turun dari 387 saat submit); g6c GAGAL gerbang gold 0,9325. **STUCK DI CLUSTER 0,958** (1.408 tim salinan goodpjw R6+flip). Simulasi: **P(silver) resep kita ≈15–35%** (δ +0,0003–0,0006 dari korelasi ρ S6F~R7 = 0,879 terlalu tinggi, target ≤0,86). Model baru butuh 2–3 hari (tak sempat validasi). **KEPUTUSAN: maximalkan peluang existing** — local OOF eval besok (R6+R7 blend grid), submit 1 best/hari (19–21 Okt), reserve 2 final 21–22 Okt (A = best OOF, B = hedge). Harapan realistis: silver 15–35% (bukan 100%), bronze 60–75%. Sisakan 3 jatah (1 user + 2 eksekusi).
 - **18 Okt 10:50 — user "sisakan 1 submission"** → agen s/d 4 jatah hari ini. **R6flip stride 2 = gold 0,9377 (≥ stride 1 0,9366; ρ 0,998), kontroler 774 dtk vs 1.076–1.171 dtk** → aman & ±35 % lebih cepat. Gold: g6a 0,9398 · g6a+R6 s2 0,9405 · **g9a 0,9408**. Commit `g9a` & **`g6c`** (g6a + murid .4, r2a 8 model) jalan di akun utama; unit `rsna-submit-18okt` (`data/run_submit_18okt.sh`, log `data/submit_18okt.log`, SPECS="g9a:1:1:1 g6c:1:1:0") → gerbang (g9a wajib R7_LEG used) → submit bila sisa jatah ≥2.
 - **18 Okt 10:40 — hasil malam**: `g8a` (V2 + murid 8) = 0,958 tapi **tak melampaui g6a** (rank tim tak naik); `g8b` (tanpa S6F) = **0,957** → S6F terbukti; user 57322996 = 0,958. Papan 18 Okt 10:13: 6.161 tim, ≥0,959 = ±137→?, perak rank 308 = 0,958, **kita rank 385**. Gold + lokal OOF SEPAKAT: **R7 ke-2 di compact** (gold +0,0009…0,0016 P 0,82–0,89; lokal +0,003 P 1,00). `build_r7murid.py` opsi baru `r7add=<w>` (R7 setelah S6F, sel R7 heliosli utuh di temp `probe_r7`, gagal/<97 % → R6 saja; uji mandiri `check_r7merge`) & `r6stride=` (R6 eval-stride, manifest 1). Kernel **`g9a`** = g6a + R7 0,286 (≈R6 .5/R7 .2/murid .3) + R6 stride 2 → commit di akun utama. Uji gold R6flip stride 2 di **alver** (`compact-gold-r6s2`). Penjaga antrean juga memantau g9a & gold-r6s2.
 - **17 Okt 23:40 — perintah user: LATIH hanya di akun 2/3 (alver, nxtirfan), akun utama = commit-run final + submisi saja.** Semua latih selesai (r3-a nxtirfan, r3-bm utama). `g8b` tersubmit 22:22 → jatah 17 Okt 4/5 agen+user… sisa 1 utk user. **Murid r3 tak menambah**: gold solo 0,9292 (< r2a 0,9334), di resep g8a 0,9403 vs 0,9399 (derau), lokal OOF sama (+0,013) → r3 tidak disubmit. Slot nxtirfan sering penuh oleh proyek lain (`fase-b-gguf-*`) — jangan disentuh. Tuas berikut: R6 + R7 bersama di compact (lokal +0,0032, P 1,00) — waktu tak muat bersama S6F.
@@ -51,16 +52,16 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (17 Okt 03:00 WIB)
+## 3. Status (18 Okt 19:55 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **0,958, rank 317/6.103** (papan 17 Okt 01:51 WIB) = salinan user goodpjw v27 **57269378**; perak publik = rank 305. Resep kita sendiri 0,957: `r7v3s`/`r7v3sr`/`r7v3sw`/`r7v5a` (`r7v3sr` pernah rank 317 di blok 0,957). |
-| Terjadwal 17 Okt | 07:01 submit **`r7v6a`** (gold 0,9414); 07:03 **`g6a`** bergerbang (`data/run_submit_g6a_17okt.sh`); 07:05 latih murid full-data (alver) + r2c (nxtirfan); 11:00 pasca-latih → dataset murid 8 model + **`r7v7a` dibangun+commit TANPA submit** (`SUBMIT_R7V7A` kosong). |
-| Gold setia (58) | goodpjw 0,9384 · r7v3sr 0,9387 · **r7v6a 0,9414** · g6a (R6flip + S6F .5 + murid4 .3) 0,9398 · komponen: R6flip 0,9366, murid4 0,9334, R7 0,9312, S6F 0,9314. |
-| Kuota GPU | main 1,6 j → reset **17 Okt 07:00 WIB** (+30 j/akun); alver 0; nxtirfan 0,5 j. |
-| Waktu run (uji tersembunyi) | goodpjw ±6 j (submit→skor); `r7v5a` ±5 j. g6a perkiraan ±6,5–7 j (S6F berhenti paksa di NB_T0+8,0 j → tanpa kaki S6F bila telat). |
+| Submisi | **0,958, rank 424/6.168** (papan 18 Okt 17:45 WIB) = **g9a** 57336879; perak publik = rank ±308 (≥0,958). Cluster 0,958 = **1.408 tim** salinan goodpjw R6+flip. Resep kita: g9a (R6+R7 dual), g8a (V2+murid8+S6F), g6a (R6+S6F+murid4) semua 0,957–0,958. |
+| Rencana 19–22 Okt | **19 Okt**: local OOF eval (R6+R7 blend grid, `local_eval_oof.py`), pilih 1 best recipe → submit sore. **20–21 Okt**: 1 submit/hari best variant. **22 Okt pagi**: user pilih 2 final dari {g9a, g6a, best OOF} + hedge (A = best, B = alt family). |
+| Gold setia (58) | g9a (R6+R7 dual) 0,9408 · g6a (R6+S6F+murid4) 0,9398 · goodpjw 0,9384 · r7v3sr 0,9387 · r7v6a 0,9414. |
+| Kuota GPU | main 21,2 j; alver 18,4 j; nxtirfan 23,9 j → reset **24 Okt 07:00 WIB**. |
+| P(silver) estimasi | **15–35%** (δ +0,0003–0,0006 dari cluster; ρ=0,879 vs target ≤0,86). Bronze 60–75%. Bukan jaminan. |
 | Git | runner `data/run_*.sh`, `data/rank_poll.py` tidak di-commit. |
-| Menunggu user | (1) penanda auto-select UI Submissions; (2) pilih 2 final 22 Okt (rekomendasi agen 21 Okt). |
+| Menunggu user | Pilih 2 final 22 Okt (rekomendasi agen 21 Okt dari hasil OOF + papan). |
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
