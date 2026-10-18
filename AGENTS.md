@@ -12,8 +12,8 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, 
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md** (bliverrigpdoge, S6F, heliosli 0,9576, auto-select) dan **reports/Riset 14 Okt malam - jalan ke perak.md**. Arsip: `reports/` lain (scrape 12 Okt), `research_notes/`, PROGRESS.md (§62–§64), docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (18 Okt ±21:55 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
-Tim **0,958 rank 424/6.168**; tersubmit 18 Okt: `g9a` (R6+R7 dual) 0,958 (tak melampaui `g6a`), **`g6c`** (murid r2a 8 model .4) pending; `g10a` (g6c + bobot V2 + R6 stride 2) & **`g12`** (R6 .36/R7 .24/murid .4 + S6F .5; OOF lokal +R7 +0,002 P 1,00) commit-run → submit otomatis bergerbang (`data/run_submit_gate2.sh`), selalu sisa 1 jatah utk user; penjaga antrean `rsna-requeue` kini **5 menit** (kernel QUEUED ≥5 mnt → hapus + push ulang). Latih hanya di akun 2/3 (alver 18 j, nxtirfan 10 j sisa).
+## Status satu kalimat (18 Okt 23:52 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
+Tim **0,958 rank 452/6.179** (22:20; perak rank ±308 masih di dalam blok 0,958); 18 Okt tersubmit **4/5**: `g9a` 0,958 · **`g6c`** (57357991, PENDING ±01:00) · **`g12`** (57359383, PENDING ±01:50) · **`g13`** (57362095, B-leg, PENDING ±03:40) — sisa **1 jatah utk user**; `g10a` cadangan (commit COMPLETE, tidak disubmit); uji gold B-leg LULUS (ρ 0,9984 vs logit penulis; sim gold-58 +0,0011 vs g10a). Penjaga antrean `rsna-requeue` 5 menit terbukti bekerja. Latih hanya di akun 2/3 (alver 17,8 j, nxtirfan 6,7 j sisa).
 
 ## Status 17 Okt ±03:00 WIB (arsip)
 Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; perak publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % perak); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.

@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 18 Okt 2026 ~21:55 WIB (sesi Claude Code, mesin Linux; sebelumnya 14 Okt 15:20; sebelumnya 12 Okt 23:58 sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 19 Okt 2026 ~00:15 WIB (sesi OpenCode; sebelumnya 18 Okt 21:55 sesi Claude Code). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan (15 Okt malam)
@@ -16,15 +16,15 @@
 3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
 4. Bangun varian: `python3 build_r7murid.py base=v224m w=<murid> slot=compact folds=dimaspashaakrilian/rsna-knee-student-r2a [flip=1 fstride=1] [s6f=0.35] name=<nama>` → `kaggle kernels push -p kaggle_kernel_<nama>` → cek log commit (`GOLD58`, `MURID_LEG used`, `S6F_LEG used`, tanpa error) → submit. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (18 Okt ±21:55 WIB — sesi Claude Code mesin Linux; status lama 15 Okt → arsip git)
+## 0c. Status (19 Okt ~00:15 WIB — sesi OpenCode; status lama 18 Okt 21:55 → arsip git)
 | Hal | Keadaan |
 |---|---|
-| **Papan 18 Okt 17:45** | 6.168 tim; ≥0,957 = 1.408; **kita 0,958 rank 424** (terbaik publik = `g6a`; `g8a`/`g9a` tak melampauinya). Perak = rank ±308 → di DALAM blok 0,958 (salinan goodpjw v27 & heliosli "0,9586"). |
-| **Submisi 18 Okt (UTC)** | `g9a` 03:36 UTC = 0,958 · **`g6c` 14:36 UTC** (21:36 WIB; murid r2a 8 model .4 + S6F .5) PENDING · sisa jatah 3 → agen boleh 2 lagi (sisakan 1 utk user). |
-| **Bergerbang malam ini** | `g10a` (g6c + wc=h2 + R6 stride 2) & **`g12`** (R6s2 .36 / R7 .24 / murid8 .4 + S6F .5, wc=h) → `data/run_submit_gate2.sh` (SPECS `nama:versi:flip:s6f:r7`; versi gagal → coba v1) → submit bila lulus & sisa ≥2; log `data/submit_18okt.log`. |
-| **Penjaga antrean** | `rsna-requeue.timer` tiap 2 mnt → `data/requeue.py`: kernel di WATCH yang **QUEUED ≥5 mnt** (perintah user 18 Okt) → hapus + push ulang (versi kembali v1). WATCH hanya kernel BELUM tersubmit (kini g10a, g12) — tambahkan tiap kernel baru. Log `data/requeue.log`. |
-| **Bukti terbaru** | OOF lokal 3.480 studi: + R7 di compact **+0,0016–0,0020 (P 1,00)**; murid r2a~r3 ρ 0,970 (guru beda → murid nyaris sama); R6~R7 ρ 0,889 (lokal) vs 0,98 (gold). Gold-58: g6a 0,9398 · g6c 0,9408 · g9a 0,9408 · g10a 0,9403 · g12 0,9404 (semua derau). |
-| **Kuota GPU** (reset 24 Okt 07:00 WIB = setelah final) | main 21,2 j (commit-run/submit saja) · alver 18,2 j · nxtirfan 10,3 j (sering dipakai proyek lain rekan — jangan disentuh). |
+| **Papan 18 Okt 22:20** | 6.179 tim; ≥0,957 = 1.455; **kita 0,958 rank 452** (terbaik publik = `g6a`; `g8a`/`g9a` tak melampauinya). Perak = rank ±308 → di DALAM blok 0,958 (salinan goodpjw v27 & heliosli "0,9586"). |
+| **Submisi 18 Okt (UTC)** | `g9a` 03:36 = 0,958 · `g6c` 14:36 (57357991) PENDING · **`g12` 15:19 (57359383) PENDING** · **`g13` 16:52 (57362095, B-leg) PENDING** — skor jatuh ±01:00–03:40 WIB. **Jatah 18 Okt 4/5 — sisa 1 utk user.** |
+| **Hasil bergerbang** | `g12` tersubmit otomatis 22:19 (gerbang LULUS gold 0,9325); **`g13` tersubmit 23:52 setelah uji gold B-leg LULUS (ρ 0,9984)**; `g10a` TIDAK disubmit (slot ke g13; commit COMPLETE = cadangan). Runner `data/run_submit_g13.sh` selesai. |
+| **Penjaga antrean** | `rsna-requeue.timer` tiap 2 mnt → `data/requeue.py`: kernel di WATCH yang **QUEUED ≥5 mnt** (perintah user 18 Okt) → hapus + push ulang. Terbukti bekerja (gold-bleg QUEUED 7 mnt → requeue 22:20). Log `data/requeue.log`. |
+| **Bukti terbaru** | OOF lokal 3.480 studi: + R7 di compact **+0,0016–0,0020 (P 1,00)**; murid r2a~r3 ρ 0,970; R6~R7 ρ 0,889 (lokal) vs 0,98 (gold). **Uji gold B-leg LULUS: ρ 0,9984 vs logit gold penulis (AUC kita 0,9264 vs 0,9245); sim gold-58 g13 0,9415 > g10a 0,9403 (+0,0011, P 0,82).** |
+| **Kuota GPU** (reset 24 Okt 07:00 WIB = setelah final) | main 19,87 j · alver 17,81 j · nxtirfan 6,71 j sisa (per 18 Okt 23:50; nxtirfan sering dipakai proyek lain rekan — jangan disentuh). Watcher kuota di-restart (mati sejak 13 Okt). |
 | **Riset** | agen latar menulis `reports/Riset 18 Okt malam - model publik baru.md` (papan, notebook ≥0,958 baru, dataset model/label baru: Mycelis 4-fold ConvNeXt 384px, DINO 5-fold, label omerzalman/haungjiawei). |
 | **Menunggu user** | pilih 2 final 22 Okt (rekomendasi agen 21 Okt); push git hanya atas perintah. |
 
@@ -73,6 +73,8 @@
 7. (15 Okt 02:30) rank 447 (r7r224 efektif); OOF R7 lengkap + label v1 diunggah (alver); timer systemd 07:03 & 17 Okt 07:05; builder `folds=` + `slot=compact` utk inferensi murid r2 (dataset fold r2 dibuat setelah latih: `dimaspashaakrilian/rsna-knee-student-r2a|r2c`).
 7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
+
+### I000000000. 19 Okt 00:15 — uji gold B-leg LULUS (ρ 0,9984) → `g13` tersubmit 23:52 (57362095); jatah 18 Okt 4/5 (sisa 1 utk user); `g10a` cadangan (commit COMPLETE). Pending skor: g6c ±01:00, g12 ±01:50, g13 ±03:40 WIB. Watcher kuota di-restart.
 
 ### I00000000. 18 Okt 21:55 — `g9a` = 0,958 (tak melampaui g6a, rank 424). Gerbang lama salah menolak `g6c` (cek kaku w=0,3) → **g6c tersubmit manual 21:36**. `g10a` v1 salah dataset murid (r1) → v2 r2a. OOF lokal: R7 di compact +0,002 (P 1,00) → kernel **`g12`**. Runner baru `data/run_submit_gate2.sh`; penjaga antrean 5 mnt (perintah user). Latih akun 2/3 ditunda sampai riset label/model publik selesai (murid guru-baru ρ 0,97 dgn r2a → keragaman kecil).
 
