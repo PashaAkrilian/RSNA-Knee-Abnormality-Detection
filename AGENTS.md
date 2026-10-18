@@ -3,7 +3,7 @@
 > File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana PERAK aktif = **STRATEGI_PERAK.md §0** (ditulis ulang 15 Okt malam) + `STRATEGI_0960.md` §0.3.
 
 ## Misi
-Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956**, **rank 398/6.040** (15 Okt 19:49 WIB). **Garis perak publik kini 0,957** (≥0,957 = 327 tim, perak rank 301; tumbuh ±180/hari dari salinan notebook heliosli "0,9573"); blok 0,956 = 941 tim (rank di dalamnya ≈ sinyal lemah). Target user: **PERAK**. Pola terbukti: tim yang naik ke 0,957 MENAMBAH MODEL beragam (bliverrigpdoge model pribadi 0,2; leoprovorov S6F 0,4 di slot compact) → resep kita: R7 + r384/r224 bercermin + **S6F nartaa** + **murid r2a kita** (pembeda dari ratusan salinan). Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry ditutup 15 Okt 23:59 UTC (user menolak merger). 100 % tidak bisa dijamin.
+Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, **rank 424/6.168** (18 Okt 17:45 WIB; skor terbaik publik = `g6a`, resep unik kita). Garis perak publik = rank ±308 (5 %), berada DI DALAM blok 0,958 yang dipenuhi salinan notebook publik (goodpjw v27 R6+flip, heliosli "0,9586"); peringkat di dalam blok = skor tak-dibulatkan. Resep kita = goodpjw tanpa Part B + **S6F nartaa .5 di separuh Raptor** + **murid ConvNeXt-T r2a kita** (pembeda dari salinan) [+ R7 di compact]. Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry sudah ditutup. Target user: **PERAK** — 100 % tidak bisa dijamin.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
@@ -12,7 +12,10 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,956**, 
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md** (bliverrigpdoge, S6F, heliosli 0,9576, auto-select) dan **reports/Riset 14 Okt malam - jalan ke perak.md**. Arsip: `reports/` lain (scrape 12 Okt), `research_notes/`, PROGRESS.md (§62–§64), docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (17 Okt ±03:00 WIB) — terbaru di MEMORY/HANDOFF §I0000
+## Status satu kalimat (18 Okt ±21:55 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
+Tim **0,958 rank 424/6.168**; tersubmit 18 Okt: `g9a` (R6+R7 dual) 0,958 (tak melampaui `g6a`), **`g6c`** (murid r2a 8 model .4) pending; `g10a` (g6c + bobot V2 + R6 stride 2) & **`g12`** (R6 .36/R7 .24/murid .4 + S6F .5; OOF lokal +R7 +0,002 P 1,00) commit-run → submit otomatis bergerbang (`data/run_submit_gate2.sh`), selalu sisa 1 jatah utk user; penjaga antrean `rsna-requeue` kini **5 menit** (kernel QUEUED ≥5 mnt → hapus + push ulang). Latih hanya di akun 2/3 (alver 18 j, nxtirfan 10 j sisa).
+
+## Status 17 Okt ±03:00 WIB (arsip)
 Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; perak publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % perak); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.
 
 ## Status 16 Okt ±20:40 WIB (arsip)

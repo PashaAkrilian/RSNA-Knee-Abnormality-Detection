@@ -4,6 +4,14 @@
 
 ## 0. RENCANA PERAK (AKTIF, 15 Okt malam)
 
+### 0.00 Pembaruan 18 Okt malam (berlaku di atas §0.1–§0.9)
+- **Posisi**: 0,958 rank 424/6.168; perak (rank ±308) ada di dalam blok 0,958 → yang menentukan = skor tak-dibulatkan (publik) dan, di akhir, skor PRIVAT 70 %. Salinan identik notebook publik berbagi satu skor privat → resep unik kita (S6F nartaa di separuh Raptor + murid r2a) adalah satu-satunya jalan melompati klaster.
+- **Bukti komponen**: S6F wajib (g8b tanpa S6F 0,957 vs g8a 0,958); murid r2a menaikkan g6a di atas salinan goodpjw (rank 569→323); R7 di compact: OOF lokal +0,002 (P 1,00), gold +0,001, papan netral (g9a) → masuk kandidat `g12`.
+- **Kandidat final**: A = resep unik dgn bukti publik terbaik (saat ini `g6a`; diganti bila `g6c`/`g10a`/`g12` menaikkan rank tim). B = resep dgn bukti OOF lokal terbesar (`g12`: R6+R7+murid .4 + S6F) bila bukan A; keduanya HARUS memuat S6F + murid. Salinan murni (57269378, 57322996) hanya cadangan.
+- **Sisa tuas**: model publik baru yang beragam (riset `reports/Riset 18 Okt malam - model publik baru.md`), murid berlabel baru di akun 2/3 hanya bila label publik baru terbukti lebih baik di gold-58 (murid dgn guru berbeda ρ 0,97 → keragaman kecil).
+- **Peluang jujur**: perak ±20–40 %; perunggu jauh lebih mungkin; emas ≈0 %.
+
+
 ### 0.1 Apa itu perak di kompetisi ini
 - **PEMBARUAN 17 Okt 03:00**: papan 01:51 WIB (6.103 tim): ≥0,959 = 124, **blok 0,958 = 488 (kebanyakan salinan R6+flip goodpjw/heliosli), garis perak publik = rank 305 (0,958)**; **kita 0,958 rank 317** (salinan user goodpjw 57269378). Simulasi ulang (`silver_sim_1017.py`, δ relatif thd klaster goodpjw): salinan murni 0–12 %; unik δ 0 → 25–30 %; δ +0,0003 → 40–62 %; **δ +0,0006 → 57–86 %**; δ +0,001 → 76–99 %. Kandidat unik: `r7v6a` (gold +0,0031 vs goodpjw, P 0,84), `g6a` (gold +0,0015, P 0,69). Papan publik condong ke R6+flip (0,958 vs 0,957) → dua sinyal saling tarik, keduanya dlm derau.
 - Perak = **5 % teratas papan PRIVAT** (70 % uji ≈ 900 dari 1.284 studi). Proyeksi ±6.150 tim saat tutup → **rank ≤ ±308**. Papan publik (30 %, ±385 studi) hanya penunjuk.

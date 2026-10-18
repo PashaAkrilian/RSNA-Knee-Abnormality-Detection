@@ -1,5 +1,5 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 14 Okt 2026 ~15:20 WIB (sesi Claude Code, mesin Linux; sebelumnya 12 Okt 23:58 sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 18 Okt 2026 ~21:55 WIB (sesi Claude Code, mesin Linux; sebelumnya 14 Okt 15:20; sebelumnya 12 Okt 23:58 sesi OpenCode). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
 ## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan (15 Okt malam)
@@ -16,32 +16,17 @@
 3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
 4. Bangun varian: `python3 build_r7murid.py base=v224m w=<murid> slot=compact folds=dimaspashaakrilian/rsna-knee-student-r2a [flip=1 fstride=1] [s6f=0.35] name=<nama>` → `kaggle kernels push -p kaggle_kernel_<nama>` → cek log commit (`GOLD58`, `MURID_LEG used`, `S6F_LEG used`, tanpa error) → submit. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (15 Okt ~21:10 WIB — sesi Claude Code mesin Linux)
+## 0c. Status (18 Okt ±21:55 WIB — sesi Claude Code mesin Linux; status lama 15 Okt → arsip git)
 | Hal | Keadaan |
 |---|---|
-| **Papan 15 Okt 19:49** | 6.040 tim; ≥0,958 = 132; **≥0,957 = 327 → garis PERAK (rank 301) = 0,957**; tepat 0,956 = 941; perunggu (603) = 0,956. **Kita rank 398 (0,956)** = ±ke-71 di blok 0,956 |
-| **Submisi 15 Okt** | `r7r224m` 57198411 = 0,956 (rank 506→403) · `r7v3c` 57201659 = 0,956 (rank saat selesai tak tercatat — PC mati) · 57223271 (user/rekan, salinan heliosli "=0.9573" = R7+r224) = 0,956. Jatah tim 15 Okt 3/5 |
-| **Terjadwal (systemd --user, PERMANEN, linger=yes)** | `rsna-rankpoll` (tiap 5 mnt → `data/rank_watch.log`, state `data/rank_poll_seen.json`) · **16 Okt 07:01 & ±08:30** `rsna-submit-16okt` (`r7v3s` lalu `r7v3sr`) · **17 Okt 07:05** `rsna-push-17okt` (alver: `student-r2a-n2` fold 2–3 + `student-r2a-full` fold 8/9 full-data; nxtirfan: `student-r2c-a/b`) · **17 Okt 11:00** `rsna-after-train-17okt` (tunggu → unduh → gerbang gold → dataset r2a versi baru + `rsna-knee-student-r2c`; TIDAK submit). Unit di `~/.config/systemd/user/rsna-*`; cek `systemctl --user list-timers 'rsna-*'` |
-| **Kandidat siap (commit LULUS)** | **`r7v3s`** (S6F 0,35 + r2a 0,30 compact, tanpa flip; 16 Okt 07:01), **`r7v3sr`** (S6F 0,35 di separuh Raptor + r2a 0,30; 16 Okt ±08:30), `r7v6` (sama + flip stride 1), `r7v3c40` (r2a 0,40; 16 Okt 07:01), `r7v4c` (flip + r2a 0,25), `r7v3t` (r2a kaki ke-3 0,2), `r7v4` (flip saja). Tersubmit 20:08: `r7v4c40` 57231466 |
-| Kuota 21:06 | main **9,26 j** (inferensi saja) · alver **0** (34,02 j terpakai) · nxtirfan **0,50 j** · TPU 20 j/akun tak terpakai · reset **17 Okt 07:00 WIB** |
-| *(riwayat 14 Okt di bawah)* | |
-| **Submisi terbaik** | **0,956** = salinan R7 heliosli oleh user (57146631, 13 Okt 21:26 WIB) + duplikat 57150970 (0,956); rank **558/5.957**; dataran 0,956 ±750 tim (rank 202–951) = garis perak (297) DAN perunggu (595) |
-| **Basis baru R7** | `heliosli/rsna-knee-compact-r7cnxfsss` (bundel `8c7b666e`) + notebook "≈0.957 one click"; salinan disimpan `kaggle_base/r7_heliosli_0957_20261013.ipynb` (+ `.meta.json`) |
-| **Hasil 14 Okt** | `r7murid` 57174015 = 0,956, rank 558→604 (murid r1 di luar slot tak menambah). **`r7r224` 57185636 PENDING** (resep varshitha; skor ±02:30). Varian siap jatah 15 Okt: `r7r224f` (flip-TTA, commit jalan), `r7m224s` (murid di slot Raptor). Submit: `kaggle competitions submit rsna-knee-abnormality-detection -k dimaspashaakrilian/<slug> -v 1 -f submission.csv -m "..."` |
-| **Terjadwal (systemd --user)** | ~~15 Okt 07:03~~ DIHENTIKAN (user izinkan 2 jatah sisa → `r7v3f` 57194021 + `r7v3fs` 57194035 disubmit 03:02). `rsna-rankwatch-15okt` (pemantau rank → `data/rank_watch.log`). 17 Okt 07:05 `rsna-push-17okt` (latih r2a alver + r2c nxtirfan — sesuaikan setelah hasil r2a-n). Cek `systemctl --user list-timers 'rsna-*'` |
-| **Guru OOF R7** | f0/f1 COMPLETE → `data/r7oof/`; f2/f3 RUNNING (nxtirfan, push 21:21); lalu `bash kg3.sh kernels push -p kaggle_kernel_compact-gold-r7`; tarik: `bash kg3.sh kernels output nxtirfan/<slug> -p data/r7oof --file-pattern '(compact_(oof|gold).*\.csv|receipt.*\.json)$'` → `python3 make_labels_v1.py` |
-| Kuota 21:20 | main 11,54 j (inferensi saja) · alver 0 · nxtirfan 8,54 j · reset 17 Okt 07:00 WIB |
-| Dibatalkan | `s6student` + `student_infer` rencana 17 Okt (preds murid dari dataset → fallback diam-diam di run penilaian; DINO emas-58 0,71). Diganti `r7murid` |
-| *(riwayat 12 Okt di bawah)* | |
-| Submisi terbaik (12 Okt) | **0,954 tetap** (57051680 klon S6, rank 499/5.812; papan 16:00: dataran 0,954 = 649 tim, ≥0,954 = 835, perak 290 = 0,954, emas 21 = 0,962) |
-| **S6-eq — SKOR MASUK 18:10** | `s6eq` v3 = **0,954** (57103358) + `s6eqr` v3 = **0,954** (57103359) → **G0 ≥0,955 BELUM lulus**; reader net-zero (konsisten 11 Okt); **jatah 3/5**. 400 sore = setting "All Versions Accessible" `heliosli/r6cnxfsss` → mirror `dimaspashaakrilian/rsna-knee-compact-r6cnxfsss` v1 |
-| **Murid — train-a/b COMPLETE 18:10** | fold0–3 + oof sudah **di lokal** `data/student_out_a|b` (471 MB): **val AUC 0,9255–0,9279, gold 0,9189–0,9223**; `dino_full.pt` (95 MB) sudah ditarik (nxtirfan); **dataset `dimaspashaakrilian/rsna-knee-student-folds` v1 (privat) LIVE** (fold0–3+oof) — `build_student_infer.py` masih perlu mount folds saat push |
-| train-c + infer + OOF | **ANTRE 17 Okt 07:00**: train-c (fold4) → dataset v2 → infer murid → blend/`s6student`; `build_compact_oof.py` (guru OOF, fold 0–3 stride 3 ±1,6 j/fold) juga 17 Okt (alver 4,6 j sisa malam ini TIDAK dipakai — train sudah selesai, jangan push). OOM lagi → gradient checkpointing / kwin 8→6, res 256 jangan diturunkan |
-| Kuota 23:00 | main **12,67 j** (tak terpakai malam — tak ada rencana GPU); alver **4,6 j** (sisa, idle); nxtirfan 0. Reset **17 Okt 07:00 WIB** (+30 j/akun) |
-| **Persiapan 17 Okt SELESAI 23:30** | builder train-c + compact-oof-f0..f3 + gold + student_infer + s6student siap push; **dataset alver `rsna-knee-student-folds` v1 + `rsna-knee-student-dino` v1 LIVE** (mount akun-2 aman); rincian perintah di §G6. akun 2/3 **kuota 0 s/d 17 Okt 07:00 — JANGAN push sebelumnya** |
-| Pantau kuota | `scripts/quota_watch.sh` **JALAN** (PID 11661, 5 mnt → `data/quota_watch.log`): main 12,67 j · alver 0 · nxtirfan 0, refresh 17 Okt 07:00. Stop: `kill 11661`; start: `setsid nohup bash scripts/quota_watch.sh >/dev/null 2>&1 &` |
-| Git | update 12 Okt (skor + train + persiapan + pantau kuota) **sudah push** sampai `c063ef5` |
-| OAI | host diam; user belum jawab (21:16 11 Okt) — jangan eksekusi |
+| **Papan 18 Okt 17:45** | 6.168 tim; ≥0,957 = 1.408; **kita 0,958 rank 424** (terbaik publik = `g6a`; `g8a`/`g9a` tak melampauinya). Perak = rank ±308 → di DALAM blok 0,958 (salinan goodpjw v27 & heliosli "0,9586"). |
+| **Submisi 18 Okt (UTC)** | `g9a` 03:36 UTC = 0,958 · **`g6c` 14:36 UTC** (21:36 WIB; murid r2a 8 model .4 + S6F .5) PENDING · sisa jatah 3 → agen boleh 2 lagi (sisakan 1 utk user). |
+| **Bergerbang malam ini** | `g10a` (g6c + wc=h2 + R6 stride 2) & **`g12`** (R6s2 .36 / R7 .24 / murid8 .4 + S6F .5, wc=h) → `data/run_submit_gate2.sh` (SPECS `nama:versi:flip:s6f:r7`; versi gagal → coba v1) → submit bila lulus & sisa ≥2; log `data/submit_18okt.log`. |
+| **Penjaga antrean** | `rsna-requeue.timer` tiap 2 mnt → `data/requeue.py`: kernel di WATCH yang **QUEUED ≥5 mnt** (perintah user 18 Okt) → hapus + push ulang (versi kembali v1). WATCH hanya kernel BELUM tersubmit (kini g10a, g12) — tambahkan tiap kernel baru. Log `data/requeue.log`. |
+| **Bukti terbaru** | OOF lokal 3.480 studi: + R7 di compact **+0,0016–0,0020 (P 1,00)**; murid r2a~r3 ρ 0,970 (guru beda → murid nyaris sama); R6~R7 ρ 0,889 (lokal) vs 0,98 (gold). Gold-58: g6a 0,9398 · g6c 0,9408 · g9a 0,9408 · g10a 0,9403 · g12 0,9404 (semua derau). |
+| **Kuota GPU** (reset 24 Okt 07:00 WIB = setelah final) | main 21,2 j (commit-run/submit saja) · alver 18,2 j · nxtirfan 10,3 j (sering dipakai proyek lain rekan — jangan disentuh). |
+| **Riset** | agen latar menulis `reports/Riset 18 Okt malam - model publik baru.md` (papan, notebook ≥0,958 baru, dataset model/label baru: Mycelis 4-fold ConvNeXt 384px, DINO 5-fold, label omerzalman/haungjiawei). |
+| **Menunggu user** | pilih 2 final 22 Okt (rekomendasi agen 21 Okt); push git hanya atas perintah. |
 
 ## 1. Urutan kerja
 ### A. 11 Okt 03:35–07:03 — SELESAI
@@ -88,6 +73,8 @@
 7. (15 Okt 02:30) rank 447 (r7r224 efektif); OOF R7 lengkap + label v1 diunggah (alver); timer systemd 07:03 & 17 Okt 07:05; builder `folds=` + `slot=compact` utk inferensi murid r2 (dataset fold r2 dibuat setelah latih: `dimaspashaakrilian/rsna-knee-student-r2a|r2c`).
 7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
+
+### I00000000. 18 Okt 21:55 — `g9a` = 0,958 (tak melampaui g6a, rank 424). Gerbang lama salah menolak `g6c` (cek kaku w=0,3) → **g6c tersubmit manual 21:36**. `g10a` v1 salah dataset murid (r1) → v2 r2a. OOF lokal: R7 di compact +0,002 (P 1,00) → kernel **`g12`**. Runner baru `data/run_submit_gate2.sh`; penjaga antrean 5 mnt (perintah user). Latih akun 2/3 ditunda sampai riset label/model publik selesai (murid guru-baru ρ 0,97 dgn r2a → keragaman kecil).
 
 ### I0000000. 17 Okt 19:10 — heliosli 0,9586 = goodpjw + bobot V2 (probe papan). Kernel `g8a`/`g8b` (wc=h2 + murid 8 model, ± S6F) → `rsna-submit-g8` (log `data/submit_g8_17okt.log`). r7v6a = 0,957; g6a pending. Murid r3: r3-a (nxtirfan) + r3-bm (akun utama) jalan → dataset r3 MANUAL (pasca-latih dihentikan 19:05).
 
