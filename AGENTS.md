@@ -3,7 +3,7 @@
 > File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana SILVER aktif = **STRATEGI_SILVER.md §0**; riset terbaru = `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
 
 ## Misi
-Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, **rank 467/6.187** (papan publik 19 Okt 02:33 WIB); terbaik COMPLETE `g9a`/`g6a` = 0,958. Cutoff publik top 5% saat itu rank 309, masih di dalam blok 0,958; hasil privat 70% yang menentukan medali. `g6c`, `g12`, dan `g13` masih PENDING (cek API 02:55 WIB); dua kernel murid r4 alver sudah dua kali di-requeue, terakhir 02:51, dan RUNNING pada cek 02:56; timer memantau. Bukti terbaru mendukung B-leg seed 0; seed 1 tidak menambah gold. Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry sudah ditutup. Target user: **SILVER** — tidak ada jaminan.
+Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, **rank 473/6.190** (papan publik 19 Okt 04:17 WIB); terbaik COMPLETE termasuk `g6c` = 0,958. Cutoff aritmetika top 5% sekitar rank 310, masih di dalam blok 0,958; hasil privat 70% yang menentukan medali. `g6c` COMPLETE; `g10a` 57369237, `g12` 57359383, dan `g13` 57362095 PENDING (cek API 04:17 WIB). Jatah 19 Okt 5/5 terpakai atas instruksi user, 0 tersisa sampai reset harian 07:00 WIB. Dua kernel murid r4 alver terakhir RUNNING pada cek 04:17; timer memantau. Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry sudah ditutup. Target user: **SILVER** — tidak ada jaminan.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
@@ -12,8 +12,8 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, 
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md**; lalu riset 18 Okt dan 15 Okt. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md (§67–§71), docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (19 Okt 02:56 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
-Tim **0,958 rank 467/6.187** (papan 02:33 WIB; cutoff publik top 5% = 309); `g6c` (57357991), `g12` (57359383), `g13` (57362095) masih **PENDING**. Terbaik COMPLETE `g9a`/`g6a` = 0,958. Jatah 18 Okt tersisa satu dan dibiarkan. Uji gold B-leg LULUS (ρ 0,9984; g13 gold 0,9415); seed 1 menurunkan gold. Dua kernel murid r4 (fold0–1 dan 2–3) di-requeue dua kali, terakhir pukul 02:51, lalu RUNNING pada cek 02:54:59 dan 02:55; kuota alver mulai terpakai, belum ada submisi baru. Timer rankpoll 5 mnt dan requeue 2 mnt aktif. Kuota main/alver/nxtirfan = 19,87/17,75/4,62 jam; reset 24 Okt 07:00 WIB.
+## Status satu kalimat (19 Okt 04:17 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
+Tim **0,958 rank 473/6.190** (papan 04:17 WIB; cutoff aritmetika top 5% sekitar 310); `g6c` (57357991) COMPLETE 0,958, sedangkan `g10a` (57369237), `g12` (57359383), dan `g13` (57362095) masih **PENDING**. `g10a` dipakai atas instruksi user sebagai jatah terakhir hari ini; 5/5 habis sampai reset 07:00 WIB. Gold g10a 0,9403 vs g6c 0,9408/g13 0,9415. Uji gold B-leg LULUS (ρ 0,9984); seed 1 menurunkan gold. Dua kernel murid r4 alver terakhir RUNNING pada cek 04:17. Timer rankpoll 5 mnt dan requeue 2 mnt aktif. Kuota main/alver/nxtirfan = 19,87/15,03/4,62 jam; reset 24 Okt 07:00 WIB.
 
 ## Status 17 Okt ±03:00 WIB (arsip)
 Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; silver publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % silver); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.

@@ -29,6 +29,13 @@
 - Dataset r4 privat dan dua kernel 12 epoch ada di alver; `student-r4-a/b` di-requeue pukul 02:42 dan 02:51 (kembali v1), lalu RUNNING pada cek 02:55. Kuota terbaru main/alver/nxtirfan 19,87/17,75/4,62 jam; timer aktif.
 - Lanjutkan r4 setelah kernel berjalan; periksa semua fold, emas dikecualikan, inferensi gold, dan waktu run. Jangan buat `g14` kecuali g13 naik pada papan dan r4 lulus. Rincian metode, aset yang ditolak, dan limitasi metrik ada di laporan riset 19 Okt.
 
+#### 0.00e Status dan keputusan 19 Okt 04:17 WIB — pemakaian jatah terakhir hari ini
+- Papan publik Kaggle (unduhan 04:17 WIB): **0,958 rank 473/6.190**; batas aritmetika top 5% sekitar rank 310. API submission: `g6c` 57357991 COMPLETE 0,958; **`g10a` 57369237 PENDING**, `g12` 57359383 PENDING, `g13` 57362095 PENDING.
+- Atas instruksi user, kirim **`g10a` v1** pada 04:16:44 WIB dari akun utama. Commit-run COMPLETE, pseudo-output 3 baris lolos validasi; resep = goodpjw v27 tanpa Part B, R6 stride 2 + S6F + murid r2a 8-model .4. Gold-58 g10a 0,9403 vs g6c 0,9408 dan g13 0,9415; ini sinyal terbatas, skor publik/privat tetap menunggu API.
+- Jatah submission 19 Okt **5/5 terpakai, 0 tersisa** hingga reset harian 07:00 WIB. Lifetime submissions 143. Kuota GPU main/alver/nxtirfan **19,87/15,03/4,62 jam**; reset mingguan 24 Okt 07:00 WIB.
+- Kernel `student-r4-a/b` terakhir RUNNING pada cek 04:17 (alver); empat fold, gold, dan waktu run belum diverifikasi. Pemeriksaan CLI lanjutan pada endpoint privat akun alver ditolak.
+- Keputusan berikut: tunggu skor `g10a/g12/g13` dan selesaikan validasi r4. `g14` tetap **terkunci** kecuali g13 menaikkan papan dan r4 lolos gold. Tidak ada jatah harian tersisa saat status ini dicatat; dua final tetap dipilih manual sebelum tenggat.
+
 ### 0.1 Apa itu silver di kompetisi ini
 - **PEMBARUAN 17 Okt 03:00**: papan 01:51 WIB (6.103 tim): ≥0,959 = 124, **blok 0,958 = 488 (kebanyakan salinan R6+flip goodpjw/heliosli), garis silver publik = rank 305 (0,958)**; **kita 0,958 rank 317** (salinan user goodpjw 57269378). Simulasi ulang (`silver_sim_1017.py`, δ relatif thd klaster goodpjw): salinan murni 0–12 %; unik δ 0 → 25–30 %; δ +0,0003 → 40–62 %; **δ +0,0006 → 57–86 %**; δ +0,001 → 76–99 %. Kandidat unik: `r7v6a` (gold +0,0031 vs goodpjw, P 0,84), `g6a` (gold +0,0015, P 0,69). Papan publik condong ke R6+flip (0,958 vs 0,957) → dua sinyal saling tarik, keduanya dlm derau.
 - Silver = **5 % teratas papan PRIVAT** (70 % uji ≈ 900 dari 1.284 studi). Proyeksi ±6.150 tim saat tutup → **rank ≤ ±308**. Papan publik (30 %, ±385 studi) hanya penunjuk.

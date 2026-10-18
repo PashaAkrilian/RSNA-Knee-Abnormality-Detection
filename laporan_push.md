@@ -1,16 +1,17 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
 > Konteks aturan: `MEMORY.md` · rencana aktif: **`STRATEGI_SILVER.md` §0** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset/riwayat terdahulu ada di `reports/`, `research_notes/`, dan `PROGRESS.md`.
-> Diperbarui 19 Okt 2026 03:02 WIB; status operasional terakhir diperiksa 02:56 WIB. Rencana aktif: `STRATEGI_SILVER.md` §0; status lengkap: `MEMORY.md` §3 dan `HANDOFF.md` §0c. Riset baru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
+> Diperbarui 19 Okt 2026 04:18 WIB; papan dan API terakhir diperiksa 04:17 WIB. Rencana aktif: `STRATEGI_SILVER.md` §0; status lengkap: `MEMORY.md` §3 dan `HANDOFF.md` §0c. Riset baru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`.
 
-> Papan publik 02:33 WIB: 6.187 tim, Krazy KIller **0,958 rank 467** (cutoff publik top 5% = 309). Kaggle API 02:55 WIB: g6c/g12/g13 PENDING. Dua kernel r4 di alver sudah RUNNING setelah push ulang kedua; kuota main/alver/nxtirfan 19,87/17,75/4,62 jam. Tidak ada submission baru; eksperimen dicatat terpisah dari skor.
+> Papan publik 04:17 WIB: 6.190 tim, Krazy KIller **0,958 rank 473** (cutoff aritmetika top 5% sekitar 310). Kaggle API: `g6c` COMPLETE 0,958; `g10a`/`g12`/`g13` PENDING. Dua kernel r4 terakhir RUNNING pada cek 04:17; kuota main/alver/nxtirfan 19,87/15,03/4,62 jam. Jatah hari ini 5/5 terpakai setelah user mengizinkan satu submission terakhir.
 
 ## 1. Posisi vs garis silver (baris pertama = status terbaru; baris berikut arsip)
 | Hal | Nilai |
 |---|---|
-| Tim — 19 Okt 02:33 WIB | `Krazy KIller`: **0,958 rank 467/6.187**, 139 submisi; cutoff top 5% publik rank 309, di dalam blok 0,958. |
-| Submisi pending — API 19 Okt 02:33 WIB | **57357991 `g6c`, 57359383 `g12`, 57362095 `g13` = PENDING**. Jatah 18 Okt yang tersisa satu dibiarkan. |
-| Timer/kuota — 19 Okt 02:56 WIB | rankpoll tiap 5 mnt, requeue tiap 2 mnt; kuota GPU main/alver/nxtirfan = **19,87/17,75/4,62 jam**, reset 24 Okt 07:00 WIB. Dua kernel r4 di alver di-requeue ulang pada 02:51 lalu RUNNING pada cek 02:55; dipantau timer rsna-requeue. |
+| Tim — 19 Okt 04:17 WIB | `Krazy KIller`: **0,958 rank 473/6.190**, 143 lifetime submission menurut API; cutoff top 5% aritmetika sekitar rank 310, di dalam blok 0,958. |
+| Status submission — API 19 Okt 04:17 WIB | **57357991 `g6c` COMPLETE 0,958; 57369237 `g10a`, 57359383 `g12`, 57362095 `g13` = PENDING**. |
+| Jatah/kuota — 19 Okt 04:17 WIB | Jatah 19 Okt **5/5 terpakai, 0 tersisa** sampai reset harian 07:00 WIB. Kuota GPU main/alver/nxtirfan = **19,87/15,03/4,62 jam**, reset 24 Okt 07:00 WIB. |
+| Timer/kernel — 19 Okt 04:17 WIB | rankpoll tiap 5 mnt, requeue tiap 2 mnt; dua kernel r4 alver terakhir RUNNING pada cek 04:17. |
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_SILVER.md` J4) |
 | LB kita | **0,956 — rank 398/6.040** (15 Okt 19:49; skor terbaik dari `r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271). Riwayat: rank 403 (15 Okt pagi), 447 (r7r224), 558 (R7, 14 Okt), 0,954 rank 466 (12 Okt) |
 | Peta blok (15 Okt 19:49 WIB) | ≥0,958 = 132 · **≥0,957 = 327** · tepat 0,956 = 941 · **garis silver (rank 301) = 0,957** · perunggu (rank 603) = 0,956 → silver publik menuntut tampil 0,957 |
@@ -24,6 +25,7 @@
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
 |---|---|---|---|---|---|---|---|
+| 45 | 19 Okt 04:16 | **57369237 `g10a` v1** (izin user: gunakan 1 submission terakhir) | goodpjw v27 tanpa Part B; R6 stride 2 + S6F + murid r2a 8-model bobot 0,4 | **PENDING** | — | tunggu skor | Commit-run COMPLETE; submission pseudo 3 baris tervalidasi. Gold 0,9403 (di bawah g6c 0,9408 dan g13 0,9415); API terima, jatah 19 Okt 5/5, sisa 0. |
 | — | 19 Okt 03:02 | **normalisasi dokumentasi (tanpa submission)** | Semua rujukan medali di 35 Markdown diseragamkan menjadi silver; nama rencana aktif dan arsip diperbarui | — | — | tanpa perubahan skor atau kernel | `STRATEGI_SILVER.md` menggantikan nama rencana lama; status eksperimen tetap sesuai cek 02:56 WIB |
 | — | 19 Okt 02:30 | riset aset publik + persiapan murid r4 (tanpa submission) | Evaluasi seed1/Engine8/Engine9/dual-teacher/Argon4; label konsensus + OOF-R7 + OOF-B-leg; dua kernel training alver dikirim | — | — | lanjutkan setelah r4 selesai; `g14` tetap bersyarat pada kenaikan g13 dan gerbang gold | rincian dan angka di laporan riset 19 Okt; requeue v1 dilakukan 02:42, watcher aktif; push kedua selesai 02:51; kedua kernel RUNNING pada cek 02:55 dan kuota alver mulai berkurang; sisa jatah 18 Okt tidak digunakan |
 | 1 | 13 Sep | 56196772 | v3 hybrid (fork + arm v3 α=0,15) | 0,941 | −0,009 | BUANG | byte-identik dgn base; arm tak terbaca |
@@ -166,6 +168,7 @@
 - Simulator repo pada papan baru: P(silver) publik 0,954 ≈ 16–25 %, 0,956 ≈ 19–42 %, 0,958 ≈ 26–60 %, 0,960 ≈ 27–76 %.
 
 ## 4. Rencana (ringkas; rincian & gerbang di `STRATEGI_SILVER.md`)
+- [x] 19 Okt 04:17: user mengizinkan pemakaian jatah submission terakhir hari ini → `g10a` v1 diterima (57369237), **PENDING**, jatah 5/5 habis. Pantau hasil dan r4; `g14` tetap bersyarat pada kenaikan g13 serta gerbang gold r4.
 - [ ] 12 Okt: 2 submisi S6-eq (`s6eq`, `s6eqr`) via watcher; scrape lanjutan; PR untuk evaluasi rekan; lalu jalur 0,960 (`STRATEGI_0960.md`: guru OOF compact → murid A/B → notebook final).
 - [x] 10 Okt: r224 (0,950), fork rabari (0,950), Apex+MaVIT (0,949) ditutup; 57028008 Timeout; 57044355 = 0,950 (OF tak jalan → OOM terkonfirmasi); v4.1 dibangun/diuji.
 - [x] 11 Okt dini hari: S6 publik lagi → user men-submit 57051680; sonda `s6probe` (compact ±3,5 j); `build_s6plus.py` (reader/OF opsional); riset forum & zoologi bundel; dokumen diperbarui.

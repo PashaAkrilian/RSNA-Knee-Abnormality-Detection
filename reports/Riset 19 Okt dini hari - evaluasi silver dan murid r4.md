@@ -81,5 +81,10 @@ Gerbang setelah selesai:
 - Ringkasan operasional: `MEMORY.md` §2–§5, `HANDOFF.md` §0c, `laporan_push.md` §1–§2.
 - Metadata publik: [B-leg seed 1](https://www.kaggle.com/datasets/xhaitanya/rsna-knee-bleg-s1-f01), [dual-teacher labels](https://www.kaggle.com/datasets/srinath2495/rsna-knee-dual-teacher-consensus-4407), [Argon4 labels](https://www.kaggle.com/datasets/abdullahmathar/rsna-knee-argon4-soft-labels), [Engine 9 weights](https://www.kaggle.com/datasets/cyruspinto/rsna-knee-engine9-384-weights).
 
-## Tindak lanjut antrean — 19 Okt 2026 02:56 WIB
+## Tindak lanjut antrean — 19 Okt 2026 02:56 WIB (arsip)
 Papan terakhir tetap 0,958 rank 467/6.187; rankpoll 02:55 selesai sukses tanpa perubahan tercatat. API 02:55 masih menunjukkan g6c/g12/g13 PENDING. Setelah push ulang kedua pada 02:51, kedua kernel r4 berubah menjadi RUNNING pada cek 02:54:59 dan tetap RUNNING pada 02:55–02:56. Kuota GPU terbaru main/alver/nxtirfan 19,87/17,75/4,62 jam; pemakaian alver mulai naik, sementara akun utama dan nxtirfan tidak dipakai. Timer requeue tetap aktif. Tidak ada submission kompetisi baru.
+
+## Tindak lanjut submission — 19 Okt 2026 04:17 WIB
+Atas instruksi user, satu jatah harian terakhir dipakai untuk mengirim **`g10a` v1, ref 57369237**, pukul 04:16:44 WIB dari akun utama. Commit-run COMPLETE; `submission.csv` pseudo (3 baris, 13 kolom) lolos validasi bentuk, ID unik, nilai finite dan dalam rentang. Resep: R6 stride 2 + S6F + murid r2a 8-model .4 di goodpjw v27 tanpa Part B. API 04:17 masih **PENDING**. Gold g10a = 0,9403, dibanding g6c 0,9408 dan g13 0,9415; skor papan belum tersedia.
+
+Papan 04:17: **0,958 rank 473/6.190**. API: g6c 57357991 COMPLETE 0,958; g10a 57369237, g12 57359383, dan g13 57362095 PENDING. Jatah 19 Okt 5/5 terpakai, 0 tersisa sampai reset 07:00 WIB. Kuota GPU main/alver/nxtirfan 19,87/15,03/4,62 jam. Kernel r4-a/r4-b terakhir RUNNING pada 04:17; `g14` tetap bersyarat pada kenaikan papan g13 dan gerbang gold r4.
