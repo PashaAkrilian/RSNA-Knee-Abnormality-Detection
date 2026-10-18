@@ -1702,3 +1702,8 @@ ATURAN PENULISAN:
 - `g12` tersubmit otomatis 22:19 (57359383, PENDING); `g10a` submit otomatis dihentikan (slot diserahkan ke g13).
 - 23:50 uji gold B-leg (`alverlfarfaraway/rsna-knee-gold-bleg`; `cmp_bleg_gold.py`) **LULUS**: ρ rerata 0,9984 (0,997–0,999) vs logit gold penulis B-leg (rerata 4 fold `partial_preds_E_prior_s0.json`); AUC gold kita 0,9264 vs mereka 0,9245 → penanda `data/bleg_gold_ok` → **`g13` tersubmit 23:52 (57362095, PENDING ±03:40 WIB)**. Sim gold-58: g13 0,9415 vs g10a 0,9403 (+0,0011, P 0,82); g12 0,9402.
 - Jatah 18 Okt 4/5 (g9a, g6c, g12, g13) — sisa 1 utk user. Kuota 23:50: main 19,87 j · alver 17,81 j · nxtirfan 6,71 j (refresh 24 Okt 07:00 WIB); watcher kuota `scripts/quota_watch.sh` di-restart (log mati sejak 13 Okt).
+
+## 66. 19 Okt 2026 02:10 WIB — sinkronisasi status dan dokumen
+- Kaggle API (02:04 WIB): `g6c` 57357991, `g12` 57359383, `g13` 57362095 tetap PENDING; tidak ada skor baru. Leaderboard publik terunduh 02:08 WIB: **Krazy KIller 0,958 rank 465/6.184**, best COMPLETE tetap `g9a`/`g6a` 0,958.
+- Timer `rsna-rankpoll` (5 mnt) dan `rsna-requeue` (2 mnt) aktif. Kuota main/alver/nxtirfan = **19,87/17,81/4,62 jam**, refresh 24 Okt 07:00 WIB. Sisa 1 jatah 18 Okt tetap dibiarkan.
+- Dokumen aktif diselaraskan: `MEMORY.md`, `HANDOFF.md`, `laporan_push.md`, `STRATEGI_PERAK.md`, serta salinan ringkas `AGENTS.md`/`CLAUDE.md`. Arah eksperimen tidak berubah: tunggu skor g13; r4/g14 bersyarat.

@@ -1,32 +1,32 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 19 Okt 2026 ~00:15 WIB (sesi OpenCode; sebelumnya 18 Okt 21:55 sesi Claude Code). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_0960.md`** (rencana aktif 12 Okt) → `STRATEGI_PERAK.md` (§0.0) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
+> Diperbarui 19 Okt 2026 02:10 WIB (Kaggle API, papan, timer, dan kuota terverifikasi). Baca urut: `MEMORY.md` (aturan+fakta) → **`STRATEGI_PERAK.md` (§0 rencana aktif 19–22 Okt)** → `STRATEGI_0960.md` (arsip rencana 12 Okt) → `docs/PLAN_B.md` (§00) → file ini (apa yang dikerjakan SEKARANG).
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
-## 0. Untuk USER (manusia) — yang hanya Anda bisa kerjakan (15 Okt malam)
-1. **Baca penanda auto-select** di halaman Kaggle *Submissions*: bila final belum dipilih manual, Kaggle menandai 2 submisi = **2 skor publik tak-dibulatkan tertinggi**. Kirim nomor/deskripsinya ke agen → kita tahu komponen mana yang benar-benar menaikkan skor (r7v3c? r7v4c40? r7v3s?) tanpa memakai jatah.
-2. **Biarkan PC menyala** 16–17 Okt: jadwal otomatis (systemd --user, linger) submit 16 Okt 07:01, latih 17 Okt 07:05, unduh fold 17 Okt 11:00. Bila PC mati, tugas menyusul saat boot (bisa terlambat).
-3. Jatah submisi: agen ≤2/hari (sisakan 2–3 utk Anda & rekan); jatah ekstra hanya atas izin Anda (15 Okt: 1 jatah dipakai utk `r7v4c40`).
-4. **21–22 Okt: pilih 2 final** (manual di UI Submissions → select 2). Agen akan merekomendasikan A (resep terlengkap: S6F + murid) dan B (lindung nilai) pada 21 Okt.
-5. Ketik **"lanjut"/"eksekusi"** untuk melanjutkan; **"push"** untuk `git push origin master`. Merger & pesan support DIBATALKAN (keputusan Anda 11 Okt; entry/merger ditutup 15 Okt 23:59 UTC).
-- Harapan jujur: perak ±35–50 % bila murid + S6F memberi +0,0005–0,001 nyata; hanya salinan publik ±15–25 %; emas ≈0–2 %. **100 % tidak mungkin.**
+## 0. Prioritas operasional (19 Okt 02:10 WIB)
+1. `g6c` 57357991, `g12` 57359383, `g13` 57362095 masih PENDING menurut Kaggle API. Papan terbaru 19 Okt 02:08 WIB: **0,958 rank 465/6.184**; `g9a`/`g6a` tetap COMPLETE 0,958.
+2. `rsna-rankpoll.timer` (5 mnt) dan `rsna-requeue.timer` (2 mnt) aktif. Kuota main/alver/nxtirfan = 19,87/17,81/4,62 jam; reset 24 Okt 07:00 WIB.
+3. Jatah 18 Okt 4/5 terpakai; **sisa 1 dibiarkan** sesuai instruksi user. Jangan gunakan. Jika `g13` mengonfirmasi peningkatan, lanjutkan rencana murid r4 → `g14`; selain itu ikuti pohon keputusan MEMORY §2.
+4. **21–22 Okt: pilih 2 final secara manual** di UI Kaggle. Deadline 22 Okt 23:59 UTC. Push Git sudah diminta user pada sesi ini.
+- Perak tetap tidak pasti; 100 % tidak bisa dijamin.
 
 ## 0b. Quickstart AGEN BARU (Claude Code / OpenCode / lain)
 1. `export PATH="$HOME/.local/bin:$PATH"` · `cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection`
-2. Baca `MEMORY.md` → `STRATEGI_0960.md` §0.3 → file ini (§0c + §H). Cek: `kaggle quota` (+ `bash kg2.sh quota`, `bash kg3.sh quota`) · `kaggle competitions submissions rsna-knee-abnormality-detection -v | head` · `tail data/rank_watch.log` · `systemctl --user list-timers 'rsna-*'` · `python3 scan_public_updates.py`.
+2. Baca `MEMORY.md` → `STRATEGI_PERAK.md` §0 → file ini (§0c + urutan kerja aktif); `STRATEGI_0960.md` adalah arsip. Cek `kaggle quota` (+ `bash kg2.sh quota`, `bash kg3.sh quota`) · submission API · `tail data/rank_watch.log` · `systemctl --user list-timers 'rsna-*'`.
 3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
 4. Bangun varian: `python3 build_r7murid.py base=v224m w=<murid> slot=compact folds=dimaspashaakrilian/rsna-knee-student-r2a [flip=1 fstride=1] [s6f=0.35] name=<nama>` → `kaggle kernels push -p kaggle_kernel_<nama>` → cek log commit (`GOLD58`, `MURID_LEG used`, `S6F_LEG used`, tanpa error) → submit. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (19 Okt ~00:15 WIB — sesi OpenCode; status lama 18 Okt 21:55 → arsip git)
+## 0c. Status (19 Okt 2026 02:10 WIB — tersinkron)
 | Hal | Keadaan |
 |---|---|
-| **Papan 18 Okt 22:20** | 6.179 tim; ≥0,957 = 1.455; **kita 0,958 rank 452** (terbaik publik = `g6a`; `g8a`/`g9a` tak melampauinya). Perak = rank ±308 → di DALAM blok 0,958 (salinan goodpjw v27 & heliosli "0,9586"). |
-| **Submisi 18 Okt (UTC)** | `g9a` 03:36 = 0,958 · `g6c` 14:36 (57357991) PENDING · **`g12` 15:19 (57359383) PENDING** · **`g13` 16:52 (57362095, B-leg) PENDING** — skor jatuh ±01:00–03:40 WIB. **Jatah 18 Okt 4/5 — sisa 1 utk user.** |
+| **Papan publik** | Kaggle leaderboard 19 Okt 02:08 WIB: **6.184 tim; kita 0,958 rank 465**. Terbaik COMPLETE `g9a` dan `g6a`, keduanya 0,958; perak publik sekitar rank 309 di dalam blok 0,958. |
+| **Submission API** | `g6c` 57357991, `g12` 57359383, `g13` 57362095 = **PENDING** pada cek 02:04 WIB. Belum ada skor akhir baru. |
 | **Hasil bergerbang** | `g12` tersubmit otomatis 22:19 (gerbang LULUS gold 0,9325); **`g13` tersubmit 23:52 setelah uji gold B-leg LULUS (ρ 0,9984)**; `g10a` TIDAK disubmit (slot ke g13; commit COMPLETE = cadangan). Runner `data/run_submit_g13.sh` selesai. |
 | **Penjaga antrean** | `rsna-requeue.timer` tiap 2 mnt → `data/requeue.py`: kernel di WATCH yang **QUEUED ≥5 mnt** (perintah user 18 Okt) → hapus + push ulang. Terbukti bekerja (gold-bleg QUEUED 7 mnt → requeue 22:20). Log `data/requeue.log`. |
 | **Bukti terbaru** | OOF lokal 3.480 studi: + R7 di compact **+0,0016–0,0020 (P 1,00)**; murid r2a~r3 ρ 0,970; R6~R7 ρ 0,889 (lokal) vs 0,98 (gold). **Uji gold B-leg LULUS: ρ 0,9984 vs logit gold penulis (AUC kita 0,9264 vs 0,9245); sim gold-58 g13 0,9415 > g10a 0,9403 (+0,0011, P 0,82).** |
-| **Kuota GPU** (reset 24 Okt 07:00 WIB = setelah final) | main 19,87 j · alver 17,81 j · nxtirfan 6,71 j sisa (per 18 Okt 23:50; nxtirfan sering dipakai proyek lain rekan — jangan disentuh). Watcher kuota di-restart (mati sejak 13 Okt). |
+| **Kuota GPU** | main 19,87 j · alver 17,81 j · nxtirfan 4,62 j; reset 24 Okt 07:00 WIB. |
 | **Riset** | agen latar menulis `reports/Riset 18 Okt malam - model publik baru.md` (papan, notebook ≥0,958 baru, dataset model/label baru: Mycelis 4-fold ConvNeXt 384px, DINO 5-fold, label omerzalman/haungjiawei). |
-| **Menunggu user** | pilih 2 final 22 Okt (rekomendasi agen 21 Okt); push git hanya atas perintah. |
+| **Timer** | `rsna-rankpoll.timer` aktif tiap 5 mnt; `rsna-requeue.timer` aktif tiap 2 mnt. Timer kerja 17 Okt selesai/nonaktif. |
+| **Menunggu** | Skor g6c/g12/g13; ikuti pohon keputusan MEMORY §2 / STRATEGI_PERAK §0. Jika g13 mengonfirmasi kenaikan, jalur berikut murid r4 → `g14` dengan gerbang sebelum submit. Pilih 2 final manual 22 Okt. |
 
 ## 1. Urutan kerja
 ### A. 11 Okt 03:35–07:03 — SELESAI
@@ -74,7 +74,10 @@
 7. (22:40) riset mendalam → `reports/Riset 14 Okt malam - jalan ke perak.md`; jadwal 07:03 diganti `r7v3f`/`r7v3fs` (base `v224m`); murid r2a (alver) + r2c (nxtirfan, konsensus saja) disiapkan utk 17 Okt.
 7. (21:33) `r7r224` disubmit (57185636); `r7r224f` + `r7m224s` dibangun utk 15 Okt; pelajaran: anggota baru masuk di slot keluarganya.
 
-### I000000000. 19 Okt 00:15 — uji gold B-leg LULUS (ρ 0,9984) → `g13` tersubmit 23:52 (57362095); jatah 18 Okt 4/5 (sisa 1 utk user); `g10a` cadangan (commit COMPLETE). Pending skor: g6c ±01:00, g12 ±01:50, g13 ±03:40 WIB. Watcher kuota di-restart.
+### I000000000. 19 Okt 02:10 — status disegarkan
+- Kaggle API: g6c/g12/g13 masih PENDING. Papan publik: 0,958 rank 465/6.184. Tidak ada skor baru setelah g9a.
+- Timer rankpoll/requeue aktif. Kuota main/alver/nxtirfan = 19,87/17,81/4,62 jam. Sisa 1 submission 18 Okt dibiarkan.
+- Arah tetap: OOF 2.651 menunjukkan B-leg .24 > R7 .24 sebesar +0,0033 (P 1,00); gold g13 0,9415 optimum. Murid r4/g14 menunggu hasil g13.
 
 ### Strategi 19–22 Okt (19 Okt 00:35). Sweep OOF 2.651: **B-leg .24 > R7 .24 +0,0033 (P 1,00)**; gold g13 0,9415 optimum (jangan naikkan bobot B-leg). Baca rank g6c/g12/g13 pagi (poller) → bila g13 naik, kerja utama = **murid r4** (label 0,5 konsensus + 0,25 OOF-R7 + 0,25 OOF-B-leg; fallback tanpa B-leg) di alver 19–20 Okt → `g14` = g13 + murid r4 .4 → submit ±20–21 Okt. Sisa 1 jatah 18 Okt TIDAK dipakai (perintah user); 19–22 Okt sisakan ≥1/hari; final 22 Okt (A unik terbaik + B beda mekanisme), submisi terakhir ≤22 Okt 15:00 UTC. `data/requeue.py` WATCH dikosongkan (g12/g13 sudah tersubmit).
 

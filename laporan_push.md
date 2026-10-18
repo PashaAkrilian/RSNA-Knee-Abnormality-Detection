@@ -1,11 +1,16 @@
 # laporan_push.md — Evaluasi & jalan menuju SILVER
 > Wadah TETAP untuk hasil evaluasi tiap submisi/probe + rencana peningkatan. **Setelah tiap run/submisi/skor baru: tambah baris §2, perbarui §1 & §4.**
-> Konteks aturan: `MEMORY.md` · rencana aktif: **`STRATEGI_0960.md` §0.3** (gerbang/peluang: `STRATEGI_PERAK.md`) · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset terbaru: **`reports/Ringkasan riset 10 Okt (sesi Claude Code).md`** · arsip OpenCode: `reports/Cara menembus 0951 perak.md`, `reports/Strategi meraih perak RSNA.md`, `research_notes/`.
-> Dibuat 9 Okt 2026 ~21:45 WIB, diperbarui 15 Okt ~21:10 WIB (riset terbaru: `reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md`). Bahasa kerja: Indonesia. **Cadangan/arah terbaru: `docs/PLAN_B.md` §00 (S6 hidup lagi).**
+> Konteks aturan: `MEMORY.md` · rencana aktif: **`STRATEGI_PERAK.md` §0** · langkah harian: `HANDOFF.md` · arahan harness: `push.md` · riset/riwayat terdahulu ada di `reports/`, `research_notes/`, dan `PROGRESS.md`.
+> Diperbarui 19 Okt 2026 02:10 WIB. Rencana aktif: `STRATEGI_PERAK.md` §0; status lengkap: `MEMORY.md` §3 dan `HANDOFF.md` §0c. Arsip riset/hasil lama tetap bertanggal pada tabel masing-masing.
 
-## 1. Posisi vs garis perak (papan 15 Okt 19:49 WIB, 6.040 tim; baris lama = arsip)
+> Papan publik 19 Okt 02:08 WIB: 6.184 tim, Krazy KIller **0,958 rank 465**. Kaggle API 02:04 WIB: g6c/g12/g13 PENDING. Timer rankpoll/requeue aktif; kuota main/alver/nxtirfan 19,87/17,81/4,62 jam. Belum ada skor baru untuk dicatat pada baris evaluasi.
+
+## 1. Posisi vs garis perak (baris pertama = status terbaru; baris berikut arsip)
 | Hal | Nilai |
 |---|---|
+| Tim — 19 Okt 02:08 WIB | `Krazy KIller`: **0,958 rank 465/6.184**, 139 submisi; batas perak publik sekitar rank 309 (di dalam blok 0,958). |
+| Submisi pending — API 19 Okt 02:04 WIB | **57357991 `g6c`, 57359383 `g12`, 57362095 `g13` = PENDING**; belum ada skor baru. Sisa 1 jatah dari 18 Okt tidak digunakan. |
+| Timer/kuota — 19 Okt 02:10 WIB | rankpoll aktif tiap 5 mnt, requeue aktif tiap 2 mnt; kuota GPU main/alver/nxtirfan = **19,87/17,81/4,62 jam**, reset 24 Okt 07:00 WIB. |
 | Tim | `Krazy KIller` = `alverlfarfaraway`, `dimaspashaakrilian`, `nxtirfan` (3 akun di halaman tim; lihat risiko akun di `STRATEGI_PERAK.md` J4) |
 | LB kita | **0,956 — rank 398/6.040** (15 Okt 19:49; skor terbaik dari `r7r224m` 57198411 / `r7v3c` 57201659 / salinan user 57223271). Riwayat: rank 403 (15 Okt pagi), 447 (r7r224), 558 (R7, 14 Okt), 0,954 rank 466 (12 Okt) |
 | Peta blok (15 Okt 19:49 WIB) | ≥0,958 = 132 · **≥0,957 = 327** · tepat 0,956 = 941 · **garis perak (rank 301) = 0,957** · perunggu (rank 603) = 0,956 → perak publik menuntut tampil 0,957 |

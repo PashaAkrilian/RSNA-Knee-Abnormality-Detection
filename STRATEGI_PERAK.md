@@ -1,10 +1,10 @@
-# STRATEGI PERAK — RSNA Knee 2026 (ditulis ulang 15 Okt 2026 malam; sesi Claude Code)
+# STRATEGI PERAK — RSNA Knee 2026 (rencana ditulis 15 Okt; status disegarkan 19 Okt 2026)
 > **Target user: PERAK sebelum kompetisi berakhir (final 22 Okt 23:59 UTC = 23 Okt 06:59 WIB).** Dokumen ini = RENCANA + ATURAN KEPUTUSAN yang berlaku 16–22 Okt.
 > Status harian: `HANDOFF.md` §0c/§I · hasil submisi: `laporan_push.md` §2 · bukti riset: `reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md` · simulasi: `silver_sim_cluster.py` · cadangan: `docs/PLAN_B.md` §0000. Bagian "Arsip" di bawah = rencana 10–12 Okt (era S6), hanya sejarah.
 
-## 0. RENCANA PERAK (AKTIF, 15 Okt malam)
+## 0. RENCANA PERAK (AKTIF, diperbarui 19 Okt)
 
-### 0.00 Pembaruan 18 Okt malam (berlaku di atas §0.1–§0.9)
+### 0.00 Pembaruan 18 Okt malam (arsip baseline, disusul §0.00b–§0.00c)
 - **Posisi**: 0,958 rank 424/6.168; perak (rank ±308) ada di dalam blok 0,958 → yang menentukan = skor tak-dibulatkan (publik) dan, di akhir, skor PRIVAT 70 %. Salinan identik notebook publik berbagi satu skor privat → resep unik kita (S6F nartaa di separuh Raptor + murid r2a) adalah satu-satunya jalan melompati klaster.
 - **Bukti komponen**: S6F wajib (g8b tanpa S6F 0,957 vs g8a 0,958); murid r2a menaikkan g6a di atas salinan goodpjw (rank 569→323); R7 di compact: OOF lokal +0,002 (P 1,00), gold +0,001, papan netral (g9a) → masuk kandidat `g12`.
 - **Kandidat final**: A = resep unik dgn bukti publik terbaik (saat ini `g6a`; diganti bila `g6c`/`g10a`/`g12` menaikkan rank tim). B = resep dgn bukti OOF lokal terbesar (`g12`: R6+R7+murid .4 + S6F) bila bukan A; keduanya HARUS memuat S6F + murid. Salinan murni (57269378, 57322996) hanya cadangan.
@@ -16,6 +16,11 @@
 - **Pohon keputusan (±01:00–03:40 WIB, dari rank poller)**: g13 rank < 452 → B-leg terbukti → lanjut tuas berikut; g12 naik g6c tidak → R7 bekerja; g6c naik → murid8 bekerja; semua datar → `g6a` tetap kandidat A.
 - **Tuas berikut = murid r4** (keluarga model-milik-kita, pola bliverrigpdoge): label = 0,5 konsensus + 0,25 OOF-R7 + 0,25 **OOF-B-leg** (studi tanpa OOF B-leg → 0,5 konsensus + 0,5 OOF-R7); latih 4 fold di akun 2 (alver 17,8 j sisa) 19–20 Okt → `g14` = g13 dgn murid r4 (bobot .4, sama spt g13) → submit ±20–21 Okt bila g13 mengonfirmasi.
 - **Jatah**: sisa 18 Okt (1) **TIDAK dipakai** (perintah user 19 Okt 00:10); 19–22 Okt: agen ≤1–2/hari, selalu sisakan ≥1 utk user; final 22 Okt = A (resep unik terbaik terskor) + B (mekanisme beda); submisi baru terakhir aman **≤22 Okt 15:00 UTC** (skor penuh ±4 j).
+
+#### 0.00c Status papan/API 19 Okt 02:10 WIB
+- Papan publik Kaggle (02:08 WIB): **0,958 rank 465/6.184**; terbaik COMPLETE `g9a`/`g6a` = 0,958; batas perak publik sekitar rank 309. Kaggle API (02:04 WIB): `g6c` 57357991, `g12` 57359383, `g13` 57362095 masih PENDING.
+- Timer `rsna-rankpoll` (5 mnt) dan `rsna-requeue` (2 mnt) aktif. Kuota GPU main/alver/nxtirfan: 19,87/17,81/4,62 jam; reset 24 Okt 07:00 WIB.
+- Tidak ada hasil baru yang mengubah pohon keputusan: tunggu skor g6c/g12/g13; jangan gunakan jatah tersisa 18 Okt; murid r4/`g14` hanya bila g13 terkonfirmasi.
 
 
 ### 0.1 Apa itu perak di kompetisi ini

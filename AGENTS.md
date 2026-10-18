@@ -3,17 +3,17 @@
 > File ini dibaca otomatis Claude Code (dan AGENTS.md = salinan identik utk harness lain). Isinya ringkas; fakta & keputusan lengkap = **MEMORY.md**; rencana PERAK aktif = **STRATEGI_PERAK.md §0** (ditulis ulang 15 Okt malam) + `STRATEGI_0960.md` §0.3.
 
 ## Misi
-Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, **rank 424/6.168** (18 Okt 17:45 WIB; skor terbaik publik = `g6a`, resep unik kita). Garis perak publik = rank ±308 (5 %), berada DI DALAM blok 0,958 yang dipenuhi salinan notebook publik (goodpjw v27 R6+flip, heliosli "0,9586"); peringkat di dalam blok = skor tak-dibulatkan. Resep kita = goodpjw tanpa Part B + **S6F nartaa .5 di separuh Raptor** + **murid ConvNeXt-T r2a kita** (pembeda dari salinan) [+ R7 di compact]. Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry sudah ditutup. Target user: **PERAK** — 100 % tidak bisa dijamin.
+Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, **rank 465/6.184** (papan publik 19 Okt 02:08 WIB); terbaik COMPLETE `g9a`/`g6a` = 0,958. Garis perak publik sekitar rank 309, masih di dalam blok 0,958; peringkat mengikuti skor tak-dibulatkan. `g6c`, `g12`, dan `g13` masih PENDING; `g13` menguji B-leg yang didukung OOF/gold. Resep unik saat ini = goodpjw tanpa Part B + **S6F nartaa .5 di separuh Raptor** + **murid ConvNeXt-T**, dengan R7/B-leg sebagai eksperimen compact. Final **22 Okt 23:59 UTC** (maks 2 submisi final, pilih manual di UI); merger/entry sudah ditutup. Target user: **PERAK** — 100 % tidak bisa dijamin.
 
 ## Baca urut (WAJIB, sebelum kerja apa pun)
 1. **MEMORY.md** — aturan mutlak + fakta terkini (<2 menit).
-2. **STRATEGI_PERAK.md §0** (RENCANA PERAK aktif: definisi perak privat, simulasi sadar-klaster, bukti tiap komponen incl. gold-58 S6F, gerbang 16–22 Okt, aturan 2 final) lalu `STRATEGI_0960.md` §0.3 dan **docs/PLAN_B.md** §0000 (cadangan).
+2. **STRATEGI_PERAK.md §0** (rencana aktif 19–22 Okt); `STRATEGI_0960.md` = arsip 12 Okt; **docs/PLAN_B.md** = cadangan.
 3. **HANDOFF.md** — §0c status + jadwal otomatis (systemd), §H urutan kerja (apa yang dikerjakan SEKARANG).
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 15 Okt malam - komponen 0,957 dan jalan perak.md** (bliverrigpdoge, S6F, heliosli 0,9576, auto-select) dan **reports/Riset 14 Okt malam - jalan ke perak.md**. Arsip: `reports/` lain (scrape 12 Okt), `research_notes/`, PROGRESS.md (§62–§64), docs/RESEARCH_NOTES.md.
 
 ## Status satu kalimat (18 Okt 23:52 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
-Tim **0,958 rank 452/6.179** (22:20; perak rank ±308 masih di dalam blok 0,958); 18 Okt tersubmit **4/5**: `g9a` 0,958 · **`g6c`** (57357991, PENDING ±01:00) · **`g12`** (57359383, PENDING ±01:50) · **`g13`** (57362095, B-leg, PENDING ±03:40) — sisa **1 jatah utk user**; `g10a` cadangan (commit COMPLETE, tidak disubmit); uji gold B-leg LULUS (ρ 0,9984 vs logit penulis; sim gold-58 +0,0011 vs g10a). Penjaga antrean `rsna-requeue` 5 menit terbukti bekerja. Latih hanya di akun 2/3 (alver 17,8 j, nxtirfan 6,7 j sisa).
+Tim **0,958 rank 465/6.184** (papan 19 Okt 02:08 WIB; perak publik ±rank 309 masih di dalam blok 0,958); `g6c` (57357991), `g12` (57359383), `g13` (57362095, B-leg) masih **PENDING** menurut API 02:04 WIB. Terbaik COMPLETE `g9a`/`g6a` = 0,958. 18 Okt tersubmit **4/5**, sisa **1 jatah dibiarkan** sesuai instruksi user. `g10a` cadangan; uji gold B-leg LULUS (ρ 0,9984; g13 gold 0,9415). Timer rankpoll 5 mnt dan requeue 2 mnt aktif. Kuota main/alver/nxtirfan = 19,87/17,81/4,62 jam; reset 24 Okt 07:00 WIB. Murid r4/`g14` bersyarat pada hasil `g13`.
 
 ## Status 17 Okt ±03:00 WIB (arsip)
 Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; perak publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % perak); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.
