@@ -54,6 +54,9 @@ WC = args.get("wc", "")   # "h" = bobot Raptor per temuan heliosli 16 Okt (noteb
 assert WC in ("", "h", "h2"), WC
 WC_LINE = {"h": "W_RAPTOR_C = {'Medial OA': 0.5, 'Lateral OA': 0.2, 'PF OA': 0.6, 'Synovitis': 0.8, \"Baker's\": 0.35}   # [wc=h] heliosli 16 Okt (notebook 0,958)\n",
            "h2": "W_RAPTOR_C = {'Medial OA': 0.5, 'Lateral OA': 0.15, 'PF OA': 0.65, 'Synovitis': 0.85, \"Baker's\": 0.30}   # [wc=h2] heliosli 17 Okt (notebook 0,9586, probe papan per kelas)\n"}
+R7ADD = float(args.get("r7add", "0"))   # 18 Okt (base=g958): R7 heliosli sbg model compact ke-2 SETELAH S6F; bobot R7 di dalam gabungan compact
+R6STRIDE = args.get("r6stride", "")      # base=g958: eval-stride R6 (manifest = 1; 2 = ±separuh waktu GPU R6) agar R7 sempat jalan
+assert 0.0 <= R7ADD <= 0.6 and R6STRIDE in ("", "1", "2", "3") and (BASE_ARG == "g958" or not (R7ADD or R6STRIDE)), (R7ADD, R6STRIDE)
 BUDGET = int(args.get("budget", "4500"))
 assert 0.0 <= W <= 0.5 and 600 <= BUDGET <= 7200, (W, BUDGET)
 _b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "v224m": "r7_r224m_varshitha_20261014",
@@ -279,6 +282,82 @@ S6F_IN_LOOP = ("    if _s6f_ok is not None:   # [s6f] S6F inside the compact (R7
 S6F_IN_LOOP_RAPTOR = re.sub(r"\bro\b", "rr", S6F_IN_LOOP.replace("compact (R7) slot", "Raptor slot (JEV-label family)"))
 
 
+R7_RUN = r"""# Stage 2d (ours, build_r7murid r7add): heliosli's public R7 compact model (bundle 8c7b666e, its setup + controller cells unchanged,
+# own temp dir) after S6F, as a second compact model.  Its controller stops at NB_T0 + 8.3 h like R6's; any failure -> R6 alone.
+import shutil, time
+_r7t0 = time.time(); R7_OK = False
+shutil.copyfile(WORK / 'ours_sub.csv', WORK / 'ours_r6.csv'); R6_PRED = pred
+try:
+    exec(compile(open('/tmp/r7_stage.py', encoding='utf-8').read(), '/tmp/r7_stage.py', 'exec'), globals())
+    shutil.copyfile(WORK / 'ours_sub.csv', WORK / 'ours_r7.csv'); R7_PRED = pred; R7_OK = True
+except BaseException as _e:
+    print('R7_STAGE_FAILED', repr(_e)[:300], flush=True)
+print('R7_STAGE', 'ok' if R7_OK else 'failed', 'seconds %.0f' % (time.time() - _r7t0), flush=True)
+"""
+
+R7_MERGE = r"""# [r7add] compact slot = (1 - W_R7) rank(R6) + W_R7 rank(R7), each ranked over its own scored studies (a study only one model scored
+# takes that model's rank); R7 failed or < 97 % scored -> R6 alone (printed).  The blend cell below then sees one compact model.
+import csv, json, shutil
+import numpy as np, pandas as pd
+from pathlib import Path
+W_R7 = __WR7__
+_ids = pd.read_csv(DATA / 'test.csv')['StudyInstanceUID'].astype(str).tolist()
+_lbl = [c for c in pd.read_csv(WORK / 'ours_r6.csv', nrows=1).columns if c != 'StudyInstanceUID']
+def _scored(pdir):
+    s = set()
+    for f in Path(pdir).glob('worker*/predictions.csv'):
+        with open(f, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                try:
+                    if all(0.0 <= float(r[c]) <= 1.0 for c in _lbl):
+                        s.add(r['StudyInstanceUID'])
+                except (KeyError, ValueError, TypeError):
+                    pass
+    return s
+def _pr(v, ok):
+    r = np.full(len(v), np.nan)
+    if ok.any():
+        r[ok] = pd.Series(np.asarray(v, dtype=np.float64)[ok]).rank(pct=True).values
+    return r
+_s6 = _scored(R6_PRED)
+_s7 = _scored(R7_PRED) if R7_OK else set()
+R7_LEG = {'w': W_R7, 'r7_ok': bool(R7_OK), 'r6_scored': len(_s6 & set(_ids)), 'r7_scored': len(_s7 & set(_ids)), 'used': False}
+if R7_OK and len(_s7 & set(_ids)) >= 0.97 * len(_ids):
+    _r6 = pd.read_csv(WORK / 'ours_r6.csv', dtype={'StudyInstanceUID': str}).drop_duplicates('StudyInstanceUID').set_index('StudyInstanceUID').loc[_ids, _lbl]
+    _r7 = pd.read_csv(WORK / 'ours_r7.csv', dtype={'StudyInstanceUID': str}).drop_duplicates('StudyInstanceUID').set_index('StudyInstanceUID').loc[_ids, _lbl]
+    _ok6, _ok7 = np.array([u in _s6 for u in _ids]), np.array([u in _s7 for u in _ids])
+    _m = np.zeros((len(_ids), len(_lbl)))
+    for j, c in enumerate(_lbl):
+        a_, b_ = _pr(_r6[c].values, _ok6), _pr(_r7[c].values, _ok7)
+        _m[:, j] = np.where(_ok6 & _ok7, (1.0 - W_R7) * a_ + W_R7 * b_, np.where(_ok6, a_, np.where(_ok7, b_, 0.5)))
+    _mg = pd.DataFrame(_m, columns=_lbl)
+    _mg.insert(0, 'StudyInstanceUID', _ids)
+    _mg.to_csv(WORK / 'ours_sub.csv', index=False)
+    _pm = Path('/kaggle/temp' if Path('/kaggle/temp').is_dir() else '/tmp') / 'probe_merged' / 'worker0'
+    _pm.mkdir(parents=True, exist_ok=True)
+    _mg[[u in (_s6 | _s7) for u in _ids]].to_csv(_pm / 'predictions.csv', index=False)
+    pred = _pm.parent                                   # the blend reads pred/worker*/predictions.csv for "scored"
+    R7_LEG['rho_r6_r7_mean'] = round(float(np.mean([pd.Series(_r6[c].values[_ok6 & _ok7]).corr(pd.Series(_r7[c].values[_ok6 & _ok7]), method='spearman') for c in _lbl])), 4) if (_ok6 & _ok7).sum() >= 3 else None
+    R7_LEG['used'] = True
+else:
+    shutil.copyfile(WORK / 'ours_r6.csv', WORK / 'ours_sub.csv')
+    pred = R6_PRED
+print('R7_LEG', json.dumps(R7_LEG), flush=True)
+"""
+
+
+def r7_stage_script():
+    b = json.loads((ROOT / "kaggle_base" / "r7_r224m_varshitha_20261014.ipynb").read_text(encoding="utf-8"))["cells"]
+    k = [i for i, c in enumerate(b) if src(c).startswith("ARM = ")]
+    assert len(k) == 1 and src(b[k[0] + 1]).lstrip().startswith("deadline = T0 + DEADLINE_HOURS"), k
+    setup, run = src(b[k[0]]), src(b[k[0] + 1])
+    assert "BUNDLE_ID = '8c7b666e27dc0e8f'" in setup and setup.count("TMP = TMP / 'probe'\n") == 1
+    setup = setup.replace("TMP = TMP / 'probe'\n", "TMP = TMP / 'probe_r7'   # [r7add] own temp dir: R6 used /probe\n")
+    s = setup + "\n" + run
+    compile(s, "r7_stage.py", "exec")
+    return "%%writefile /tmp/r7_stage.py\n" + s
+
+
 def s6f_script():
     s = S6F_BASE.read_text(encoding="utf-8")
     for a, b in S6F_PATCH:
@@ -345,6 +424,12 @@ def build():
             assert c4.count(a_) == 1, a_
             c4 = c4.replace(a_, b_)
         mid = mid[:k_set[0]] + [code(c4)] + mid[k_set[0] + 1:]
+    if R6STRIDE:                                                   # g958: R6 eval-stride (manifest R6 = 1)
+        k_r6 = [k for k, c in enumerate(mid) if "BUNDLE_ID = 'fe055406fad6a12f'" in src(c)]
+        assert len(k_r6) == 1, k_r6
+        a_ = "'--eval-stride', str(manifest.get('eval_stride', 3))"
+        assert src(mid[k_r6[0]]).count(a_) == 1
+        mid = mid[:k_r6[0]] + [code(src(mid[k_r6[0]]).replace(a_, f"'--eval-stride', '{R6STRIDE}'"))] + mid[k_r6[0] + 1:]
     student = STUDENT.replace("__BUDGET__", str(BUDGET)).replace("__DECODE__", DECODE).replace("__FOLDSLUG__", FOLDS_DS.split("/")[1])
     stage0 = STAGE0.replace("__TIMEOUT__", str(BUDGET + 2400))     # + gold check in commit mode (≤1800 s) + model load
     base_txt = ("goodpjw2008's public 0.958 notebook v27 without its Part B reader (Raptor slot = 0.65 r384 + 0.35 r224 mirror; compact = "
@@ -353,11 +438,15 @@ def build():
                 "heliosli R7 public notebook (Raptor 0.5 + compact R7 0.5, bundle `8c7b666e27dc0e8f`)")
     extra = ([f"our ConvNeXt-T 2.5D student (4 folds, weight {W}, slot {SLOT})"] if W > 0 else []) + (
         [f"R7 compact with heliosli's anatomical flip TTA at eval stride {FSTRIDE}"] if FLIP else []) + (
-        [f"nartaa's public S6 ConvNeXt (all data) inside the {S6F_SLOT} slot, weight {S6F}"] if S6F > 0 else [])
+        [f"nartaa's public S6 ConvNeXt (all data) inside the {S6F_SLOT} slot, weight {S6F}"] if S6F > 0 else []) + (
+        [f"heliosli's R7 as a second compact model after S6F, weight {R7ADD} inside the compact model"] if R7ADD > 0 else []) + (
+        [f"R6 eval stride {R6STRIDE}"] if R6STRIDE else [])
     title = (f"# RSNA Knee: R7 variant ({NAME})\n\n{base_txt}, plus: {'; '.join(extra) or 'nothing'}. Built by `build_r7murid.py`.\n")
     stu_cells = [code(student), code(stage0), code(c3)] if W > 0 else [cells[i_st1]]
     if S6F > 0:                                                    # tahap S6F setelah R7 (GPU sudah bebas), sebelum blend
         mid = mid + [code(s6f_script()), code(S6F_RUN)]
+    if R7ADD > 0:                                                  # R7 setelah S6F: S6F (terbukti di papan) tak pernah terpotong oleh R7
+        mid = mid + [code(r7_stage_script()), code(R7_RUN), code(R7_MERGE.replace("__WR7__", repr(R7ADD)))]
     nb["cells"] = [md(title)] + cells[1:i_st1] + stu_cells + mid + [code(c6)]
     for k, c in enumerate(nb["cells"]):
         if c["cell_type"] == "code":
@@ -494,8 +583,42 @@ def check_s6f():
     print(f"cek kaki S6F OK (w={ws}): tanpa file, lengkap, 5 % NaN -> tanpa kaki, rho rendah -> tanpa kaki")
 
 
+def check_r7merge():
+    """Uji gabungan R6+R7 di luar Kaggle: R7 lengkap -> rata-rata rank; R7 < 97 % -> R6 saja; studi yg hanya diskor satu model."""
+    labels = ['ACL', 'MCL']
+    rng = np.random.default_rng(2)
+    n = 100
+    ids = [f"1.2.5.{i}" for i in range(n)]   # UID ber-titik banyak (angka desimal akan terbaca float)
+    with tempfile.TemporaryDirectory() as d:
+        D = Path(d)
+        (D / "test.csv").write_text("StudyInstanceUID\n" + "\n".join(ids) + "\n")
+        def write(name, pdir, rows):
+            df = pd.DataFrame(rng.random((n, 2)), columns=labels)
+            df.insert(0, "StudyInstanceUID", ids)
+            df.to_csv(D / name, index=False)
+            (D / pdir / "worker0").mkdir(parents=True, exist_ok=True)
+            df.iloc[rows].to_csv(D / pdir / "worker0" / "predictions.csv", index=False)
+            return df
+        r6 = write("ours_r6.csv", "p6", list(range(n)))
+        for rows7, want_used in ((list(range(1, n)), True), (list(range(90)), False)):
+            r7 = write("ours_r7.csv", "p7", rows7)
+            ns = dict(DATA=D, WORK=D, R6_PRED=D / "p6", R7_PRED=D / "p7", R7_OK=True)
+            exec(compile(R7_MERGE.replace("__WR7__", "0.3").replace("Path('/kaggle/temp' if Path('/kaggle/temp').is_dir() else '/tmp')", f"Path('{d}')"), "merge", "exec"), ns)
+            got = pd.read_csv(D / "ours_sub.csv")
+            assert ns["R7_LEG"]["used"] == want_used, ns["R7_LEG"]
+            if want_used:
+                ok7 = np.arange(n) >= 1
+                a = r6["ACL"].rank(pct=True).values
+                b = np.full(n, np.nan); b[ok7] = r7["ACL"].values[ok7].argsort().argsort() + 1.0; b[ok7] /= ok7.sum()
+                assert np.isclose(got["ACL"].values[0], a[0]) and np.allclose(got["ACL"].values[1:], 0.7 * a[1:] + 0.3 * b[1:])
+            else:
+                assert np.allclose(got["ACL"].values, r6["ACL"].values)
+    print("cek gabungan R6+R7 OK: lengkap -> rata-rata rank (studi tanpa R7 = rank R6), R7 < 97 % -> R6 saja")
+
+
 if __name__ == "__main__":
     out = build()
     check_leg()
     check_s6f()
+    check_r7merge()
     print("ditulis:", out, "| id dimaspashaakrilian/" + SLUG, "| w", W, "| budget", BUDGET, "s | datasets +", EXTRA_DS)
