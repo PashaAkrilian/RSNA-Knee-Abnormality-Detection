@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
 > Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_PERAK.md §0**; `STRATEGI_0960.md` (12 Okt) = arsip rencana; arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-19T02:10:00+07:00 (papan/API/timer/kuota disegarkan; lihat HANDOFF §0c)
+> Last updated: 2026-10-19T02:14:00+07:00 (kernel tiga akun dicek langsung; lihat HANDOFF §0c)
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -63,6 +63,7 @@
 | Jatah | 18 Okt terpakai 4/5; **sisa 1 tidak digunakan** sesuai instruksi user. Jangan submit sampai keputusan berikutnya; batas akhir kompetisi 22 Okt 23:59 UTC. |
 | Kuota GPU (19 Okt 02:10 WIB) | main **19,87 j** · alver **17,81 j** · nxtirfan **4,62 j**; reset **24 Okt 07:00 WIB**. |
 | Timer | `rsna-rankpoll.timer` aktif (tiap 5 mnt); `rsna-requeue.timer` aktif (tiap 2 mnt). Timer kerja 17 Okt nonaktif/selesai. |
+| Kernel GPU terbaru | Akun utama: g13/g12/g6c dan kernel kerja terbaru COMPLETE; alver: gold-bleg/gold-r6s2/student-r2a-full/full2 COMPLETE; nxtirfan: student-r3-a/r2a-n COMPLETE. Tidak ada kernel RSNA terbaru yang masih running. Submission g6c/g12/g13 tetap PENDING (penilaian Kaggle terpisah). |
 | Bukti arah | Sweep OOF 2.651 studi: B-leg .24 mengganti R7 .24 +0,0033 (P 1,00); gold g13 0,9415 tertinggi. `g14` dengan murid r4 hanya bila papan mengonfirmasi hasil g13. |
 | P(perak) jujur | estimasi 20–40 % dari resep unik dan posisi klaster; bukan jaminan. |
 | Git | runner `data/run_*.sh`, `data/requeue.py`, `data/rank_poll.py` tidak di-commit. |
@@ -71,6 +72,7 @@
 ### Pemeriksaan sesi Codex (19 Okt 02:10 WIB)
 - Kaggle API mengonfirmasi tiga submisi masih PENDING; papan publik terbaru (19 Okt 02:08 WIB) menempatkan tim rank 465/6.184 pada 0,958. Timer rankpoll dan requeue aktif. Kuota main/alver/nxtirfan = 19,87/17,81/4,62 jam.
 - Pertahankan bobot g13 dari sweep OOF; murid r4/g14 hanya setelah skor g13 keluar. Rincian operasional di `HANDOFF.md` §0c.
+- Pemeriksaan kernel 02:14 WIB: seluruh kernel RSNA terbaru yang dicek langsung pada ketiga akun berstatus COMPLETE; tidak ada run GPU aktif yang terdeteksi.
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
