@@ -1,7 +1,7 @@
 # MEMORY — RSNA Knee Abnormality Detection
-> Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_0960.md** (12 Okt); model peluang & aturan → **STRATEGI_PERAK.md** (§0.0); arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
+> Living memory — PADAT (baca <2 menit). Rencana aktif → **STRATEGI_PERAK.md §0**; `STRATEGI_0960.md` (12 Okt) = arsip rencana; arah/cadangan → **`docs/PLAN_B.md` §000/§00**; langkah harian → **HANDOFF.md**. Scrape lengkap 12 Okt → `reports/Scrape kompetisi 12 Okt 2026 - peta menuju perak.md`.
 > Riset → `reports/Ringkasan riset 10 Okt (sesi Claude Code).md` (§10 = 11 Okt), `docs/RESEARCH_NOTES.md` (§36–§44). Sejarah/arsip penuh (MEMORY lama 10 Okt 21:00) → `PROGRESS.md` §52b; narasi 11 Okt → `PROGRESS.md` §54–§55.
-> Last updated: 2026-10-19T00:15:00+07:00
+> Last updated: 2026-10-19T02:10:00+07:00 (papan/API/timer/kuota disegarkan; lihat HANDOFF §0c)
 
 ## 0. Aturan mutlak
 - Balas **Bahasa Indonesia** (dokumen & pesan commit juga), bertindak otonom; user ingin medali (minimal perak) sebelum **22 Okt 2026 23:59 UTC**.
@@ -56,17 +56,21 @@
 - **DITUTUP (jangan ulangi)**: r224/bobot/mirror (0,950); "Tri-Reader 0,954" (rabari/jcgweb/sameerk = Apex+r224); Apex+MaVIT 0,949; CoAtNet resgated; anak-OAI/pseudo-label/soup (≤ induk); kompilator aturan heliosli; klon DINOsaur; tri-hybrid jenillangaliya 0,952 (< S6).
 - **Peluang (simulasi)**: Apex 0,950 → perak 13–20 %/perunggu 25–41 %; klon S6 di klaster ratusan tim → perak ±25–45 %/perunggu ±45–70 %; dua final berkorelasi tinggi +3–6 poin; merger dgn tim ≥0,956 → perak 23–82 %; emas ≈0–2 %; **100 % mustahil**. Trik "kirim 1−p" → tim kuat tersembunyi.
 
-## 3. Status (18 Okt 21:55 WIB)
+## 3. Status (19 Okt 02:10 WIB)
 | Hal | Keadaan |
 |---|---|
-| Submisi | **0,958, rank 424/6.168** (papan 18 Okt 17:45 WIB); terbaik publik = **`g6a`** (57296301; rank 569→323 saat skor keluar). `g8a`/`g9a` 0,958 tak melampaui g6a; `g8b` (tanpa S6F) 0,957. **`g6c` 57357991 PENDING** (submit 21:36 WIB). Blok 0,958 dipenuhi salinan goodpjw v27 & heliosli "0,9586". |
-| Bergerbang malam ini | `g10a` v2 (g6c + wc=h2 + R6 stride 2) & **`g12`** (R6s2 .36/R7 .24/murid8 .4 + S6F .5) → `data/run_submit_gate2.sh` → submit bila lulus & sisa ≥2 (sisa 1 utk user). Penjaga antrean 5 mnt. |
-| Gold setia (58) | g6a 0,9398 · g6c 0,9408 · g9a 0,9408 · g10a 0,9403 · g12 0,9404 · r7v6a 0,9414 — semua dalam derau (SE beda ±0,003). |
-| OOF lokal (3.480) | compact: R6flip 0,8829 · R7 0,8791 · +R7 ke R6+murid **+0,002 (P 1,00)** · murid .4 vs .3 +0,003 (bias: murid dilatih ke konsensus). |
-| Kuota GPU | main 21,2 j · alver 18,2 j · nxtirfan 10,3 j → reset **24 Okt 07:00 WIB** (setelah final). |
-| P(perak) jujur | kasar **20–40 %** (resep unik S6F + murid; bergantung δ privat vs klaster salinan); bukan jaminan. |
+| Papan/submisi | Papan publik 19 Okt 02:08 WIB: **rank 465/6.184, 0,958**; perak publik sekitar rank 309. Terbaik COMPLETE tetap **g9a 0,958** (g6a juga 0,958; rank tim berubah mengikuti papan). API: `g6c` 57357991, `g12` 57359383, `g13` 57362095 masih PENDING; belum ada skor final baru. |
+| Jatah | 18 Okt terpakai 4/5; **sisa 1 tidak digunakan** sesuai instruksi user. Jangan submit sampai keputusan berikutnya; batas akhir kompetisi 22 Okt 23:59 UTC. |
+| Kuota GPU (19 Okt 02:10 WIB) | main **19,87 j** · alver **17,81 j** · nxtirfan **4,62 j**; reset **24 Okt 07:00 WIB**. |
+| Timer | `rsna-rankpoll.timer` aktif (tiap 5 mnt); `rsna-requeue.timer` aktif (tiap 2 mnt). Timer kerja 17 Okt nonaktif/selesai. |
+| Bukti arah | Sweep OOF 2.651 studi: B-leg .24 mengganti R7 .24 +0,0033 (P 1,00); gold g13 0,9415 tertinggi. `g14` dengan murid r4 hanya bila papan mengonfirmasi hasil g13. |
+| P(perak) jujur | estimasi 20–40 % dari resep unik dan posisi klaster; bukan jaminan. |
 | Git | runner `data/run_*.sh`, `data/requeue.py`, `data/rank_poll.py` tidak di-commit. |
 | Menunggu user | pilih 2 final 22 Okt (rekomendasi agen 21 Okt). |
+
+### Pemeriksaan sesi Codex (19 Okt 02:10 WIB)
+- Kaggle API mengonfirmasi tiga submisi masih PENDING; papan publik terbaru (19 Okt 02:08 WIB) menempatkan tim rank 465/6.184 pada 0,958. Timer rankpoll dan requeue aktif. Kuota main/alver/nxtirfan = 19,87/17,81/4,62 jam.
+- Pertahankan bobot g13 dari sweep OOF; murid r4/g14 hanya setelah skor g13 keluar. Rincian operasional di `HANDOFF.md` §0c.
 
 ## 4. Operasional
 - **Mesin Windows (12 Okt)**: repo di `C:\Users\LE\01- project\RSNA-Knee-Abnormality-Detection` (Git Bash; gh login `alvrlfarfaraway`); Kaggle CLI 2.2.4; HANYA kredensial alver di `~/.kaggle-acct2` (`KAGGLE_CONFIG_DIR`); scrape + skrip di `..\kaggle-scrape-rsna-knee-20261012\` (INDEX.md, `tools\`). Isi postingan pembuka forum: `kaggle competitions topic-messages <slug> <id> -n -1`.
