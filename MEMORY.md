@@ -70,7 +70,7 @@
 | Langkah berikut | Pantau status r4 dan skor g6c/g12/g13; build `g14` hanya jika g13 naik dan r4 lolos gold. Pilih maksimal 2 final secara manual sebelum deadline. |
 
 ### Pemeriksaan sesi Codex (19 Okt 02:33 WIB)
-- Papan 02:25 = rank 467/6.187, 0,958; tiga submission pending; kuota main/alver/nxtirfan = 19,87/17,81/4,62 j.
+- Papan 02:33 = rank 467/6.187, 0,958; tiga submission pending; kuota main/alver/nxtirfan = 19,87/17,81/4,62 j.
 - Dataset label r4 privat sudah dibuat di alver; dua kernel 12 epoch didorong dan masih QUEUED saat cek. Tidak ada training di akun utama atau nxtirfan.
 - Rincian riset dan gate eksperimen di `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`; urutan operasi di `HANDOFF.md` §0c.
 
