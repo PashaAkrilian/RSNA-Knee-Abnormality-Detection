@@ -55,6 +55,9 @@ assert WC in ("", "h", "h2"), WC
 WC_LINE = {"h": "W_RAPTOR_C = {'Medial OA': 0.5, 'Lateral OA': 0.2, 'PF OA': 0.6, 'Synovitis': 0.8, \"Baker's\": 0.35}   # [wc=h] heliosli 16 Okt (notebook 0,958)\n",
            "h2": "W_RAPTOR_C = {'Medial OA': 0.5, 'Lateral OA': 0.15, 'PF OA': 0.65, 'Synovitis': 0.85, \"Baker's\": 0.30}   # [wc=h2] heliosli 17 Okt (notebook 0,9586, probe papan per kelas)\n"}
 R7ADD = float(args.get("r7add", "0"))   # 18 Okt (base=g958): R7 heliosli sbg model compact ke-2 SETELAH S6F; bobot R7 di dalam gabungan compact
+C2 = args.get("c2", "r7")   # 18 Okt malam: model compact ke-2 (bobot r7add) = R7 heliosli ATAU "bleg" = B-leg publik (R6 fine-tune label soft-v2)
+assert C2 in ("r7", "bleg"), C2
+BLEG_DS = ["kritikabenjwal/rsna-knee-bleg-s0-f01", "sarthakgupta1801/rsna-knee-bleg-s0-f23"]   # E_prior_s0_f0..f3 (seed 0, 4 fold)
 R6STRIDE = args.get("r6stride", "")      # base=g958: eval-stride R6 (manifest = 1; 2 = ±separuh waktu GPU R6) agar R7 sempat jalan
 assert 0.0 <= R7ADD <= 0.6 and R6STRIDE in ("", "1", "2", "3") and (BASE_ARG == "g958" or not (R7ADD or R6STRIDE)), (R7ADD, R6STRIDE)
 BUDGET = int(args.get("budget", "4500"))
@@ -346,6 +349,38 @@ print('R7_LEG', json.dumps(R7_LEG), flush=True)
 """
 
 
+def bleg_stage_script():
+    """B-leg = 4 fold ConvNeXt-S publik (R6 fe055406 di-fine-tune 2 epoch dgn label soft-v2, arm E_prior; OOF lokal 2.651 studi:
+    ganti R7 di compact +0,0033 P 1,00; rho~R6 0,81). Jalan lewat setup + controller R6 basis g958 (manifest R6 utk aset/argumen),
+    bobot dari dataset B-leg, TANPA flip & TANPA stacker R6 (stacker dipasang pd keluaran R6; bukti OOF/gold B-leg = logit mentah)."""
+    b = json.loads((ROOT / "kaggle_base" / "r6_goodpjw_0958_20261016.ipynb").read_text(encoding="utf-8"))["cells"]
+    k = [i for i, c in enumerate(b) if src(c).startswith("ARM = ")]
+    assert len(k) == 1 and src(b[k[0] + 1]).lstrip().startswith("deadline = T0 + DEADLINE_HOURS"), k
+    setup, run = src(b[k[0]]), src(b[k[0] + 1])
+    rep = [("ARM = 'E_lrprior'\n", "ARM = 'E_prior'   # [bleg] B-leg fold models carry arm E_prior (inference math is arm-independent)\n"),
+           ("FLIP_TTA = True", "FLIP_TTA = False   # [bleg] B-leg evidence (OOF, gold) is without flip;"),
+           ("TMP = TMP / 'probe'\n", "TMP = TMP / 'probe_bleg'   # [bleg] own temp dir: R6 used /probe\n"),
+           ("for name in manifest['models'] + (manifest.get('models2') or []):\n"
+            "    assert hashlib.sha256((M_SRC / name).read_bytes()).hexdigest() == manifest['sha256'][name], name\n"
+            "    shutil.copy(M_SRC / name, BUNDLE / name)\n",
+            "_bd = [d for d in list(INPUT.glob('rsna-knee-bleg-s0-f*')) + list(INPUT.glob('datasets/*/rsna-knee-bleg-s0-f*')) + list(INPUT.glob('*/rsna-knee-bleg-s0-f*')) if d.is_dir()]\n"
+            "_bl = sorted({p.name: p for d in _bd for p in d.rglob('E_prior_s0_f*.pt')}.values(), key=lambda p: p.name)   # [bleg] public B-leg seed-0 folds\n"
+            "assert [p.name for p in _bl] == ['E_prior_s0_f%d.pt' % i for i in range(4)], [str(p) for p in _bl]\n"
+            "for p in _bl:\n"
+            "    shutil.copy(p, BUNDLE / p.name)\n"
+            "    print('BLEG_MODEL', p.name, hashlib.sha256((BUNDLE / p.name).read_bytes()).hexdigest()[:16], flush=True)\n"),
+           ("'--eval-stride', str(manifest.get('eval_stride', 3))", "'--eval-stride', '2'"),
+           ("if manifest.get('fluid_stacker'):\n    # v4b", "if False:   # [bleg] R6's fluid stacker was fit on R6 outputs\n    # v4b"),
+           ("if manifest.get('state_stacker'):\n    # v4c", "if False:   # [bleg] R6's state stacker was fit on R6 outputs\n    # v4c"),
+           ("print('ASSETS_READY'", "print('BLEG_ASSETS_READY'")]
+    for a, c in rep:
+        assert setup.count(a) == 1, a[:60]
+        setup = setup.replace(a, c)
+    s = setup + "\n" + run
+    compile(s, "bleg_stage.py", "exec")
+    return "%%writefile /tmp/r7_stage.py\n" + s
+
+
 def r7_stage_script():
     b = json.loads((ROOT / "kaggle_base" / "r7_r224m_varshitha_20261014.ipynb").read_text(encoding="utf-8"))["cells"]
     k = [i for i, c in enumerate(b) if src(c).startswith("ARM = ")]
@@ -439,14 +474,17 @@ def build():
     extra = ([f"our ConvNeXt-T 2.5D student (4 folds, weight {W}, slot {SLOT})"] if W > 0 else []) + (
         [f"R7 compact with heliosli's anatomical flip TTA at eval stride {FSTRIDE}"] if FLIP else []) + (
         [f"nartaa's public S6 ConvNeXt (all data) inside the {S6F_SLOT} slot, weight {S6F}"] if S6F > 0 else []) + (
-        [f"heliosli's R7 as a second compact model after S6F, weight {R7ADD} inside the compact model"] if R7ADD > 0 else []) + (
+        [(f"heliosli's R7" if C2 == "r7" else "the public B-leg ConvNeXt-S (R6 fine-tuned on soft-v2 labels; no flip, no stackers, stride 2)")
+         + f" as a second compact model after S6F, weight {R7ADD} inside the compact model"] if R7ADD > 0 else []) + (
         [f"R6 eval stride {R6STRIDE}"] if R6STRIDE else [])
     title = (f"# RSNA Knee: R7 variant ({NAME})\n\n{base_txt}, plus: {'; '.join(extra) or 'nothing'}. Built by `build_r7murid.py`.\n")
     stu_cells = [code(student), code(stage0), code(c3)] if W > 0 else [cells[i_st1]]
     if S6F > 0:                                                    # tahap S6F setelah R7 (GPU sudah bebas), sebelum blend
         mid = mid + [code(s6f_script()), code(S6F_RUN)]
     if R7ADD > 0:                                                  # R7 setelah S6F: S6F (terbukti di papan) tak pernah terpotong oleh R7
-        mid = mid + [code(r7_stage_script()), code(R7_RUN), code(R7_MERGE.replace("__WR7__", repr(R7ADD)))]
+        r7run = R7_RUN if C2 == "r7" else R7_RUN.replace("heliosli's public R7 compact model (bundle 8c7b666e, its setup + controller cells unchanged,",
+                                                         "public B-leg compact model (R6 fine-tuned on soft-v2 labels; R6 setup + controller, arm E_prior,")
+        mid = mid + [code(r7_stage_script() if C2 == "r7" else bleg_stage_script()), code(r7run), code(R7_MERGE.replace("__WR7__", repr(R7ADD)))]
     nb["cells"] = [md(title)] + cells[1:i_st1] + stu_cells + mid + [code(c6)]
     for k, c in enumerate(nb["cells"]):
         if c["cell_type"] == "code":
@@ -460,7 +498,8 @@ def build():
         meta.pop(k, None)
     meta.update(id=f"dimaspashaakrilian/{SLUG}", title="RSNA Knee " + NAME, code_file=f"{SLUG}.ipynb", is_private=True,
                 dataset_sources=meta["dataset_sources"] + [d for d in EXTRA_DS if W > 0 and d not in meta["dataset_sources"]]
-                + ([S6F_DS] if S6F > 0 and S6F_DS not in meta["dataset_sources"] else []))
+                + ([S6F_DS] if S6F > 0 and S6F_DS not in meta["dataset_sources"] else [])
+                + (BLEG_DS if R7ADD > 0 and C2 == "bleg" else []))
     (out / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     return out
 

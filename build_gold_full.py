@@ -43,7 +43,7 @@ PATCH = [  # (pola, ganti, jumlah sel yg harus kena)
     ('    cands = ["/kaggle/input/competitions/rsna-knee-abnormality-detection",',
      f'    cands = ["{G}", "/kaggle/input/competitions/rsna-knee-abnormality-detection",   # [gold]', 2),
     ("COMP = mount('rsna-knee-abnormality-detection', 'test.csv')", f"COMP = '{G}'   # [gold]", (0, 1)),   # murid opsional
-    ("DATA = find_mount(COMPETITION, 'test.csv')", f"DATA = Path('{G}')   # [gold]", 1),
+    ("DATA = find_mount(COMPETITION, 'test.csv')", f"DATA = Path('{G}')   # [gold]", (1, 2)),   # 2 = tahap compact ke-2 (r7add)
     ('I.comp = find_mount(COMP, "test.csv")', f'I.comp = Path("{G}")   # [gold]', (0, 1)),   # S6F opsional
 ]
 
