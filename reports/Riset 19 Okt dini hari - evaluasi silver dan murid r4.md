@@ -1,6 +1,6 @@
 # Riset 19 Okt 2026 dini hari — posisi perak, aset publik, dan murid r4
 
-> Audit riset dan antrean 19 Okt 2026 02:30 WIB; papan diperiksa ulang 02:33 WIB, API dan training 02:40–02:52 WIB. Data papan/submisi/kuota dibaca ulang lewat Kaggle CLI; dataset publik dan prediksi gold diperiksa lokal. Rencana aktif: `STRATEGI_PERAK.md` §0. Rincian operasi: `HANDOFF.md` §0c.
+> Audit riset dan antrean 19 Okt 2026 02:30 WIB; papan diperiksa ulang 02:33 WIB, API dan training 02:40–02:56 WIB. Data papan/submisi/kuota dibaca ulang lewat Kaggle CLI; dataset publik dan prediksi gold diperiksa lokal. Rencana aktif: `STRATEGI_PERAK.md` §0. Rincian operasi: `HANDOFF.md` §0c.
 
 ## Ringkasan keputusan
 
@@ -81,5 +81,5 @@ Gerbang setelah selesai:
 - Ringkasan operasional: `MEMORY.md` §2–§5, `HANDOFF.md` §0c, `laporan_push.md` §1–§2.
 - Metadata publik: [B-leg seed 1](https://www.kaggle.com/datasets/xhaitanya/rsna-knee-bleg-s1-f01), [dual-teacher labels](https://www.kaggle.com/datasets/srinath2495/rsna-knee-dual-teacher-consensus-4407), [Argon4 labels](https://www.kaggle.com/datasets/abdullahmathar/rsna-knee-argon4-soft-labels), [Engine 9 weights](https://www.kaggle.com/datasets/cyruspinto/rsna-knee-engine9-384-weights).
 
-## Tindak lanjut antrean — 19 Okt 2026 02:52 WIB
-Papan terakhir yang diunduh tetap menunjukkan 0,958 rank 467/6.187; rankpoll 02:50 selesai sukses tanpa mencatat perubahan. API 02:52 masih mencatat g6c/g12/g13 sebagai PENDING. Dua kernel r4 di alver awalnya tetap QUEUED setelah push pertama 02:42. Atas instruksi user jika masih QUEUED, watchdog menjalankan push ulang kedua: r4-a dihapus 02:51:09 lalu berhasil dikirim v1 02:51:32; r4-b dihapus 02:51:36 lalu berhasil dikirim v1 02:51:59. Cek API 02:52 tetap menunjukkan keduanya QUEUED. Kuota GPU tidak berubah (main/alver/nxtirfan 19,87/17,81/4,62 jam), jadi training belum mulai. Timer tetap aktif memantau antrean dengan ambang lima menit. Tidak ada submission kompetisi baru.
+## Tindak lanjut antrean — 19 Okt 2026 02:56 WIB
+Papan terakhir tetap 0,958 rank 467/6.187; rankpoll 02:55 selesai sukses tanpa perubahan tercatat. API 02:55 masih menunjukkan g6c/g12/g13 PENDING. Setelah push ulang kedua pada 02:51, kedua kernel r4 berubah menjadi RUNNING pada cek 02:54:59 dan tetap RUNNING pada 02:55–02:56. Kuota GPU terbaru main/alver/nxtirfan 19,87/17,75/4,62 jam; pemakaian alver mulai naik, sementara akun utama dan nxtirfan tidak dipakai. Timer requeue tetap aktif. Tidak ada submission kompetisi baru.

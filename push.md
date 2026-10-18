@@ -1,6 +1,6 @@
 # push.md — Arahan untuk agen/harness lain (Claude Code, OpenCode, dll.) melanjutkan misi PERAK RSNA Knee
-> Status aktif 19 Okt 2026 02:52 WIB: LB **0,958 rank 467/6.187**; g6c/g12/g13 PENDING; dua kernel murid r4 di-requeue ulang pukul 02:51 dan masih QUEUED pada cek 02:52 di alver; watcher memantau keduanya. Baca `AGENTS.md`, `MEMORY.md`, `STRATEGI_PERAK.md` §0, dan `HANDOFF.md` §0 sebelum bertindak. Riset terbaru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Bagian status lama di bawah dipertahankan sebagai arsip.
-> Berkas mandiri. Baca juga `MEMORY.md` (aturan+fakta), `STRATEGI_PERAK.md` (rencana+gerbang) dan `HANDOFF.md` (langkah harian). Diperbarui 19 Okt 2026 02:52 WIB; bagian status bertanggal lebih lama adalah arsip. Bahasa kerja: **Indonesia**.
+> Status aktif 19 Okt 2026 02:56 WIB: LB **0,958 rank 467/6.187**; g6c/g12/g13 PENDING; dua kernel murid r4 di-requeue ulang pukul 02:51 dan RUNNING pada cek 02:55 di alver; watcher memantau keduanya. Baca `AGENTS.md`, `MEMORY.md`, `STRATEGI_PERAK.md` §0, dan `HANDOFF.md` §0 sebelum bertindak. Riset terbaru: `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Bagian status lama di bawah dipertahankan sebagai arsip.
+> Berkas mandiri. Baca juga `MEMORY.md` (aturan+fakta), `STRATEGI_PERAK.md` (rencana+gerbang) dan `HANDOFF.md` (langkah harian). Diperbarui 19 Okt 2026 02:56 WIB; bagian status bertanggal lebih lama adalah arsip. Bahasa kerja: **Indonesia**.
 
 ## 1. Misi
 - Tim `Krazy KIller` (akun utama `dimaspashaakrilian`; rekan `nxtirfan`) di `rsna-knee-abnormality-detection` (macro ROC-AUC 12 label). **Final 22 Okt 2026 23:59 UTC**; pilih maks 2 submisi final (manual).
