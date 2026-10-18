@@ -76,6 +76,8 @@
 
 ### I000000000. 19 Okt 00:15 — uji gold B-leg LULUS (ρ 0,9984) → `g13` tersubmit 23:52 (57362095); jatah 18 Okt 4/5 (sisa 1 utk user); `g10a` cadangan (commit COMPLETE). Pending skor: g6c ±01:00, g12 ±01:50, g13 ±03:40 WIB. Watcher kuota di-restart.
 
+### Strategi 19–22 Okt (19 Okt 00:35). Sweep OOF 2.651: **B-leg .24 > R7 .24 +0,0033 (P 1,00)**; gold g13 0,9415 optimum (jangan naikkan bobot B-leg). Baca rank g6c/g12/g13 pagi (poller) → bila g13 naik, kerja utama = **murid r4** (label 0,5 konsensus + 0,25 OOF-R7 + 0,25 OOF-B-leg; fallback tanpa B-leg) di alver 19–20 Okt → `g14` = g13 + murid r4 .4 → submit ±20–21 Okt. Sisa 1 jatah 18 Okt TIDAK dipakai (perintah user); 19–22 Okt sisakan ≥1/hari; final 22 Okt (A unik terbaik + B beda mekanisme), submisi terakhir ≤22 Okt 15:00 UTC. `data/requeue.py` WATCH dikosongkan (g12/g13 sudah tersubmit).
+
 ### I00000000. 18 Okt 21:55 — `g9a` = 0,958 (tak melampaui g6a, rank 424). Gerbang lama salah menolak `g6c` (cek kaku w=0,3) → **g6c tersubmit manual 21:36**. `g10a` v1 salah dataset murid (r1) → v2 r2a. OOF lokal: R7 di compact +0,002 (P 1,00) → kernel **`g12`**. Runner baru `data/run_submit_gate2.sh`; penjaga antrean 5 mnt (perintah user). Latih akun 2/3 ditunda sampai riset label/model publik selesai (murid guru-baru ρ 0,97 dgn r2a → keragaman kecil).
 
 ### I0000000. 17 Okt 19:10 — heliosli 0,9586 = goodpjw + bobot V2 (probe papan). Kernel `g8a`/`g8b` (wc=h2 + murid 8 model, ± S6F) → `rsna-submit-g8` (log `data/submit_g8_17okt.log`). r7v6a = 0,957; g6a pending. Murid r3: r3-a (nxtirfan) + r3-bm (akun utama) jalan → dataset r3 MANUAL (pasca-latih dihentikan 19:05).

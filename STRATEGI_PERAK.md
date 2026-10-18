@@ -11,6 +11,12 @@
 - **Sisa tuas**: model publik baru yang beragam (riset `reports/Riset 18 Okt malam - model publik baru.md`), murid berlabel baru di akun 2/3 hanya bila label publik baru terbukti lebih baik di gold-58 (murid dgn guru berbeda ρ 0,97 → keragaman kecil).
 - **Peluang jujur**: perak ±20–40 %; perunggu jauh lebih mungkin; emas ≈0 %.
 
+#### 0.00b Pembaruan 19 Okt 00:35 (sesi OpenCode) — sweep OOF, pohon keputusan, rencana 19–22 Okt
+- **Sweep OOF irisan 2.651 studi** (label konsensus v0c; `/tmp/opencode/oof_sweep19.py`): solo R6 0,8855 · R7 0,8810 · **B-leg 0,8841**; slot compact: g10a 0,9012 · g12 0,9027 · **g13 0,9060** → **B-leg .24 menggantikan R7 = +0,0033 (P 1,00)**; naikkan B-leg ke .3/.36 hanya +0,0003 (derau). **Gold-58**: **g13 0,9415 = terbaik** (B-leg .3: 0,9412; .36: 0,9407) → **desain `g13` sudah di optimum bobot; jangan dinaikkan**. (murid di eval lokal bias label konsensus — angka absolut dilebihkan; urutan B-leg>R7 tidak, karena B-leg tak dilatih label itu.)
+- **Pohon keputusan (±01:00–03:40 WIB, dari rank poller)**: g13 rank < 452 → B-leg terbukti → lanjut tuas berikut; g12 naik g6c tidak → R7 bekerja; g6c naik → murid8 bekerja; semua datar → `g6a` tetap kandidat A.
+- **Tuas berikut = murid r4** (keluarga model-milik-kita, pola bliverrigpdoge): label = 0,5 konsensus + 0,25 OOF-R7 + 0,25 **OOF-B-leg** (studi tanpa OOF B-leg → 0,5 konsensus + 0,5 OOF-R7); latih 4 fold di akun 2 (alver 17,8 j sisa) 19–20 Okt → `g14` = g13 dgn murid r4 (bobot .4, sama spt g13) → submit ±20–21 Okt bila g13 mengonfirmasi.
+- **Jatah**: sisa 18 Okt (1) **TIDAK dipakai** (perintah user 19 Okt 00:10); 19–22 Okt: agen ≤1–2/hari, selalu sisakan ≥1 utk user; final 22 Okt = A (resep unik terbaik terskor) + B (mekanisme beda); submisi baru terakhir aman **≤22 Okt 15:00 UTC** (skor penuh ±4 j).
+
 
 ### 0.1 Apa itu perak di kompetisi ini
 - **PEMBARUAN 17 Okt 03:00**: papan 01:51 WIB (6.103 tim): ≥0,959 = 124, **blok 0,958 = 488 (kebanyakan salinan R6+flip goodpjw/heliosli), garis perak publik = rank 305 (0,958)**; **kita 0,958 rank 317** (salinan user goodpjw 57269378). Simulasi ulang (`silver_sim_1017.py`, δ relatif thd klaster goodpjw): salinan murni 0–12 %; unik δ 0 → 25–30 %; δ +0,0003 → 40–62 %; **δ +0,0006 → 57–86 %**; δ +0,001 → 76–99 %. Kandidat unik: `r7v6a` (gold +0,0031 vs goodpjw, P 0,84), `g6a` (gold +0,0015, P 0,69). Papan publik condong ke R6+flip (0,958 vs 0,957) → dua sinyal saling tarik, keduanya dlm derau.
