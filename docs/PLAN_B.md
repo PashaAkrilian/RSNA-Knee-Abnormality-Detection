@@ -124,5 +124,5 @@ Tidak bisa digabung: `mattiaangeli` (282 submisi → gabungan > batas).
 - Skor publik bukan prediktor privat di dataran → jangan mengejar selisih 0,001.
 - Bundel heliosli (dan ckpt OAI nartaa) = pengetahuan eksternal tak terklarifikasi host (743416: 35 komentar, host diam). Jalur bersih 0,944 BUKAN lagi zona perunggu (6 Okt: perunggu 0,944; 8 Okt: 0,947; 10 Okt: 0,950 — rank 0,944 ≈1.387) → hanya perlindungan kepatuhan, nilai medali ≈0. Putuskan 21–22 Okt setelah cek ulang 743416; selama host diam dan OAI 'accessible' (741819), kedua final tetap dari keluarga Apex.
 
-## Status terkini — 19 Okt 2026 02:45 WIB
-Dokumen ini arsip rencana lama. Untuk status dan keputusan aktif, lihat `MEMORY.md`, `HANDOFF.md` §0c, `STRATEGI_PERAK.md` §0, dan `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan terakhir: 0,958 rank 467/6.187; `g6c`, `g12`, `g13` masih PENDING pada cek API 02:44. Dua kernel murid r4 alver di-requeue v1 pada 02:42 dan tetap QUEUED pada cek 02:44. Kuota main/alver/nxtirfan: 19,87/17,81/4,62 jam.
+## Status terkini — 19 Okt 2026 02:52 WIB
+Dokumen ini arsip rencana lama. Untuk status dan keputusan aktif, lihat `MEMORY.md`, `HANDOFF.md` §0c, `STRATEGI_PERAK.md` §0, dan `reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md`. Papan terakhir: 0,958 rank 467/6.187; `g6c`, `g12`, `g13` masih PENDING pada cek API 02:52. Dua kernel murid r4 alver di-requeue dua kali, terakhir pukul 02:51, dan tetap QUEUED pada cek 02:52. Kuota main/alver/nxtirfan: 19,87/17,81/4,62 jam.

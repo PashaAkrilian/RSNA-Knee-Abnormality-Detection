@@ -23,10 +23,10 @@
 - Tidak ada hasil baru yang mengubah pohon keputusan: tunggu skor g6c/g12/g13; jangan gunakan jatah tersisa 18 Okt; murid r4/`g14` hanya bila g13 terkonfirmasi.
 
 
-#### 0.00d Status dan keputusan 19 Okt 02:45 WIB
+#### 0.00d Status dan keputusan 19 Okt 02:52 WIB
 - Papan publik 02:33 WIB: **0,958 rank 467/6.187**; cutoff aritmetika publik top 5% = rank 309. Medali ditentukan split privat 70%. `g6c` 57357991, `g12` 57359383, dan `g13` 57362095 masih PENDING.
 - B-leg seed0 memberi 3.325 OOF UID tanpa gold overlap; korelasi logits gold dengan pembuat ρ=0,9984. Seed1 ditolak (gold 0,92065; rerata seed0+1 0,92398 < seed0 0,92448). Engine8/9 dan label dual-teacher/Argon4 ditahan karena tidak ada validasi independen.
-- Dataset r4 privat dan dua kernel 12 epoch ada di alver; `student-r4-a/b` di-requeue v1 pukul 02:42 dan tetap QUEUED pada 02:44. Timer requeue memantau keduanya; kuota alver tetap 17,81 jam pada cek 02:44. Kuota main/alver/nxtirfan 19,87/17,81/4,62 jam.
+- Dataset r4 privat dan dua kernel 12 epoch ada di alver; `student-r4-a/b` di-requeue pukul 02:42 dan 02:51 (kembali v1); tetap QUEUED pada 02:52. Timer requeue memantau; kuota alver tetap 17,81 jam. Kuota main/alver/nxtirfan 19,87/17,81/4,62 jam.
 - Lanjutkan r4 setelah kernel berjalan; periksa semua fold, emas dikecualikan, inferensi gold, dan waktu run. Jangan buat `g14` kecuali g13 naik pada papan dan r4 lulus. Rincian metode, aset yang ditolak, dan limitasi metrik ada di laporan riset 19 Okt.
 
 ### 0.1 Apa itu perak di kompetisi ini
