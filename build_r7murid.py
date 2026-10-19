@@ -57,6 +57,10 @@ WC = args.get("wc", "")   # "h" = bobot Raptor per temuan heliosli 16 Okt (noteb
 assert WC in ("", "h", "h2"), WC
 WC_LINE = {"h": "W_RAPTOR_C = {'Medial OA': 0.5, 'Lateral OA': 0.2, 'PF OA': 0.6, 'Synovitis': 0.8, \"Baker's\": 0.35}   # [wc=h] heliosli 16 Okt (notebook 0,958)\n",
            "h2": "W_RAPTOR_C = {'Medial OA': 0.5, 'Lateral OA': 0.15, 'PF OA': 0.65, 'Synovitis': 0.85, \"Baker's\": 0.30}   # [wc=h2] heliosli 17 Okt (notebook 0,9586, probe papan per kelas)\n"}
+EXT = args.get("ext", "")                 # 20 Okt: "slug:w" = kaki CSV prediksi 24-kanal (test_pred_2plv4.csv) di blend akhir
+EXT_DS = EXT.split(":")[0] if EXT else ""
+EW = float(EXT.split(":")[1]) if EXT else 0.0
+assert 0.0 <= EW <= 0.4, EW
 R7ADD = float(args.get("r7add", "0"))   # 18 Okt (base=g958): R7 heliosli sbg model compact ke-2 SETELAH S6F; bobot R7 di dalam gabungan compact
 C2 = args.get("c2", "r7")   # 18 Okt malam: model compact ke-2 (bobot r7add) = R7 heliosli ATAU "bleg" = B-leg publik (R6 fine-tune label soft-v2)
 assert C2 in ("r7", "bleg"), C2
@@ -213,6 +217,26 @@ APPLY_FINAL = r'''if _stu_ok is not None:   # [murid] third leg on the final ble
         _rb = pct(out[:, j])
         out[:, j] = np.where(_stu_ok, (1.0 - W_MURID) * _rb + W_MURID * pct_on(_stu_v[:, j], _stu_ok), _rb)
 # ---- [murid] selesai ----
+'''
+
+EXT_BLEND = r'''if __EW__ > 0:   # [ext] external per-finding predictions (24-channel, different inductive bias)
+    import glob as _g
+    _f = _g.glob('/kaggle/input/**/test_pred_2plv4.csv', recursive=True)
+    if _f:
+        _e = pd.read_csv(_f[0], index_col=0)
+        _e.index = _e.index.astype(str)
+        _e = _e.reindex(test_ids)
+        _hit = np.isfinite(_e[labels].values).all(axis=1)
+        if _hit.mean() >= 0.97:
+            for j, c in enumerate(labels):
+                _r = pct(out[:, j])
+                _x = pct_on(_e[c].values, _hit)
+                out[:, j] = np.where(_hit, (1.0 - __EW__) * _r + __EW__ * _x, _r)
+            print('EXT_LEG used=1 w=%.2f hit=%.3f' % (__EW__, _hit.mean()), flush=True)
+        else:
+            print('EXT_LEG used=0 hit=%.3f' % _hit.mean(), flush=True)
+    else:
+        print('EXT_LEG used=0 file-missing', flush=True)
 '''
 
 IN_LOOP = ("    if _stu_ok is not None:   # [murid] student inside the Raptor slot (Raptor-like, rho 0.93), over its own scored rows\n"
@@ -445,6 +469,9 @@ def build():
         assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
         c6 = c6.replace(a_out, S6F_LOAD.replace("__WS6F__", repr(S6F)) + a_out).replace(
             a_wr, (S6F_IN_LOOP if S6F_SLOT == "compact" else S6F_IN_LOOP_RAPTOR) + a_wr)
+    if EW > 0:
+        assert c6.count(anchor) == 1
+        c6 = c6.replace(anchor, EXT_BLEND.replace("__EW__", repr(EW)) + anchor)
     load = LOAD.replace("__W__", repr(W)).replace("__SLOT__", SLOT)
     if W > 0 and SLOT == "final":
         c6 = c6.replace(anchor, load + APPLY_FINAL + anchor)
@@ -452,7 +479,7 @@ def build():
         assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
         mix = {"raptor": IN_LOOP, "compact": IN_LOOP_COMPACT, "both": IN_LOOP_COMPACT + IN_LOOP2.replace("__W2__", repr(W2))}[SLOT]
         c6 = c6.replace(a_out, load + a_out).replace(a_wr, mix + a_wr)
-    extra_rec = (["'murid': murid"] if W > 0 else []) + (["'s6f': s6f"] if S6F > 0 else [])
+    extra_rec = (["'ext': {'ds': %r, 'w': %r}" % (EXT_DS, EW)] if EW > 0 else []) + (["'murid': murid"] if W > 0 else []) + (["'s6f': s6f"] if S6F > 0 else [])
     if extra_rec:
         c6 = c6.replace(rec, rec[:-1] + ", " + ", ".join(extra_rec) + "}")
     if A224O >= 0:                                                 # 19 Okt: ganti porsi r224 di slot Raptor (mis. 0 = murid penuh)
@@ -515,7 +542,8 @@ def build():
     meta.update(id=f"dimaspashaakrilian/{SLUG}", title="RSNA Knee " + NAME, code_file=f"{SLUG}.ipynb", is_private=True,
                 dataset_sources=meta["dataset_sources"] + [d for d in EXTRA_DS if W > 0 and d not in meta["dataset_sources"]]
                 + ([S6F_DS] if S6F > 0 and S6F_DS not in meta["dataset_sources"] else [])
-                + (BLEG_DS if R7ADD > 0 and C2 == "bleg" else []))
+                + (BLEG_DS if R7ADD > 0 and C2 == "bleg" else [])
+                + ([EXT_DS] if EW > 0 and EXT_DS not in meta["dataset_sources"] else []))
     (out / "kernel-metadata.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
     return out
 
