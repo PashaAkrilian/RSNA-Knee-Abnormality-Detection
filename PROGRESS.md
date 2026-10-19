@@ -1747,3 +1747,10 @@ ATURAN PENULISAN:
 - `g17` = g16a + murid 12 model (r2a+r4) di kedua slot; dibangun 17:24, runner `data/run_submit_g16.sh` SPECS=g17 push + gate + submit otomatis. WATCH requeue dikosongkan agar kernel tersubmit tidak terhapus.
 - Kuota main ±19,5 j · alver 8,02 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. Skor g16a/g16b/g17 diperkirakan 21:00–21:30 WIB.
 - `g17` commit COMPLETE dengan **gold 0,9342 (12 fold)**, gerbang LULUS, **tersubmit 17:38 WIB (57393166)**. Pending: g16a 57392757, g16b 57392796, g17 57393166. Jatah 19 Okt 3/5 (sisa 2, sisakan ≥1). Dokumen + commit di-push 17:32 (`660f736`).
+
+## 71. 20 Okt 2026 01:45 WIB — analisis papan penuh, h3 (resep 0,9586), model 24-kanal
+- Unduhan papan 19 Okt 17:54 (6.219 tim), hitungan per nilai: ≥0,959 = 188 (0,959×66, 0,960×40, 0,961×19, 0,962×17, 0,963×19, 0,964×9, 0,965×5, 0,966×5, 0,967×4, 0,968×3, 0,969×1); 0,958 = 1.271 (rank 189–1459); 0,957 = 180. Silver 5 % ≈ rank 311 → cutoff di dalam blok 0,958. Kesimpulan: 0,959 = tiket aman (±123 kursi sisa di atas blok); 0,958 = peluang ±10 % bila skor sejati setara.
+- g16a/g16b/g17 COMPLETE = 0,957 → murid di slot Raptor selalu merugikan (tiga percobaan independen). g13 (B-leg) = 0,957. Gold-58 tidak mampu memisahkan resep 0,957–0,958 (SE ±0,01); skor publik 30 % juga berderau ±0,002 → urutan di dalam ember 0,958 tidak dapat dibaca.
+- h3 dibangun dari goodpjw v27 UTUH (termasuk Part B) + bobot per-temuan V2 heliosli; commit smoke 3 studi LULUS 695 s; tersubmit 01:39/01:40 (57405943, 57405945) — duplikat akibat dua runner; skor ±07:30 WIB.
+- Model 24-kanal (12 sagital + 12 koronal, ConvNeXt-T 224, 5 fold, soft-BCE) di alver: `rsna-knee-2pl` (label laporan) RUNNING, `rsna-knee-2plv4` (label v4) QUEUED. Tujuan: menutup titik buta koronal ensemble publik pada Medial/Lateral/PF OA.
+- Kuota main ±19,3 j · alver ±6,5 j · nxtirfan ±4,6 j. Jatah 19 Okt UTC 5/5 (3 g16/g17 + 2 h3); reset 07:00 WIB.

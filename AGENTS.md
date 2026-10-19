@@ -12,8 +12,8 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, 
 4. **laporan_push.md** — wadah evaluasi submisi (§2, baris 22–31) + temuan.
 5. Riset TERBARU: **reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md**; lalu riset 18 Okt dan 15 Okt. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md (§67–§71), docs/RESEARCH_NOTES.md.
 
-## Status satu kalimat (19 Okt 17:30 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
-Tim **0,958 rank 486/6.195** (papan 09:11 WIB; cutoff aritmetika top 5% ±rank 308). COMPLETE: `g6c`/`g12`/`g10a` = **0,958**, `g13` (B-leg) = **0,957** → B-leg gugur. **`g16a`/`g16b`** (murid r2a di kedua slot; gold 0,9325) tersubmit 17:22/17:23; **`g17`** (murid 12 model r2a+r4) gerbang LULUS gold **0,9342** (12 fold) + **tersubmit 17:38 (57393166)** — skor ketiganya ±21:30 WIB. Murid r4 selesai (4-fold gold 0,9291); dataset `rsna-knee-student-folds-r4`. Jatah 19 Okt **3/5, sisa 2** (sisakan ≥1). Kuota main ±19,5 j/alver 8,02 j/nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. WATCH requeue kosong (jangan hapus kernel tersubmit). Final maks 2 manual sebelum 22 Okt 23:59 UTC.
+## Status satu kalimat (20 Okt 01:45 WIB) — terbaru di MEMORY §2/§3 & HANDOFF §0c
+Papan 19 Okt 17:54 (6.219 tim): **≥0,959 = 188 tim; 0,958 = 1.271 (rank 189–1459)** — silver ±rank 311, jadi **0,959 = tiket aman**. COMPLETE: `g6c`/`g12`/`g10a` = 0,958; `g13`/`g16a`/`g16b`/`g17` = **0,957** (murid slot Raptor & B-leg gugur). **`h3`** (resep publik 0,9586: v27 utuh + bobot V2) tersubmit 01:39/01:40 (57405943/57405945); skor ±07:30 WIB. Alver melatih **model 24-kanal sagital+koronal** (`2pl`, `2plv4`). Jatah 19 Okt UTC 5/5 → reset 07:00 WIB. Kuota main ±19,3 j/alver ±6,5 j. Final maks 2 manual sebelum 22 Okt 23:59 UTC.
 
 ## Status 17 Okt ±03:00 WIB (arsip)
 Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; silver publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % silver); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.

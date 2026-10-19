@@ -1,15 +1,15 @@
 # HANDOFF — RSNA Knee Abnormality Detection (serah-terima operasional)
-> Diperbarui 19 Okt 2026 17:30 WIB; papan terakhir 09:11, API 17:23 WIB. Baca urut: `MEMORY.md` → **`STRATEGI_SILVER.md` §0 (rencana aktif)** → file ini §0/§0c → `laporan_push.md` → laporan riset 19 Okt. `STRATEGI_0960.md` dan `docs/PLAN_B.md` adalah arsip.
+> Diperbarui 20 Okt 2026 01:45 WIB; papan 19 Okt 17:54, API 01:40 WIB. Baca urut: `MEMORY.md` → **`STRATEGI_SILVER.md` §0 (rencana aktif)** → file ini §0/§0c → `laporan_push.md` → laporan riset 19 Okt. `STRATEGI_0960.md` dan `docs/PLAN_B.md` adalah arsip.
 > Setelah tiap unit kerja: perbarui §0c + MEMORY.md §3 (commit terpisah "memory: ...") + `laporan_push.md`.
 
-## 0. Prioritas operasional (19 Okt 17:30 WIB)
-1. Kaggle COMPLETE: **g6c/g12/g10a = 0,958; g13 = 0,957** (B-leg gugur). Papan 09:11: **rank 486/6.195**, ≥0,957 = 1.528, silver aritmetika ±rank 308.
-2. **`g16a` & `g16b` tersubmit 17:22/17:23** (gold 0,9325; murid r2a di kedua slot, A224 .175 / A224 0). **`g17`** (murid 12 model r2a+r4) LULUS gerbang (gold **0,9342**, 12 fold) dan **tersubmit 17:38 (57393166)**; skor ketiganya ±21:30 WIB.
-3. Murid r4 selesai (fold0–1 0,9269; fold2–3 0,9288); dataset privat `dimaspashaakrilian/rsna-knee-student-folds-r4` (fold0–3.pt + OOF). Gabungan 12 model gold **0,9338**.
-4. Jatah 19 Okt **3/5 terpakai, sisa 2**; aturan user: sisakan minimal 1 per hari (maks 1 lagi hari ini). Kuota main ±19,5 j · alver 8,02 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB.
-5. WATCH requeue **kosong** — g16a/g16b sudah tersubmit, jangan pernah dihapus. g17 dipegang runner.
-6. Final maks 2, dipilih manual sebelum 22 Okt 23:59 UTC; submission terakhir aman ≤22 Okt 15:00 UTC.
-- Peluang silver kerja **20–40%**; B-leg gagal di LB, g17 = tuas baru. Bukan jaminan.
+## 0. Prioritas operasional (20 Okt 01:45 WIB)
+1. **Analisis papan penuh 19 Okt 17:54 (6.219 tim)**: ≥0,959 = **188 tim**; 0,958 = **1.271 tim** (rank 189–1459); silver = ±rank **311** → cutoff DI DALAM blok 0,958. Submission 0,959 duduk ≤rank 188 (±123 kursi sisa); submission 0,958 harus ±10 % teratas blok.
+2. **Target tunggal = menembus 0,959.** `g16a`/`g16b`/`g17` = 0,957 → murid di slot Raptor berhenti. `g13` (B-leg) = 0,957 → B-leg berhenti.
+3. **`h3`** (resep publik "=0,9586" persis: v27 utuh + bobot V2) commit LULUS dan **tersubmit 01:39/01:40 (57405943 & 57405945, duplikat)**; skor ±07:30 WIB. Jatah 19 Okt UTC 5/5 → reset **07:00 WIB**.
+4. **Model 24-kanal (sagital+koronal)** di alver: `rsna-knee-2pl` (label laporan) RUNNING; `rsna-knee-2plv4` (label v4) QUEUED. Ini menutup titik buta koronal ensemble publik (3 label OA = 25 % metrik).
+5. Kuota main ±19,3 j · alver ±6,5 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. WATCH requeue = 2plv4 saja; h3 JANGAN dihapus (sudah tersubmit).
+6. Final maks 2, dipilih manual sebelum 22 Okt 23:59 UTC; submisi terakhir aman ≤22 Okt 15:00 UTC.
+- Peluang silver jujur: **±15–25 %** bila tetap 0,958; **±70–85 %** bila 0,959 tercapai. Bukan jaminan.
 
 ## 0b. Quickstart AGEN BARU (Claude Code / OpenCode / lain)
 1. `export PATH="$HOME/.local/bin:$PATH"` · `cd /home/pasha/Documents/RSNA-Knee-Abnormality-Detection`
@@ -17,27 +17,27 @@
 3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
 4. Untuk tugas r4, jangan kirim submission dari kernel training. Setelah selesai, validasi semua fold, gold, dan waktu run; bangun `g14` hanya jika g13 naik dan r4 melewati gerbang gold. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (19 Okt 2026 17:30 WIB — tersinkron)
+## 0c. Status (20 Okt 2026 01:45 WIB — tersinkron)
 | Hal | Keadaan |
 |---|---|
-| Papan publik | **0,958 rank 486/6.195** (papan 09:11 WIB); ≥0,957 = 1.528; silver aritmetika ±rank 308. Skor final = privat 70%. |
-| Submission | COMPLETE: `g6c` 57357991 **0,958** · `g12` 57359383 **0,958** · `g10a` 57369237 **0,958** · `g13` 57362095 **0,957**. BARU: `g16a` 57392757 (17:22), `g16b` 57392796 (17:23), `g17` 57393166 (17:38) — semua PENDING; gold 0,9325/0,9325/0,9342. |
-| Bukti keputusan | Sweep OOF 2.651 studi: B-leg .24 vs R7 .24 +0,0033 (P 1,00) → **tetapi g13 (B-leg) = 0,957 di LB** ⇒ sinyal OOF/gold tidak menjamin LB. Murid r2a solo OOF 0,9056 (label bias), r4 0,9291 gold, **12 model 0,9338 gold**. Sweep gold murid-di-Raptor: g16f +0,0013 (P 0,76). |
-| Riset kandidat | B-leg/seed1/Engine8/9/dual-teacher tidak dipakai. Murid lebih banyak = satu-satunya tuas baru yang tervalidasi gold. |
-| Kernel training | r4-a/r4-b COMPLETE (alver). Akun utama hanya commit-run/submisi; nxtirfan tidak dipakai sesi ini. |
-| Kuota GPU | main ±19,5 j · alver **8,02 j** · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. |
-| Jatah submission | 19 Okt **3/5 terpakai**, sisa **2**; lifetime API 146. |
-| Timer | `rsna-rankpoll.timer` 5 mnt; `rsna-requeue.timer` 2 mnt, WATCH kosong (jangan hapus kernel tersubmit); runner g17 selesai. Log `data/submit_19okt.log`. |
-| Aksi berikut | Tunggu skor g16a/g16b/g17 (≈21:30 WIB). Bila ada >0,958 → kandidat final A; bila tidak → 20 Okt uji varian murid (bobot 0,5–0,6 / 12 model + S6F tuning) atau hedge mekanisme. Jangan pakai B-leg lagi. |
-| Dokumentasi | Diperbarui 19 Okt 17:30 WIB berdasarkan API 17:23 dan papan 09:11. |
+| Papan publik | 19 Okt 17:54, 6.219 tim: ≥0,959 = **188**; 0,958 = **1.271** (rank 189–1459); 0,957 = 180. Silver ≈ rank 311 → di dalam blok 0,958. |
+| Submission | COMPLETE: `g6c`/`g12`/`g10a` = **0,958**; `g13` 0,957; `g16a`/`g16b`/`g17` = **0,957**. PENDING: `h3` 57405943 & 57405945 (duplikat, 01:39/01:40) — skor ±07:30 WIB. |
+| Bukti keputusan | Murid slot Raptor 3× gagal (0,957); B-leg gagal; gold-58 tidak memisahkan 0,957–0,958. Distribusi papan: 0,959 = tiket aman. |
+| Riset kandidat | Resep publik "=0,9586" = v27 + Part B + bobot V2 (h3, diuji). Model 24-kanal dua-bidang = titik buta koronal (2pl/2plv4, dilatih). |
+| Kernel training | Alver: `rsna-knee-2pl` RUNNING, `rsna-knee-2plv4` QUEUED. Akun utama hanya commit/submisi. |
+| Kuota GPU | main ±19,3 j · alver ±6,5 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. |
+| Jatah submission | 19 Okt UTC **5/5**; reset **07:00 WIB**. Lifetime API 148. |
+| Timer | `rsna-rankpoll.timer` 5 mnt; `rsna-requeue.timer` 2 mnt, WATCH = 2plv4. |
+| Aksi berikut | 07:00 WIB jatah baru; baca skor h3 ±07:30 dan gold 2pl/2plv4. h3 ≥0,959 → final A = h3; bila <0,959 → siapkan `g19` = g6c + 24-kanal (bobot 0,15–0,25) hanya bila gold ≥0,930 & ρ<0,85. |
+| Dokumentasi | Diperbarui 20 Okt 01:45 WIB (papan 19 Okt 17:54; API 01:40). |
 
 ## 1. Urutan kerja
 ### A. 11 Okt 03:35–07:03 — SELESAI
 1. (SELESAI) `s6plusr` LULUS → `s6reader` & `s6plus` ter-push; pewaktu men-submit keduanya 07:03 WIB (57055673 + 57055781).
 2. Baca `apexof4r3` (4 pekerja tanpa injeksi; throughput/MemAvail) → putuskan `nproc` produksi OF.
 ### B. Eksperimen yang sedang berjalan
-- r4 SELESAI (gold 4-fold 0,9291); dataset `rsna-knee-student-folds-r4` dibuat. `g16a`/`g16b` tersubmit; `g17` (murid 12 model) menunggu gate+submit.
-- Setelah skor 21:00–21:30: putuskan varian murid berikutnya untuk 20 Okt; jangan pakai B-leg (g13 0,957).
+- `h3` menunggu skor (±07:30 WIB); `2pl`/`2plv4` menunggu COMPLETE (alver) → cek gold-58 + ρ terhadap murid 2.5D.
+- Bila h3 <0,959: `g19` = g6c + model 24-kanal (0,15–0,25), submit 21 Okt setelah gold/ρ layak.
 - Final: pilih maks 2 manual; A = resep unik terskor terbaik, B = mekanisme berbeda.
 ### C. Tiap sesi
 - `python3 scan_public_updates.py` + papan + `kaggle datasets list --user heliosli` / `kaggle kernels list --user heliosli` (S7?) + thread 748141/735304/743416. Syarat arm baru = skor ≥0,951 TERVERIFIKASI (halaman Code) **dan** input publik runnable.
