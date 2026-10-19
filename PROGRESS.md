@@ -1738,3 +1738,11 @@ ATURAN PENULISAN:
 ## 71. 19 Okt 2026 02:56 WIB — dua kernel murid r4 mulai berjalan
 - Status Kaggle menunjukkan `rsna-knee-student-r4-a` (fold0–1) dan `...-b` (fold2–3) RUNNING pada 02:54:59 dan tetap RUNNING pada cek 02:55–02:56, setelah push ulang kedua pada 02:51.
 - Kuota main/alver/nxtirfan = 19,87/17,75/4,62 jam; penggunaan GPU alver mulai tercatat. API 02:55: g6c/g12/g13 masih PENDING. Rankpoll 02:55 sukses tanpa perubahan baru; tidak ada submission baru.
+
+## 70. 19 Okt 2026 17:30 WIB — skor 18 Okt terkonfirmasi, g16a/g16b tersubmit, g17 murid 12 model
+- Kaggle COMPLETE: `g6c` 57357991 **0,958**, `g12` 57359383 **0,958**, `g10a` 57369237 **0,958** (sesi paralel 04:16), `g13` 57362095 **0,957**. B-leg (gold 0,9415, OOF +0,0033) **gagal di LB** → hipotesis B-leg ditutup. Papan 09:11: rank 486/6.195, ≥0,957 = 1.528; silver aritmetika ±rank 308.
+- Murid r4 (alver) selesai: gold fold0–1 0,9269 · fold2–3 0,9288 · 4-fold 0,9291; r2a 8 model 0,9323; **gabungan 12 model 0,9338**. Checkpoint fold0–3 + OOF diunduh, dataset privat `dimaspashaakrilian/rsna-knee-student-folds-r4` dibuat (8 file).
+- Sweep gold-58 urutan notebook r224→S6F→murid: g16f (A224 .175 / murid Raptor .175 / murid compact .4) = **0,9415** (+0,0013 vs g6c, P 0,76); A224=0/murid .25 = 0,9413; murid .35 = 0,9409.
+- `build_r7murid.py` ditambah `a224=`, `w2=` (bobot murid slot Raptor), `slot=both` (murid di compact + Raptor), dan `folds2=` (mount dataset fold kedua; glob `fold[0-9].pt` dari dua direktori). g16a/g16b dibangun, di-push 16:37, QUEUED 22 mnt → requeue timer (hapus+push) → RUNNING 17:11 → COMPLETE 17:23, gold 0,9325, gerbang LULUS (MURID_LEG slot both used, S6F used, 8/12 fold) → **tersubmit 17:22 & 17:23** (jatah 19 Okt 2/5, sisa 3).
+- `g17` = g16a + murid 12 model (r2a+r4) di kedua slot; dibangun 17:24, runner `data/run_submit_g16.sh` SPECS=g17 push + gate + submit otomatis. WATCH requeue dikosongkan agar kernel tersubmit tidak terhapus.
+- Kuota main ±19,5 j · alver 8,02 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. Skor g16a/g16b/g17 diperkirakan 21:00–21:30 WIB.

@@ -40,10 +40,13 @@ BASE_ARG = args.get("base", "r7")
 assert BASE_ARG in ("r7", "v224", "v224m", "g958"), BASE_ARG
 V224 = BASE_ARG in ("v224", "v224m", "g958")  # basis varshitha (slot Raptor = 0,65 r384 + 0,35 r224)
 SLOT = args.get("slot", "final")
+W2 = float(args.get("w2", "0"))          # 19 Okt: bobot murid di slot Raptor (slot=both) — murid menggantikan sebagian r224
+assert 0.0 <= W2 <= 0.5, W2
+A224O = float(args.get("a224", "-1"))    # 19 Okt: timpa A224 notebook (default -1 = biarkan)
 FLIP = args.get("flip", "0") == "1"
 FSTRIDE = int(args.get("fstride", "2"))   # eval-stride compact saat flip=1 (2 = biaya GPU ≈ tanpa flip; 1 = TTA penuh, ±+1,7 j)
 assert FSTRIDE in (1, 2, 3)
-assert SLOT in ("final", "raptor", "compact")
+assert SLOT in ("final", "raptor", "compact", "both")
 FOLDS_DS = args.get("folds", "dimaspashaakrilian/rsna-knee-student-folds")   # set fold murid (r1 = default; r2a/r2c = dataset baru)
 NAME = args.get("name", "r7m224" if V224 else "r7murid")
 S6F = float(args.get("s6f", "0"))   # bobot S6F nartaa (all-data) DI DALAM slot compact, diterapkan sebelum murid; 0 = tanpa tahap S6F
@@ -67,7 +70,8 @@ _b = {"r7": "r7_heliosli_0957_20261013", "v224": "r7_r224_varshitha_20261013", "
 BASE = ROOT / "kaggle_base" / f"{_b}.ipynb"
 BASE_META = ROOT / "kaggle_base" / f"{_b}.meta.json"
 SLUG = "rsna-knee-" + NAME
-EXTRA_DS = [FOLDS_DS, "goodpjw2008/rsna-knee-2-5d-convnext-reader"]
+FOLDS2 = args.get("folds2", "")   # 19 Okt: dataset fold KEDUA (murid gabungan, mis. r4) -> inferensi memakai semua fold[0-9].pt
+EXTRA_DS = [FOLDS_DS] + ([FOLDS2] if FOLDS2 else []) + ["goodpjw2008/rsna-knee-2-5d-convnext-reader"]
 MB, ME = "# ---- [murid] kaki ke-3", "# ---- [murid] selesai ----"
 S6F_DS = "nartaa/rsna-knee-s6fall-weights"
 S6F_BASE = ROOT / "kaggle_base" / "s6fall_solo_nartaa_20261015.py"   # skrip publik nartaa (komponen B = S6F all-data, 0,950 solo)
@@ -214,6 +218,7 @@ APPLY_FINAL = r'''if _stu_ok is not None:   # [murid] third leg on the final ble
 IN_LOOP = ("    if _stu_ok is not None:   # [murid] student inside the Raptor slot (Raptor-like, rho 0.93), over its own scored rows\n"
            "        rr = np.where(_stu_ok, (1.0 - W_MURID) * rr + W_MURID * pct_on(_stu_v[:, j], _stu_ok), rr)\n")
 IN_LOOP_COMPACT = IN_LOOP.replace("Raptor slot (Raptor-like, rho 0.93)", "compact (R7) slot (student taught by R7 OOF)").replace("rr", "ro")
+IN_LOOP2 = IN_LOOP.replace("W_MURID", "__W2__")   # 19 Okt: murid di slot Raptor dgn bobot sendiri (slot=both)
 
 
 # tahap S6F: skrip nartaa UTUH, hanya komponen B (A = tahap-1 Raptor-384 kita sendiri, sumber byte-identik bcd864cb...);
@@ -443,12 +448,17 @@ def build():
     load = LOAD.replace("__W__", repr(W)).replace("__SLOT__", SLOT)
     if W > 0 and SLOT == "final":
         c6 = c6.replace(anchor, load + APPLY_FINAL + anchor)
-    elif W > 0:                                                    # slot=raptor|compact: muat sebelum loop, campur ke rr|ro di dalam loop
+    elif W > 0:                                                    # slot=raptor|compact|both: muat sebelum loop, campur ke rr|ro di dalam loop
         assert c6.count(a_out) == 1 and c6.count(a_wr) == 1
-        c6 = c6.replace(a_out, load + a_out).replace(a_wr, (IN_LOOP if SLOT == "raptor" else IN_LOOP_COMPACT) + a_wr)
+        mix = {"raptor": IN_LOOP, "compact": IN_LOOP_COMPACT, "both": IN_LOOP_COMPACT + IN_LOOP2.replace("__W2__", repr(W2))}[SLOT]
+        c6 = c6.replace(a_out, load + a_out).replace(a_wr, mix + a_wr)
     extra_rec = (["'murid': murid"] if W > 0 else []) + (["'s6f': s6f"] if S6F > 0 else [])
     if extra_rec:
         c6 = c6.replace(rec, rec[:-1] + ", " + ", ".join(extra_rec) + "}")
+    if A224O >= 0:                                                 # 19 Okt: ganti porsi r224 di slot Raptor (mis. 0 = murid penuh)
+        k = [l for l in c6.splitlines(keepends=True) if l.startswith("A224 = ")]
+        assert len(k) == 1, k
+        c6 = c6.replace(k[0], f"A224 = {A224O}   # [a224] Raptor-slot share of the 224-crop model (ours, 19 Okt)\n")
     mid = cells[i_st1 + 1:i_bl]
     if FLIP:                                                       # compact R7: flip-TTA heliosli v4c + eval-stride 2
         k_set = [k for k, c in enumerate(mid) if "if manifest.get('flip_tta'):" in src(c)]
@@ -466,6 +476,12 @@ def build():
         assert src(mid[k_r6[0]]).count(a_) == 1
         mid = mid[:k_r6[0]] + [code(src(mid[k_r6[0]]).replace(a_, f"'--eval-stride', '{R6STRIDE}'"))] + mid[k_r6[0] + 1:]
     student = STUDENT.replace("__BUDGET__", str(BUDGET)).replace("__DECODE__", DECODE).replace("__FOLDSLUG__", FOLDS_DS.split("/")[1])
+    if FOLDS2:                                                     # 19 Okt: mount kedua; glob fold[0-9].pt di inferensi menangkap keduanya
+        student = student.replace("FOLD_DIR = mount('" + FOLDS_DS.split("/")[1] + "', 'fold0.pt')",
+                                  "FOLD_DIR = mount('" + FOLDS_DS.split("/")[1] + "', 'fold0.pt')\nFOLD_DIR2 = mount('" + FOLDS2.split("/")[1] + "', 'fold0.pt')")
+        assert student.count("FOLDS = sorted(glob.glob(FOLD_DIR + '/fold[0-9].pt'))") == 1
+        student = student.replace("FOLDS = sorted(glob.glob(FOLD_DIR + '/fold[0-9].pt'))",
+                                  "FOLDS = sorted(glob.glob(FOLD_DIR + '/fold[0-9].pt') + glob.glob(FOLD_DIR2 + '/fold[0-9].pt'))")
     stage0 = STAGE0.replace("__TIMEOUT__", str(BUDGET + 2400))     # + gold check in commit mode (≤1800 s) + model load
     base_txt = ("goodpjw2008's public 0.958 notebook v27 without its Part B reader (Raptor slot = 0.65 r384 + 0.35 r224 mirror; compact = "
                 "heliosli's R6 with flip TTA; heliosli's per-finding Raptor weights)" if BASE_ARG == "g958" else
