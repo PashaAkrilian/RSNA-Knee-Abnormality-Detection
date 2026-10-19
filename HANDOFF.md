@@ -4,9 +4,9 @@
 
 ## 0. Prioritas operasional (19 Okt 17:30 WIB)
 1. Kaggle COMPLETE: **g6c/g12/g10a = 0,958; g13 = 0,957** (B-leg gugur). Papan 09:11: **rank 486/6.195**, ≥0,957 = 1.528, silver aritmetika ±rank 308.
-2. **`g16a` & `g16b` tersubmit 17:22/17:23** (gold 0,9325; murid r2a di kedua slot, A224 .175 / A224 0). **`g17`** (murid 12 model r2a+r4, gold 0,9338) commit-run + gate + submit oleh runner; skor ketiganya ±21:00–21:30 WIB.
+2. **`g16a` & `g16b` tersubmit 17:22/17:23** (gold 0,9325; murid r2a di kedua slot, A224 .175 / A224 0). **`g17`** (murid 12 model r2a+r4) LULUS gerbang (gold **0,9342**, 12 fold) dan **tersubmit 17:38 (57393166)**; skor ketiganya ±21:30 WIB.
 3. Murid r4 selesai (fold0–1 0,9269; fold2–3 0,9288); dataset privat `dimaspashaakrilian/rsna-knee-student-folds-r4` (fold0–3.pt + OOF). Gabungan 12 model gold **0,9338**.
-4. Jatah 19 Okt **2/5 terpakai, sisa 3**; aturan user: sisakan minimal 1 per hari. Kuota main ±19,5 j · alver 8,02 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB.
+4. Jatah 19 Okt **3/5 terpakai, sisa 2**; aturan user: sisakan minimal 1 per hari (maks 1 lagi hari ini). Kuota main ±19,5 j · alver 8,02 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB.
 5. WATCH requeue **kosong** — g16a/g16b sudah tersubmit, jangan pernah dihapus. g17 dipegang runner.
 6. Final maks 2, dipilih manual sebelum 22 Okt 23:59 UTC; submission terakhir aman ≤22 Okt 15:00 UTC.
 - Peluang silver kerja **20–40%**; B-leg gagal di LB, g17 = tuas baru. Bukan jaminan.
@@ -21,14 +21,14 @@
 | Hal | Keadaan |
 |---|---|
 | Papan publik | **0,958 rank 486/6.195** (papan 09:11 WIB); ≥0,957 = 1.528; silver aritmetika ±rank 308. Skor final = privat 70%. |
-| Submission | COMPLETE: `g6c` 57357991 **0,958** · `g12` 57359383 **0,958** · `g10a` 57369237 **0,958** · `g13` 57362095 **0,957**. BARU: `g16a` (17:22) & `g16b` (17:23) tersubmit, gold 0,9325; `g17` gate+submit otomatis. |
+| Submission | COMPLETE: `g6c` 57357991 **0,958** · `g12` 57359383 **0,958** · `g10a` 57369237 **0,958** · `g13` 57362095 **0,957**. BARU: `g16a` 57392757 (17:22), `g16b` 57392796 (17:23), `g17` 57393166 (17:38) — semua PENDING; gold 0,9325/0,9325/0,9342. |
 | Bukti keputusan | Sweep OOF 2.651 studi: B-leg .24 vs R7 .24 +0,0033 (P 1,00) → **tetapi g13 (B-leg) = 0,957 di LB** ⇒ sinyal OOF/gold tidak menjamin LB. Murid r2a solo OOF 0,9056 (label bias), r4 0,9291 gold, **12 model 0,9338 gold**. Sweep gold murid-di-Raptor: g16f +0,0013 (P 0,76). |
 | Riset kandidat | B-leg/seed1/Engine8/9/dual-teacher tidak dipakai. Murid lebih banyak = satu-satunya tuas baru yang tervalidasi gold. |
 | Kernel training | r4-a/r4-b COMPLETE (alver). Akun utama hanya commit-run/submisi; nxtirfan tidak dipakai sesi ini. |
 | Kuota GPU | main ±19,5 j · alver **8,02 j** · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. |
-| Jatah submission | 19 Okt **2/5 terpakai**, sisa **3**; lifetime API 145. |
-| Timer | `rsna-rankpoll.timer` 5 mnt; `rsna-requeue.timer` 2 mnt, WATCH kosong; runner g17 PID 54431 (log `data/submit_19okt.log`). |
-| Aksi berikut | Tunggu skor g16a/g16b/g17 (≈21:00–21:30 WIB). Bila ada >0,958 → kandidat final A; bila tidak → 20 Okt uji varian murid (bobot 0,5–0,6 / 12 model + S6F tuning) atau hedge mekanisme. Jangan pakai B-leg lagi. |
+| Jatah submission | 19 Okt **3/5 terpakai**, sisa **2**; lifetime API 146. |
+| Timer | `rsna-rankpoll.timer` 5 mnt; `rsna-requeue.timer` 2 mnt, WATCH kosong (jangan hapus kernel tersubmit); runner g17 selesai. Log `data/submit_19okt.log`. |
+| Aksi berikut | Tunggu skor g16a/g16b/g17 (≈21:30 WIB). Bila ada >0,958 → kandidat final A; bila tidak → 20 Okt uji varian murid (bobot 0,5–0,6 / 12 model + S6F tuning) atau hedge mekanisme. Jangan pakai B-leg lagi. |
 | Dokumentasi | Diperbarui 19 Okt 17:30 WIB berdasarkan API 17:23 dan papan 09:11. |
 
 ## 1. Urutan kerja
