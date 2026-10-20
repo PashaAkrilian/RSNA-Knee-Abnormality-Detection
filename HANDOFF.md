@@ -17,18 +17,19 @@
 3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
 4. Untuk tugas r4, jangan kirim submission dari kernel training. Setelah selesai, validasi semua fold, gold, dan waktu run; bangun `g14` hanya jika g13 naik dan r4 melewati gerbang gold. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
-## 0c. Status (20 Okt 2026 15:45 WIB — tersinkron)
+## 0c. Status (20 Okt 2026 17:00 WIB — tersinkron; sesi alver)
 | Hal | Keadaan |
 |---|---|
-| Papan publik | 15:05 WIB, **6.259 tim**: tim kita **rank 615 (0,958)**; ≥0,957 = 1.728; ≥0,959 = ±188 (19 Okt). Silver 5 % ≈ **rank 313** → masih di dalam blok 0,958. |
-| Submission | COMPLETE: `g6c`/`g12`/`g10a`/`57419023` versia-7 = **0,958**; `g13`/`g16a`/`g16b`/`g17`/`h3` = **0,957**. PENDING: **`h4` 57427200** (±20:00), **`h4m` 57428613** (±20:40). Siap: `h4ms` (S6F+murid+reader, commit LULUS). |
+| Papan publik | 16:13 WIB, **6.261 tim**: tim kita **rank 620 (0,958)**; ≥0,959 = **203**; blok 0,958 = 1.366 (rank 204–1569). Silver 5 % ≈ **rank 313** → di dalam blok 0,958. |
+| Submission | COMPLETE: `g6c`/`g12`/`g10a`/`57419023` versia-7 = **0,958**; `g13`/`g16a`/`g16b`/`g17`/`h3` = **0,957**. PENDING: **`h4` 57427200** (±20:00), **`h4m` 57428613** (±20:40), **`h5` 57432552** (akun alver, ±22:00–23:00). Siap: `h4ms` (S6F+murid+reader, commit LULUS). |
+| Koreksi riset (sesi alver) | Reader Part B di h4 berbobot **0,003–0,035 per temuan** (`OWN_W` 0,15 tak dipakai); efek di gold dgn 3 proksi = **+0,0000** → "reader = pembeda 0,0016" hampir pasti keliru. h4 = salinan murni → **bukan final** walau 0,959 (berbagi skor privat dgn semua penyalin, kita di ekor waktu submit). Akun alver punya 8 model murid sendiri (output kernel r4-a/b, r2a-full/full2; gold 0,9332). Rincian: `reports/Riset 20 Okt sore - jalan 0,960 dan strategi silver (sesi alver).md`. |
 | Bukti keputusan | Murid slot Raptor 3× gagal (0,957); B-leg gagal; gold-58 tidak memisahkan 0,957–0,958. Distribusi papan: 0,959 = tiket aman. |
 | Riset kandidat | **Part B ditemukan**: notebook 0,9586 = 10 sel, reader V2 @0,15 (ρ 0,75) — h4/h4m persis. `h3` (V2 tanpa reader) = 0,957 → leg reader-lah pembeda 0,0016. `evgendvorkin/rsna-versia-7` versi sekarang = resep 0,958 yang sama (bukan 24-kanal) → plafon 0,958 terkonfirmasi lintas 4 salinan. |
 | Kernel training | (tak ada yang berjalan) `rsna-knee-2pl`/`2plv4`/`2plinfer` COMPLETE; akun utama hanya commit/submisi. |
-| Kuota GPU | main ±19,3 j · alver ±6,3 j · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. |
-| Jatah submission | 20 Okt **3/5** (versia-7 09:49, h4 14:07, h4m 14:53); sisa 2 → **sisakan 1**, **1 bebas**. Reset 21 Okt 07:00 WIB. |
+| Kuota GPU | main ±19,3 j · **alver 1,32 j** (cek CLI 16:53) · nxtirfan ±4,6 j; reset 24 Okt 07:00 WIB. |
+| Jatah submission | 20 Okt **4/5** (versia-7 09:49, h4 14:07, h4m 14:53, h5 16:54) → **sisa 1 (disisakan)**, tidak ada jatah bebas. Reset 21 Okt 07:00 WIB. |
 | Timer | `rsna-rankpoll.timer` 5 mnt; `rsna-requeue.timer` 2 mnt, WATCH kosong. |
-| Aksi berikut | Tunggu skor h4/h4m ±20:00–20:40. ≥0,959 → final A = yang terbaik, B = yang lain. <0,959 → final A = h4m/h4 (leg reader), B = g6c/g12; `h4ms` (S6F+murid) siap utk 1 jatah bebas hari ini atau 21 Okt. Pilih final manual ≤22 Okt 15:00 UTC. |
+| Aksi berikut | Tunggu skor h4/h4m (±20:00–20:40) & h5 (±22:00–23:00). Final A = resep UNIK terbaik dgn S6F + murid (g6a/g6c, atau h5/h4m bila ≥ g6a); final B = resep unik lain 0,958 (g12/g10a); salinan murni (h4, versia-7) bukan final. `h4ms` siap utk jatah 21 Okt. Submisi baru terakhir ≤22 Okt 15:00 UTC; pilih final manual sebelum 22 Okt 23:59 UTC. |
 | Dokumentasi | Diperbarui 20 Okt 01:45 WIB (papan 19 Okt 17:54; API 01:40). |
 
 ## 1. Urutan kerja
