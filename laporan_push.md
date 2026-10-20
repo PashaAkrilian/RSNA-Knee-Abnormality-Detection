@@ -100,7 +100,7 @@
 | 51 | 19 Okt 23:30 | **57393166 `g17`** | murid 12 model kedua slot | **0,957** | turun | gold 0,9342 | idem; 12 model tidak menolong |
 | 52 | 20 Okt 01:39 | **57405943 `h3`** | 13 sel (= g6c tanpa murid) + bobot V2 heliosli (0,9586); TANPA Part B | PENDING (±07:30 WIB) | — | commit smoke 3 studi LULUS (695 s) | resep heliosli 17 Okt, klaim 0,9586 |
 | 53 | 20 Okt 01:40 | **57405945 `h3`** | duplikat h3 (dua runner) | **0,957** | turun | bobot V2 tanpa reader | leg reader-lah pembeda 0,0016 |
-| 54 | 20 Okt 09:49 | **57419023** versia-7 | notebook publik 24-kanal apa adanya (user) | PENDING (±16:00) | — | — | gold 2plv4 kita 0,8346 → ekspektasi rendah |
+| 54 | 20 Okt 09:49 | **57419023** versia-7 | notebook publik `evgendvorkin/rsna-versia-7` (user) | **0,958** | sama | 25 sel = resep Raptor+R6+reader, bukan pelatih 24-kanal | plafon 0,958 terkonfirmasi |
 | 55 | 20 Okt 14:07 | **57427200 `h4`** | 10 sel PERSIS notebook 0,9586 heliosli (V2 + Part B reader @0,15) | PENDING (±20:00) | — | commit 10 mnt; reader ρ 0,75 | replikasi resep terbaik publik |
 | 56 | 20 Okt 14:53 | **57428613 `h4m`** | h4 + murid r2a 8 model @0,2 slot final | PENDING (±20:40) | — | MURID_LEG used; reader ρ 0,792 | leg terlengkap |
 | — | 20 Okt 03:33 | — | `2plinfer` gold-58 24-kanal = **0,8346** | — | gugur | dicampur ke murid: w=0,2 → −0,005 | leg ext 24-kanal dibatalkan (build siap, tidak dipakai) |

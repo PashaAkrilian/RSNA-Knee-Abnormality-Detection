@@ -1769,3 +1769,8 @@ ATURAN PENULISAN:
 - `h4m` = h4 + (builder base=g958 wc=h2 w=0,2 slot=final folds=rsna-knee-student-r2a) → 16 sel; MURID_LEG used=true; reader ρ 0,792; tersubmit 57428613 (14:53 WIB).
 - Hambatan: dataset `dimaspashaakrilian/rsna-knee-student-folds-r4` (dibuat 16:50 19 Okt) TERHAPUS; create ulang gagal karena tombstone judul → h4m memakai r2a 8 model (gold 0,9323). Dataset r2a yang valid = `rsna-knee-student-r2a` (bukan `...-folds-r2a`, slug yang salah di h3m v1; MURID_LEG used=false).
 - Jatah 20 Okt 3/5; sisa 2 (sisakan 1). Kuota main 18,67 j; alver ±5 j.
+
+## 74. 20 Okt 2026 15:45 WIB — 57419023 = 0,958 (resep yang sama, bukan 24-kanal); h4ms siap
+- `57419023` COMPLETE **0,958**. Pemeriksaan notebook `evgendvorkin/rsna-versia-7` (25 sel, 457 vote, last run 19 Okt 19:29): dataset = `goodpjw2008/rsna-knee-2-5d-convnext-reader` + `heliosli/rsna-knee-compact-r7cnxfsss` + `rostigor/rsna-knee-r6-fe055406` + `nartaa/...-swa-weights` + `heliosli/rsna-orthofoundation...` → **resep 0,958 yang sama**, bukan notebook pelatih 24-kanal. Jadi 0,958 = plafon keluarga resep publik (4+ salinan independen); 24-kanal tetap gugur atas bukti gold kita (2pl 0,674–0,781 laporan; 2plv4 0,8346 v4).
+- `h4ms` dibangun (builder base=g958 wc=h2 w=0,2 slot=final s6f=0,5 compact folds=r2a + sel Part B dari h4) → commit COMPLETE 15:16: `S6F_LEG used=true rho 0,75`, `MURID_LEG used=true scored=3`, reader "blended 3 checkpoints at weight 0.15 ... corr 0.750", NOTEBOOK_COMPLETE. Siap submit; WATCH requeue dipindah dari h4m (sudah tersubmit) ke h4ms.
+- Papan 15:05: tim rank 615/6.259; ≥0,957 = 1.728. Pending h4/h4m.

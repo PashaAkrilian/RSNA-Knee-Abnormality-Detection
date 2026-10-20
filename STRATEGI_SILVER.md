@@ -55,6 +55,14 @@
 - **Anggaran**: jatah 20 Okt 5 (0 terpakai, reset 07:00 WIB); kuota main ±19,3 j, alver ±6,3 j, nxtirfan ±4,6 j; tidak ada kernel berjalan.
 
 
+#### 0.00h PEMBARUAN 20 Okt 15:45 WIB — `h3` 0,957, akar 0,9586 = Part B reader, `h4`/`h4m`/`h4ms` siap
+- **`h3` = 0,957** (bukan 0,9586): bobot V2/h2 TANPA leg reader lebih buruk 0,001 dari bobot h + murid. Bukan bobotnya yang salah — **leg ekstra beragam yang menaikkan**.
+- **Akar 0,9586 ditemukan**: notebook `heliosli/...new-version-0-9586` (10 sel, diunduh via API) = base 13 sel + **Part B V2 = reader 2.5D goodpjw @ bobot total 0,15** (3 checkpoint, per-temuan 0,003–0,035). `h4` = replikasi PERSIS (satu-satunya patch: `C_SLUG` → `rostigor/rsna-knee-r6-fe055406`; dataset `heliosli/...r6-frozen...` sudah berisi bundel R7). Commit 10 mnt, reader ρ 0,75 thd stack. `h4m` = h4 + murid r2a 8 model @0,2 (ρ reader 0,792). `h4ms` = h4m + S6F 0,5 compact (S6F ρ 0,75) — 18 sel, commit LULUS. **57427200 (h4) & 57428613 (h4m) PENDING, skor ±20:00–20:40 WIB.**
+- **Koreksi 15:40**: `57419023` (submisi user) = 0,958, tetapi notebook `evgendvorkin/rsna-versia-7` versi sekarang (25 sel, 457 vote) = **resep 0,958 yang sama** (Raptor 384+224 + R6 + Part B), bukan notebook pelatih 24-kanal → tidak ada mekanisme baru; 24-kanal tetap gugur atas bukti gold kita (0,8346). Plafon publik 0,958 kini terkonfirmasi lintas ≥4 salinan independen.
+- **Papan 15:05**: tim **rank 615/6.259** (0,958); ≥0,957 = 1.728; silver 5 % ≈ rank 313 → kita masih di dalam blok 0,958, silver = 30 % privat di atas klaster.
+- **Keputusan 20–22 Okt**: (a) h4 atau h4m ≥ 0,959 → final A = pemenang, B = lainnya (diversitas leg reader); (b) keduanya 0,958 → final A = h4m (leg terlengkap), B = g6c/g12; sisa jatah 20 Okt (2, sisakan 1 → 1 bebas) hanya untuk bukti baru, bukan variasi bobot; (c) `h4ms` cadangan 21 Okt; (d) jangan ulangi: training 24-kanal, murid di slot Raptor, B-leg, bobot V2 tanpa reader.
+- **Anggaran**: jatah 20 Okt 3/5 (versia-7 09:49, h4 14:07, h4m 14:53); kuota main 18,3 j, alver ±5 j; final ≤22 Okt 15:00 UTC.
+
 ### 0.1 Apa itu silver di kompetisi ini
 - **PEMBARUAN 17 Okt 03:00**: papan 01:51 WIB (6.103 tim): ≥0,959 = 124, **blok 0,958 = 488 (kebanyakan salinan R6+flip goodpjw/heliosli), garis silver publik = rank 305 (0,958)**; **kita 0,958 rank 317** (salinan user goodpjw 57269378). Simulasi ulang (`silver_sim_1017.py`, δ relatif thd klaster goodpjw): salinan murni 0–12 %; unik δ 0 → 25–30 %; δ +0,0003 → 40–62 %; **δ +0,0006 → 57–86 %**; δ +0,001 → 76–99 %. Kandidat unik: `r7v6a` (gold +0,0031 vs goodpjw, P 0,84), `g6a` (gold +0,0015, P 0,69). Papan publik condong ke R6+flip (0,958 vs 0,957) → dua sinyal saling tarik, keduanya dlm derau.
 - Silver = **5 % teratas papan PRIVAT** (70 % uji ≈ 900 dari 1.284 studi). Proyeksi ±6.150 tim saat tutup → **rank ≤ ±308**. Papan publik (30 %, ±385 studi) hanya penunjuk.
