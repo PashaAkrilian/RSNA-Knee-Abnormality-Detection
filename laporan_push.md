@@ -99,7 +99,10 @@
 | 50 | 19 Okt 22:25 | **57392796 `g16b`** | murid r2a kedua slot, A224 0 | **0,957** | turun | gold 0,9325 | idem |
 | 51 | 19 Okt 23:30 | **57393166 `g17`** | murid 12 model kedua slot | **0,957** | turun | gold 0,9342 | idem; 12 model tidak menolong |
 | 52 | 20 Okt 01:39 | **57405943 `h3`** | 13 sel (= g6c tanpa murid) + bobot V2 heliosli (0,9586); TANPA Part B | PENDING (±07:30 WIB) | — | commit smoke 3 studi LULUS (695 s) | resep heliosli 17 Okt, klaim 0,9586 |
-| 53 | 20 Okt 01:40 | **57405945 `h3`** | duplikat h3 (dua runner) | PENDING | — | — | jatah 19 Okt UTC 5/5 |
+| 53 | 20 Okt 01:40 | **57405945 `h3`** | duplikat h3 (dua runner) | **0,957** | turun | bobot V2 tanpa reader | leg reader-lah pembeda 0,0016 |
+| 54 | 20 Okt 09:49 | **57419023** versia-7 | notebook publik 24-kanal apa adanya (user) | PENDING (±16:00) | — | — | gold 2plv4 kita 0,8346 → ekspektasi rendah |
+| 55 | 20 Okt 14:07 | **57427200 `h4`** | 10 sel PERSIS notebook 0,9586 heliosli (V2 + Part B reader @0,15) | PENDING (±20:00) | — | commit 10 mnt; reader ρ 0,75 | replikasi resep terbaik publik |
+| 56 | 20 Okt 14:53 | **57428613 `h4m`** | h4 + murid r2a 8 model @0,2 slot final | PENDING (±20:40) | — | MURID_LEG used; reader ρ 0,792 | leg terlengkap |
 | — | 20 Okt 03:33 | — | `2plinfer` gold-58 24-kanal = **0,8346** | — | gugur | dicampur ke murid: w=0,2 → −0,005 | leg ext 24-kanal dibatalkan (build siap, tidak dipakai) |
 | — | 18 Okt 23:50 | **uji gold B-leg** (`alverlfarfaraway/rsna-knee-gold-bleg`; `cmp_bleg_gold.py`) | logit gold kita vs logit gold penulis B-leg (rerata 4 fold `partial_preds_E_prior_s0.json`) | **LULUS: ρ rerata 0,9984** (0,997–0,999); AUC gold kita 0,9264 vs mereka 0,9245 | — | integrasi B-leg sahih → penanda `data/bleg_gold_ok` → runner lepas g13 | sim gold-58: g13 0,9415 vs g10a 0,9403 (+0,0011, P 0,82); gold-bleg QUEUED 7 mnt → requeue 22:20 lalu COMPLETE |
 | — | 17 Okt 02:10–02:30 | target user 0,962 → jujur < 5 % (rank 26–39 = ambang emas); jalur **murid r3** (guru OOF R6+flip + R7) | `compact-oof-r6-f0..f3` (akun utama) → label v3 → `student-r3-a/b` (nxtirfan 07:05) | — | — | commit `g6a` LULUS; gold tambahan: S6F separuh Raptor = pembeda utama (+0,0015..+0,003) | r3 → varian 18–19 Okt |

@@ -1761,3 +1761,11 @@ ATURAN PENULISAN:
 - **Koreksi**: salinan v27 kita (13 sel) tidak memuat Part B; v25/26/27 publik = resep ini + reader 2.5D pada bobot 1/10 dan tetap 0,958 (rank 195/6.077 pada 16 Okt). g6c/g12/g10a (tanpa reader) kita juga 0,958 → leg reader netral terhadap pembulatan; murid kita lebih kuat di gold (0,9334 vs 0,929). Part B tidak dibangun.
 - Karena itu `h3` = 13 sel yang sama dengan g6c dengan hanya bobot V2/h2 → **= resep heliosli 17 Okt yang dilaporkan 0,9586** (klaim "v27 utuh termasuk Part B" pada catatan 01:45 keliru). Skor ±07:30–08:00 WIB; bila 0,959 → final A = h3.
 - Anggaran 20 Okt: jatah 0/5 (reset 07:00 WIB), tidak ada kernel berjalan; WATCH requeue dikosongkan, watcher 2pl dimatikan.
+
+## 73. 20 Okt 2026 14:55 WIB — h3 = 0,957; akar 0,9586 = Part B reader; h4 & h4m tersubmit
+- `h3` COMPLETE 0,957 (57405943/57405945). Bobot V2 tanpa leg reader turun 0,001 vs bobot h + murid (g6c 0,958). Kesimpulan: bobot saja tidak cukup; leg ekstra yang beragam yang menaikkan.
+- Notebook publik heliosli `this-is-best-public-dataset-new-version-0-9586` diunduh via API: **10 sel**; sel 9 = **Part B V2** (goodpjw reader 2.5D, 3 checkpoint, bobot total 0,15, per-temuan 0,003–0,035). Salinan v27 kita (13 sel) tidak pernah memuatnya → itulah pembeda 0,9586 vs 0,957/0,958.
+- `h4` = salinan PERSIS 10 sel; patch hanya `C_SLUG` → `rostigor/rsna-knee-r6-fe055406` (dataset heliosli r6-frozen kini berisi R7: AssertionError 8c7b666e vs fe055406). Metadata: internet OFF, GPU T4, kernel source `goodpjw2008/rsna-knee-coatnet-r6-2-5d-mil-lb-0-958`. Commit COMPLETE 10 mnt; log: "own leg: blended 3 checkpoints at weight 0.15 ... mean rank corr with stack 0.750" → tersubmit 57427200 (14:07 WIB).
+- `h4m` = h4 + (builder base=g958 wc=h2 w=0,2 slot=final folds=rsna-knee-student-r2a) → 16 sel; MURID_LEG used=true; reader ρ 0,792; tersubmit 57428613 (14:53 WIB).
+- Hambatan: dataset `dimaspashaakrilian/rsna-knee-student-folds-r4` (dibuat 16:50 19 Okt) TERHAPUS; create ulang gagal karena tombstone judul → h4m memakai r2a 8 model (gold 0,9323). Dataset r2a yang valid = `rsna-knee-student-r2a` (bukan `...-folds-r2a`, slug yang salah di h3m v1; MURID_LEG used=false).
+- Jatah 20 Okt 3/5; sisa 2 (sisakan 1). Kuota main 18,67 j; alver ±5 j.
