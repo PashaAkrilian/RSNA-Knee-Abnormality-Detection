@@ -1774,3 +1774,12 @@ ATURAN PENULISAN:
 - `57419023` COMPLETE **0,958**. Pemeriksaan notebook `evgendvorkin/rsna-versia-7` (25 sel, 457 vote, last run 19 Okt 19:29): dataset = `goodpjw2008/rsna-knee-2-5d-convnext-reader` + `heliosli/rsna-knee-compact-r7cnxfsss` + `rostigor/rsna-knee-r6-fe055406` + `nartaa/...-swa-weights` + `heliosli/rsna-orthofoundation...` → **resep 0,958 yang sama**, bukan notebook pelatih 24-kanal. Jadi 0,958 = plafon keluarga resep publik (4+ salinan independen); 24-kanal tetap gugur atas bukti gold kita (2pl 0,674–0,781 laporan; 2plv4 0,8346 v4).
 - `h4ms` dibangun (builder base=g958 wc=h2 w=0,2 slot=final s6f=0,5 compact folds=r2a + sel Part B dari h4) → commit COMPLETE 15:16: `S6F_LEG used=true rho 0,75`, `MURID_LEG used=true scored=3`, reader "blended 3 checkpoints at weight 0.15 ... corr 0.750", NOTEBOOK_COMPLETE. Siap submit; WATCH requeue dipindah dari h4m (sudah tersubmit) ke h4ms.
 - Papan 15:05: tim rank 615/6.259; ≥0,957 = 1.728. Pending h4/h4m.
+
+## 75. 20 Okt 2026 17:10 WIB — sesi alver: koreksi reader, `h5` tersubmit, aturan final
+- Laporan riset baru: `reports/Riset 20 Okt sore - jalur 0,960 dan strategi silver (sesi alver).md`.
+- Papan 16:13 (6.261 tim): tim rank 620; ≥0,959 = 203; blok 0,958 = 1.366 (204–1569); silver ≈ 313 (proyeksi tutup ≈ 317). Forum: 0,960+ = model sendiri + pseudo-label dari gambar (ConvNeXt-T 2.5D single 0,953–0,959); 0,960 tak tercapai dgn komponen publik.
+- Koreksi: bobot Part B 0,003–0,035/temuan → efek gold +0,0000 (bukan pembeda 0,0016); h4 ≈ 0,958; h4m berbasis goodpjw v27, bukan h4+murid.
+- Alver punya 8 model murid sendiri (gold OOF 0,9332, ρ 0,990 vs r2a).
+- `build_h5.py` + `kaggle_kernel_h5`: h4 PERSIS + S6F 0,5 separuh Raptor + murid alver-8 0,4 compact + R6 stride 2 + guard reader 7,9 j. Uji lokal 5 skenario lolos; commit 16:53 (17,6 mnt) LULUS; tersubmit 57432552 16:54 dari alver (izin user alver). Jatah 20 Okt 4/5; kuota alver 1,32 j.
+- Aturan final: A = resep unik ber-S6F+murid (g6a/g6c atau h5/h4m bila ≥ g6a); B = unik lain 0,958 (g12/g10a); salinan murni (h4/versia-7) bukan final walau 0,959.
+
