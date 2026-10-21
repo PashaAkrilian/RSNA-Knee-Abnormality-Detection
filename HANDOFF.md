@@ -19,7 +19,7 @@
 
 ## 0c-21. Status 21 Okt 18:40 WIB (terbaru)
 - Rank 710/6.312 (0,958); silver ≤315. Tidak ada resep publik ≥0,959; tidak ada latih baru (kuota alver 1,3 j, nxtirfan 4,0 j).
-- **Final (user pilih manual di UI Submissions sebelum 22 Okt 23:59 UTC): A = g6a 57296301, B = g12 57359383.**
+- **FINAL TERPILIH 22 Okt 00:20 WIB (UI 2/2, via Chrome atas izin user): g6a 57296301 + g8a 57315276** (auto-selection candidates Kaggle = 2 skor publik tertinggi kita).
 - Jatah 21 Okt tidak dipakai; timer `rsna-requeue`/`rsna-rankpoll` aktif.
 
 ## 0c. Status (20 Okt 2026 17:00 WIB — tersinkron; sesi alver)

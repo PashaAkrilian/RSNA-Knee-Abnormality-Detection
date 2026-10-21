@@ -13,7 +13,7 @@ Tim **Krazy KIller** di Kaggle `rsna-knee-abnormality-detection`: LB **0,958**, 
 5. Riset TERBARU: **reports/Riset 19 Okt dini hari - evaluasi silver dan murid r4.md**; lalu riset 18 Okt dan 15 Okt. Arsip: `reports/` lain, `research_notes/`, PROGRESS.md (§67–§71), docs/RESEARCH_NOTES.md.
 
 ## Status satu kalimat (21 Okt 18:40 WIB) — terbaru di MEMORY §2 & HANDOFF §0c
-Papan 18:06 (6.312 tim): **rank 710 (0,958)**; silver = rank ≤315; ≥0,959 = 229. Riset akhir: tidak ada resep publik ≥0,959 (publikasi terkunci ±16 Okt); specialist/coat-extra/V-JEPA ditolak; kuota alver 1,3 j & nxtirfan 4,0 j → tanpa latih baru. **Final rekomendasi: A = `g6a` 57296301, B = `g12` 57359383** (keduanya unik; pilih manual di UI ≤22 Okt). Salinan murni bukan final.
+Papan 18:06 (6.312 tim): **rank 710 (0,958)**; silver = rank ≤315; ≥0,959 = 229. Riset akhir: tidak ada resep publik ≥0,959 (publikasi terkunci ±16 Okt); specialist/coat-extra/V-JEPA ditolak; kuota alver 1,3 j & nxtirfan 4,0 j → tanpa latih baru. **FINAL TERPILIH (22 Okt 00:20, UI 2/2): `g6a` 57296301 + `g8a` 57315276** (= 2 skor publik tertinggi kita, keduanya unik). Salinan murni bukan final.
 
 ## Status 17 Okt ±03:00 WIB (arsip)
 Tim **0,958 rank 317/6.103** (salinan user goodpjw v27 57269378; silver publik = rank 305, blok 0,958 = 488 tim salinan R6+flip); final harus resep UNIK (salinan murni ≈0–12 % silver); **17 Okt 07:01 `r7v6a`** (gold 0,9414) + **07:03 `g6a`** (goodpjw + S6F .5 + murid4 .3, gold 0,9398, bergerbang); `r7v7a` (murid 8 model) hanya dibangun+commit.
