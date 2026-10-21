@@ -17,6 +17,10 @@
 3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
 4. Untuk tugas r4, jangan kirim submission dari kernel training. Setelah selesai, validasi semua fold, gold, dan waktu run; bangun `g14` hanya jika g13 naik dan r4 melewati gerbang gold. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
+## 0c-22. Status 22 Okt 01:00 WIB (terbaru)
+- Final terpilih di UI: **g6a + g8a** (2/2). Izin user: latih di akun utama → murid **r6** (label v6 = v1 + soft-v2) `student-r6-a/b` RUNNING; unit `rsna-after-r6` otomatis: gerbang gold → dataset → `g18` (g8a + r6, R6 stride 2) → commit → submit bergerbang (sisa 1 jatah utk user).
+- Bila g18 menaikkan rank tim (skor tak-dibulatkan > g6a/g8a) → ganti final B ke g18 di UI (sebelum 22 Okt 23:59 UTC).
+
 ## 0c-21. Status 21 Okt 18:40 WIB (terbaru)
 - Rank 710/6.312 (0,958); silver ≤315. Tidak ada resep publik ≥0,959; tidak ada latih baru (kuota alver 1,3 j, nxtirfan 4,0 j).
 - **FINAL TERPILIH 22 Okt 00:20 WIB (UI 2/2, via Chrome atas izin user): g6a 57296301 + g8a 57315276** (auto-selection candidates Kaggle = 2 skor publik tertinggi kita).

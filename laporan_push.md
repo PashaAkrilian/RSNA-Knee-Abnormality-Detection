@@ -25,6 +25,7 @@
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
 |---|---|---|---|---|---|---|---|
+| — | 22 Okt 01:00 | latih `student-r6-a/b` (akun utama, izin user) | murid ConvNeXt-T label v6 (v1 + soft-v2) | RUNNING | — | ρ label v6~v1 0,86–0,97 | → g18 otomatis (g8a + r6) |
 | — | 22 Okt 00:20 | **FINAL DIPILIH** | g6a 57296301 + g8a 57315276 (UI 2/2) | 0,958 / 0,958 | — | auto-selection candidates Kaggle | ganti rekomendasi g12 |
 | — | 21 Okt 18:40 | riset akhir | tidak ada resep publik ≥0,959; specialist subsh2004 ditolak | — | — | lonjakan rank hanya g6a sejak 17 Okt | **final A = g6a, B = g12** |
 | 45 | 19 Okt 04:16 | **57369237 `g10a` v1** (izin user: gunakan 1 submission terakhir) | goodpjw v27 tanpa Part B; R6 stride 2 + S6F + murid r2a 8-model bobot 0,4 | **PENDING** | — | tunggu skor | Commit-run COMPLETE; submission pseudo 3 baris tervalidasi. Gold 0,9403 (di bawah g6c 0,9408 dan g13 0,9415); API terima, jatah 19 Okt 5/5, sisa 0. |
