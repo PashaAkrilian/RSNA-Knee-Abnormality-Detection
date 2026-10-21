@@ -17,6 +17,11 @@
 3. Akun: alver (`kg2.sh`) & nxtirfan (`kg3.sh`) = LATIH (keputusan user 12 Okt); akun utama = commit-run inferensi + submisi saja. Jangan cetak `kaggle.json`.
 4. Untuk tugas r4, jangan kirim submission dari kernel training. Setelah selesai, validasi semua fold, gold, dan waktu run; bangun `g14` hanya jika g13 naik dan r4 melewati gerbang gold. Setiap hasil: update MEMORY §3, `laporan_push.md`, §0c di sini.
 
+## 0c-21. Status 21 Okt 18:40 WIB (terbaru)
+- Rank 710/6.312 (0,958); silver ≤315. Tidak ada resep publik ≥0,959; tidak ada latih baru (kuota alver 1,3 j, nxtirfan 4,0 j).
+- **Final (user pilih manual di UI Submissions sebelum 22 Okt 23:59 UTC): A = g6a 57296301, B = g12 57359383.**
+- Jatah 21 Okt tidak dipakai; timer `rsna-requeue`/`rsna-rankpoll` aktif.
+
 ## 0c. Status (20 Okt 2026 17:00 WIB — tersinkron; sesi alver)
 | Hal | Keadaan |
 |---|---|

@@ -25,6 +25,7 @@
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
 |---|---|---|---|---|---|---|---|
+| — | 21 Okt 18:40 | riset akhir | tidak ada resep publik ≥0,959; specialist subsh2004 ditolak | — | — | lonjakan rank hanya g6a sejak 17 Okt | **final A = g6a, B = g12** |
 | 45 | 19 Okt 04:16 | **57369237 `g10a` v1** (izin user: gunakan 1 submission terakhir) | goodpjw v27 tanpa Part B; R6 stride 2 + S6F + murid r2a 8-model bobot 0,4 | **PENDING** | — | tunggu skor | Commit-run COMPLETE; submission pseudo 3 baris tervalidasi. Gold 0,9403 (di bawah g6c 0,9408 dan g13 0,9415); API terima, jatah 19 Okt 5/5, sisa 0. |
 | — | 19 Okt 03:02 | **normalisasi dokumentasi (tanpa submission)** | Semua rujukan medali di 35 Markdown diseragamkan menjadi silver; nama rencana aktif dan arsip diperbarui | — | — | tanpa perubahan skor atau kernel | `STRATEGI_SILVER.md` menggantikan nama rencana lama; status eksperimen tetap sesuai cek 02:56 WIB |
 | — | 19 Okt 02:30 | riset aset publik + persiapan murid r4 (tanpa submission) | Evaluasi seed1/Engine8/Engine9/dual-teacher/Argon4; label konsensus + OOF-R7 + OOF-B-leg; dua kernel training alver dikirim | — | — | lanjutkan setelah r4 selesai; `g14` tetap bersyarat pada kenaikan g13 dan gerbang gold | rincian dan angka di laporan riset 19 Okt; requeue v1 dilakukan 02:42, watcher aktif; push kedua selesai 02:51; kedua kernel RUNNING pada cek 02:55 dan kuota alver mulai berkurang; sisa jatah 18 Okt tidak digunakan |
