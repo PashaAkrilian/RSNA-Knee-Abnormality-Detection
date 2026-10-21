@@ -4,6 +4,12 @@
 
 ## 0. RENCANA SILVER (AKTIF, diperbarui 19 Okt)
 
+### 0.000 Pembaruan 22 Okt 03:20 WIB (berlaku di atas semua subbagian lama)
+- **Final terpilih** di UI (izin user, via Chrome): **g6a + g8a** = 2 skor publik tak-dibulatkan tertinggi (tanda auto-selection Kaggle); keduanya resep unik (S6F nartaa di separuh Raptor + murid kita). Salinan murni tidak dipilih.
+- **Riset akhir 21 Okt**: tidak ada notebook publik ≥0,959; publikasi notebook baru terkunci ±16 Okt; dataset baru tanpa bukti / lebih lemah (specialist subsh2004, coat-extra) → ditolak.
+- **Tuas terakhir**: murid **r6** (label v6 = v1 + soft-v2) dilatih di akun utama atas izin user → `g18` = g8a + r6 (otomatis). Ganti final B ke g18 HANYA bila rank tim naik (bukti publik label asli). Bila tidak, final tetap g6a + g8a.
+- **Peluang jujur**: silver ±20–35 % (posisi publik rank 728, skor privat 70 % menentukan); 0,962 tidak realistis.
+
 ### 0.00 Pembaruan 18 Okt malam (arsip baseline, disusul §0.00b–§0.00c)
 - **Posisi**: 0,958 rank 424/6.168; silver (rank ±308) ada di dalam blok 0,958 → yang menentukan = skor tak-dibulatkan (publik) dan, di akhir, skor PRIVAT 70 %. Salinan identik notebook publik berbagi satu skor privat → resep unik kita (S6F nartaa di separuh Raptor + murid r2a) adalah satu-satunya jalan melompati klaster.
 - **Bukti komponen**: S6F wajib (g8b tanpa S6F 0,957 vs g8a 0,958); murid r2a menaikkan g6a di atas salinan goodpjw (rank 569→323); R7 di compact: OOF lokal +0,002 (P 1,00), gold +0,001, papan netral (g9a) → masuk kandidat `g12`.
