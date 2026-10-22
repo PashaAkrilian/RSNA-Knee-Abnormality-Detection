@@ -25,6 +25,7 @@
 ## 2. Rekap evaluasi (diisi tiap hasil — JANGAN hapus baris lama)
 | # | Tanggal | Submisi | Konfigurasi | LB | Δ vs 0,950 | Keputusan | Catatan |
 |---|---|---|---|---|---|---|---|
+| — | 22 Okt 14:26–21:00 | versia-7 alver 57509811 / nxtirfan 57509816 / h6 57515154 | salinan versia-7; h6 = h4 + S6F .5 (tanpa murid, akun 3) | alver **Timeout**; nxtirfan **0,958**; h6 pending | — | alver dikirim ulang 20:59 | run penilaian dekat tenggat bisa >9 j |
 | — | 22 Okt 03:20 | status | r6 latih RUNNING (akun utama); final UI g6a + g8a | — | — | papan: rank 728/6.340, silver ≤317 | g18 otomatis setelah r6 |
 | — | 22 Okt 01:00 | latih `student-r6-a/b` (akun utama, izin user) | murid ConvNeXt-T label v6 (v1 + soft-v2) | RUNNING | — | ρ label v6~v1 0,86–0,97 | → g18 otomatis (g8a + r6) |
 | — | 22 Okt 00:20 | **FINAL DIPILIH** | g6a 57296301 + g8a 57315276 (UI 2/2) | 0,958 / 0,958 | — | auto-selection candidates Kaggle | ganti rekomendasi g12 |
