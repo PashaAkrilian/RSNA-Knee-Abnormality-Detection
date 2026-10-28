@@ -1,1 +1,0 @@
-{"arch": "resnet50", "res": 224, "epochs": 12, "seed": 1, "nfold": 6, "lr_bb": 0.0002, "rel": "ResNet50.pt", "match": "", "fmt": "rad", "norm": "rad", "label_file": "fused_labels_r1.csv", "outtag": "cheap_radresnet50_ep12_s1", "smoke": false, "bs": 2, "acc": 2, "warmup": 200, "kwin": 12, "bias_init": 1, "ema": 0.998, "tpu": 1, "only_folds": [3, 4, 5], "probe_fold": 0}

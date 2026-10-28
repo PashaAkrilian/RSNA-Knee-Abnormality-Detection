@@ -1,130 +1,80 @@
 <div align="center">
 
-# 🦵 RSNA Knee Abnormality Detection
+# RSNA Knee Abnormality Detection
 
-**Weak labels from radiology reports + a 3-family MRI ensemble, built for a code competition with no internet and a 9-hour limit.**
+Our code for the Kaggle RSNA knee MRI competition: weak labels from radiology reports, a three-family ensemble, and a distilled student model.
 
-![Competition](https://img.shields.io/badge/Kaggle-RSNA%20Knee%20Abnormality%20Detection-20BEFF?logo=kaggle&logoColor=white)
-![Public LB](https://img.shields.io/badge/Public%20LB-0.958-blue)
-![Private LB](https://img.shields.io/badge/Private%20LB-0.944-lightgrey)
-![Rank](https://img.shields.io/badge/Public%20rank-757%20%2F%206%2C299-orange)
-![Metric](https://img.shields.io/badge/Metric-macro%20ROC--AUC%20(12%20labels)-success)
-![PyTorch](https://img.shields.io/badge/PyTorch-timm%20%7C%20DINOv2%20%7C%20ConvNeXt-red)
-
-[Task](#-the-task) · [How it works](#-how-it-works) · [Results](#-results) · [What failed](#-what-did-not-work) · [Repo map](#-repository-map) · [Run it](#-quick-start)
-
-</div>
-
----
-
-## 🖼️ Sample MRI slices
-
-<div align="center">
+![Public LB](https://img.shields.io/badge/public%20LB-0.958-blue)
+![Private LB](https://img.shields.io/badge/private%20LB-0.944-lightgrey)
+![Rank](https://img.shields.io/badge/public%20rank-757%20%2F%206299-orange)
+![Metric](https://img.shields.io/badge/metric-macro%20ROC--AUC-success)
 
 ![Sample MRI slices](eda_results/eda_outputs/10_sample_slices_grid.png)
 
 </div>
 
-## 📊 What the data looks like
+## The task
 
-| Label availability | Class balance | Label correlation |
+Predict 12 knee abnormalities per MRI study (ACL, MCL, both menisci, three OA sites, effusion, synovitis, Baker's cyst, contusion, fracture). The metric is macro ROC-AUC, scored 30% public and 70% private. It was a code competition: no internet, 9 hours per run.
+
+## Why it was hard
+
+- About 98-99% of the structured labels are missing. Only 58 studies are fully labeled, and most of the rest have just a report, written in 9 languages.
+- Laterality is missing for about half of the series, so a horizontal flip has to swap medial and lateral labels.
+- The 58 gold studies are too few to rank models: the standard error is about 0.01, while the leaderboard differences were 0.001.
+
+| Label availability | Class balance | Scanner heterogeneity |
 |:---:|:---:|:---:|
-| ![](eda_results/eda_outputs/01_label_availability.png) | ![](eda_results/eda_outputs/02_label_class_balance.png) | ![](eda_results/eda_outputs/03_label_correlation.png) |
-| **Report language** | **Plane vs. test set** | **Scanner heterogeneity** |
-| ![](eda_results/eda_outputs/06_report_language.png) | ![](eda_results/eda_outputs/09_train_vs_test_plane.png) | ![](eda_results/eda_outputs/13_scanner_heterogeneity.png) |
+| ![](eda_results/eda_outputs/01_label_availability.png) | ![](eda_results/eda_outputs/02_label_class_balance.png) | ![](eda_results/eda_outputs/13_scanner_heterogeneity.png) |
 
-## 🎯 The task
-
-Predict the probability of **12 knee abnormalities** per MRI study (ACL, MCL, medial/lateral meniscus, medial/lateral/PF OA, effusion, synovitis, Baker's, contusion, fracture). Metric: macro ROC-AUC, 30% public / 70% private split. Code competition: internet off, run ≤ 9 h.
-
-## 🤔 Why this is hard
-
-- **~98–99% of structured label cells are missing.** Only 58 "gold" studies have complete labels; most studies only have a radiology report, in 9 languages.
-- **Laterality is missing for ~50% of series**, so a horizontal flip is not label-preserving (medial ↔ lateral must swap).
-- **819,078 DICOM instances** across 24,371 series: the audit found 94.1% clean, a handful of duplicate / constant / corrupt slices.
-- **Gold-58 is too small to rank models**: SE ≈ 0.01, while the leaderboard is separated by 0.001.
-
-## 🔄 How it works
+## Approach
 
 ```
- DICOM (24,371 series)
-        │  audit → 16 slices/series → 0.5 mm/px → 224² cache
-        ▼
- Radiology reports ──► rule-based weak labeler (negation, uncertainty,
-        │              clause-level, 9 languages)  → 4,407 labeled studies
-        ▼
- ┌───────────────────────┬──────────────────────┬─────────────────────────┐
- │ Raptor family         │ compact R6 (+flip)   │ our "student" family    │
- │ 384 + mirrored 224    │ public checkpoints   │ ConvNeXt-T 2.5D,        │
- │ public checkpoints    │                      │ distilled from OOF      │
- │ + S6F in half of it   │                      │ teacher consensus       │
- └───────────┬───────────┴──────────┬───────────┴────────────┬────────────┘
-             └──────── per-finding weights (V2) ──────────────┘
-                                    ▼
-                      12 probabilities per study
+DICOM -> audit -> 16 slices per series at 0.5 mm/px -> 224x224 cache
+Reports -> rule-based weak labeler (negation, uncertainty, 9 languages)
+
+ Raptor family (384 + mirrored 224)   compact R6 + flip      our student (ConvNeXt-T 2.5D)
+ public checkpoints, S6F in half      public checkpoints     distilled from OOF teachers
+                  \                          |                        /
+                   +------ per-finding weights, one blend ---------+
 ```
 
-Slot rule learned the hard way: **a new model goes inside the slot of its own family**, never as a third leg (a student in the Raptor slot always lowered the public score).
+A new model goes inside the slot of its own family. Every time we added the student as a separate leg, the public score dropped.
 
-## 🏁 Results
+## Results
 
-| Item | Value |
+| | |
 |---|---|
-| Public LB (final) | **0.958**, rank **757 / 6,299** (public silver line was inside the 0.958 block) |
-| Private LB, both selected finals (`g6a`, `g8a`) | **0.944** |
-| Selected finals | `g6a` (57296301), `g8a` (57315276) — chosen because they were our two highest unrounded public scores and the only *unique* recipes |
-| Submissions | 156 by the team |
+| Public LB | 0.958, rank 757 of 6,299 |
+| Private LB (both final picks, `g6a` and `g8a`) | 0.944 |
 
-Honest reading: the 0.958 plateau was a public-notebook recipe shared by ~1,300 teams. Our contribution on top was the S6F placement, per-finding weights, and a distilled student; none moved the public score above 0.958.
+Most of the 0.958 comes from public notebooks, which about 1,300 teams also used. Our additions (S6F placement, per-finding weights, the student) did not move the public score above 0.958. Things that did not help: a student in the Raptor slot, the B-leg, a 24-channel two-plane model, the Part B reader. Details are in the Kaggle writeup.
 
-## ❌ What did not work
+## Layout
 
-| Idea | Outcome |
-|---|---|
-| Student as a third leg / inside the Raptor slot | Public 0.957 (down) |
-| B-leg (`g13`) | Gold-58 0.9415 and OOF +0.0033, but public 0.957 → gold-58 cannot choose between 0.957 and 0.958 |
-| 24-channel two-plane model | Gold 0.8346; hurt every blend weight |
-| Part B reader leg | Neutral after rounding; not worth the compute |
-| Label v3 student (r3) | No gain over r2a (0.9292 vs 0.9334 gold) |
-
-## 🗺️ Repository map
-
-```text
-.
-├── build_*.py              Kaggle kernel generators (train / OOF / inference / submit)
-├── kaggle_kernel_*/        one folder per pushed Kaggle kernel (metadata + notebook)
-├── eda_results/            EDA figures          audit_results*/  DICOM audit outputs
-├── weak_labeler_results/   report-label validation
-├── blend_results/          OOF blend sweeps     label_engineering/  label v1–v6
-├── reports/                dated research notes (Indonesian)
-├── docs/                   plans, permissions, research notes
-├── MEMORY.md  HANDOFF.md  STRATEGI_SILVER.md  PROGRESS.md   full decision log
-└── data/                   run logs, small manifests (heavy artifacts are gitignored)
+```
+build_*.py                 kernel generators (student prep/train/infer, OOF, blends)
+make_labels_v1.py          report -> weak labels
+local_eval_oof.py          local OOF evaluation
+gold_eval_full.py          gold-58 evaluation
+kaggle_kernel*/            the pushed Kaggle kernels that matter (EDA, audit, preprocessing,
+                           weak labeler, student, final submissions g6a and g8a)
+label_engineering/         label versions and blending code
+eda_results/  audit_results_exhaustive/  weak_labeler_results/  blend_results/   figures and outputs
+docs/WRITEUP_KAGGLE.md     the writeup
 ```
 
-## ⚡ Quick start
-
-ML runs on Kaggle only (the competition data is DICOM-scale); the local machine drives it through the CLI.
+Training and inference ran on Kaggle. The scripts assume the Kaggle CLI is configured and the competition data is attached to the kernel.
 
 ```bash
 pip install kaggle
-cd kaggle_kernel && kaggle kernels push -p .          # run EDA on Kaggle
-kaggle kernels status <user>/<kernel-slug>             # poll
-kaggle kernels output <user>/<kernel-slug> -p ../eda_results
+cd kaggle_kernel && kaggle kernels push -p .
 ```
 
-Credentials (`kaggle.json`, `akun_kaggle/`) are gitignored; never commit them.
+## Credits
 
-## 📚 Credits
+The final recipes build on public work by goodpjw2008, heliosli, nartaa, evgendvorkin and kritikabenjwal. Thanks to them and to the RSNA organizers.
 
-Our final recipes built on public work. Thanks to the authors of the public notebooks and datasets we used or tested: `goodpjw2008` (CoAtNet + R6 + 2.5D MIL), `heliosli` (per-finding weights), `nartaa` (S6F), `evgendvorkin` (Versia-7), `kritikabenjwal` (B-leg, soft labels), and the RSNA organizers.
+Research and competition code, not a clinically validated system.
 
-## ⚠️ Disclaimer
-
-Research and competition code. **Not a clinically validated diagnostic system.**
-
-<div align="center">
-
-**Team Krazy KIller** · [Kaggle competition page](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection)
-
-</div>
+Team Krazy KIller. [Competition page](https://www.kaggle.com/competitions/rsna-knee-abnormality-detection)
