@@ -4,9 +4,10 @@
 
 Our code for the Kaggle RSNA knee MRI competition: weak labels from radiology reports, a three-family ensemble, and a distilled student model.
 
-![Public LB](https://img.shields.io/badge/public%20LB-0.958-blue)
+![Medal](https://img.shields.io/badge/Kaggle-silver%20medal-C0C0C0)
+![Final rank](https://img.shields.io/badge/final%20rank-272%20%2F%206299-blue)
 ![Private LB](https://img.shields.io/badge/private%20LB-0.944-lightgrey)
-![Rank](https://img.shields.io/badge/public%20rank-757%20%2F%206299-orange)
+![Public LB](https://img.shields.io/badge/public%20LB-0.958-lightgrey)
 ![Metric](https://img.shields.io/badge/metric-macro%20ROC--AUC-success)
 
 ![Sample MRI slices](eda_results/eda_outputs/10_sample_slices_grid.png)
@@ -45,10 +46,11 @@ A new model goes inside the slot of its own family. Every time we added the stud
 
 | | |
 |---|---|
-| Public LB | 0.958, rank 757 of 6,299 |
+| Final result | **Silver medal, rank 272 of 6,299 teams** |
 | Private LB (both final picks, `g6a` and `g8a`) | 0.944 |
+| Public LB | 0.958, rank 757 (the private split moved us up 485 places) |
 
-Most of the 0.958 comes from public notebooks, which about 1,300 teams also used. Our additions (S6F placement, per-finding weights, the student) did not move the public score above 0.958. Things that did not help: a student in the Raptor slot, the B-leg, a 24-channel two-plane model, the Part B reader. Details are in the Kaggle writeup.
+Most of the score comes from public notebooks, which about 1,300 teams also used. Our additions (S6F placement, per-finding weights, the student) did not move the public score above 0.958. Things that did not help: a student in the Raptor slot, the B-leg, a 24-channel two-plane model, the Part B reader. Details are in the Kaggle writeup.
 
 ## Layout
 
